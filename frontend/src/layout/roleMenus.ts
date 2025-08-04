@@ -1,0 +1,43 @@
+export const roleMenus = {
+  superAdmin: [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Companies", path: "/companies" },
+    { label: "Plans", path: "/plans" },
+    { label: "Messages", path: "/message" },
+    { label: "Payments", path: "/payments" },
+    { label: "Notification", path: "/notification" },
+  ],
+  admin: [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "Departments", path: "/employees" },
+    { label: "Projects", path: "/dashboard" },
+    { label: "My Team", path: "/employees" },
+    { label: "Leave Management", path: "/dashboard" },
+    { label: "Meetings", path: "/employees" },
+    { label: "Message", path: "/dashboard" },
+    { label: "Notification", path: "/employees" },
+    { label: "Subscription", path: "/dashboard" },
+    { label: "My Profile", path: "/my-profile" },
+  ],
+  manager: [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "My Team", path: "/team" },
+    { label: "Projects", path: "/projects" },
+    { label: "Meetings", path: "/meetings" },
+    { label: "Message", path: "/message" },
+    { label: "Department", path: "/department" },
+    { label: "Attendance", path: "/attendance" },
+    { label: "Notification", path: "/notification" },
+    { label: "My Profile", path: "/profile" },
+  ],
+  team: [
+    { label: "Dashboard", path: "/dashboard" },
+    { label: "My Tasks", path: "/my-tasks" },
+    { label: "Attendance", path: "/attendance" },
+    { label: "Leave Status", path: "/leave-status" },
+    { label: "Meetings", path: "/meetings" },
+    { label: "Message", path: "/message" },
+    { label: "Notification", path: "/notification" },
+    { label: "My Profile", path: "/my-profile" },
+  ]
+};
