@@ -1,31 +1,23 @@
-import { RegisterCompanyDTO,RegisterCompanySchema } from "../../dto/company/RegisterCompanyDTO";
+import { RegisterCompanyDTO } from "../../dto/company/RegisterCompanyDTO";
+import { RegisterCompanySchema } from "../../dto/company/RegisterCompanySchema";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { Company } from "../../../domain/entities/Company";
-import { EmailService } from "../../../infrastructure/services/EmailService";
-import { OTP } from "../../../domain/entities/OTP";
-import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
-import { generateOtp } from "../../../shared/utils/otpUtils";
-export class RegisterCompanyUseCase{
-    constructor(
+import { SendOtpUseCase } from "../auth/SendOtpUseCase";
+import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
+
+export class RegisterCompanyUseCase {
+  constructor(
     private companyRepo: ICompanyRepository,
-    private otpRepo: IOTPRepository,
-    private emailService: EmailService
-    ){}
+    private sendOtpUseCase: SendOtpUseCase,
+    private tempRegRepo: ITempRegistrationRepository,
+  ) {}
 
-    async execute(data:RegisterCompanyDTO):Promise<void>{
-        RegisterCompanySchema.parse(data)
-        const existing = await this.companyRepo.findByEmail(data.email);
-        if(existing) throw new Error("Company already registered");
-        const otpCode=generateOtp();
-          const otp = new OTP(data.email, otpCode, new Date(Date.now() + 3 * 60000)); 
-          await this.otpRepo.save(otp);
+  async execute(data: RegisterCompanyDTO): Promise<void> {
+    RegisterCompanySchema.parse(data);
+    const existing = await this.companyRepo.findByEmail(data.email);
+    if (existing) throw new Error("Company already registered");
+     const expiresAt = new Date(Date.now() + 3 * 60 * 1000); 
+    await this.tempRegRepo.save(data.email, data, expiresAt);
+    await this.sendOtpUseCase.execute(data.email); 
 
-             await this.emailService.sendEmail(
-      data.email,
-      "Your OTP Code",
-      `<p>Your OTP is <b>${otpCode}</b>. It will expire in 3 minutes.</p>`
-    );
-    }
-
-
-} 
+  }
+}

@@ -1,20 +1,35 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { Company } from "../../../domain/entities/Company";
+import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
+
+
 
 export class VerifyCompanyOTPUseCase{
     constructor(
     private otpRepo: IOTPRepository,
-    private companyRepo: ICompanyRepository
+    private companyRepo: ICompanyRepository,
+     private tempRegRepo: ITempRegistrationRepository
     ){}
 
-    async execute(email:string,code:string,companyDate:Company):Promise<void>{
-        const otp = await this.otpRepo.findByEmail(email);
-        if(!otp) throw new Error("OTP not found");
-        if(otp.isExpired()) throw new Error("OTP Expired");
-        if(otp.code===code) throw new Error("Invalid OTP")
-
-            await this.companyRepo.create(companyDate);
-            await this.otpRepo.deleteByEmail(email)
+    async execute(email:string,otp:string):Promise<void>{
+         const storedOtp = await this.otpRepo.findByEmail(email);
+    if (!storedOtp || storedOtp.code !== String(otp)) {
+      throw new Error("Invalid or expired OTP");
     }
+
+    const companyData = await this.tempRegRepo.findByEmail(email);
+    if (!companyData) throw new Error("Registration data expired");
+
+    await this.companyRepo.create(companyData);
+
+     await this.tempRegRepo.delete(email);
+    await this.otpRepo.deleteByEmail(email);
+
+    }
+
+    
 }
+
+
+

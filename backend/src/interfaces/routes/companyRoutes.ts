@@ -5,17 +5,24 @@ import { EmailService } from "../../infrastructure/services/EmailService";
 import { RegisterCompanyUseCase } from "../../application/use-cases/company/RegisterCompanyUseCase";
 import { VerifyCompanyOTPUseCase } from "../../application/use-cases/company/VerifyCompanyOTPUseCase";
 import { CompanyRepository } from "../../infrastructure/repositories/CompanyRepository";
+import { SendOtpUseCase } from "../../application/use-cases/auth/SendOtpUseCase"; // adjust path
+import { TempRegistrationRepository } from "../../infrastructure/repositories/TempRegistrationRepository";
 
-const companyRouter = Router()
+const companyRouter = Router();
+
+
 const companyRepo = new CompanyRepository();
 const otpRepo = new OTPRepository();
 const emailService = new EmailService();
+const tempRegRepo= new TempRegistrationRepository()
 
-const registerUseCase = new RegisterCompanyUseCase(companyRepo, otpRepo, emailService);
-const verifyUseCase = new VerifyCompanyOTPUseCase(otpRepo, companyRepo);
+const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
+
+const registerUseCase = new RegisterCompanyUseCase(companyRepo, sendOtpUseCase,tempRegRepo);
+const verifyUseCase = new VerifyCompanyOTPUseCase(otpRepo, companyRepo,tempRegRepo);
 
 const controller = new CompanyController(registerUseCase, verifyUseCase);
 
-companyRouter.post('/register',controller.register)
-
+companyRouter.post("/register", controller.register);
+companyRouter.post("/verify-otp", controller.verifyOTP);
 export default companyRouter;
