@@ -1,6 +1,5 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { Company } from "../../../domain/entities/Company";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 
 

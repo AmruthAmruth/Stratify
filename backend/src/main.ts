@@ -4,11 +4,17 @@ import connectDB from "./config/db";
 import morgan from "morgan";
 import superAdminRouter from "./interfaces/routes/superAdminRoutes";
 import companyRouter from "./interfaces/routes/companyRoutes";
+import cors from 'cors';
+
 dotenv.config();
 
 const app = express();
+app.use(cors({
+  origin: "http://localhost:5173",  
+  credentials: true                 
+}));
 
-app.use(express.json());
+app.use(express.json()); 
 app.use(morgan("dev"));
 
 connectDB();

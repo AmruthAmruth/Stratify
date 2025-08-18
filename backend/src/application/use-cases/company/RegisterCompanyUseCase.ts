@@ -1,8 +1,9 @@
-import { RegisterCompanyDTO } from "../../dto/company/RegisterCompanyDTO";
+
 import { RegisterCompanySchema } from "../../dto/company/RegisterCompanySchema";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { SendOtpUseCase } from "../auth/SendOtpUseCase";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
+import { Company } from "../../../domain/entities/Company";
 
 export class RegisterCompanyUseCase {
   constructor(
@@ -11,7 +12,7 @@ export class RegisterCompanyUseCase {
     private tempRegRepo: ITempRegistrationRepository,
   ) {}
 
-  async execute(data: RegisterCompanyDTO): Promise<void> {
+  async execute(data: Company): Promise<void> {
     RegisterCompanySchema.parse(data);
     const existing = await this.companyRepo.findByEmail(data.email);
     if (existing) throw new Error("Company already registered");

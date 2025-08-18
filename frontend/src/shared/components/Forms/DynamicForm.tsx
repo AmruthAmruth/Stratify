@@ -20,7 +20,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   onSubmit,
   buttonText,
 }) => {
-  // Initialize form data dynamically based on the fields passed
+ 
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [preview, setPreview] = useState<Record<string, string | ArrayBuffer | null>>({});
@@ -40,7 +40,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
       const file = files[0];
       setFormData((prev) => ({ ...prev, [name]: file }));
 
-      // generate preview
+
       const reader = new FileReader();
       reader.onload = () => {
         setPreview((prev) => ({ ...prev, [name]: reader.result }));

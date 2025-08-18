@@ -1,13 +1,14 @@
+import { Company } from "../../domain/entities/Company";
 import { ITempRegistrationRepository } from "../../domain/repositories/ITempRegistrationRepository";
 
 
 export class TempRegistrationRepository implements ITempRegistrationRepository{
-    private storage=new Map<string,{data:any;expiresAt: Date }>();
-    async save(email: string, data: any, expiresAt: Date): Promise<void> {
+    private storage=new Map<string,{data:Company;expiresAt: Date }>();
+    async save(email: string, data: Company, expiresAt: Date): Promise<void> {
         this.storage.set(email,{data,expiresAt})
     }
 
-    async findByEmail(email: string): Promise<any | null> {
+    async findByEmail(email: string): Promise<Company | null> {
         const record = this.storage.get(email);
         if(!record) return null;
         if(record.expiresAt<new Date()){
