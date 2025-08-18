@@ -7,7 +7,7 @@ import { VerifyCompanyOTPUseCase } from "../../application/use-cases/company/Ver
 import { CompanyRepository } from "../../infrastructure/repositories/CompanyRepository";
 import { SendOtpUseCase } from "../../application/use-cases/auth/SendOtpUseCase"; // adjust path
 import { TempRegistrationRepository } from "../../infrastructure/repositories/TempRegistrationRepository";
-
+import { upload } from "../../shared/utils/cloudinaryConfig";
 const companyRouter = Router();
 
 
@@ -23,6 +23,7 @@ const verifyUseCase = new VerifyCompanyOTPUseCase(otpRepo, companyRepo,tempRegRe
 
 const controller = new CompanyController(registerUseCase, verifyUseCase);
 
-companyRouter.post("/register", controller.register);
+companyRouter.post("/register",upload.single("profileImage"), controller.register);
 companyRouter.post("/verify-otp", controller.verifyOTP);
+
 export default companyRouter;

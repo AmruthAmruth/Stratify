@@ -10,6 +10,9 @@ export class CompanyController {
 
   register = async (req: Request, res: Response) => {
     try {
+       if (req.file) {
+      req.body.profileImage = (req.file as any).path;
+    }
       await this.registerUseCase.execute(req.body);
       res.status(200).json({ message: "OTP sent to email" });
     } catch (error: unknown) {
@@ -34,4 +37,15 @@ export class CompanyController {
       }
     }
   };
+
+
+   
+ 
+
+
+
+
+
+
+
 }

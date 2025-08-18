@@ -12,7 +12,8 @@ export class SendOtpUseCase{
   const otpCode = generateOtp();
   const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
   const identifier: string = userId ?? email;
-
+   console.log("OTP Code ",otpCode);
+   
   await this.otpRepo.save(new OTP(identifier, otpCode, expiresAt));
   await this.emailService.sendEmail(
     email,
