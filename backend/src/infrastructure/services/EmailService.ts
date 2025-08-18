@@ -1,26 +1,22 @@
 
+
 import nodemailer from 'nodemailer'
 
 export class EmailService{
-    private transporter;
-    constructor(){
-        this.transporter=nodemailer.createTransport({
-             host: process.env.SMTP_HOST,
-      port: Number(process.env.SMTP_PORT) || 587,
-      secure: false,
+  private transporter;
+  constructor(){
+     this.transporter = nodemailer.createTransport({
+      service: "Gmail",
       auth: {
-        user: process.env.SMTP_USER,
-        pass: process.env.SMTP_PASS,
-      },
-        })
-    }
+        user: process.env.EMAIL_USER,
+        pass: process.env.EMAIL_PASS
+      }
+    });
+  }
 
-    async send(to:string,subject:string,text:string):Promise<void>{
-        await this.transporter.sendMail({
-      from: `"Stratify" <${process.env.SMTP_USER}>`,
-      to,
-      subject,
-      text,
-        })
-    }
+   async sendEmail(to: string, subject: string, html: string): Promise<void> {
+    await this.transporter.sendMail({ from: process.env.EMAIL_USER, to, subject, html });
+  }
+
+
 }

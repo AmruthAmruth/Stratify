@@ -1,16 +1,20 @@
-import React from 'react';
-import Sidebar from './Sidebar';
-import Navbar from './Navbar';
-import { Outlet } from 'react-router-dom';
+import React from "react";
+import Sidebar from "./Sidebar";
+import Navbar from "./Navbar";
+import { Outlet, Navigate } from "react-router-dom";
+import { useSelector } from "react-redux";
+import { RootState } from "../store/index";
 
-type MainLayoutProps = {
-  role: string;
-};
+const MainLayout: React.FC = () => {
+  const role = useSelector((state: RootState) => state.auth.role);
 
-const MainLayout = ({ role }: MainLayoutProps) => {
+  if (!role) {
+    return <Navigate to="/login" replace />;
+  }
+
   return (
     <div className="flex min-h-screen">
-      <Sidebar role={role} />
+      <Sidebar/>
       <div className="flex-1 flex flex-col">
         <Navbar role={role} />
         <main className="p-4">

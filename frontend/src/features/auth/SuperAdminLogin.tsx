@@ -1,0 +1,103 @@
+import React from "react";
+import AuthForm from "../../shared/components/Forms/DynamicForm";
+import { loginFields } from "../../shared/components/Forms/formFields";
+import { loginSchema } from "@/shared/utils/validations";
+import { superAdminLogin } from "@/services/authApi";
+import { ShieldCheck } from "lucide-react"; 
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/store/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+
+
+
+const SuperAdminLogin: React.FC = () => {
+  interface LoginValues {
+    email: string;
+    password: string;
+  }
+const navigate = useNavigate();
+
+  interface DecodedToken {
+  id: string;
+  role: string;
+  exp: number;
+}
+
+const dispatch = useDispatch()
+
+  const handleLogin = (values: LoginValues) => {
+    superAdminLogin(values)
+      .then((data) => {
+        console.log("Login successful", data);
+        if(data.accessToken){
+             const decoded: DecodedToken = jwtDecode(data.accessToken);
+             console.log("decoded",decoded);
+             
+            dispatch(
+                setCredentials({
+                    accessToken:data.accessToken,
+                    role:decoded.role,
+                    userId:decoded.id
+                })
+            )
+             navigate("/dashboard");
+        }
+      })
+      .catch((err) => {
+        console.error("Login failed", err);
+      });
+  };
+
+  return (
+    <div className="min-h-screen flex">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-blue-700 to-indigo-900 text-white flex-col justify-center items-center p-12">
+        <ShieldCheck className="w-20 h-20 mb-6 text-white" />
+        <h1 className="text-4xl font-bold mb-4">Stratify Admin Portal</h1>
+        <p className="text-lg text-gray-200 max-w-md text-center">
+          Secure access for Super Administrators. Manage your company and
+          oversee operations with full control.
+        </p>
+      </div>
+
+      <div className="flex w-full lg:w-1/2 justify-center items-center bg-gray-50 px-6">
+        <div className="bg-white shadow-2xl rounded-3xl p-14 w-full max-w-3xl">
+        
+          <div className="flex justify-center mb-8">
+            <span className="bg-blue-100 text-blue-700 px-5 py-1.5 rounded-full text-sm font-medium">
+              Super Admin Login
+            </span>
+          </div>
+
+          <h2 className="text-4xl font-bold text-gray-800 text-center mb-4">
+            Welcome Back 👋
+          </h2>
+          <p className="text-center text-gray-500 mb-10 text-lg">
+            Sign in to continue to your admin dashboard
+          </p>
+
+          <div className="space-y-6">
+            <AuthForm
+              fields={loginFields}
+              validationSchema={loginSchema}
+              onSubmit={handleLogin}
+              buttonText="Login"
+            />
+          </div>
+
+          {/* Links */}
+          <div className="mt-10 text-center text-gray-500 text-base">
+            <p>
+              Forgot your password?{" "}
+              <a href="/forgot-password" className="text-blue-600 hover:underline">
+                Reset it
+              </a>
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default SuperAdminLogin;

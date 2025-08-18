@@ -14,8 +14,8 @@ export class Company {
     public country: string,
     public zipcode: string,
     public password: string,
-    public status: CompanyStatus,   
+    public status: CompanyStatus = "pending",
     public profileImage?: string,
-     public _id?: string,     
+    public _id?: string
   ) {}
 }

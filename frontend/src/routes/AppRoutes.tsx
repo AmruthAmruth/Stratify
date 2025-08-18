@@ -1,36 +1,53 @@
 import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
-import MainLayout from "../layout/MainLayout";
+import { useRoutes, Navigate } from "react-router-dom";
+import type { RouteObject } from "react-router-dom";
 
+import { useSelector } from "react-redux";
+import { RootState } from '../store/index'
+
+import MainLayout from "../layout/MainLayout";
 import superAdminRoutes from "./superAdminRoutes";
 import adminRoutes from "./adminRoutes";
 import managerRoutes from "./managerRoutes";
 import teamRoutes from "./teamRoutes";
+import generalRoutes from "./generalRoutes"; 
 
-const userRole = "superAdmin";
+type UserRole = "superAdmin" | "company" | "manager" | "team" | "general";
 
-const roleRoutesMap: Record<string, any[]> = {
+const roleRoutesMap: Record<UserRole, RouteObject[]> = {
   superAdmin: superAdminRoutes,
-  admin: adminRoutes,
+  company: adminRoutes,
   manager: managerRoutes,
-  team: teamRoutes
+  team: teamRoutes,
+  general: generalRoutes
 };
 
-const AppRoutes = () => {
-  const routes = roleRoutesMap[userRole] || [];
+const AppRoutes: React.FC = () => {
+  const userRole = useSelector((state: RootState) => state.auth.role) ?? "general";
+  const roleRoutes = roleRoutesMap[userRole as UserRole] ?? []; // ✅ safe fallback
 
+  let routes: RouteObject[];
 
-  return (
-    <Routes>
-      <Route path="/" element={<MainLayout role={userRole} />}>
-        {routes.map((route, i) => (
-          <Route key={i} {...route} />
-        ))}
-        <Route index element={<Navigate to="dashboard" />} />
-      </Route>
-      <Route path="*" element={<h1>404 - Not Found</h1>} />
-    </Routes>
-  );
+  if (userRole === "general") {
+    routes = [
+      ...roleRoutes, 
+      { path: "*", element: <h1>404 - Not Found</h1> }
+    ];
+  } else {
+    routes = [
+      {
+        path: "/",
+        element: <MainLayout/>,
+        children: [
+          ...roleRoutes,
+          { index: true, element: <Navigate to="dashboard" replace /> }
+        ]
+      },
+      { path: "*", element: <h1>404 - Not Found</h1> }
+    ];
+  }
+
+  return useRoutes(routes);
 };
 
 export default AppRoutes;

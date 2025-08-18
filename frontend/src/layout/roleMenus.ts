@@ -1,4 +1,6 @@
-export const roleMenus = {
+import { UserRole, MenuItem } from "./types";
+
+export const roleMenus: Record<UserRole, MenuItem[]> = {
   superAdmin: [
     { label: "Dashboard", path: "/dashboard" },
     { label: "Companies", path: "/companies" },
@@ -39,5 +41,5 @@ export const roleMenus = {
     { label: "Message", path: "/message" },
     { label: "Notification", path: "/notification" },
     { label: "My Profile", path: "/my-profile" },
-  ]
+  ],
 };
