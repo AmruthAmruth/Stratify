@@ -9,10 +9,9 @@ export class RefreshTokenUseCase{
             const accessToken = generateAccessToken(payload);
             const newRefreashToken= generateRefreshToken(payload);
             return {accessToken,refreshToken:newRefreashToken}
-
-        }catch(err){
-            throw new Error("Invalid or expired refresh token")
-        }
+        } catch {
+    throw new Error("Invalid or expired refresh token");
+}
     }
 } 
 
