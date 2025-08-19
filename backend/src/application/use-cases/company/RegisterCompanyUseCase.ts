@@ -4,6 +4,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { SendOtpUseCase } from "../auth/SendOtpUseCase";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 import { Company } from "../../../domain/entities/Company";
+import { hashPassword } from "../../../shared/utils/passwordHash";
 
 export class RegisterCompanyUseCase {
   constructor(
@@ -19,6 +20,9 @@ export class RegisterCompanyUseCase {
 
 const existingInMobile = await this.companyRepo.findByPhone(data.phone);
 if (existingInMobile) throw new Error("Phone number already registered");
+ 
+const hasedPassword = await hashPassword(data.password)
+
 
      const expiresAt = new Date(Date.now() + 3 * 60 * 1000); 
       const tempData = new Company(
@@ -33,7 +37,7 @@ if (existingInMobile) throw new Error("Phone number already registered");
     data.state,
     data.country,
     data.zipcode,
-    data.password,
+    hasedPassword,
     data.status,
     data.profileImage,
     data._id,

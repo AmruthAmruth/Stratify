@@ -57,36 +57,47 @@ export class CompanyController {
     }
   };
 
-  login = async (req:Request,res:Response)=>{
-    try{
- const result = LoginSchema.safeParse(req.body);
 
+ login = async (req: Request, res: Response) => {
+  try {
+    const result = LoginSchema.safeParse(req.body);
 
-if (!result.success) {
-  res.status(400).json({
-    status: "error",
-    errors: result.error.issues.map(issue => ({
-      field: issue.path.join("."),
-      message: issue.message
-    }))
-  });
-  return;
-}
+    if (!result.success) {
+      res.status(400).json({
+        status: "error",
+        errors: result.error.issues.map(issue => ({
+          field: issue.path.join("."),
+          message: issue.message
+        }))
+      });
+      return;
+    }
 
+    const dto: LoginDTO = {
+      email: req.body.email,
+      password: req.body.password,
+    };
 
-   const dto: LoginDTO = {
-           email: req.body.email,
-           password: req.body.password,
-         };
-    await this.companyLoginUseCase.execute(dto)
-    }catch(error){
-       if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
-      } else {
-        res.status(400).json({ error: String(error) });
-      }
+    const { accessToken, refreashToken } = await this.companyLoginUseCase.execute(dto);
+
+    res.cookie("refreshToken", refreashToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "strict",
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
+
+    res.status(200).json({ accessToken, message: "Login successful" });
+
+  } catch (error: unknown) {
+    if (error instanceof Error) {
+      res.status(400).json({ error: error.message });
+    } else {
+      res.status(400).json({ error: String(error) });
     }
   }
+};
+
   
 
 

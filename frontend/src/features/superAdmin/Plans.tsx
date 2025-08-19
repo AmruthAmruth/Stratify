@@ -1,9 +1,8 @@
 import React from 'react'
-import Register from '../auth/Register'
 const Plans = () => {
   return (
     <div>
-      <Register/>
+     <h1>Plan page</h1>
     </div>
   )
 }

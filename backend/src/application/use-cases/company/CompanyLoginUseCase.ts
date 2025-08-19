@@ -9,8 +9,11 @@ export class CompanyLoginUseCase{
     constructor(private companyRepository : ICompanyRepository){};
 
     async execute(data:LoginDTO):Promise<{accessToken:string,refreashToken:string}>{
+        console.log("Hello Login");
+        
         const user = await this.companyRepository.findByEmail(data.email);
         if(!user) throw new Error("Email not found")
+
             const isPassword = await comparePassword(data.password,user.password);
         if(!isPassword) throw new Error("Invalid Credentials")
 

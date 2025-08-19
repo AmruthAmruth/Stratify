@@ -53,3 +53,13 @@ export const verifyOTP = async (data: { otp: string; email: string }) => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+export const companyLogin = async (data:{email:string,password:string})=>{
+    try{
+      const response = await axiosInstance.post('/company/login',data);
+      return response.data
+    }catch(err:any){
+       throw err.response?.data || new Error("Network error");
+    }
+}

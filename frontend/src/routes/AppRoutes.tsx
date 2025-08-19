@@ -12,19 +12,21 @@ import managerRoutes from "./managerRoutes";
 import teamRoutes from "./teamRoutes";
 import generalRoutes from "./generalRoutes"; 
 
-type UserRole = "superAdmin" | "company" | "manager" | "team" | "general";
+type UserRole = "superAdmin" | "company" | "manager" | "employee" | "general";
 
 const roleRoutesMap: Record<UserRole, RouteObject[]> = {
   superAdmin: superAdminRoutes,
   company: adminRoutes,
   manager: managerRoutes,
-  team: teamRoutes,
+  employee: teamRoutes,
   general: generalRoutes
 };
 
 const AppRoutes: React.FC = () => {
   const userRole = useSelector((state: RootState) => state.auth.role) ?? "general";
-  const roleRoutes = roleRoutesMap[userRole as UserRole] ?? []; // ✅ safe fallback
+  
+  
+  const roleRoutes = roleRoutesMap[userRole as UserRole] ?? []; 
 
   let routes: RouteObject[];
 
@@ -34,17 +36,17 @@ const AppRoutes: React.FC = () => {
       { path: "*", element: <h1>404 - Not Found</h1> }
     ];
   } else {
-    routes = [
-      {
-        path: "/",
-        element: <MainLayout/>,
-        children: [
-          ...roleRoutes,
-          { index: true, element: <Navigate to="dashboard" replace /> }
-        ]
-      },
-      { path: "*", element: <h1>404 - Not Found</h1> }
-    ];
+   routes = [
+  {
+    path: "/",
+    element: <MainLayout />,
+    children: [
+      ...roleRoutes,                
+      { index: true, element: <Navigate to="dashboard" replace /> }
+    ]
+  },
+  { path: "*", element: <h1>404 - Not Found</h1> }
+];
   }
 
   return useRoutes(routes);

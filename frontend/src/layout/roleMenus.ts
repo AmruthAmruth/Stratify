@@ -9,16 +9,16 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Payments", path: "/payments" },
     { label: "Notification", path: "/notification" },
   ],
-  admin: [
+  company: [  
     { label: "Dashboard", path: "/dashboard" },
-    { label: "Departments", path: "/employees" },
-    { label: "Projects", path: "/dashboard" },
+    { label: "Departments", path: "/department" },
+    { label: "Projects", path: "/projects" },
     { label: "My Team", path: "/employees" },
-    { label: "Leave Management", path: "/dashboard" },
-    { label: "Meetings", path: "/employees" },
-    { label: "Message", path: "/dashboard" },
-    { label: "Notification", path: "/employees" },
-    { label: "Subscription", path: "/dashboard" },
+    { label: "Leave Management", path: "/leave" },
+    { label: "Meetings", path: "/meetings" },
+    { label: "Message", path: "/message" },
+    { label: "Notification", path: "/notification" },
+    { label: "Subscription", path: "/subscription" },
     { label: "My Profile", path: "/my-profile" },
   ],
   manager: [
@@ -32,7 +32,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Notification", path: "/notification" },
     { label: "My Profile", path: "/profile" },
   ],
-  team: [
+  employee: [  
     { label: "Dashboard", path: "/dashboard" },
     { label: "My Tasks", path: "/my-tasks" },
     { label: "Attendance", path: "/attendance" },
@@ -41,5 +41,8 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Message", path: "/message" },
     { label: "Notification", path: "/notification" },
     { label: "My Profile", path: "/my-profile" },
+  ],
+  general: [
+    { label: "Dashboard", path: "/dashboard" },
   ],
 };
