@@ -1,30 +1,53 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
-
+import { generateAccessToken,generateRefreshToken } from "../../../shared/utils/token";
+import { Messages } from "../../../shared/constants/messages";
 
 
 export class VerifyCompanyOTPUseCase{
     constructor(
-    private otpRepo: IOTPRepository,
-    private companyRepo: ICompanyRepository,
-     private tempRegRepo: ITempRegistrationRepository
+    private _otpRepo: IOTPRepository,
+    private _companyRepo: ICompanyRepository,
+    private _tempRegRepo: ITempRegistrationRepository
     ){}
 
-    async execute(email:string,otp:string):Promise<void>{
-         const storedOtp = await this.otpRepo.findByEmail(email);
-    if (!storedOtp || storedOtp.code !== String(otp)) {
-      throw new Error("Invalid or expired OTP");
+    async execute(email:string,otp:string):Promise<{accessToken:string,refreshToken:string}>{
+         const storedOtp = await this._otpRepo.findByEmail(email);
+         console.log("Stored OTP:", storedOtp, "Entered OTP:", otp);
+
+    if (!storedOtp) {
+    throw new Error(Messages.OTP_EXPIRED);
     }
 
-    const companyData = await this.tempRegRepo.findByEmail(email);
+if (storedOtp.code !== otp) {
+  throw new Error(Messages.OTP_INVALID);
+}
+
+if (storedOtp.expiresAt < new Date()) {
+  throw new Error(Messages.OTP_EXPIRED);
+}
+
+    const companyData = await this._tempRegRepo.findByEmail(email);
     if (!companyData) throw new Error("Registration data expired");
 
-    await this.companyRepo.create(companyData);
+    
+    const createdCompany = await this._companyRepo.create(companyData);
 
-     await this.tempRegRepo.delete(email);
-    await this.otpRepo.deleteByEmail(email);
+    const payload = { id: createdCompany._id!, role: createdCompany.role };
 
+    
+if (!createdCompany._id) {
+  throw new Error("Company ID is missing after creation");
+}
+
+    const accessToken = generateAccessToken(payload);
+    const refreshToken = generateRefreshToken(payload)
+
+     await this._tempRegRepo.delete(email);
+    await this._otpRepo.deleteByEmail(email);
+
+    return {accessToken,refreshToken}
     }
 
     

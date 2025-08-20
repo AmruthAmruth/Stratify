@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/store/slices/authSlice";
 import { useNavigate } from "react-router-dom";
-
+import { useSnackbar } from "notistack";
 
 
 const SuperAdminLogin: React.FC = () => {
@@ -25,6 +25,8 @@ const navigate = useNavigate();
 }
 
 const dispatch = useDispatch()
+const { enqueueSnackbar } = useSnackbar();
+
 
   const handleLogin = (values: LoginValues) => {
     superAdminLogin(values)
@@ -41,11 +43,19 @@ const dispatch = useDispatch()
                     userId:decoded.id
                 })
             )
+
+             enqueueSnackbar("Login successful!", {
+          variant: "success",
+        });
+
              navigate("/dashboard");
         }
       })
       .catch((err) => {
         console.error("Login failed", err);
+        enqueueSnackbar(err?.error || "Registration failed", {
+          variant: "error",
+        });
       });
   };
 

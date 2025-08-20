@@ -1,8 +1,10 @@
 
 
 import nodemailer from 'nodemailer'
+import { IEmailService } from '../../domain/repositories/IEmailService';
 
-export class EmailService{
+
+export class EmailService implements IEmailService{
   private transporter;
   constructor(){
      this.transporter = nodemailer.createTransport({

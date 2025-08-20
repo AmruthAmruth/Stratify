@@ -1,37 +1,14 @@
+
+
 import { Router } from "express";
-import { SuperAdminController } from "../controllers/SuperAdminController";
-import { SuperAdminRepository } from "../../infrastructure/repositories/SuperAdminRepository";
-import { LoginUseCase } from "../../application/use-cases/super-admin/LoginUseCase";
-import { RefreshTokenUseCase } from "../../application/use-cases/super-admin/RefreshTokenUseCase";
-
-const superAdminRouter= Router();
+import { superAdminDI } from "../../di/superAdminDI";
 
 
-const repository = new SuperAdminRepository();
-const loginUseCase = new LoginUseCase(repository);
-const refreshTokenUseCase = new RefreshTokenUseCase()
+const superAdminRouter = Router();
 
-const controllers = new SuperAdminController(loginUseCase,refreshTokenUseCase)
+const controllers = superAdminDI();
 
 superAdminRouter.post('/login',(req,res)=>controllers.login(req,res))
 superAdminRouter.post('/refresh',(req,res)=>controllers.refresh(req,res))
-export default superAdminRouter;
 
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
+export default superAdminRouter

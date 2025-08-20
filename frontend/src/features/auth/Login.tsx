@@ -3,8 +3,14 @@ import AuthForm from "../../shared/components/Forms/DynamicForm";
 import { loginFields } from "../../shared/components/Forms/formFields";
 import { loginSchema } from "@/shared/utils/validations";
 import { Navbar } from "../Genaral/Navbar";
-import { superAdminLogin } from "@/services/authApi";
 import { Users } from "lucide-react";
+import { companyLogin } from "@/services/authApi";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import { setCredentials } from "@/store/slices/authSlice";
+import { useSnackbar } from "notistack";
+
 
 const Login: React.FC = () => {
   interface LoginValues {
@@ -12,18 +18,47 @@ const Login: React.FC = () => {
     password: string;
   }
 
-  const handleLogin = (values: LoginValues) => {
-    console.log("Login Data:", values);
+    interface DecodedToken {
+  id: string;
+  role: string;
+  exp: number;
+}
 
-    superAdminLogin(values)
-      .then((data) => {
-        console.log("Login successful", data);
-        // TODO: save token, redirect, etc.
-      })
-      .catch((err) => {
-        console.error("Login failed", err);
-      });
-  };
+const dispatch = useDispatch()
+const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+
+const handleLogin = async (values: LoginValues) => {
+  console.log("Login Data:", values);
+  try {
+    const data = await companyLogin(values);
+    console.log("Login Successful", data);
+    enqueueSnackbar("Login successful!", {
+          variant: "success",
+        });
+
+    if (data.accessToken) {
+      const decoded: DecodedToken = jwtDecode(data.accessToken);
+      console.log("decoded", decoded);
+
+      dispatch(
+        setCredentials({
+          accessToken: data.accessToken,
+          role: decoded.role,
+          userId: decoded.id,
+        })
+      );
+
+      navigate("/dashboard");
+    }
+  } catch (err) {
+    console.error("Login failed:", err);
+   
+        enqueueSnackbar(err?.error || "Registration failed", {
+          variant: "error",
+        });
+  }
+};
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

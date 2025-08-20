@@ -3,7 +3,6 @@ interface Column {
   label: string;
 }
 
-// Define the shape of your table rows here
 interface RowData {
   [key: string]: string | number | boolean | null;
 }

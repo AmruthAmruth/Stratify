@@ -16,6 +16,8 @@ export class Company {
     public password: string,
     public status: CompanyStatus = "pending",
     public profileImage?: string,
-    public _id?: string
+    public _id?: string,
+    public role: "company" | "manager" | "employee" = "company"
   ) {}
-}
+} 
+ 
