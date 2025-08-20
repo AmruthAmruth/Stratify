@@ -5,6 +5,9 @@ import { GetAllCompnayUseCase } from "../../application/use-cases/company/GetAll
 import { GetCompanyByIdUseCase } from "../../application/use-cases/company/GetCompanyByIdUseCase";
 import { CompanyLoginUseCase } from "../../application/use-cases/company/CompanyLoginUseCase";
 import { LoginDTO, LoginSchema } from "../../application/dto/auth/LoginSchema";
+import { Messages } from "../../shared/constants/messages";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { CookieConfig } from "../../config/cookieConfig";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -12,11 +15,11 @@ interface MulterRequest extends Request {
 
 export class CompanyController {
   constructor(
-    private registerUseCase: RegisterCompanyUseCase,
-    private verifyUseCase: VerifyCompanyOTPUseCase,
-    private getAllCompanyUseCase:GetAllCompnayUseCase,
-    private getCompanyByIdUseCase:GetCompanyByIdUseCase,
-    private companyLoginUseCase:CompanyLoginUseCase
+    private _registerUseCase: RegisterCompanyUseCase,
+  private _verifyUseCase: VerifyCompanyOTPUseCase,
+  private _getAllCompanyUseCase: GetAllCompnayUseCase,
+  private _getCompanyByIdUseCase: GetCompanyByIdUseCase,
+  private _companyLoginUseCase: CompanyLoginUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -24,13 +27,13 @@ export class CompanyController {
       if (req.file) {
         req.body.profileImage = req.file.path;
       }
-      await this.registerUseCase.execute(req.body);
-      res.status(200).json({ message: "OTP sent to email" });
+      await this._registerUseCase.execute(req.body);
+      res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
       } else {
-        res.status(400).json({ error: String(error) });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
       }
     }
   };
@@ -38,21 +41,16 @@ export class CompanyController {
   verifyOTP = async (req: Request, res: Response) => {
     try {
       const { email, otp } = req.body;
-      const { accessToken, refreshToken } = await this.verifyUseCase.execute(email, otp);
+      const { accessToken, refreshToken } = await this._verifyUseCase.execute(email, otp);
        
-      res.cookie("refreshToken",refreshToken,{
-      httpOnly:true,
-      secure: process.env.NODE_ENV === "production", 
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000,
-      })
+      res.cookie("refreshToken",refreshToken,CookieConfig)
 
-      res.status(201).json({ accessToken, message: "Company registered successfully" });
+      res.status(StatusCodes.CREATED).json({ accessToken, message: Messages.REGISTER_SUCCESS });
     } catch (error: unknown) {
       if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
       } else {
-        res.status(400).json({ error: String(error) });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
       }
     }
   };
@@ -63,7 +61,7 @@ export class CompanyController {
     const result = LoginSchema.safeParse(req.body);
 
     if (!result.success) {
-      res.status(400).json({
+      res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
         errors: result.error.issues.map(issue => ({
           field: issue.path.join("."),
@@ -78,22 +76,17 @@ export class CompanyController {
       password: req.body.password,
     };
 
-    const { accessToken, refreashToken } = await this.companyLoginUseCase.execute(dto);
+    const { accessToken, refreshToken } = await this._companyLoginUseCase.execute(dto);
 
-    res.cookie("refreshToken", refreashToken, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "strict",
-      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    });
+    res.cookie("refreshToken", refreshToken,CookieConfig);
 
-    res.status(200).json({ accessToken, message: "Login successful" });
+    res.status(StatusCodes.OK).json({ accessToken, message: Messages.LOGIN_SUCCESS });
 
   } catch (error: unknown) {
     if (error instanceof Error) {
-      res.status(400).json({ error: error.message });
+      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
     } else {
-      res.status(400).json({ error: String(error) });
+      res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
     }
   }
 };
@@ -104,13 +97,13 @@ export class CompanyController {
 
   getAllCompanies=async(_req:Request,res:Response)=>{
     try{
-const companies = await this.getAllCompanyUseCase.execute()
+const companies = await this._getAllCompanyUseCase.execute()
 res.status(200).json(companies);
     }catch(error:unknown){
       if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
       } else {
-        res.status(400).json({ error: String(error) });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
       }
     }
   }
@@ -119,13 +112,13 @@ res.status(200).json(companies);
   getCompanyById=async(req:Request,res:Response)=>{
     try{
       const {id} = req.params
-     const company =  await this.getCompanyByIdUseCase.execute(id);
-     res.status(200).json(company)
+     const company =  await this._getCompanyByIdUseCase.execute(id);
+     res.status(StatusCodes.OK).json(company)
     }catch(error){
        if (error instanceof Error) {
-        res.status(400).json({ error: error.message });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
       } else {
-        res.status(400).json({ error: String(error) });
+        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
       }
     }
   }

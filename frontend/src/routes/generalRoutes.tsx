@@ -4,6 +4,7 @@ import LoginForm from "../features/auth/Login";
 import RegisterForm from "../features/auth/Register";
 import RegisterOTPPage from "@/features/auth/OTP";
 import SuperAdminLogin from "@/features/auth/SuperAdminLogin";
+import ForgotPassword from "../features/auth/ForgotPassword";
 
 const genaralRoutes: RouteObject[] = [
   {
@@ -25,6 +26,9 @@ const genaralRoutes: RouteObject[] = [
    {
     path: "otp",
     element: <RegisterOTPPage/>,
+  },{
+    path: "forgotpassword",
+    element: <ForgotPassword/>,
   },
   
   

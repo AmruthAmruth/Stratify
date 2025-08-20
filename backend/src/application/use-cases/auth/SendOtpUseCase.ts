@@ -1,11 +1,13 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { generateOtp } from "../../../shared/utils/otpUtils";
 import { OTP } from "../../../domain/entities/OTP";
-import { EmailService } from "../../../infrastructure/services/EmailService";
+import { IEmailService } from "../../../domain/repositories/IEmailService";
+
+
 export class SendOtpUseCase{
     constructor(
-    private otpRepo: IOTPRepository,
-    private emailService: EmailService 
+    private _otpRepo: IOTPRepository,
+    private _emailService: IEmailService 
     ){}
 
    async execute(email: string, userId?: string): Promise<void> {
@@ -14,8 +16,8 @@ export class SendOtpUseCase{
   const identifier: string = userId ?? email;
    console.log("OTP Code ",otpCode);
    
-  await this.otpRepo.save(new OTP(identifier, otpCode, expiresAt));
-  await this.emailService.sendEmail(
+  await this._otpRepo.save(new OTP(identifier, otpCode, expiresAt));
+  await this._emailService.sendEmail(
     email,
     "Your OTP Code",
     `Your OTP is ${otpCode}`

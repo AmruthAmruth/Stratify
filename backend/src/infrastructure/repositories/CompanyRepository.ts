@@ -108,9 +108,8 @@ async findById(id: string): Promise<Company | null> {
 }
 
 
-
 async findAll(): Promise<Company[]> {
   return await CompanyModel.find();
 }
-
+ 
 } 

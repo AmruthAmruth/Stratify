@@ -9,6 +9,8 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "@/store/slices/authSlice";
+import { useSnackbar } from "notistack";
+
 
 const Login: React.FC = () => {
   interface LoginValues {
@@ -24,12 +26,16 @@ const Login: React.FC = () => {
 
 const dispatch = useDispatch()
 const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
 const handleLogin = async (values: LoginValues) => {
   console.log("Login Data:", values);
   try {
     const data = await companyLogin(values);
     console.log("Login Successful", data);
+    enqueueSnackbar("Login successful!", {
+          variant: "success",
+        });
 
     if (data.accessToken) {
       const decoded: DecodedToken = jwtDecode(data.accessToken);
@@ -47,6 +53,10 @@ const handleLogin = async (values: LoginValues) => {
     }
   } catch (err) {
     console.error("Login failed:", err);
+   
+        enqueueSnackbar(err?.error || "Registration failed", {
+          variant: "error",
+        });
   }
 };
 

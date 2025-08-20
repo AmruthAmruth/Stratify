@@ -13,4 +13,5 @@ export interface ICompanyRepository{
     findByPhone(phone:string):Promise<Company|null>;
     findById(id:string):Promise<Company|null>;
     findAll():Promise<Company[]>;
+
 }
