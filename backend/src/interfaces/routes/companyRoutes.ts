@@ -1,16 +1,17 @@
 import { Router } from "express";
 import { companyDI } from "../../di/companyDI";
 import { upload } from "../../shared/utils/cloudinaryConfig";
+import { asyncHandler } from "../middleware/asyncHandler";
 
 
 const companyRouter = Router();
 const controller = companyDI();
 
 
-companyRouter.post("/register", upload.single("profileImage"), controller.register);
-companyRouter.post("/verify-otp", controller.verifyOTP);
-companyRouter.get("/all-company", controller.getAllCompanies);
-companyRouter.get("/:id", controller.getCompanyById);
-companyRouter.post("/login", controller.login);
+companyRouter.post("/register", upload.single("profileImage"),asyncHandler(controller.register));
+companyRouter.post("/verify-otp", asyncHandler(controller.verifyOTP));
+companyRouter.get("/all-company", asyncHandler(controller.getAllCompanies));
+companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
+companyRouter.post("/login", asyncHandler(controller.login));
 
 export default companyRouter

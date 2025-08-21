@@ -5,6 +5,7 @@ import morgan from "morgan";
 import superAdminRouter from "./interfaces/routes/superAdminRoutes";
 import companyRouter from "./interfaces/routes/companyRoutes";
 import cors from 'cors';
+import { errorMiddleware } from "./interfaces/middleware/errorMiddleware";
 
 dotenv.config();
 
@@ -23,6 +24,9 @@ connectDB();
 app.use("/super-admin", superAdminRouter);
 app.use("/company", companyRouter);
 
+
+
+app.use(errorMiddleware);
 const PORT = process.env.PORT || 7000;
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);

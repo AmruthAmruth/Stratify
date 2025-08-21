@@ -23,42 +23,23 @@ export class CompanyController {
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
-    try {
-      if (req.file) {
-        req.body.profileImage = req.file.path;
-      }
-    const otpTime=  await this._registerUseCase.execute(req.body);
-      res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT,time:otpTime });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      } else {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-      }
-    }
+    
+    if (req.file) req.body.profileImage = req.file.path;
+    const otpTime = await this._registerUseCase.execute(req.body);
+    res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT, time: otpTime });
   };
 
   verifyOTP = async (req: Request, res: Response) => {
-    try {
-      const { email, otp } = req.body;
-      const { accessToken, refreshToken } = await this._verifyUseCase.execute(email, otp);
-       
-      res.cookie("refreshToken",refreshToken,CookieConfig)
+    const { email, otp } = req.body;
+    const { accessToken, refreshToken } = await this._verifyUseCase.execute(email, otp);
 
-      res.status(StatusCodes.CREATED).json({ accessToken, message: Messages.REGISTER_SUCCESS });
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      } else {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-      }
-    }
+    res.cookie("refreshToken", refreshToken, CookieConfig);
+    res.status(StatusCodes.CREATED).json({ accessToken, message: Messages.REGISTER_SUCCESS });
   };
 
 
  login = async (req: Request, res: Response) => {
-  try {
-    const result = LoginSchema.safeParse(req.body);
+  const result = LoginSchema.safeParse(req.body);
 
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
@@ -78,60 +59,31 @@ export class CompanyController {
 
     const { accessToken, refreshToken } = await this._companyLoginUseCase.execute(dto);
 
-    res.cookie("refreshToken", refreshToken,CookieConfig);
-
+    res.cookie("refreshToken", refreshToken, CookieConfig);
     res.status(StatusCodes.OK).json({ accessToken, message: Messages.LOGIN_SUCCESS });
 
-  } catch (error: unknown) {
-    if (error instanceof Error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-    } else {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-    }
-  }
 };
 
+
+
+
 logout = async (_req: Request, res: Response) => {
-  try {
-    res.clearCookie("refreshToken", CookieConfig);
+   res.clearCookie("refreshToken", CookieConfig);
     res.status(StatusCodes.OK).json({ message: "Logout successful" });
-  } catch (error) {
-    if (error instanceof Error) {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-    } else {
-      res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-    }
-  }
 };
 
 
 
   getAllCompanies=async(_req:Request,res:Response)=>{
-    try{
-const companies = await this._getAllCompanyUseCase.execute()
-res.status(200).json(companies);
-    }catch(error:unknown){
-      if (error instanceof Error) {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      } else {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-      }
-    }
+     const companies = await this._getAllCompanyUseCase.execute();
+    res.status(StatusCodes.OK).json(companies);
   }
 
 
   getCompanyById=async(req:Request,res:Response)=>{
-    try{
-      const {id} = req.params
-     const company =  await this._getCompanyByIdUseCase.execute(id);
-     res.status(StatusCodes.OK).json(company)
-    }catch(error){
-       if (error instanceof Error) {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
-      } else {
-        res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
-      }
-    }
+   const { id } = req.params;
+    const company = await this._getCompanyByIdUseCase.execute(id);
+    res.status(StatusCodes.OK).json(company);
   }
 
 

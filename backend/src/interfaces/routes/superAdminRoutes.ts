@@ -2,13 +2,13 @@
 
 import { Router } from "express";
 import { superAdminDI } from "../../di/superAdminDI";
-
+import { asyncHandler } from "../middleware/asyncHandler";
 
 const superAdminRouter = Router();
 
 const controllers = superAdminDI();
 
-superAdminRouter.post('/login',(req,res)=>controllers.login(req,res))
-superAdminRouter.post('/refresh',(req,res)=>controllers.refresh(req,res))
+superAdminRouter.post('/login',asyncHandler(controllers.login))
+superAdminRouter.post('/refresh',asyncHandler(controllers.refresh))
 
 export default superAdminRouter
