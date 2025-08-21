@@ -5,12 +5,23 @@ import { Users } from "lucide-react";
 import { verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
+import { useDispatch } from "react-redux";
+import { setCredentials } from "@/store/slices/authSlice";
 
 const OTP: React.FC = () => {
   const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState<number>(0); // in seconds
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch()
+
+    interface DecodedToken {
+  id: string;
+  role: string;
+  exp: number;
+}
+
 
   useEffect(() => {
     const expiry = localStorage.getItem("otpExpiry");
@@ -20,7 +31,6 @@ const OTP: React.FC = () => {
     }
   }, []);
 
-  // Countdown timer
   useEffect(() => {
     if (timeLeft <= 0) return;
     const interval = setInterval(() => {
@@ -44,22 +54,35 @@ const OTP: React.FC = () => {
       alert("Email not found. Please register first.");
       return;
     }
-    verifyOTP({ otp, email })
-      .then((data) => {
-        console.log("Registered data", data);
-        enqueueSnackbar(data.message, {
-          variant: "success",
-        });
-        localStorage.removeItem("email");
-        localStorage.removeItem("otpExpiry");
-        navigate("/dashboard"); // redirect after success
-      })
-      .catch((err) => {
-        console.error("OTP verification failed:", err);
-        enqueueSnackbar(err?.error || err.message, {
-          variant: "error",
-        });
-      });
+   verifyOTP({ otp, email })
+  .then((data) => {
+    console.log("Registered data", data);
+    enqueueSnackbar(data.message, { variant: "success" });
+    localStorage.removeItem("email");
+    localStorage.removeItem("otpExpiry");
+
+    if (data.accessToken) {
+      const decoded: DecodedToken = jwtDecode(data.accessToken);
+      console.log("decoded", decoded);
+
+      dispatch(
+        setCredentials({
+          accessToken: data.accessToken,
+          role: decoded.role,
+          userId: decoded.id,
+        })
+      );
+
+      navigate("/dashboard");
+    }
+  })
+  .catch((err) => {
+    console.error("OTP verification failed:", err);
+    enqueueSnackbar(err?.error || err.message, {
+      variant: "error",
+    });
+  });
+
   };
 
   const formatTime = (seconds: number) => {

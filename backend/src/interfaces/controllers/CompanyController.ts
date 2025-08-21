@@ -29,6 +29,7 @@ export class CompanyController {
     res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT, time: otpTime });
   };
 
+  
   verifyOTP = async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const { accessToken, refreshToken } = await this._verifyUseCase.execute(email, otp);
