@@ -1,8 +1,35 @@
 import React from 'react';
 import { Bell } from 'lucide-react'; 
+import { useDispatch } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { clearCredentials } from '@/store/slices/authSlice';
+import { logout } from '@/services/authApi';
+import { useSnackbar } from "notistack";
 
 const Navbar = ({ role }: { role: string }) => {
+  const dispatch = useDispatch();
+   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate()
   const userName = role; 
+
+  const handleLogout = async () => {
+  try {
+    const result = await logout();
+    console.log("Result",result);
+    
+    enqueueSnackbar(result.message || "Logout successful!", { variant: "success" });
+  } catch (error: any) {
+    enqueueSnackbar(error?.message || "Logout failed!", { variant: "error" });
+  } finally {
+  
+    dispatch(clearCredentials());
+    localStorage.clear(); 
+    navigate("/");
+  }
+};
+
+
+
   return (
     <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-gray-200">
      
@@ -23,6 +50,7 @@ const Navbar = ({ role }: { role: string }) => {
         </button>
 
         <button
+          onClick={handleLogout}
           className="px-4 py-2 bg-red-500 text-white rounded-md text-sm font-medium hover:bg-red-600 transition"
         >
           Logout

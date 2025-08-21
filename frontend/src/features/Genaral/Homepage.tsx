@@ -1,272 +1,237 @@
-import React from 'react';
-import {  Users, BarChart3, Shield, Zap, CheckCircle, ArrowRight, Star } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { ArrowRight, Play, CheckCircle, Zap, Globe, Users, TrendingUp, Star } from 'lucide-react';
 import { Navbar } from './Navbar';
 
-const Homepage = () => {
+const HomePage = () => {
+  const [isVisible, setIsVisible] = useState(false);
 
-  const features = [
-    {
-      icon: <Users className="w-8 h-8" />,
-      title: "Team Management",
-      description: "Streamline your workforce with intelligent team organization and role-based access controls."
-    },
-    {
-      icon: <BarChart3 className="w-8 h-8" />,
-      title: "Analytics & Insights",
-      description: "Make data-driven decisions with comprehensive reporting and real-time business intelligence."
-    },
-    {
-      icon: <Shield className="w-8 h-8" />,
-      title: "Enterprise Security",
-      description: "Bank-level security with end-to-end encryption and compliance with industry standards."
-    },
-    {
-      icon: <Zap className="w-8 h-8" />,
-      title: "Automation Tools",
-      description: "Automate repetitive tasks and workflows to boost productivity across your organization."
-    }
-  ];
+  useEffect(() => {
+    setIsVisible(true);
+  }, []);
 
-  const testimonials = [
-    {
-      name: "Sarah Chen",
-      role: "CEO, TechFlow",
-      content: "Stratify transformed how we manage our growing team. The intuitive interface and powerful features saved us countless hours.",
-      rating: 5
-    },
-    {
-      name: "Marcus Rodriguez",
-      role: "Operations Director, InnovaCorp",
-      content: "The analytics dashboard gives us insights we never had before. It's like having a crystal ball for our business.",
-      rating: 5
-    }
+  const floatingElements = [
+    { icon: Zap, color: 'text-yellow-500', delay: '0s' },
+    { icon: Globe, color: 'text-blue-500', delay: '0.5s' },
+    { icon: Users, color: 'text-green-500', delay: '1s' },
+    { icon: TrendingUp, color: 'text-purple-500', delay: '1.5s' },
   ];
 
   return (
-    <div className="min-h-screen bg-white w-full">
-      {/* Navigation */}
-     <Navbar/>
+    <div className="min-h-screen bg-white relative overflow-hidden">
+     
+      {/* Animated Background Elements */}
+      <div className="absolute inset-0">
+        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-100 to-purple-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse"></div>
+        <div className="absolute top-40 right-10 w-96 h-96 bg-gradient-to-r from-purple-100 to-pink-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse" style={{ animationDelay: '1s' }}></div>
+        <div className="absolute bottom-20 left-20 w-96 h-96 bg-gradient-to-r from-cyan-100 to-blue-100 rounded-full mix-blend-multiply filter blur-3xl opacity-60 animate-pulse" style={{ animationDelay: '2s' }}></div>
+        
+        {/* Floating geometric shapes */}
+        {[...Array(15)].map((_, i) => (
+          <div
+            key={i}
+            className={`absolute animate-bounce ${i % 3 === 0 ? 'bg-blue-200' : i % 3 === 1 ? 'bg-purple-200' : 'bg-cyan-200'} opacity-30`}
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+              width: `${8 + Math.random() * 8}px`,
+              height: `${8 + Math.random() * 8}px`,
+              borderRadius: `${Math.random() > 0.5 ? '50%' : '2px'}`,
+              animationDelay: `${Math.random() * 3}s`,
+              animationDuration: `${3 + Math.random() * 2}s`
+            }}
+          ></div>
+        ))}
+      </div>
 
-      {/* Hero Section */}
-      <section className="pt-24 pb-16 bg-gradient-to-br from-slate-50 via-white to-blue-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
-              <div className="inline-flex items-center px-4 py-2 bg-blue-100 text-blue-800 rounded-full text-sm font-medium">
-                <Zap className="w-4 h-4 mr-2" />
-                Now with AI-powered insights
+      {/* Navigation */}
+      <nav className="relative z-50 flex items-center justify-between px-6 py-6 lg:px-8">
+        <Navbar/>
+      </nav>
+
+      {/* Hero Content */}
+      <div className="relative z-40 max-w-7xl mx-auto px-6 lg:px-8 pt-16 pb-24">
+        <div className="text-center space-y-16">
+          
+          {/* Floating Icons */}
+          <div className="relative h-24 mb-12">
+            {floatingElements.map((Element, index) => (
+              <div
+                key={index}
+                className="absolute animate-bounce"
+                style={{
+                  left: `${15 + index * 20}%`,
+                  animationDelay: Element.delay,
+                  animationDuration: '3s'
+                }}
+              >
+                <div className="w-16 h-16 bg-white rounded-2xl flex items-center justify-center border-2 border-gray-100 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-110">
+                  <Element.icon className={`w-8 h-8 ${Element.color}`} />
+                </div>
               </div>
-              
-              <h1 className="text-5xl lg:text-6xl font-bold text-gray-900 leading-tight">
-                Streamline Your
-                <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent"> Company Management</span>
+            ))}
+          </div>
+
+          {/* Main Content */}
+          <div className={`space-y-12 transition-all duration-1000 ${isVisible ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-10'}`}>
+            
+            {/* Badge */}
+            <div className="inline-flex items-center space-x-3 bg-gradient-to-r from-blue-50 to-purple-50 border-2 border-blue-200 px-6 py-3 rounded-full shadow-lg">
+              <div className="flex items-center space-x-1">
+                {[...Array(5)].map((_, i) => (
+                  <Star key={i} className="w-4 h-4 text-yellow-500 fill-current" />
+                ))}
+              </div>
+              <span className="text-gray-800 font-semibold">Rated #1 Business Platform 2024</span>
+              <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            </div>
+
+            {/* Main Headline */}
+            <div className="space-y-8">
+              <h1 className="text-6xl lg:text-8xl font-black leading-tight">
+                <span className="block text-gray-900 mb-4">Transform Your</span>
+                <span className="block bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent mb-4">
+                  Business Future
+                </span>
+                <span className="block text-gray-900 text-5xl lg:text-6xl">Today</span>
               </h1>
               
-              <p className="text-xl text-gray-600 leading-relaxed">
-                Stratify empowers growing businesses with intelligent management tools, 
-                real-time analytics, and seamless team collaboration - all in one powerful platform.
+              <p className="text-2xl lg:text-3xl text-gray-600 max-w-5xl mx-auto leading-relaxed font-light">
+                Experience the next generation of business management with 
+                <span className="text-blue-600 font-semibold"> AI-powered insights</span>, 
+                <span className="text-purple-600 font-semibold"> seamless collaboration</span>, and 
+                <span className="text-cyan-600 font-semibold"> intelligent automation</span>.
               </p>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <button className="group relative bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 text-white px-12 py-6 rounded-2xl font-bold text-xl shadow-2xl hover:shadow-3xl transform hover:scale-105 transition-all duration-300 overflow-hidden">
+                <span className="relative z-10 flex items-center space-x-3">
+                  <span>Start Free Trial</span>
+                  <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                </span>
+                <div className="absolute inset-0 bg-gradient-to-r from-cyan-600 via-blue-600 to-purple-600 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+              </button>
               
-              <div className="flex flex-col sm:flex-row gap-4">
-                <button className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700 transition-all transform hover:scale-105 flex items-center justify-center group">
-                  Start Free Trial
-                  <ArrowRight className="w-5 h-5 ml-2 group-hover:translate-x-1 transition-transform" />
-                </button>
-                <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors">
-                  Schedule Demo
-                </button>
+              <button className="group flex items-center space-x-3 bg-white border-2 border-gray-200 text-gray-800 px-12 py-6 rounded-2xl font-bold text-xl shadow-lg hover:shadow-xl hover:border-blue-300 transition-all duration-300 transform hover:scale-105">
+                <Play className="w-6 h-6 text-blue-600" />
+                <span>Watch Demo</span>
+              </button>
+            </div>
+
+            {/* Trust Indicators */}
+            <div className="flex flex-wrap justify-center gap-8 text-gray-600">
+              <div className="flex items-center space-x-2 bg-green-50 px-4 py-2 rounded-full">
+                <CheckCircle className="w-5 h-5 text-green-600" />
+                <span className="font-medium">14-day free trial</span>
               </div>
-              
-              <div className="flex items-center space-x-6 text-sm text-gray-600">
-                <div className="flex items-center">
-                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                  Free 14-day trial
-                </div>
-                <div className="flex items-center">
-                  <CheckCircle className="w-5 h-5 text-green-500 mr-2" />
-                  No credit card required
-                </div>
+              <div className="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full">
+                <CheckCircle className="w-5 h-5 text-blue-600" />
+                <span className="font-medium">No setup fees</span>
+              </div>
+              <div className="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-full">
+                <CheckCircle className="w-5 h-5 text-purple-600" />
+                <span className="font-medium">Cancel anytime</span>
               </div>
             </div>
+          </div>
+        </div>
+
+        {/* Interactive Dashboard Mockup */}
+        <div className="mt-24 relative">
+          <div className="relative max-w-6xl mx-auto">
+            {/* Glow effect */}
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-200 via-purple-200 to-cyan-200 rounded-3xl blur-3xl opacity-30 transform scale-105"></div>
             
-            <div className="relative">
-              <div className="bg-white rounded-2xl shadow-2xl p-8 transform rotate-3 hover:rotate-0 transition-transform duration-500">
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between">
-                    <h3 className="text-lg font-semibold text-gray-900">Dashboard Overview</h3>
-                    <div className="w-3 h-3 bg-green-400 rounded-full"></div>
-                  </div>
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-blue-50 p-4 rounded-lg">
-                      <div className="text-2xl font-bold text-blue-600">847</div>
-                      <div className="text-sm text-gray-600">Active Users</div>
+            {/* Main mockup */}
+            <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-gray-100 transform hover:scale-105 transition-all duration-500">
+              {/* Mockup Header */}
+              <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-6 border-b-2 border-gray-200">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex space-x-2">
+                      <div className="w-4 h-4 bg-red-500 rounded-full shadow-sm"></div>
+                      <div className="w-4 h-4 bg-yellow-500 rounded-full shadow-sm"></div>
+                      <div className="w-4 h-4 bg-green-500 rounded-full shadow-sm"></div>
                     </div>
-                    <div className="bg-green-50 p-4 rounded-lg">
-                      <div className="text-2xl font-bold text-green-600">94%</div>
-                      <div className="text-sm text-gray-600">Efficiency</div>
+                    <span className="text-gray-800 font-bold text-lg">stratify.app</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-gray-600 font-medium">Live Dashboard</span>
+                  </div>
+                </div>
+              </div>
+
+              {/* Mockup Content */}
+              <div className="p-10 space-y-8">
+                {/* Stats Cards */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                  <div className="bg-gradient-to-br from-blue-500 to-blue-600 p-8 rounded-2xl text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <TrendingUp className="w-10 h-10" />
+                      <span className="text-3xl font-bold">+32%</span>
+                    </div>
+                    <p className="text-blue-100 text-lg font-medium">Revenue Growth</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-purple-500 to-purple-600 p-8 rounded-2xl text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <Users className="w-10 h-10" />
+                      <span className="text-3xl font-bold">18.2K</span>
+                    </div>
+                    <p className="text-purple-100 text-lg font-medium">Active Users</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-cyan-500 to-cyan-600 p-8 rounded-2xl text-white shadow-xl transform hover:scale-105 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <Zap className="w-10 h-10" />
+                      <span className="text-3xl font-bold">99.2%</span>
+                    </div>
+                    <p className="text-cyan-100 text-lg font-medium">Efficiency Score</p>
+                  </div>
+                </div>
+
+                {/* Chart Area */}
+                <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-8 border-2 border-gray-200 shadow-inner">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-gray-800 font-bold text-2xl">Performance Analytics</h3>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-green-500 rounded-full animate-pulse"></div>
+                      <span className="text-gray-600 font-medium">Live Data</span>
                     </div>
                   </div>
-                  <div className="h-24 bg-gradient-to-r from-blue-500 to-purple-500 rounded-lg opacity-80"></div>
+                  <div className="h-40 bg-gradient-to-r from-blue-400 via-purple-400 to-cyan-400 rounded-xl shadow-lg opacity-80"></div>
                 </div>
               </div>
-              <div className="absolute -bottom-4 -right-4 w-32 h-32 bg-gradient-to-br from-blue-400 to-purple-400 rounded-full blur-2xl opacity-30"></div>
             </div>
           </div>
         </div>
-      </section>
+      </div>
 
-      {/* Features Section */}
-      <section id="features" className="py-20 bg-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Everything you need to manage your business
-            </h2>
-            <p className="text-xl text-gray-600 max-w-3xl mx-auto">
-              From team management to advanced analytics, Stratify provides all the tools 
-              your growing business needs to succeed in today's competitive landscape.
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            {features.map((feature, index) => (
-              <div key={index} className="group p-6 rounded-xl hover:bg-gradient-to-br hover:from-blue-50 hover:to-purple-50 transition-all duration-300 hover:shadow-lg">
-                <div className="text-blue-600 mb-4 group-hover:scale-110 transition-transform">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-semibold text-gray-900 mb-2">{feature.title}</h3>
-                <p className="text-gray-600">{feature.description}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* Stats Section */}
-      <section className="py-16 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8 text-center">
-            <div>
-              <div className="text-4xl font-bold mb-2">10K+</div>
-              <div className="text-blue-100">Companies Trust Us</div>
+      {/* Bottom Stats Bar */}
+      <div className="relative z-40 bg-gradient-to-r from-gray-50 via-white to-gray-50 border-t-2 border-gray-200 shadow-lg">
+        <div className="max-w-7xl mx-auto px-6 lg:px-8 py-12">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 text-center">
+            <div className="space-y-3">
+              <div className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">15K+</div>
+              <div className="text-gray-600 font-semibold text-lg">Companies Trust Us</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">99.9%</div>
-              <div className="text-blue-100">Uptime Guarantee</div>
+            <div className="space-y-3">
+              <div className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-purple-600 to-cyan-600 bg-clip-text text-transparent">250K+</div>
+              <div className="text-gray-600 font-semibold text-lg">Active Users</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">50M+</div>
-              <div className="text-blue-100">Tasks Managed</div>
+            <div className="space-y-3">
+              <div className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-cyan-600 to-blue-600 bg-clip-text text-transparent">99.99%</div>
+              <div className="text-gray-600 font-semibold text-lg">Uptime SLA</div>
             </div>
-            <div>
-              <div className="text-4xl font-bold mb-2">24/7</div>
-              <div className="text-blue-100">Expert Support</div>
+            <div className="space-y-3">
+              <div className="text-4xl lg:text-5xl font-black bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">180+</div>
+              <div className="text-gray-600 font-semibold text-lg">Countries</div>
             </div>
           </div>
         </div>
-      </section>
-
-      {/* Testimonials */}
-      <section className="py-20 bg-gray-50">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-gray-900 mb-4">
-              Trusted by industry leaders
-            </h2>
-            <p className="text-xl text-gray-600">
-              See what our customers have to say about their experience
-            </p>
-          </div>
-          
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            {testimonials.map((testimonial, index) => (
-              <div key={index} className="bg-white p-8 rounded-xl shadow-lg">
-                <div className="flex items-center mb-4">
-                  {[...Array(testimonial.rating)].map((_, i) => (
-                    <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
-                  ))}
-                </div>
-                <p className="text-gray-700 mb-6 text-lg italic">"{testimonial.content}"</p>
-                <div>
-                  <div className="font-semibold text-gray-900">{testimonial.name}</div>
-                  <div className="text-gray-600">{testimonial.role}</div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section */}
-      <section className="py-20 bg-white">
-        <div className="max-w-4xl mx-auto text-center px-4 sm:px-6 lg:px-8">
-          <h2 className="text-4xl font-bold text-gray-900 mb-6">
-            Ready to transform your business?
-          </h2>
-          <p className="text-xl text-gray-600 mb-8">
-            Join thousands of companies already using Stratify to streamline their operations
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button className="bg-blue-600 text-white px-8 py-4 rounded-lg text-lg font-medium hover:bg-blue-700 transition-colors">
-              Start Your Free Trial
-            </button>
-            <button className="border border-gray-300 text-gray-700 px-8 py-4 rounded-lg text-lg font-medium hover:bg-gray-50 transition-colors">
-              Contact Sales
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="bg-gray-900 text-white py-16">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-4 gap-8">
-            <div>
-              <div className="flex items-center space-x-2 mb-4">
-                <div className="w-8 h-8 bg-gradient-to-br from-blue-600 to-purple-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">S</span>
-                </div>
-                <span className="text-xl font-bold">Stratify</span>
-              </div>
-              <p className="text-gray-400">
-                Empowering businesses with intelligent management solutions for the modern world.
-              </p>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Product</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Features</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Pricing</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Integrations</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">API</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Company</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">About</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Careers</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Press</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Contact</a></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="font-semibold mb-4">Support</h4>
-              <ul className="space-y-2 text-gray-400">
-                <li><a href="#" className="hover:text-white transition-colors">Help Center</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Documentation</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Status</a></li>
-                <li><a href="#" className="hover:text-white transition-colors">Community</a></li>
-              </ul>
-            </div>
-          </div>
-          <div className="border-t border-gray-800 mt-12 pt-8 text-center text-gray-400">
-            <p>&copy; 2025 Stratify. All rights reserved.</p>
-          </div>
-        </div>
-      </footer>
+      </div>
     </div>
   );
 };
 
-export default Homepage;
+export default HomePage;

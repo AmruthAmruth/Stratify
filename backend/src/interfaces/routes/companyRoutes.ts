@@ -13,5 +13,5 @@ companyRouter.post("/verify-otp", asyncHandler(controller.verifyOTP));
 companyRouter.get("/all-company", asyncHandler(controller.getAllCompanies));
 companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
 companyRouter.post("/login", asyncHandler(controller.login));
-
+companyRouter.post('/logout',asyncHandler(controller.logout))
 export default companyRouter

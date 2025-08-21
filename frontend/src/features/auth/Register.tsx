@@ -26,13 +26,13 @@ const Register: React.FC = () => {
         enqueueSnackbar("Registration successful! OTP sent to your email.", {
           variant: "success",
         });
-
+            localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()));
         navigate("/otp");
       })
       .catch((err) => {
         console.error("Registration failed:", err);
 
-        enqueueSnackbar(err?.error || "Registration failed", {
+        enqueueSnackbar(err?.message || "Registration failed", {
           variant: "error",
         });
       })

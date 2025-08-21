@@ -42,6 +42,12 @@ export class SuperAdminController {
     });
   };
 
+
+  logout=async(_req:Request,res:Response)=>{
+    res.clearCookie("refreshToken", CookieConfig);
+    res.status(StatusCodes.OK).json({ message: "Logout successful" });
+  }
+
   refresh = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {

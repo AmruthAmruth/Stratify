@@ -59,3 +59,13 @@ export const companyLogin = async (data:{email:string,password:string})=>{
        throw err.response?.data || new Error("Network error");
     }
 }
+
+
+export const logout = async()=>{
+  try{
+    const response = await api.post('company/logout');
+    return response.data;
+  }catch(err:any){
+      throw err.response?.data || new Error("Network error");
+  }
+}
