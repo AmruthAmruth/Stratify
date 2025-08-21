@@ -14,7 +14,7 @@ export class RegisterCompanyUseCase {
     private _tempRegRepo: ITempRegistrationRepository,
   ) {}
 
-  async execute(data: Company): Promise<void> {
+  async execute(data: Company): Promise<Date> {
     RegisterCompanySchema.parse(data);
     const existing = await this._companyRepo.findByEmail(data.email);
     if (existing) throw new Error(Messages.COMPANY_ALREADY_EXISTS);
@@ -49,6 +49,6 @@ const hasedPassword = await hashPassword(data.password)
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);
     await this._sendOtpUseCase.execute(data.email); 
-
+  return expiresAt
   }
 }

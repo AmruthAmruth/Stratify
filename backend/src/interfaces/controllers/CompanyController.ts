@@ -27,8 +27,8 @@ export class CompanyController {
       if (req.file) {
         req.body.profileImage = req.file.path;
       }
-      await this._registerUseCase.execute(req.body);
-      res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT });
+    const otpTime=  await this._registerUseCase.execute(req.body);
+      res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT,time:otpTime });
     } catch (error: unknown) {
       if (error instanceof Error) {
         res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
@@ -91,7 +91,18 @@ export class CompanyController {
   }
 };
 
-  
+logout = async (_req: Request, res: Response) => {
+  try {
+    res.clearCookie("refreshToken", CookieConfig);
+    res.status(StatusCodes.OK).json({ message: "Logout successful" });
+  } catch (error) {
+    if (error instanceof Error) {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: error.message });
+    } else {
+      res.status(StatusCodes.BAD_REQUEST).json({ error: String(error) });
+    }
+  }
+};
 
 
 
@@ -122,5 +133,8 @@ res.status(200).json(companies);
       }
     }
   }
+
+
+
 
 }
