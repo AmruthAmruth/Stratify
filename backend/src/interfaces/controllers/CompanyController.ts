@@ -8,6 +8,7 @@ import { LoginDTO, LoginSchema } from "../../application/dto/auth/LoginSchema";
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/cookieConfig";
+import { ResendOtpUseCase } from "../../application/use-cases/auth/ResendOtpUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -15,35 +16,39 @@ interface MulterRequest extends Request {
 
 export class CompanyController {
   constructor(
-    private _registerUseCase: RegisterCompanyUseCase,
+  private _registerUseCase: RegisterCompanyUseCase,
   private _verifyUseCase: VerifyCompanyOTPUseCase,
   private _getAllCompanyUseCase: GetAllCompnayUseCase,
   private _getCompanyByIdUseCase: GetCompanyByIdUseCase,
-  private _companyLoginUseCase: CompanyLoginUseCase
+  private _companyLoginUseCase: CompanyLoginUseCase,
+  private _resendOtpUseCase:ResendOtpUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
-    
     if (req.file) req.body.profileImage = req.file.path;
-    const otpTime = await this._registerUseCase.execute(req.body);
-    res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT, time: otpTime });
+    const otpExpiresAt = await this._registerUseCase.execute(req.body);
+    res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT, time: otpExpiresAt });
   };
 
   
   verifyOTP = async (req: Request, res: Response) => {
     const { email, otp } = req.body;
     const { accessToken, refreshToken } = await this._verifyUseCase.execute(email, otp);
-
     res.cookie("refreshToken", refreshToken, CookieConfig);
     res.status(StatusCodes.CREATED).json({ accessToken, message: Messages.REGISTER_SUCCESS });
   };
 
+  resendOtp = async (req:Request,res:Response)=>{
+    const {email}=req.body;
+    await this._resendOtpUseCase.execute(email);
+      res.status(StatusCodes.OK).json({ message: Messages.OTP_RESENT });
+  }
 
- login = async (req: Request, res: Response) => {
+
+ login = async (req: Request, res: Response) => { 
   const result = LoginSchema.safeParse(req.body);
-
     if (!result.success) {
-      res.status(StatusCodes.BAD_REQUEST).json({
+      res.status(StatusCodes.BAD_REQUEST).json({ 
         status: "error",
         errors: result.error.issues.map(issue => ({
           field: issue.path.join("."),
@@ -66,13 +71,10 @@ export class CompanyController {
 };
 
 
-
-
 logout = async (_req: Request, res: Response) => {
    res.clearCookie("refreshToken", CookieConfig);
     res.status(StatusCodes.OK).json({ message: "Logout successful" });
 };
-
 
 
   getAllCompanies=async(_req:Request,res:Response)=>{

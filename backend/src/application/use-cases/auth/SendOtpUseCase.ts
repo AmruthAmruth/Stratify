@@ -10,9 +10,9 @@ export class SendOtpUseCase{
     private _emailService: IEmailService 
     ){}
 
-   async execute(email: string, userId?: string): Promise<void> {
+   async execute(email: string, userId?: string): Promise<Date> {
   const otpCode = generateOtp();
-  const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
+     const expiresAt = new Date(Date.now() + 3 * 60 * 1000); 
   const identifier: string = userId ?? email;
    console.log("OTP Code ",otpCode);
    
@@ -22,7 +22,9 @@ export class SendOtpUseCase{
     "Your OTP Code",
     `Your OTP is ${otpCode}`
   );
+  return expiresAt
 }
+
 }
 
   

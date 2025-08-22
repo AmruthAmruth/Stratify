@@ -1,3 +1,4 @@
+import { ResendOtpUseCase } from "../application/use-cases/auth/ResendOtpUseCase";
 import { SendOtpUseCase } from "../application/use-cases/auth/SendOtpUseCase";
 import { CompanyLoginUseCase } from "../application/use-cases/company/CompanyLoginUseCase";
 import { GetAllCompnayUseCase } from "../application/use-cases/company/GetAllCompaniesUseCase";
@@ -9,33 +10,38 @@ import { OTPRepository } from "../infrastructure/repositories/OTPRepository";
 import { TempRegistrationRepository } from "../infrastructure/repositories/TempRegistrationRepository";
 import { EmailService } from "../infrastructure/services/EmailService";
 import { CompanyController } from "../interfaces/controllers/CompanyController";
-
 export const companyDI = () => {
+
   const companyRepo = new companyRepository();
   const otpRepo = new OTPRepository();
   const emailService = new EmailService();
   const tempRegRepo = new TempRegistrationRepository();
 
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
+
   const registerUseCase = new RegisterCompanyUseCase(
     companyRepo,
     sendOtpUseCase,
     tempRegRepo
   );
+
   const verifyUseCase = new VerifyCompanyOTPUseCase(
     otpRepo,
     companyRepo,
     tempRegRepo
   );
+
   const getAllCompaniesUseCase = new GetAllCompnayUseCase(companyRepo);
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
   const companyLoginUseCase = new CompanyLoginUseCase(companyRepo);
 
+const resendOtpUseCase = new ResendOtpUseCase(otpRepo,emailService,tempRegRepo);
   return new CompanyController(
-    registerUseCase,
+    registerUseCase, 
     verifyUseCase,
     getAllCompaniesUseCase,
     getCompanyById,
-    companyLoginUseCase
+    companyLoginUseCase,
+    resendOtpUseCase
   );
 };

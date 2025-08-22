@@ -27,7 +27,7 @@ if (existingInMobile) throw new Error(Messages.PHONE_ALREADY_EXISTS);
 const hasedPassword = await hashPassword(data.password)
 
 
-     const expiresAt = new Date(Date.now() + 3 * 60 * 1000); 
+     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); 
       const tempData = new Company(
     data.name,
     data.email,
@@ -48,7 +48,7 @@ const hasedPassword = await hashPassword(data.password)
   );
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);
-    await this._sendOtpUseCase.execute(data.email); 
-  return expiresAt
+ const otpExpiresAt=   await this._sendOtpUseCase.execute(data.email); 
+  return otpExpiresAt
   }
 }

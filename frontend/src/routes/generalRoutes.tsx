@@ -5,6 +5,8 @@ import RegisterForm from "../features/auth/Register";
 import RegisterOTPPage from "@/features/auth/OTP";
 import SuperAdminLogin from "@/features/auth/SuperAdminLogin";
 import ForgotPassword from "../features/auth/ForgotPassword";
+import AboutPage from "@/features/Genaral/About";
+import ContactPage from "@/features/Genaral/Contact";
 
 const genaralRoutes: RouteObject[] = [
   {
@@ -29,6 +31,14 @@ const genaralRoutes: RouteObject[] = [
   },{
     path: "forgotpassword",
     element: <ForgotPassword/>,
+  }
+  ,{
+    path: "about",
+    element: <AboutPage/>,
+  },
+  {
+    path: "contact",
+    element: <ContactPage/>,
   },
   
   

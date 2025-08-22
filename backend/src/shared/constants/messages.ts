@@ -28,7 +28,9 @@ export const Messages = {
   OTP_INVALID: "Invalid OTP",
   OTP_EXPIRED: "OTP has expired",
   OTP_VERIFIED: "OTP verified successfully",
-
+  OTP_RESENT: "A new OTP has been resent successfully.",
   // Token messages
   NO_REFREASHTOKEN: "No refresh token provided",
+
+  
 } as const;

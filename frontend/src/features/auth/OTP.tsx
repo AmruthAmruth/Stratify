@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import ReusableOTP from "@/shared/components/OTP/ReusableOTP";
 import { Navbar } from "../Genaral/Navbar";
 import { Users } from "lucide-react";
-import { verifyOTP } from "@/services/authApi";
+import { resendOTP, verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -85,6 +85,34 @@ const OTP: React.FC = () => {
 
   };
 
+
+const handleResentOTP = () => {
+  const email = localStorage.getItem("email");
+  console.log("Email", email);
+
+  if (!email) {
+    console.error("No email found in localStorage for resend OTP");
+    return;
+  }
+
+  resendOTP(email)
+    .then((data) => {
+      console.log("OTP resent successfully:", data);
+
+      // Reset timer for 3 minutes
+      const newExpiry = Date.now() + 3 * 60 * 1000;
+      localStorage.setItem("otpExpiry", String(newExpiry));
+      setTimeLeft(180);
+
+      enqueueSnackbar("New OTP has been sent!", { variant: "info" });
+    })
+    .catch((err) => {
+      console.error("Error in resend OTP:", err);
+      enqueueSnackbar("Failed to resend OTP. Try again.", { variant: "error" });
+    });
+};
+
+
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -164,23 +192,20 @@ const OTP: React.FC = () => {
             <div className="mt-6 text-center text-gray-500 text-sm md:text-base">
               <p>
                 Didn't receive the code?{" "}
-                <span
-                  className={`font-medium cursor-pointer ${
-                    timeLeft <= 0
-                      ? "text-blue-600 hover:underline"
-                      : "text-gray-400 cursor-not-allowed"
-                  }`}
-                  onClick={() => {
-                    if (timeLeft <= 0) {
-                      // call resend OTP API here
-                      enqueueSnackbar("New OTP has been sent!", {
-                        variant: "info",
-                      });
-                    }
-                  }}
-                >
-                  Resend OTP
-                </span>
+              <span
+  className={`font-medium cursor-pointer ${
+    timeLeft > 0
+      ? "text-gray-400 cursor-not-allowed"
+      : "text-blue-600 hover:underline"
+  }`}
+  onClick={() => {
+    if (timeLeft <= 0) {
+      handleResentOTP();
+    }
+  }}
+>
+  Resend OTP
+</span>
               </p>
             </div>
           </div>

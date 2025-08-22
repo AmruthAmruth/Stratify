@@ -69,3 +69,13 @@ export const logout = async()=>{
       throw err.response?.data || new Error("Network error");
   }
 }
+
+
+export const resendOTP=async(email:string)=>{
+  try{
+const response = await api.post('company/resend-otp',{email});
+    return response.data;
+  }catch(err:any){
+    throw err.response?.data || new Error("Network Error")
+  }
+}

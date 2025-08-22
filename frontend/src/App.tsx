@@ -4,6 +4,7 @@ import AppRoutes from "./routes/AppRoutes";
 import { Provider } from "react-redux";
 import {store} from './store/index'
 import { SnackbarProvider } from "notistack";
+import './App.css'
 const App= () => {
   return (
     <Provider store={store}>
