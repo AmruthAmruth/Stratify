@@ -16,6 +16,7 @@ export const Messages = {
   EMAIL_NOT_FOUND: "Email not found",
   COMPANY_NOT_FOUND: "Company not found",
  PHONE_ALREADY_EXISTS:"Phone number is already exist",
+ PASSWORD_RESET_SUCCESS:"Password Reset Successfull",
   // General Auth messages
 
   TOKEN_EXPIRED: "Session expired. Please log in again",

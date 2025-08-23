@@ -2,11 +2,13 @@ import type { RouteObject } from "react-router-dom";
 import Homepage from "../features/Genaral/Homepage";
 import LoginForm from "../features/auth/Login";
 import RegisterForm from "../features/auth/Register";
-import RegisterOTPPage from "@/features/auth/OTP";
 import SuperAdminLogin from "@/features/auth/SuperAdminLogin";
 import ForgotPassword from "../features/auth/ForgotPassword";
 import AboutPage from "@/features/Genaral/About";
 import ContactPage from "@/features/Genaral/Contact";
+import OTPPage from "@/shared/OTP/OTPPage";
+import ResetPassword from "@/features/auth/ResetPassword";
+
 
 const genaralRoutes: RouteObject[] = [
   {
@@ -15,7 +17,7 @@ const genaralRoutes: RouteObject[] = [
   },
   {
     path: "login",
-    element: <LoginForm/>,
+    element: <LoginForm/>, 
   },
   {
     path: "super-admin-login",
@@ -26,11 +28,18 @@ const genaralRoutes: RouteObject[] = [
     element: <RegisterForm/>,
   },
    {
-    path: "otp",
-    element: <RegisterOTPPage/>,
+    path: "verify-otp",
+    element: <OTPPage context="register"/>,
+  },
+   {
+    path: "forgot-otp",
+    element: <OTPPage context="forgotPassword"/>,
   },{
-    path: "forgotpassword",
+    path: "forgot-password",
     element: <ForgotPassword/>,
+  },{
+    path: "reset-password",
+    element: <ResetPassword/>,
   }
   ,{
     path: "about",

@@ -79,3 +79,36 @@ const response = await api.post('company/resend-otp',{email});
     throw err.response?.data || new Error("Network Error")
   }
 }
+
+
+export const forgotPassword=async(email:string)=>{
+  try{
+    const response = await api.post('/company/forgotpassword',{email});
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network Error")
+  }
+}
+
+
+
+
+export const forgotpasswordVerifyOTP=async(data:{email:string,otp:string})=>{
+ try{
+ const response = await api.post('/company/forgotpassword-verifyotp',data);
+  return response.data
+ }catch(err:any){
+  throw err.response?.data || new Error("Network Error")
+ }
+}
+
+
+export const updatePassword = async(data:{email:string,password:string})=>{
+  try{
+    const response = await api.post('/company/resetpassword',data);
+  return response.data
+
+  }catch(err:any){
+    throw err.response?.data || new Error("Network Error")
+  }
+}

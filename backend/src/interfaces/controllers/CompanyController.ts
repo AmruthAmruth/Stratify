@@ -9,6 +9,9 @@ import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/cookieConfig";
 import { ResendOtpUseCase } from "../../application/use-cases/auth/ResendOtpUseCase";
+import { ForgotPasswordUseCase } from "../../application/use-cases/company/ForgotPasswordUseCase";
+import { VerifyForgotPasswordOTPUseCase } from "../../application/use-cases/company/VerifyForgotPasswordOTPUseCase";
+import { ResetPasswordUseCase } from "../../application/use-cases/company/ResetPasswordUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -21,9 +24,12 @@ export class CompanyController {
   private _getAllCompanyUseCase: GetAllCompnayUseCase,
   private _getCompanyByIdUseCase: GetCompanyByIdUseCase,
   private _companyLoginUseCase: CompanyLoginUseCase,
-  private _resendOtpUseCase:ResendOtpUseCase
+  private _resendOtpUseCase:ResendOtpUseCase,
+  private _forgotPasswordUseCase:ForgotPasswordUseCase,
+  private _verifyForgotPasswordOTPUseCase:VerifyForgotPasswordOTPUseCase,
+  private _resetPasswordUseCase:ResetPasswordUseCase
   ) {}
-
+ 
   register = async (req: MulterRequest, res: Response) => {
     if (req.file) req.body.profileImage = req.file.path;
     const otpExpiresAt = await this._registerUseCase.execute(req.body);
@@ -76,6 +82,25 @@ logout = async (_req: Request, res: Response) => {
     res.status(StatusCodes.OK).json({ message: "Logout successful" });
 };
 
+
+forgotPassword = async(req:Request,res:Response)=>{
+  const {email} = req.body;
+  const otpExpiresAt = await this._forgotPasswordUseCase.execute(email)
+  res.status(StatusCodes.OK).json({ message: Messages.OTP_SENT, time: otpExpiresAt });
+}
+
+verifyForgotPasswordOTP= async(req:Request,res:Response)=>{
+  const {email,otp}= req.body;
+  await this._verifyForgotPasswordOTPUseCase.execute(email,otp)
+  res.status(StatusCodes.OK).json({message:Messages.OTP_VERIFIED})
+}
+
+
+resetPassword = async(req:Request,res:Response)=>{
+  const {email,password}=req.body;
+  await this._resetPasswordUseCase.execute(email,password);
+  res.status(StatusCodes.OK).json({message:Messages.PASSWORD_RESET_SUCCESS})
+}
 
   getAllCompanies=async(_req:Request,res:Response)=>{
      const companies = await this._getAllCompanyUseCase.execute();

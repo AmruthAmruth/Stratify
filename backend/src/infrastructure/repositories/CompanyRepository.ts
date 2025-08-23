@@ -111,5 +111,13 @@ async findById(id: string): Promise<Company | null> {
 async findAll(): Promise<Company[]> {
   return await CompanyModel.find();
 }
+
+
+async updatePassword(email: string, password: string): Promise<void> {
+  await CompanyModel.updateOne(
+    { email },                 
+    { $set: { password } }     
+  );
+}
  
 } 

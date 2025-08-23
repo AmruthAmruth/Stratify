@@ -30,7 +30,7 @@ const Register: React.FC = () => {
           variant: "success",
         })
         localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()))
-        navigate("/otp")
+        navigate("/verify-otp")
       })
       .catch((err) => {
         console.error("Registration failed:", err)

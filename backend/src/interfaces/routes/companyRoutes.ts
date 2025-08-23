@@ -15,4 +15,7 @@ companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
 companyRouter.post("/login", asyncHandler(controller.login));
 companyRouter.post('/logout',asyncHandler(controller.logout))
 companyRouter.post('/resend-otp',asyncHandler(controller.resendOtp))
+companyRouter.post('/forgotpassword',asyncHandler(controller.forgotPassword))
+companyRouter.post('/forgotpassword-verifyotp',asyncHandler(controller.verifyForgotPasswordOTP))
+companyRouter.post('/resetpassword',asyncHandler(controller.resetPassword))
 export default companyRouter

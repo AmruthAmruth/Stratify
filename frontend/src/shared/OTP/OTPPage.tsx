@@ -1,28 +1,31 @@
 import React, { useState, useEffect } from "react";
 import ReusableOTP from "@/shared/components/OTP/ReusableOTP";
-import { Navbar } from "../Genaral/Navbar";
 import { Users } from "lucide-react";
-import { resendOTP, verifyOTP } from "@/services/authApi";
+import { forgotpasswordVerifyOTP, resendOTP, verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
 import { useDispatch } from "react-redux";
 import { setCredentials } from "@/store/slices/authSlice";
 
-const OTP: React.FC = () => {
-  const [otp, setOtp] = useState("");
-  const [timeLeft, setTimeLeft] = useState<number>(0); // in seconds
-  const navigate = useNavigate();
-  const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useDispatch()
+interface OTPProps {
+  context: "register" | "forgotPassword";
+}
 
-    interface DecodedToken {
+interface DecodedToken {
   id: string;
   role: string;
   exp: number;
 }
 
+const OTPPage: React.FC<OTPProps> = ({ context }) => {
+  const [otp, setOtp] = useState("");
+  const [timeLeft, setTimeLeft] = useState<number>(0);
+  const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
+  const dispatch = useDispatch();
 
+  // Load expiry from localStorage
   useEffect(() => {
     const expiry = localStorage.getItem("otpExpiry");
     if (expiry) {
@@ -31,6 +34,7 @@ const OTP: React.FC = () => {
     }
   }, []);
 
+  // Countdown
   useEffect(() => {
     if (timeLeft <= 0) return;
     const interval = setInterval(() => {
@@ -39,79 +43,48 @@ const OTP: React.FC = () => {
     return () => clearInterval(interval);
   }, [timeLeft]);
 
-  const handleVerify = () => {
-    if (timeLeft <= 0) {
-      enqueueSnackbar("OTP expired. Please request a new one.", {
-        variant: "error",
-      });
-      return;
+  const handleVerify = async () => {
+    try {
+      if (context === "register") {
+        const email = localStorage.getItem("email"); 
+        if (!email) throw new Error("Email not found, please register again.");
+
+        await verifyOTP({ email, otp });
+        enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
+        navigate("/login");
+      }
+
+      if (context === "forgotPassword") {
+        const email = localStorage.getItem("email"); 
+        if (!email) throw new Error("Email not found, please try again.");
+
+        await forgotpasswordVerifyOTP({ email, otp });
+        enqueueSnackbar("OTP verified! You can now reset your password.", { variant: "success" });
+        navigate("/reset-password"); 
+      }
+    } catch (err: any) {
+      enqueueSnackbar(err?.message || "OTP verification failed", { variant: "error" });
     }
-
-    console.log("Entered OTP:", otp);
-
-    const email = localStorage.getItem("email");
-    if (!email) {
-      alert("Email not found. Please register first.");
-      return;
-    }
-   verifyOTP({ otp, email })
-  .then((data) => {
-    console.log("Registered data", data);
-    enqueueSnackbar(data.message, { variant: "success" });
-    localStorage.removeItem("email");
-    localStorage.removeItem("otpExpiry");
-
-    if (data.accessToken) {
-      const decoded: DecodedToken = jwtDecode(data.accessToken);
-      console.log("decoded", decoded);
-
-      dispatch(
-        setCredentials({
-          accessToken: data.accessToken,
-          role: decoded.role,
-          userId: decoded.id,
-        })
-      );
-
-      navigate("/dashboard");
-    }
-  })
-  .catch((err) => {
-    console.error("OTP verification failed:", err);
-    enqueueSnackbar(err?.error || err.message, {
-      variant: "error",
-    });
-  });
-
   };
 
+  const handleResendOTP = () => {
+    const email = localStorage.getItem("email");
+    if (!email) {
+      enqueueSnackbar("No email found for resend OTP", { variant: "error" });
+      return;
+    }
 
-const handleResentOTP = () => {
-  const email = localStorage.getItem("email");
-  console.log("Email", email);
-
-  if (!email) {
-    console.error("No email found in localStorage for resend OTP");
-    return;
-  }
-
-  resendOTP(email)
-    .then((data) => {
-      console.log("OTP resent successfully:", data);
-
-      // Reset timer for 3 minutes
-      const newExpiry = Date.now() + 3 * 60 * 1000;
-      localStorage.setItem("otpExpiry", String(newExpiry));
-      setTimeLeft(180);
-
-      enqueueSnackbar("New OTP has been sent!", { variant: "info" });
-    })
-    .catch((err) => {
-      console.error("Error in resend OTP:", err);
-      enqueueSnackbar("Failed to resend OTP. Try again.", { variant: "error" });
-    });
-};
-
+    resendOTP({ email, context })
+      .then(() => {
+        const newExpiry = Date.now() + 3 * 60 * 1000;
+        localStorage.setItem("otpExpiry", String(newExpiry));
+        setTimeLeft(180);
+        enqueueSnackbar("New OTP has been sent!", { variant: "info" });
+      })
+      .catch(() => {
+        enqueueSnackbar("Failed to resend OTP. Try again.", { variant: "error" });
+      });
+  };
 
   const formatTime = (seconds: number) => {
     const m = Math.floor(seconds / 60);
@@ -121,17 +94,16 @@ const handleResentOTP = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">
-      <Navbar />
+  
 
       <div className="flex flex-1 flex-col lg:flex-row pt-20">
         <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-indigo-600 to-blue-800 text-white flex-col justify-center items-center p-16 text-left">
           <Users className="w-20 h-20 mb-6 text-white" />
           <h1 className="text-5xl font-bold mb-4 leading-snug">
-            Verify Your Account
+            {context === "register" ? "Verify Your Account" : "Reset Your Password"}
           </h1>
           <p className="text-lg text-gray-200 max-w-md">
-            Enter the 6-digit code sent to your email or phone number to
-            continue accessing your account securely.
+            Enter the 6-digit code sent to your email to {context === "register" ? "activate your account" : "reset your password"}.
           </p>
         </div>
 
@@ -139,7 +111,7 @@ const handleResentOTP = () => {
           <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300">
             <div className="flex justify-center mb-6">
               <span className="bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
-                OTP Verification
+                {context === "register" ? "Account Verification" : "Password Reset Verification"}
               </span>
             </div>
 
@@ -147,7 +119,9 @@ const handleResentOTP = () => {
               Enter OTP
             </h2>
             <p className="text-center text-gray-500 mb-8 md:mb-10 text-base">
-              Please type the 6-digit code sent to your email or phone
+              {context === "register"
+                ? "Please type the 6-digit code sent to your email to verify your account."
+                : "Please type the 6-digit code sent to your email to reset your password."}
             </p>
 
             <div className="flex justify-center gap-4 mb-8">
@@ -192,20 +166,18 @@ const handleResentOTP = () => {
             <div className="mt-6 text-center text-gray-500 text-sm md:text-base">
               <p>
                 Didn't receive the code?{" "}
-              <span
-  className={`font-medium cursor-pointer ${
-    timeLeft > 0
-      ? "text-gray-400 cursor-not-allowed"
-      : "text-blue-600 hover:underline"
-  }`}
-  onClick={() => {
-    if (timeLeft <= 0) {
-      handleResentOTP();
-    }
-  }}
->
-  Resend OTP
-</span>
+                <span
+                  className={`font-medium cursor-pointer ${
+                    timeLeft > 0
+                      ? "text-gray-400 cursor-not-allowed"
+                      : "text-blue-600 hover:underline"
+                  }`}
+                  onClick={() => {
+                    if (timeLeft <= 0) handleResendOTP();
+                  }}
+                >
+                  Resend OTP
+                </span>
               </p>
             </div>
           </div>
@@ -215,4 +187,4 @@ const handleResentOTP = () => {
   );
 };
 
-export default OTP;
+export default OTPPage;
