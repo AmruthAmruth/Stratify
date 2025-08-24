@@ -2,6 +2,8 @@ import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository
 import { Company } from "../../domain/entities/Company";
 import CompanyModel from "../models/CompanyModel";
 import mongoose from "mongoose";
+import { PaginatedResult } from "../../domain/common/Pagination";
+import { FilterQuery } from "mongoose";
 
 export class companyRepository implements ICompanyRepository {
   async create(company: Company): Promise<Company> {
@@ -108,9 +110,6 @@ async findById(id: string): Promise<Company | null> {
 }
 
 
-async findAll(): Promise<Company[]> {
-  return await CompanyModel.find();
-}
 
 
 async updatePassword(email: string, password: string): Promise<void> {
@@ -118,6 +117,87 @@ async updatePassword(email: string, password: string): Promise<void> {
     { email },                 
     { $set: { password } }     
   );
+}
+
+async findPaginated(options: {
+  page?: number;
+  pageSize?: number;
+  cursor?: string;
+ filter?: FilterQuery<typeof CompanyModel>;
+  sort?: { [key: string]: 1 | -1 };
+}): Promise<PaginatedResult<Company>> {
+  const {
+    page = 1,
+    pageSize = 10,
+    cursor,
+    filter = {},
+    sort = { createdAt: -1 },
+  } = options;
+
+  if (cursor) {
+   const typedFilter: FilterQuery<typeof CompanyModel> = filter;
+typedFilter["createdAt"] = { $lt: new Date(cursor) };
+    const data = await CompanyModel.find(filter).sort(sort).limit(pageSize);
+    return {
+      data: data.map(
+        (doc) =>
+          new Company(
+            doc.name,
+            doc.email,
+            doc.phone,
+            doc.industry,
+            doc.description || "",
+            doc.businessRegNo,
+            doc.address,
+            doc.city,
+            doc.state,
+            doc.country,
+            doc.zipcode,
+            doc.password,
+            doc.status,
+            doc.profileImage,
+            (doc._id as mongoose.Types.ObjectId).toString(),
+            doc.role as "company" | "manager" | "employee"
+          )
+      ),
+      total: data.length,
+      page,
+      pageSize,
+    };
+  } else {
+    const total = await CompanyModel.countDocuments(filter);
+    const data = await CompanyModel.find(filter)
+      .sort(sort)
+      .skip((page - 1) * pageSize)
+      .limit(pageSize);
+
+    return {
+      data: data.map(
+        (doc) =>
+          new Company(
+            doc.name,
+            doc.email,
+            doc.phone,
+            doc.industry,
+            doc.description || "",
+            doc.businessRegNo,
+            doc.address,
+            doc.city,
+            doc.state,
+            doc.country,
+            doc.zipcode,
+            doc.password,
+            doc.status,
+            doc.profileImage,
+            (doc._id as mongoose.Types.ObjectId).toString(),
+            doc.role as "company" | "manager" | "employee"
+          )
+      ),
+      total,
+      page,
+      pageSize,
+    };
+  }
 }
  
 } 

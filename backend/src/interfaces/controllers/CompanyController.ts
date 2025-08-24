@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import { RegisterCompanyUseCase } from "../../application/use-cases/company/RegisterCompanyUseCase";
 import { VerifyCompanyOTPUseCase } from "../../application/use-cases/company/VerifyCompanyOTPUseCase";
-import { GetAllCompnayUseCase } from "../../application/use-cases/company/GetAllCompaniesUseCase";
 import { GetCompanyByIdUseCase } from "../../application/use-cases/company/GetCompanyByIdUseCase";
 import { CompanyLoginUseCase } from "../../application/use-cases/company/CompanyLoginUseCase";
 import { LoginDTO, LoginSchema } from "../../application/dto/auth/LoginSchema";
@@ -12,6 +11,7 @@ import { ResendOtpUseCase } from "../../application/use-cases/auth/ResendOtpUseC
 import { ForgotPasswordUseCase } from "../../application/use-cases/company/ForgotPasswordUseCase";
 import { VerifyForgotPasswordOTPUseCase } from "../../application/use-cases/company/VerifyForgotPasswordOTPUseCase";
 import { ResetPasswordUseCase } from "../../application/use-cases/company/ResetPasswordUseCase";
+import { GetPaginatedCompaniesUsecase } from "../../application/use-cases/company/GetPaginatedCompaniesUsecase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -21,13 +21,13 @@ export class CompanyController {
   constructor(
   private _registerUseCase: RegisterCompanyUseCase,
   private _verifyUseCase: VerifyCompanyOTPUseCase,
-  private _getAllCompanyUseCase: GetAllCompnayUseCase,
   private _getCompanyByIdUseCase: GetCompanyByIdUseCase,
   private _companyLoginUseCase: CompanyLoginUseCase,
   private _resendOtpUseCase:ResendOtpUseCase,
   private _forgotPasswordUseCase:ForgotPasswordUseCase,
   private _verifyForgotPasswordOTPUseCase:VerifyForgotPasswordOTPUseCase,
-  private _resetPasswordUseCase:ResetPasswordUseCase
+  private _resetPasswordUseCase:ResetPasswordUseCase,
+  private _getPaginatedCompaniesUseCase:GetPaginatedCompaniesUsecase
   ) {}
  
   register = async (req: MulterRequest, res: Response) => {
@@ -102,10 +102,7 @@ resetPassword = async(req:Request,res:Response)=>{
   res.status(StatusCodes.OK).json({message:Messages.PASSWORD_RESET_SUCCESS})
 }
 
-  getAllCompanies=async(_req:Request,res:Response)=>{
-     const companies = await this._getAllCompanyUseCase.execute();
-    res.status(StatusCodes.OK).json(companies);
-  }
+ 
 
 
   getCompanyById=async(req:Request,res:Response)=>{
@@ -115,6 +112,18 @@ resetPassword = async(req:Request,res:Response)=>{
   }
 
 
+  getPaginatedCompanies=async(req:Request,res:Response)=>{
+     const { page, pageSize, cursor, filter, sort } = req.query;
+
+      const result = await this._getPaginatedCompaniesUseCase.execute({
+        page: page ? Number(page) : undefined,
+        pageSize: pageSize ? Number(pageSize) : undefined,
+        cursor: cursor as string,
+        filter: filter ? JSON.parse(filter as string) : undefined, // optional JSON filter
+        sort: sort ? JSON.parse(sort as string) : undefined,
+      });
+    res.status(StatusCodes.OK).json(result)
+}
 
 
 }

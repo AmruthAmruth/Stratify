@@ -1,3 +1,4 @@
+import { PaginatedResult } from "../common/Pagination";
 import { Company } from "../entities/Company";
 
 
@@ -12,6 +13,13 @@ export interface ICompanyRepository{
   } | null>;
     findByPhone(phone:string):Promise<Company|null>;
     findById(id:string):Promise<Company|null>;
-    findAll():Promise<Company[]>;
-   updatePassword(email:string,password:string):Promise<void>;
+    updatePassword(email:string,password:string):Promise<void>;
+   
+    findPaginated(options:{
+      page?:number,
+      pageSize?:number,
+      cursor?:string,
+     filter?: Record<string, unknown>;
+     sort?: Record<string, 1 | -1>;
+    }):Promise<PaginatedResult<Company>>;
 }

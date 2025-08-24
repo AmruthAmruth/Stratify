@@ -2,8 +2,8 @@ import { ResendOtpUseCase } from "../application/use-cases/auth/ResendOtpUseCase
 import { SendOtpUseCase } from "../application/use-cases/auth/SendOtpUseCase";
 import { CompanyLoginUseCase } from "../application/use-cases/company/CompanyLoginUseCase";
 import { ForgotPasswordUseCase } from "../application/use-cases/company/ForgotPasswordUseCase";
-import { GetAllCompnayUseCase } from "../application/use-cases/company/GetAllCompaniesUseCase";
 import { GetCompanyByIdUseCase } from "../application/use-cases/company/GetCompanyByIdUseCase";
+import { GetPaginatedCompaniesUsecase } from "../application/use-cases/company/GetPaginatedCompaniesUsecase";
 import { RegisterCompanyUseCase } from "../application/use-cases/company/RegisterCompanyUseCase";
 import { ResetPasswordUseCase } from "../application/use-cases/company/ResetPasswordUseCase";
 import { VerifyCompanyOTPUseCase } from "../application/use-cases/company/VerifyCompanyOTPUseCase";
@@ -34,7 +34,6 @@ export const companyDI = () => {
     tempRegRepo
   );
 
-  const getAllCompaniesUseCase = new GetAllCompnayUseCase(companyRepo);
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
   const companyLoginUseCase = new CompanyLoginUseCase(companyRepo);
 
@@ -42,16 +41,16 @@ const resendOtpUseCase = new ResendOtpUseCase(otpRepo,emailService,tempRegRepo);
 const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo,sendOtpUseCase)
 const verifyForgotPasswordOTPUseCase = new VerifyForgotPasswordOTPUseCase(otpRepo,companyRepo)
 const resetPasswordUsecase = new ResetPasswordUseCase(companyRepo)
-
+const getPaginatedCompaniesUseCase = new GetPaginatedCompaniesUsecase(companyRepo)
   return new CompanyController(
     registerUseCase, 
     verifyUseCase,
-    getAllCompaniesUseCase,
     getCompanyById,
     companyLoginUseCase,
     resendOtpUseCase,
     forgotPasswordUseCase,
     verifyForgotPasswordOTPUseCase,
-    resetPasswordUsecase
+    resetPasswordUsecase,
+    getPaginatedCompaniesUseCase
   );
 };
