@@ -1,6 +1,6 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { Messages } from "../../../shared/constants/messages";
-import { hashPassword } from "../../../shared/utils/passwordHash";
+import { hashPassword } from "../../../shared/utils/password";
 
 
 

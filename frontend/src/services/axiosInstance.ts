@@ -28,7 +28,6 @@ api.interceptors.response.use(
         
         const refreshRes = await api.post("/auth/refresh-token");
         const newToken = refreshRes.data.accessToken;
-
       
         const currentAuth = store.getState().auth;
         store.dispatch(

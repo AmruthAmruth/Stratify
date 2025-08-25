@@ -2,7 +2,7 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { LoginDTO } from "../../dto/auth/LoginSchema";
 import { generateAccessToken,generateRefreshToken } from "../../../shared/utils/token";
-import { comparePassword } from "../../../shared/utils/passwordHash";
+import { comparePassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
 
 

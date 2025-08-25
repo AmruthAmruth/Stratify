@@ -12,6 +12,7 @@ import { ForgotPasswordUseCase } from "../../application/use-cases/company/Forgo
 import { VerifyForgotPasswordOTPUseCase } from "../../application/use-cases/company/VerifyForgotPasswordOTPUseCase";
 import { ResetPasswordUseCase } from "../../application/use-cases/company/ResetPasswordUseCase";
 import { GetPaginatedCompaniesUsecase } from "../../application/use-cases/company/GetPaginatedCompaniesUsecase";
+import { AddDepartmentWithManagerUseCase } from "../../application/use-cases/company/AddDepartmentWithManagerUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -27,7 +28,8 @@ export class CompanyController {
   private _forgotPasswordUseCase:ForgotPasswordUseCase,
   private _verifyForgotPasswordOTPUseCase:VerifyForgotPasswordOTPUseCase,
   private _resetPasswordUseCase:ResetPasswordUseCase,
-  private _getPaginatedCompaniesUseCase:GetPaginatedCompaniesUsecase
+  private _getPaginatedCompaniesUseCase:GetPaginatedCompaniesUsecase,
+  private _addDepartmentWithManagerUseCase:AddDepartmentWithManagerUseCase
   ) {}
  
   register = async (req: MulterRequest, res: Response) => {
@@ -119,11 +121,17 @@ resetPassword = async(req:Request,res:Response)=>{
         page: page ? Number(page) : undefined,
         pageSize: pageSize ? Number(pageSize) : undefined,
         cursor: cursor as string,
-        filter: filter ? JSON.parse(filter as string) : undefined, // optional JSON filter
+        filter: filter ? JSON.parse(filter as string) : undefined, 
         sort: sort ? JSON.parse(sort as string) : undefined,
       });
     res.status(StatusCodes.OK).json(result)
 }
 
+
+  createDepartmentWithManager=async(req:Request,res:Response)=>{
+    const data = req.body;
+    const result = await this._addDepartmentWithManagerUseCase.execute(data)
+    res.status(StatusCodes.CREATED).json({message:"Departmaent crated success",data:result})
+  }
 
 }

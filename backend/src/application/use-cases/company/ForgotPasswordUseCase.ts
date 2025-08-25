@@ -14,7 +14,6 @@ export class ForgotPasswordUseCase{
         const existing = await this._companyRepository.findByEmail(email);
         if(!existing) throw  new AppError(Messages.COMPANY_NOT_FOUND, 404);
 
-
         const expiresAt = await this._sentOTPUseCase.execute(email)
             return expiresAt
     }

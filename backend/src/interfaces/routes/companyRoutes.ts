@@ -7,7 +7,7 @@ import { asyncHandler } from "../middleware/asyncHandler";
 const companyRouter = Router();
 const controller = companyDI();
 
-
+ 
 companyRouter.post("/register", upload.single("profileImage"),asyncHandler(controller.register));
 companyRouter.post("/verify-otp", asyncHandler(controller.verifyOTP));
 companyRouter.post("/login", asyncHandler(controller.login));
@@ -18,4 +18,7 @@ companyRouter.post('/forgotpassword-verifyotp',asyncHandler(controller.verifyFor
 companyRouter.post('/resetpassword',asyncHandler(controller.resetPassword))
 companyRouter.get('/companies',asyncHandler(controller.getPaginatedCompanies))
 companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
+companyRouter.post('/department',asyncHandler(controller.createDepartmentWithManager))
+
 export default companyRouter
+ 

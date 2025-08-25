@@ -1,6 +1,5 @@
 import api from './axiosInstance'
 
-
 export const getAllCompanies = async (params?: {
   page?: number;
   pageSize?: number;
@@ -11,8 +10,9 @@ export const getAllCompanies = async (params?: {
   try {
     const response = await api.get("/company/companies", {
       params, 
-    return response.data; 
+    });
+    return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
-};  
+};

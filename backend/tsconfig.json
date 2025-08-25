@@ -1,32 +1,22 @@
 {
   "compilerOptions": {
-    /* Language and Environment */
     "target": "ES2020",
     "module": "commonjs",
     "lib": ["ES2020"],
-
-    /* Paths */
     "rootDir": "./src",
     "outDir": "./dist",
-
-    /* Module Resolution */
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
-
-    /* Strictness */
     "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-
-    /* Debugging */
     "sourceMap": true,
-
-    /* Performance */
-    "skipLibCheck": true
+    "skipLibCheck": true,
+"typeRoots": ["./node_modules/@types", "./src/types"]
   },
   "include": ["src"],
   "exclude": ["node_modules", "dist", "tests"]

@@ -2,7 +2,7 @@ import React from 'react';
 import type { TableProps } from './tableTypes';
 import Pagination from './Pagination';
 
-const Table: React.FC<TableProps> = ({ columns, data, currentPage, totalPages, onPageChange }) => {
+const Table: React.FC<TableProps> = ({ columns, data, currentPage, totalPages, onPageChange, renderCell }) => {
   return (
     <div className="bg-white border border-gray-200 rounded-lg shadow-sm">
       {/* Table Container */}
@@ -36,7 +36,7 @@ const Table: React.FC<TableProps> = ({ columns, data, currentPage, totalPages, o
                       className="px-6 py-4 text-sm text-gray-900 border-b border-gray-100"
                     >
                       <div className="max-w-xs truncate">
-                        {row[col.key]}
+                        {renderCell ? renderCell(row, col.key) : row[col.key]}
                       </div>
                     </td>
                   ))}

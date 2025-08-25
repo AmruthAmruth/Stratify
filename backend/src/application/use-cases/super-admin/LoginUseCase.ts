@@ -1,6 +1,6 @@
 import { ISuperAdminRepository } from "../../../domain/repositories/ISuperAdminRepository";
 import { LoginDTO } from "../../dto/auth/LoginDTO";
-import { comparePassword } from "../../../shared/utils/passwordHash";
+import { comparePassword } from "../../../shared/utils/password";
 import { generateRefreshToken, generateAccessToken } from "../../../shared/utils/token";
 import { Messages } from "../../../shared/constants/messages";
 

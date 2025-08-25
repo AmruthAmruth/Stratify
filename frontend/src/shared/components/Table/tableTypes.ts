@@ -7,12 +7,13 @@ interface RowData {
   [key: string]: string | number | boolean | null;
 }
 
-interface TableProps {
-  columns: Column[];
-  data: RowData[];
+ interface TableProps {
+  columns: { key: string; label: string }[];
+  data: Record<string, any>[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
+  renderCell?: (row: Record<string, any>, key: string) => React.ReactNode; 
 }
 
 export type { TableProps, Column, RowData };

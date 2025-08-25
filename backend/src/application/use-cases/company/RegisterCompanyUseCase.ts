@@ -4,7 +4,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { SendOtpUseCase } from "../auth/SendOtpUseCase";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 import { Company } from "../../../domain/entities/Company";
-import { hashPassword } from "../../../shared/utils/passwordHash";
+import { hashPassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
 
 export class RegisterCompanyUseCase {

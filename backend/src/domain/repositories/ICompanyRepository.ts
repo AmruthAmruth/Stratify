@@ -22,4 +22,10 @@ export interface ICompanyRepository{
      filter?: Record<string, unknown>;
      sort?: Record<string, 1 | -1>;
     }):Promise<PaginatedResult<Company>>;
+
+    
+
+
+
+
 }

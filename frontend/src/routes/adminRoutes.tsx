@@ -1,3 +1,4 @@
+import Department from "@/features/company/Department";
 import type { RouteObject } from "react-router";
 
 const adminRoutes: RouteObject[] = [
@@ -8,6 +9,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "companies",
     element: <h1>Companies</h1>
+  },
+   {
+    path: "department",
+    element: <Department/>
   }
 ];
 
