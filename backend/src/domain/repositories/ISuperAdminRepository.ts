@@ -1,5 +1,0 @@
-import { SuperAdmin } from "../entities/SuperAdmin";
-
-export interface ISuperAdminRepository{
-    findByEmail(email:string):Promise<SuperAdmin|null>;
-}

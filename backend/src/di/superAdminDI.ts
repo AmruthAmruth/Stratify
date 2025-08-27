@@ -1,7 +1,7 @@
-import { LoginUseCase } from "../application/use-cases/super-admin/LoginUseCase"
-import { RefreshTokenUseCase } from "../application/use-cases/super-admin/RefreshTokenUseCase";
-import { SuperAdminRepository } from "../infrastructure/repositories/SuperAdminRepository"
-import { SuperAdminController } from "../interfaces/controllers/SuperAdminController";
+import { LoginUseCase } from "../application/use-cases/super-admin/login-use-case"
+import { RefreshTokenUseCase } from "../application/use-cases/super-admin/refreash-token-use-case";
+import { SuperAdminRepository } from "../infrastructure/repositories/super-admin-repository"
+import { SuperAdminController } from "../interfaces/controllers/super-admin-controller";
 
 
 
