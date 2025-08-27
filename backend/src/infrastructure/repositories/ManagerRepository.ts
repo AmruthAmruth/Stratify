@@ -24,7 +24,9 @@ export class ManagerRepository implements IManagerRepo {
       doc.role,
       doc.status,
       departmentId.toString(),
-      companyId.toString()
+      companyId.toString(),
+      doc.joiningDate,    
+      doc.profileImage   
     );
   }
 
@@ -45,7 +47,9 @@ export class ManagerRepository implements IManagerRepo {
       doc.role,
       doc.status,
       departmentId.toString(),
-      companyId.toString()
+      companyId.toString(),
+      doc.joiningDate,     
+        doc.profileImage  
     );
   }
 }

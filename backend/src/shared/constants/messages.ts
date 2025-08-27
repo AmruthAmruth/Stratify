@@ -32,6 +32,17 @@ export const Messages = {
   OTP_RESENT: "A new OTP has been resent successfully.",
   // Token messages
   NO_REFREASHTOKEN: "No refresh token provided",
+  
+
+  // Other messages
+  PROFILE_UPDATE_SUCCESS: "Profile updated successfully",
+  PROFILE_UPDATE_FAILED: "Profile update failed",
+  PASSWORD_CHANGE_SUCCESS: "Password changed successfully",
+  PASSWORD_CHANGE_FAILED: "Password change failed",
+  COMPANY_DEACTIVATED: "Company account has been deactivated",
+  COMPANY_ACTIVATED: "Company account has been activated",    
+  COMPNAY_NOT_FOUND: "Company not found",
+MANAGER_ALREADY_EXISTS: "Manager with this email already exists",
 
   
 } as const;

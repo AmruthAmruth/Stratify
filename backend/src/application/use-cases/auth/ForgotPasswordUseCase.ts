@@ -1,7 +1,7 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { AppError } from "../../../interfaces/middleware/errorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
-import { SendOtpUseCase } from "../auth/SendOtpUseCase";
+import { SendOtpUseCase } from "./SendOtpUseCase";
 
 
 

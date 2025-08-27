@@ -1,7 +1,7 @@
 
 import { RegisterCompanySchema } from "../../dto/company/RegisterCompanySchema";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { SendOtpUseCase } from "../auth/SendOtpUseCase";
+import { SendOtpUseCase } from "./SendOtpUseCase";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 import { Company } from "../../../domain/entities/Company";
 import { hashPassword } from "../../../shared/utils/password";

@@ -9,9 +9,13 @@ export interface IManagerDoc extends Document {
   status: string;
   departmentId: Types.ObjectId;
   companyId: Types.ObjectId;
+  joiningDate?: string;        
+  profileImage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
+
+
 
 const ManagerSchema = new Schema<IManagerDoc>(
   {
@@ -23,6 +27,8 @@ const ManagerSchema = new Schema<IManagerDoc>(
     status: { type: String, required: true },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
+     joiningDate: { type: String },         
+    profileImage: { type: String },  
   },
   { timestamps: true }
 );

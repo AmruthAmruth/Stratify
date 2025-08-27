@@ -8,6 +8,8 @@ export class Manager {
     public role: string,
     public status: string,
     public departmentId: string,
-    public companyId: string
+    public companyId: string,
+    public joiningDate?: string,     
+    public profileImage?: string 
   ) {}
 }
