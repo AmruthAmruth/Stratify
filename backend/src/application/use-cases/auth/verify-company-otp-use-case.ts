@@ -34,10 +34,10 @@ if (storedOtp.expiresAt < new Date()) {
     
     const createdCompany = await this._companyRepo.create(companyData);
 
-    const payload = { id: createdCompany._id!, role: createdCompany.role };
+    const payload = { id: createdCompany.id!, role: createdCompany.role };
 
     
-if (!createdCompany._id) {
+if (!createdCompany.id) {
   throw new Error("Company ID is missing after creation");
 }
 

@@ -11,10 +11,10 @@ export class Employee {
     public profileImage: string | undefined,
     public departmentId: string,
     public companyId: string,
-    public password: string | undefined, 
+   public password: string, 
     public status: "active" | "inactive" | "suspended",
     public role: "employee",
     public readonly createdAt: Date,
-    public readonly updatedAt: Date
+    public readonly updatedAt: Date  
   ) {}
 }

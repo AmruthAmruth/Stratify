@@ -3,8 +3,8 @@ export interface EmployeeDTO {
   name: string;
   email: string;
   phone: string;           
-  dob: Date | string;     
-  joiningDate: Date | string; 
+ dob: string | Date;         
+joiningDate: string | Date;
   position: string;
   managerId?: string;
   profileImage?: string;

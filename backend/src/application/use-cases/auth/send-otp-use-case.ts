@@ -1,7 +1,7 @@
 import { IOTPRepository } from "../../../domain/repositories/i-otp-repository";
 import { generateOtp } from "../../../shared/utils/otpUtils";
 import { OTP } from "../../../domain/entities/otp";
-import { IEmailService } from "../../../domain/repositories/i-employee-repository";
+import { IEmailService } from "../../../domain/repositories/i-email-services";
 
 
 export class SendOtpUseCase{

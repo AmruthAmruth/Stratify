@@ -30,4 +30,9 @@ export class DepartmentRepository implements IDepartmentRepo {
       managerId: dept.managerId ? new mongoose.Types.ObjectId(dept.managerId) : undefined,
     });
   }
+
+
+  async findById(id: string): Promise<Department|null> {
+   return await DepartmentModel.findById(id)
+  }
 }

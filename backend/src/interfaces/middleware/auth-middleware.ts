@@ -8,34 +8,38 @@ export interface AuthRequest extends Request {
 }
 
 interface JwtPayload {
-  companyId: string;
-  role: string;
+  id: string;          
+  role: "company" | "manager" | "employee";
   iat?: number;
   exp?: number;
 }
 
-export const authMiddleware = (allowedRoles: string[] = []) => {
+export const authMiddleware = (allowedRoles: ("company" | "manager" | "employee")[] = []) => {
   return (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {
-        console.log("Authorization Header:", req.headers);
+      console.log("Authorization Header:", req.headers);
+
       const authHeader = req.headers.authorization;
       if (!authHeader?.startsWith("Bearer ")) {
-        return next({ status: 401, message: "Un Autharized" });
+        return next({ status: 401, message: Messages.UNAUTHORIZED_ACCESS });
       }
 
       const token = authHeader.split(" ")[1];
       const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as JwtPayload;
 
+    
       if (allowedRoles.length && !allowedRoles.includes(decoded.role)) {
-        return next({ status: 403, message: "Not Found" });
+        return next({ status: 403, message: "Forbidden" });
       }
 
+    
       req.role = decoded.role;
-    //  req.companyId = (decoded as any).id;
-req.companyId = decoded.companyId; 
+      req.companyId = decoded.id; 
+
       console.log("Decoded Token:", decoded);
       next();
-    } catch{
+    } catch (err) {
+      console.error("Auth error:", err);
       return next({ status: 401, message: Messages.UNAUTHORIZED_ACCESS });
     }
   };

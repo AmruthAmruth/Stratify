@@ -29,22 +29,22 @@ const hasedPassword = await hashPassword(data.password)
 
      const expiresAt = new Date(Date.now() + 30 * 60 * 1000); 
       const tempData = new Company(
-    data.name,
-    data.email,
-    data.phone,
-    data.industry,
-    data.description,
-    data.businessRegNo,
-    data.address,
-    data.city,
-    data.state,
-    data.country,
-    data.zipcode,
-    hasedPassword,
-    data.status,
-    data.profileImage,
-    data._id,
-    "company" 
+     data.name,
+  data.email,
+  data.phone,
+  data.industry,
+  data.description,
+  data.businessRegNo,
+  data.address,
+  data.city,
+  data.state,
+  data.country,
+  data.zipcode,
+  hasedPassword,
+  data.status,
+  undefined,
+  "company" ,
+  data.profileImage,
   );
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);

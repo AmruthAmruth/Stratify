@@ -16,6 +16,8 @@ import { OTPRepository } from "../infrastructure/repositories/otp-repository";
 import { TempRegistrationRepository } from "../infrastructure/repositories/temp-registration-repo";
 import { EmailService } from "../infrastructure/services/email-service";
 import { CompanyController } from "../interfaces/controllers/company-controller";
+import { EmployeeRepository } from "../infrastructure/repositories/employee-repository";
+import {  CreateEmployeeUseCase } from "../application/use-cases/company/create-employee-use-case";
 export const companyDI = () => {
 
   const companyRepo = new companyRepository();
@@ -23,6 +25,10 @@ export const companyDI = () => {
   const emailService = new EmailService();
   const tempRegRepo = new TempRegistrationRepository();
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
+const managerRepo = new ManagerRepository()
+const employeeRepo = new EmployeeRepository()
+
+
 
   const registerUseCase = new RegisterCompanyUseCase(
     companyRepo,
@@ -37,7 +43,7 @@ export const companyDI = () => {
   );
  
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
-  const companyLoginUseCase = new CompanyLoginUseCase(companyRepo);
+  const companyLoginUseCase = new CompanyLoginUseCase(companyRepo,managerRepo,employeeRepo);
 
 const resendOtpUseCase = new ResendOtpUseCase(otpRepo,emailService,tempRegRepo);
 const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo,sendOtpUseCase)
@@ -46,14 +52,16 @@ const resetPasswordUsecase = new ResetPasswordUseCase(companyRepo)
 const getPaginatedCompaniesUseCase = new GetPaginatedCompaniesUsecase(companyRepo)
 
 const departmentRepo = new DepartmentRepository();
-const managerRepo = new ManagerRepository()
+
 const addDepartmentWithManagerUseCase = new AddDepartmentWithManagerUseCase(
   departmentRepo,
   managerRepo,
   companyRepo,
   emailService
 );
- 
+
+
+ const createEmployeUseCase = new CreateEmployeeUseCase(employeeRepo,departmentRepo,emailService)
   return new CompanyController(
     registerUseCase, 
     verifyUseCase,
@@ -64,6 +72,9 @@ const addDepartmentWithManagerUseCase = new AddDepartmentWithManagerUseCase(
     verifyForgotPasswordOTPUseCase,
     resetPasswordUsecase,
     getPaginatedCompaniesUseCase,
-    addDepartmentWithManagerUseCase
+    addDepartmentWithManagerUseCase,
+    createEmployeUseCase
+
   );
 };
+ 

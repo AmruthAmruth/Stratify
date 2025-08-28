@@ -16,7 +16,7 @@ import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/cookieConfig";
 import { AuthRequest } from "../middleware/auth-middleware";
-
+import { ICreateEmployeeUseCase } from "../../application/use-cases/interfaces/company/i-create-employee-use-case";
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -32,7 +32,8 @@ export class CompanyController {
     private _verifyForgotPasswordOTPUseCase: IVerifyForgotPasswordOTPUseCase,
     private _resetPasswordUseCase: IResetPasswordUseCase,
     private _getPaginatedCompaniesUseCase: IGetPaginatedCompaniesUseCase,
-    private _addDepartmentWithManagerUseCase: IAddDepartmentWithManagerUseCase
+    private _addDepartmentWithManagerUseCase: IAddDepartmentWithManagerUseCase,
+    private _createEmployeeUseCase : ICreateEmployeeUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -56,6 +57,7 @@ export class CompanyController {
 
   login = async (req: Request, res: Response) => {
     const result = LoginSchema.safeParse(req.body);
+    
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
@@ -125,6 +127,13 @@ export class CompanyController {
     data: result
   });
 };
+
+
+createEmployee = async(req:Request,res:Response)=>{
+
+  const result = await this._createEmployeeUseCase.execute(req.body)
+  res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",data:result})
+}
 
 
 

@@ -1,7 +1,7 @@
 
 
 import nodemailer from 'nodemailer'
-import { IEmailService } from '../../domain/repositories/i-employee-repository';
+import { IEmailService } from '../../domain/repositories/i-email-services';
 
 
 export class EmailService implements IEmailService{

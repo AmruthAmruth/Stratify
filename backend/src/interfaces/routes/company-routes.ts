@@ -6,7 +6,7 @@ import { authMiddleware } from "../middleware/auth-middleware";
 
 
 const companyRouter = Router();
-const controller = companyDI();
+const controller = companyDI();  
 
  
 companyRouter.post("/register", upload.single("profileImage"),asyncHandler(controller.register));
@@ -20,6 +20,6 @@ companyRouter.post('/resetpassword',asyncHandler(controller.resetPassword))
 companyRouter.get('/companies',asyncHandler(controller.getPaginatedCompanies))
 companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
 companyRouter.post('/department',authMiddleware(['company']),asyncHandler(controller.createDepartmentWithManager))
-
+companyRouter.post('/create-employee',authMiddleware(["company", "manager"]),asyncHandler(controller.createEmployee))
 export default companyRouter
  
