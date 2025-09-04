@@ -1,4 +1,4 @@
-import { LoginDTO } from "../../validators/login-validator";
+import { LoginDTO } from "../../validators/LoginValidator";
 
 
 export interface ILoginUseCase{

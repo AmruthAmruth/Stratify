@@ -1,11 +1,11 @@
 import express from "express";
 import dotenv from "dotenv";
-import connectDB from "./config/db";
+import connectDB from "./config/DataBase";
 import morgan from "morgan";
-import superAdminRouter from "./interfaces/routes/super-admin-routes";
-import companyRouter from "./interfaces/routes/company-routes";
+import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
+import companyRouter from "./interfaces/routes/CompanyRoutes";
 import cors from 'cors';
-import { errorMiddleware } from "./interfaces/middleware/error-middleware";
+import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 
 dotenv.config();
  
