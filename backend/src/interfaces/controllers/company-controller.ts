@@ -1,22 +1,26 @@
 import { Request, Response } from "express";
 
-import { IRegisterCompanyUseCase } from "../../application/use-cases/interfaces/auth/i-register-company-use-case";
-import { IVerifyCompanyOTPUseCase } from "../../application/use-cases/interfaces/auth/i-verify-company-otp-use-case";
-import { IGetCompanyByIdUseCase } from "../../application/use-cases/interfaces/company/i-get-company-by-id-use-case";
-import { ICompanyLoginUseCase } from "../../application/use-cases/interfaces/auth/i-company-login-use-case";
-import { IResendOtpUseCase } from "../../application/use-cases/interfaces/auth/i-resent-otp-use-case";
-import { IForgotPasswordUseCase } from "../../application/use-cases/interfaces/auth/i-forgot-password-use-case";
-import { IVerifyForgotPasswordOTPUseCase } from "../../application/use-cases/interfaces/auth/i-verify-forgotpassword-use-case";
-import { IResetPasswordUseCase } from "../../application/use-cases/interfaces/auth/i-reset-password-use-case";
-import { IGetPaginatedCompaniesUseCase } from "../../application/use-cases/interfaces/company/i-get-paginated-company-use-case";
-import { IAddDepartmentWithManagerUseCase } from "../../application/use-cases/interfaces/company/i-add-department-with-manager-use-case";
+import { IRegisterCompanyUseCase } from "../../application/interfaces/auth/i-register-company-use-case";
+import { IVerifyCompanyOTPUseCase } from "../../application/interfaces/auth/i-verify-company-otp-use-case";
+import { IGetCompanyByIdUseCase } from "../../application/interfaces/company/i-get-company-by-id-use-case";
+import { ICompanyLoginUseCase } from "../../application/interfaces/auth/i-company-login-use-case";
+import { IResendOtpUseCase } from "../../application/interfaces/auth/i-resent-otp-use-case";
+import { IForgotPasswordUseCase } from "../../application/interfaces/auth/i-forgot-password-use-case";
+import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/auth/i-verify-forgotpassword-use-case";
+import { IResetPasswordUseCase } from "../../application/interfaces/auth/i-reset-password-use-case";
+import { IGetPaginatedCompaniesUseCase } from "../../application/interfaces/company/i-get-paginated-company-use-case";
+import { IAddDepartmentWithManagerUseCase } from "../../application/interfaces/company/i-add-department-with-manager-use-case";
 
 import { LoginDTO, LoginSchema } from "../../application/validators/login-validator";
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/cookieConfig";
 import { AuthRequest } from "../middleware/auth-middleware";
-import { ICreateEmployeeUseCase } from "../../application/use-cases/interfaces/company/i-create-employee-use-case";
+import { ICreateEmployeeUseCase } from "../../application/interfaces/company/i-create-employee-use-case";
+import { IApproveCompanyUseCase } from "../../application/interfaces/company/i-approve-company";
+import { IUnapproveCompany } from "../../application/interfaces/company/i-unapprove-compnay-use-case";
+import { IGetAllDepartmentByCompanyId } from "../../application/interfaces/company/i-get-all-department-by-company-id-use-case";
+import { IGetAllEmployeeByCompanyIdUseCase } from "../../application/interfaces/company/i-get-employee-by-company-id-use-case";
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -33,7 +37,11 @@ export class CompanyController {
     private _resetPasswordUseCase: IResetPasswordUseCase,
     private _getPaginatedCompaniesUseCase: IGetPaginatedCompaniesUseCase,
     private _addDepartmentWithManagerUseCase: IAddDepartmentWithManagerUseCase,
-    private _createEmployeeUseCase : ICreateEmployeeUseCase
+    private _createEmployeeUseCase : ICreateEmployeeUseCase,
+    private _approveCompanyUseCase:IApproveCompanyUseCase,
+    private _unapproveCompanyUseCase:IUnapproveCompany,
+    private _getAllDepartmentByCompanyId:IGetAllDepartmentByCompanyId,
+    private _getAllEmployeeByCompanyId:IGetAllEmployeeByCompanyIdUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -128,7 +136,6 @@ export class CompanyController {
   });
 };
 
-
 createEmployee = async(req:Request,res:Response)=>{
 
   const result = await this._createEmployeeUseCase.execute(req.body)
@@ -136,5 +143,55 @@ createEmployee = async(req:Request,res:Response)=>{
 }
 
 
+approveCompany=async(req:Request,res:Response)=>{
+  const { companyId } = req.body;
+  await this._approveCompanyUseCase.execute(companyId)
+  res.status(StatusCodes.OK).json({message:"Company Approved Successfully.!"})
+}
+
+
+unapproveCompany=async(req:Request,res:Response)=>{
+  const {companyId} = req.body;
+  await this._unapproveCompanyUseCase.execute(companyId);
+  res.status(StatusCodes.OK).json({message:"Company Unapproved Successfully.!"})
+}
+
+
+getDepartmentDetailsInACompany = async (req: AuthRequest, res: Response) => {
+  const companyId = req.companyId
+
+  if (!companyId) {
+    
+    throw { status: 400, message: "Company ID is missing" };
+  }
+
+  const response = await this._getAllDepartmentByCompanyId.execute(companyId);
+
+  return res.status(StatusCodes.OK).json({
+    message: "Department details fetched successfully",
+    data: response
+  });
+};
+
+
+
+getAllEmployeeByCompanyId = async (req: AuthRequest, res: Response) => {
+  
+    const companyId = req.companyId;
+
+    if (!companyId) {
+      return res.status(400).json({ message: "Company ID is missing" });
+    }
+
+    const employees = await this._getAllEmployeeByCompanyId.execute(companyId);
+
+    return res.status(200).json({
+      message: "Employee details fetched successfully",
+      data: employees,
+    });
+  
+};
+
 
 }
+ 

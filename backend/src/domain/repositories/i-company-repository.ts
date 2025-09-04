@@ -1,7 +1,6 @@
 import { PaginatedResult } from "../common/pagination";
 import { Company } from "../entities/company";
 
-
 export interface ICompanyRepository{
     create(company:Company):Promise<Company>;
     findByEmail(email:string):Promise<Company | null>;
@@ -17,9 +16,8 @@ export interface ICompanyRepository{
      sort?: Record<string, 1 | -1>;
     }):Promise<PaginatedResult<Company>>;
 
-    
+    approveCompany(id:string):Promise<void>
 
-
-
+    unapproveCompany(id:string):Promise<void>
 
 }

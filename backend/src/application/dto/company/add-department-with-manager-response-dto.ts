@@ -2,6 +2,7 @@ export interface AddDepartmentWithManagerResponse {
   department: {
     id: string;
     name: string;
+     discription?: string; 
     companyId: string;
     managerId: string;
   };

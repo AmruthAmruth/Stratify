@@ -67,9 +67,9 @@ async findByEmail(email: string): Promise<Company | null> {
     doc.status,
     "company",
     doc.profileImage,
-  );
+  )
 }
-
+ 
 
 
 
@@ -214,4 +214,18 @@ typedFilter["createdAt"] = { $lt: new Date(cursor) };
   }
 }
  
-} 
+
+async approveCompany(id: string): Promise<void> {
+   await CompanyModel.findByIdAndUpdate(id,{status:'approved'},{new:true})
+}
+
+async unapproveCompany(id: string): Promise<void> {
+  await CompanyModel.findByIdAndUpdate(id,{status:'rejected'},{new:true})
+}
+
+
+
+
+
+
+}  

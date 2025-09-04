@@ -17,7 +17,7 @@ const MainLayout: React.FC = () => {
       <Sidebar/>
       <div className="flex-1 flex flex-col">
         <Navbar role={role} />
-        <main className="p-4">
+        <main className="p-4 bg-gray-50 h-full">
           <Outlet />
         </main>
       </div>

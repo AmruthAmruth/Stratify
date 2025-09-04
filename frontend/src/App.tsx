@@ -12,7 +12,7 @@ const App= () => {
 
     <BrowserRouter>
       <AppRoutes />
-    </BrowserRouter>
+    </BrowserRouter> 
  </SnackbarProvider>
     </Provider>
   );

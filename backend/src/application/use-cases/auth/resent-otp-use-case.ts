@@ -17,8 +17,8 @@ export class ResendOtpUseCase{
     if (!tempData) {
       throw new Error("Registration data expired. Please register again.");
     }
-
-        const otpCode = generateOtp();
+ 
+        const otpCode = generateOtp(); 
     const expiresAt = new Date(Date.now() + 3 * 60 * 1000);
        
  console.log("Resent OTP Code:", otpCode);

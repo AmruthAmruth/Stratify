@@ -13,7 +13,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Dashboard", path: "/dashboard" },
     { label: "Departments", path: "/department" },
     { label: "Projects", path: "/projects" },
-    { label: "My Team", path: "/employees" },
+    { label: "My Team", path: "/team" },
     { label: "Leave Management", path: "/leave" },
     { label: "Meetings", path: "/meetings" },
     { label: "Message", path: "/message" },

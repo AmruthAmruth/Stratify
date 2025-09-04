@@ -1,5 +1,5 @@
-import { PaginatedResult } from "../../../../domain/common/pagination";
-import { Company } from "../../../../domain/entities/company";
+import { PaginatedResult } from "../../../domain/common/pagination";
+import { Company } from "../../../domain/entities/company";
 
 export interface IGetPaginatedCompaniesUseCase {
   execute(params: {

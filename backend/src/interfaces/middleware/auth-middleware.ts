@@ -35,7 +35,7 @@ export const authMiddleware = (allowedRoles: ("company" | "manager" | "employee"
     
       req.role = decoded.role;
       req.companyId = decoded.id; 
-
+ 
       console.log("Decoded Token:", decoded);
       next();
     } catch (err) {

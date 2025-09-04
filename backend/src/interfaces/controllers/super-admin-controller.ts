@@ -5,8 +5,8 @@ import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { LoginSchema } from "../../application/validators/login-validator";
 import { CookieConfig } from "../../config/cookieConfig";
-import { ILoginUseCase } from "../../application/use-cases/interfaces/super-admin/ILoginUseCase";
-import { IRefreashTokenUseCase } from "../../application/use-cases/interfaces/super-admin/IRefreashTokenUseCase";
+import { ILoginUseCase } from "../../application/interfaces/super-admin/ILoginUseCase";
+import { IRefreashTokenUseCase } from "../../application/interfaces/super-admin/IRefreashTokenUseCase";
 
 export class SuperAdminController {
   constructor(

@@ -8,7 +8,7 @@ import cors from 'cors';
 import { errorMiddleware } from "./interfaces/middleware/error-middleware";
 
 dotenv.config();
-
+ 
 const app = express();
 app.use(cors({
   origin: "http://localhost:5173",  

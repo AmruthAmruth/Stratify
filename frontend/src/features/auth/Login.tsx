@@ -80,10 +80,10 @@ const handleLogin = async (values: LoginValues) => {
           </p>
         </div>
 
-        {/* Login Form */}
+        
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
           <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300">
-            {/* Badge */}
+         
             <div className="flex justify-center mb-6">
               <span className="bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
                 Login Portal
@@ -101,7 +101,7 @@ const handleLogin = async (values: LoginValues) => {
             {/* Auth Form */}
             <AuthForm
               fields={loginFields}
-              validationSchema={loginSchema}
+              validationSchema={loginSchema} 
               onSubmit={handleLogin}
               buttonText="Login"
             />

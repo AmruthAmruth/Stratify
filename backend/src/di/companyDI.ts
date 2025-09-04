@@ -18,6 +18,10 @@ import { EmailService } from "../infrastructure/services/email-service";
 import { CompanyController } from "../interfaces/controllers/company-controller";
 import { EmployeeRepository } from "../infrastructure/repositories/employee-repository";
 import {  CreateEmployeeUseCase } from "../application/use-cases/company/create-employee-use-case";
+import { ApproveCompany } from "../application/use-cases/company/approve-company";
+import { UnapproveCompany } from "../application/use-cases/company/unapprove-company-use-case";
+import { GetAllDepartmentByCompanyId } from "../application/use-cases/company/get-all-department-by-company-id-use-case";
+import { GetEmployeeByCompanyId } from "../application/use-cases/company/get-employee-by-companyid-use-case";
 export const companyDI = () => {
 
   const companyRepo = new companyRepository();
@@ -46,9 +50,9 @@ const employeeRepo = new EmployeeRepository()
   const companyLoginUseCase = new CompanyLoginUseCase(companyRepo,managerRepo,employeeRepo);
 
 const resendOtpUseCase = new ResendOtpUseCase(otpRepo,emailService,tempRegRepo);
-const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo,sendOtpUseCase)
-const verifyForgotPasswordOTPUseCase = new VerifyForgotPasswordOTPUseCase(otpRepo,companyRepo)
-const resetPasswordUsecase = new ResetPasswordUseCase(companyRepo)
+const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo,managerRepo,employeeRepo,sendOtpUseCase)
+const verifyForgotPasswordOTPUseCase = new VerifyForgotPasswordOTPUseCase(otpRepo,companyRepo,managerRepo,employeeRepo)
+const resetPasswordUsecase = new ResetPasswordUseCase(companyRepo,managerRepo,employeeRepo)
 const getPaginatedCompaniesUseCase = new GetPaginatedCompaniesUsecase(companyRepo)
 
 const departmentRepo = new DepartmentRepository();
@@ -57,11 +61,19 @@ const addDepartmentWithManagerUseCase = new AddDepartmentWithManagerUseCase(
   departmentRepo,
   managerRepo,
   companyRepo,
-  emailService
+  emailService 
 );
 
-
+const approveCompanyUseCase = new ApproveCompany(emailService,companyRepo)
+const unapproveCompanyUseCase = new UnapproveCompany(emailService,companyRepo)
  const createEmployeUseCase = new CreateEmployeeUseCase(employeeRepo,departmentRepo,emailService)
+const getAllDepartmentByCompanyIdUseCase  = new GetAllDepartmentByCompanyId(companyRepo,departmentRepo,managerRepo,employeeRepo)
+
+const getAllEmployeeByCompanyIdUseCase = new GetEmployeeByCompanyId(companyRepo,employeeRepo)
+
+
+
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase,
@@ -73,8 +85,11 @@ const addDepartmentWithManagerUseCase = new AddDepartmentWithManagerUseCase(
     resetPasswordUsecase,
     getPaginatedCompaniesUseCase,
     addDepartmentWithManagerUseCase,
-    createEmployeUseCase
-
+    createEmployeUseCase,
+    approveCompanyUseCase,
+    unapproveCompanyUseCase,
+getAllDepartmentByCompanyIdUseCase,
+getAllEmployeeByCompanyIdUseCase
   );
 };
  

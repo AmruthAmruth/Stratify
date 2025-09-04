@@ -97,7 +97,7 @@ export const Navbar = () => {
           {/* CTA Buttons */}
           <div className="flex items-center space-x-3">
             <Link
-              to="/signin"
+              to="/login"
               className="px-4 py-2 text-gray-700 hover:text-blue-600 font-medium transition-all duration-200 rounded-lg hover:bg-white/50 hover:backdrop-blur-sm"
             >
               Sign In

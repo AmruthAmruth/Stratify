@@ -1,5 +1,6 @@
+import { Employee } from "../../../domain/entities/employee";
 
-import { Employee } from "../../../../domain/entities/employee";
+
 
 
 

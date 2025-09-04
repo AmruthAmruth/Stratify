@@ -1,5 +1,5 @@
 import { Manager } from "../../../domain/entities/manager";
-import { IGetManagerByCompanyIdUseCase } from "../interfaces/company/i-get-manager-by-company-id-use-case";
+import { IGetManagerByCompanyIdUseCase } from "../../interfaces/company/i-get-manager-by-company-id-use-case";
 
 
 

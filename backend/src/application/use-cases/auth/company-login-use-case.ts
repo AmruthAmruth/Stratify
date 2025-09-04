@@ -18,17 +18,18 @@ export class CompanyLoginUseCase{
         private _companyRepository : ICompanyRepository,
         private _managerRepository : IManagerRepo,
         private _employeeRepository:IEmployeeRepository
-
+ 
     ){};
 
-    
-
+     
+  
     async execute(data:LoginDTO):Promise<{accessToken:string,refreshToken:string}>{
       let user: UserType | null = await this._companyRepository.findByEmail(data.email);
 
-    if (!user) user = await this._managerRepository.findByEmail(data.email);
+    if (!user) user = await this._managerRepository.findByEmail(data.email); 
     if (!user) user = await this._employeeRepository.findByEmail(data.email);
     if (!user) throw new Error(Messages.EMAIL_NOT_FOUND);
+console.log("USER :",user);
 
     const isPassword = await comparePassword(data.password, user.password);
     if (!isPassword) throw new Error(Messages.LOGIN_FAILED);
@@ -40,3 +41,4 @@ export class CompanyLoginUseCase{
     return { accessToken, refreshToken };
     }
 }
+ 

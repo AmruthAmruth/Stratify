@@ -40,7 +40,7 @@ const hasedPassword = await hashPassword(data.password)
   data.state,
   data.country,
   data.zipcode,
-  hasedPassword,
+  hasedPassword, 
   data.status,
   undefined,
   "company" ,

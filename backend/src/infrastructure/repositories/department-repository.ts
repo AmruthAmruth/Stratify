@@ -3,6 +3,7 @@ import { Department } from "../../domain/entities/department";
 import { IDepartmentRepo } from "../../domain/repositories/i-department-repository";
 import DepartmentModel, { IDepartmentDoc } from "../models/department-model";
 
+
 export class DepartmentRepository implements IDepartmentRepo {
 
   async create(dept: Partial<Department>): Promise<Department> {
@@ -31,8 +32,35 @@ export class DepartmentRepository implements IDepartmentRepo {
     });
   }
 
+  
+
 
   async findById(id: string): Promise<Department|null> {
    return await DepartmentModel.findById(id)
   }
+
+async getAllDepartment(id: string): Promise<Department[]> {
+  const docs = await DepartmentModel.find({ companyId: id });
+  return docs.map(
+    (doc) =>
+      new Department(
+        doc._id.toString(),
+        doc.name,
+        doc.companyId.toString(),
+        doc.managerId?.toString(),
+        doc.description,
+        doc.status
+      )
+  );
+}
+
+
+async updatePassword(email: string, password: string): Promise<void> {
+  await DepartmentModel.updateOne(
+      { email },                 
+      { $set: { password } }     
+    );
+}
+
+   
 }

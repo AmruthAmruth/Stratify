@@ -7,13 +7,20 @@ interface RowData {
   [key: string]: string | number | boolean | null;
 }
 
- interface TableProps {
-  columns: { key: string; label: string }[];
-  data: Record<string, any>[];
+interface TableAction {
+  label: string;
+  type?: "edit" | "delete" | "approve" | "custom";
+  onClick: (row: RowData) => void;
+}
+
+interface TableProps {
+  columns: Column[];
+  data: RowData[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  renderCell?: (row: Record<string, any>, key: string) => React.ReactNode; 
+  renderCell?: (row: RowData, key: string) => React.ReactNode;
+  actions?: TableAction[]; 
 }
 
-export type { TableProps, Column, RowData };
+export type { TableProps, Column, RowData, TableAction };

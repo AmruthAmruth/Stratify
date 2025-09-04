@@ -27,10 +27,11 @@ export class AddDepartmentWithManagerUseCase {
     const department = await this._departmentRepo.create({
       name: data.departmentName,
       companyId: data.companyId,
+      description:data.departmentDescription
     });
 
     const tempPassword = generateRandomPassword();
-
+console.log("Manager Temp Password :",tempPassword)
     const hashedPassword = await hashPassword(tempPassword);
     
     const manager = await this._managerRepo.create({
@@ -52,7 +53,7 @@ export class AddDepartmentWithManagerUseCase {
       "Your Account Created",
       `Email: ${data.managerEmail}\nPassword: ${tempPassword}\nPlease login and change your password.`
     );
-
+    
 
    return {
   department: {
@@ -60,6 +61,7 @@ export class AddDepartmentWithManagerUseCase {
     name: department.name,
     companyId: department.companyId,
     managerId: department.managerId,
+    discription:department.description,
   },
   manager: {
     id: manager.id,
