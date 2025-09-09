@@ -1,3 +1,4 @@
+import { Types } from "mongoose";
 import { Department } from "../../domain/entities/Department";
 import { IDepartmentRepository } from "../../domain/repositories/IDepartmentRepository";
 import { DepartmentModel } from "../models/DepartmentModel";
@@ -42,4 +43,27 @@ export class DepartmentRepository implements IDepartmentRepository {
       created.updatedAt
     );
   }
+
+
+  async findById(id: string): Promise<Department | null> {
+    const doc = await DepartmentModel.findById(id);
+    if(!doc) return null;
+    return new Department(
+      doc.id.toString(),
+      doc.name,
+      doc.description,
+      doc.companyId.toString(),
+      doc.managerId?.toString(),
+      doc.createdAt,
+      doc.updatedAt
+    ); 
+  }
+
+async assignManager(departmentId: string, managerId: string): Promise<void> {
+  await DepartmentModel.findByIdAndUpdate(
+    new Types.ObjectId(departmentId),
+    { managerId: new Types.ObjectId(managerId) },
+    { new: true } 
+  ).exec();
+}
 }

@@ -8,6 +8,5 @@ export interface IEmployeeRepository{
      findByEmail(email:string):Promise<Employee|null>
      findByPhone(phone:string):Promise<Employee|null>
      updatePassword(email:string,password:string):Promise<void>
-     findByDepartmentId(id:string):Promise<Employee[]|null>
-     findByCompanyId(id:string):Promise<Employee[]>
+     
 }

@@ -8,5 +8,6 @@ export interface IDepartmentRepository{
   findByNameAndCompany(name:string,companyId:string):Promise<Department | null>
 
   create(department:Department):Promise<Department>
-
+   findById(id:string):Promise<Department|null>
+   assignManager(departmentId:string,managerId:string):Promise<void>
 }

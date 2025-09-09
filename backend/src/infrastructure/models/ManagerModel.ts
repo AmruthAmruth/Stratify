@@ -1,41 +1,45 @@
-import mongoose, { Schema, Document, Types, Model } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
-export interface IManagerDoc extends Document {
+export interface ManagerDocument extends Document {
   name: string;
   email: string;
   phone: string;
   password: string;
-  role: string;
-  status: string;
-  departmentId: Types.ObjectId;
+  role: "manager"; 
+  position: string;
+  joiningDate: Date;
+  gender: "male" | "female" | "other";
+  dob: Date;
   companyId: Types.ObjectId;
-  joiningDate?: string;        
+  departmentId?: Types.ObjectId;
   profileImage?: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-
-
-const ManagerSchema = new Schema<IManagerDoc>(
+const ManagerSchema = new Schema<ManagerDocument>(
   {
-    name: { type: String, required: true },
-    email: { type: String, required: true, unique: true },
-    phone: { type: String, required: true },
+    name: { type: String, required: true, trim: true },
+    email: { type: String, required: true, unique: true, lowercase: true },
+    phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, required: true },
-    status: { type: String, required: true },
-    departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
+    role: { type: String, enum: ["manager"], default: "manager", required: true },
+    position: { type: String, required: true },
+    joiningDate: { type: Date, required: true },
+    gender: { type: String, enum: ["male", "female", "other"], required: true },
+    dob: { type: Date, required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
-     joiningDate: { type: String },         
-    profileImage: { type: String },  
+    departmentId: { type: Schema.Types.ObjectId, ref: "Department" },
+    profileImage: { type: String },
   },
   { timestamps: true }
 );
 
-const ManagerModel: Model<IManagerDoc> = mongoose.model<IManagerDoc>(
+
+ManagerSchema.index({ companyId: 1, email: 1 }, { unique: true });
+ManagerSchema.index({ companyId: 1, phone: 1 }, { unique: true });
+
+export const ManagerModel = mongoose.model<ManagerDocument>(
   "Manager",
   ManagerSchema
 );
-
-export default ManagerModel;

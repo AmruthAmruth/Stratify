@@ -1,20 +1,20 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { IManagerRepo } from "../../../domain/repositories/IManagerRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 import { SendOtpUseCase } from "./SendOTPUseCase";
 
 import { Company } from "../../../domain/entities/Company";
-import { Manager } from "../../../domain/entities/Managers";
 import { Employee } from "../../../domain/entities/Employee";
+import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
+import { Manager } from "../../../domain/entities/Manager";
 
 type UserType = Company | Manager | Employee;
 
 export class ForgotPasswordUseCase {
   constructor(
     private _companyRepository: ICompanyRepository,
-    private _managerRepository: IManagerRepo,
+    private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
     private _sendOtpUseCase: SendOtpUseCase
   ) {}

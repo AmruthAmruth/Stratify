@@ -2,7 +2,7 @@ import { Department } from "../../../domain/entities/Department";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
-import { IManagerRepo } from "../../../domain/repositories/IManagerRepository";
+import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Messages } from "../../../shared/constants/messages";
 import { CreateDepartmentDTO } from "../../dto/company/CreateDepartmentDTO";
 import { ICreateDepartmentUseCase } from "../../interfaces/company/ICreateDepartmentUseCase";
@@ -10,7 +10,7 @@ import { ICreateDepartmentUseCase } from "../../interfaces/company/ICreateDepart
 export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
   constructor(
     private _departmentRepo: IDepartmentRepository,
-    private _managerRepo: IManagerRepo,
+    private _managerRepo: IManagerRepository,
     private _companyRepo: ICompanyRepository,
     private _emailService:IEmailService
   ) {}

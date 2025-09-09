@@ -1,19 +1,9 @@
 import { Employee } from "../../../domain/entities/Employee";
+import { CreateEmployeeDTO } from "../../dto/company/CreateEmployeeDTO";
 
 
 
 
-
-export interface ICreateEmployeeUseCase{
-    execute(employee: {
-    name: string;
-    email: string;
-    phone: string;
-    dob: Date;
-    joiningDate: Date;
-    position: string;
-    departmentId: string;
-    status: "active" | "inactive" | "suspended";
-  }):Promise<Employee>;
-
-} 
+export interface ICreateEmployeeUseCase {
+  execute(employeeDto:CreateEmployeeDTO,creatorId: string ):Promise<Employee>
+}

@@ -1,20 +1,20 @@
 export class Employee {
   constructor(
-    public readonly id: string,
+    public id: string | undefined,
     public name: string,
     public email: string,
     public phone: string,
     public dob: Date,
     public joiningDate: Date,
     public position: string,
-    public managerId: string | undefined,
-    public profileImage: string | undefined,
-    public departmentId: string,
+    public password: string,
     public companyId: string,
-   public password: string, 
-    public status: "active" | "inactive" | "suspended",
-    public role: "employee",
-    public readonly createdAt: Date,
-    public readonly updatedAt: Date  
+    public departmentId: string,
+    public gender: "male" | "female" | "other",
+    public role: "employee" = "employee",
+    public managerId?: string,
+    public profileImage?: string,
+    public createdAt?: Date,
+    public updatedAt?: Date
   ) {}
 }

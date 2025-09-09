@@ -1,9 +1,11 @@
-import { Manager } from "../entities/Managers";
+import { Manager } from "../entities/Manager";
 
-export interface IManagerRepo {
-  create(manager: Partial<Manager>): Promise<Manager>;
-  findByEmail(email: string): Promise<Manager | null>;
-  findByCompanyId(id:string):Promise<Manager[]>;
-  updatePassword(email:string,password:string):Promise<void>
-  findById(id:string):Promise<Manager | null>
+
+
+
+export interface IManagerRepository{
+    create(manager:Manager):Promise<Manager>
+    findById(id:string):Promise<Manager|null>
+    findByEmail(email:string):Promise<Manager|null>
+    updatePassword(email:string,password:string):Promise<void>
 }

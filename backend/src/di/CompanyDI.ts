@@ -9,7 +9,6 @@ import { ResetPasswordUseCase } from "../application/use-cases/auth/ResetPasswor
 import { VerifyCompanyOTPUseCase } from "../application/use-cases/auth/VerifyCompanyOTPUseCase";
 import { VerifyForgotPasswordOTPUseCase } from "../application/use-cases/auth/VerifyForgotPasswordUseCase";
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
-import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { OTPRepository } from "../infrastructure/repositories/OTPRepository";
 import { TempRegistrationRepository } from "../infrastructure/repositories/TempRegistrationRepository";
 import { EmailService } from "../infrastructure/services/EmailService";
@@ -19,6 +18,10 @@ import { ApproveCompany } from "../application/use-cases/company/ApproveCompanyU
 import { UnapproveCompany } from "../application/use-cases/company/UnApproveCompanyUseCase";
 import { CreateDepartmentUseCase } from "../application/use-cases/company/CreateDepartmentUseCase";
 import { DepartmentRepository } from "../infrastructure/repositories/DepartmentRepository";
+import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
+import { CreateManagerUseCase } from "../application/use-cases/company/CreateManagerUseCase";
+import { CreateEmployeeUseCase } from "../application/use-cases/company/CreateEmployeeUseCase";
+
 export const companyDI = () => {
 
   const companyRepo = new companyRepository();
@@ -59,8 +62,8 @@ const unapproveCompanyUseCase = new UnapproveCompany(emailService,companyRepo)
 
 const departmentRepo = new DepartmentRepository()
 const createDepartmentUseCase= new CreateDepartmentUseCase(departmentRepo,managerRepo,companyRepo,emailService)
-
-
+const createManagerUseCase =new CreateManagerUseCase(companyRepo,managerRepo,departmentRepo,emailService)
+const createEmployeeUseCase = new CreateEmployeeUseCase(companyRepo,employeeRepo,departmentRepo,managerRepo,emailService)
 
   return new CompanyController(
     registerUseCase, 
@@ -74,7 +77,9 @@ const createDepartmentUseCase= new CreateDepartmentUseCase(departmentRepo,manage
     getPaginatedCompaniesUseCase,
     approveCompanyUseCase,
     unapproveCompanyUseCase,
-    createDepartmentUseCase
+    createDepartmentUseCase,
+createManagerUseCase,
+createEmployeeUseCase
   );
 };
  

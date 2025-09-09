@@ -25,7 +25,8 @@ companyRouter.post('/approve-company',asyncHandler(controller.approveCompany))
 companyRouter.post('/unapprove-company',asyncHandler(controller.unapproveCompany))
 
 companyRouter.post('/create-department',authMiddleware(["company"]),asyncHandler(controller.createDepartment))
-
+companyRouter.post('/create-manager',authMiddleware(["company"]),asyncHandler(controller.createManager))
+companyRouter.post('/create-employee',authMiddleware(["company","manager"]),asyncHandler(controller.createEmployee))
 //companyRouter.post('/create-employee',authMiddleware(["company", "manager"]),asyncHandler(controller.createEmployee))
 export default companyRouter
   

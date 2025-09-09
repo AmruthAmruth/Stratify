@@ -18,6 +18,8 @@ import { IApproveCompanyUseCase } from "../../application/interfaces/company/IAp
 import { IUnapproveCompany } from "../../application/interfaces/company/IUnapprovedCompanyUseCase";
 import { CreateDepartmentUseCase } from "../../application/use-cases/company/CreateDepartmentUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
+import { CreateManagerUseCase } from "../../application/use-cases/company/CreateManagerUseCase";
+import { CreateEmployeeUseCase } from "../../application/use-cases/company/CreateEmployeeUseCase";
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -35,7 +37,9 @@ export class CompanyController {
     private _getPaginatedCompaniesUseCase: IGetPaginatedCompaniesUseCase,
     private _approveCompanyUseCase:IApproveCompanyUseCase,
     private _unapproveCompanyUseCase:IUnapproveCompany,
-    private _createDeapartmentUseCase:CreateDepartmentUseCase
+    private _createDeapartmentUseCase:CreateDepartmentUseCase,
+    private _createManagerUseCase:CreateManagerUseCase,
+    private _createEmployeeUseCase:CreateEmployeeUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -184,6 +188,20 @@ createDepartment=async(req:AuthRequest,res:Response)=>{
   
   const response = await this._createDeapartmentUseCase.execute({...req.body,companyId})
   return res.status(StatusCodes.CREATED).json({message:"Department Created Successfully",response})
+}
+
+
+createManager=async(req:AuthRequest,res:Response)=>{
+  const companyId=req.companyId;
+  const response = await this._createManagerUseCase.execute({...req.body,companyId})
+  return res.status(StatusCodes.CREATED).json({message:"Manager Created Successfully",response})
+}
+
+createEmployee=async(req:AuthRequest,res:Response)=>{
+  const creatorId = req.companyId! 
+   const employeeDto = req.body;
+  const response = await this._createEmployeeUseCase.execute(employeeDto,creatorId)
+  return res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",response})
 }
 
 

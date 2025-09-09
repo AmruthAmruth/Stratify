@@ -16,8 +16,6 @@ const DepartmentSchema = new Schema<DepartmentDocument>(
     description: { type: String },
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
     managerId: { type: Schema.Types.ObjectId, ref: "Manager" },
-
-    // ✅ fix: not required, will be filled by hook
     normalizedName: { type: String, lowercase: true, default: "" },
   },
   { timestamps: true }
