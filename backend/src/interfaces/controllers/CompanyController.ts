@@ -9,18 +9,15 @@ import { IForgotPasswordUseCase } from "../../application/interfaces/auth/IForgo
 import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/auth/IVerifyForgotPasswordOTPUseCase";
 import { IResetPasswordUseCase } from "../../application/interfaces/auth/IResetPasswordOTPUseCase";
 import { IGetPaginatedCompaniesUseCase } from "../../application/interfaces/company/IListCompanyUseCase";
-import { IAddDepartmentWithManagerUseCase } from "../../application/interfaces/company/ICreateDepartmentWithMangerUseCase";
 
 import { LoginDTO, LoginSchema } from "../../application/validators/LoginValidator";
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/CookieConfig";
-import { AuthRequest } from "../middleware/AuthMiddleware";
-import { ICreateEmployeeUseCase } from "../../application/interfaces/company/ICreateEmployeeUseCase";
 import { IApproveCompanyUseCase } from "../../application/interfaces/company/IApproveCompanyUseCase";
 import { IUnapproveCompany } from "../../application/interfaces/company/IUnapprovedCompanyUseCase";
-import { IGetAllDepartmentByCompanyId } from "../../application/interfaces/company/IGetCompanyDepartmentsUseCase";
-import { IGetAllEmployeeByCompanyIdUseCase } from "../../application/interfaces/company/IGetCompanyEmployeesUseCase";
+import { CreateDepartmentUseCase } from "../../application/use-cases/company/CreateDepartmentUseCase";
+import { AuthRequest } from "../middleware/AuthMiddleware";
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -36,12 +33,9 @@ export class CompanyController {
     private _verifyForgotPasswordOTPUseCase: IVerifyForgotPasswordOTPUseCase,
     private _resetPasswordUseCase: IResetPasswordUseCase,
     private _getPaginatedCompaniesUseCase: IGetPaginatedCompaniesUseCase,
-    private _addDepartmentWithManagerUseCase: IAddDepartmentWithManagerUseCase,
-    private _createEmployeeUseCase : ICreateEmployeeUseCase,
     private _approveCompanyUseCase:IApproveCompanyUseCase,
     private _unapproveCompanyUseCase:IUnapproveCompany,
-    private _getAllDepartmentByCompanyId:IGetAllDepartmentByCompanyId,
-    private _getAllEmployeeByCompanyId:IGetAllEmployeeByCompanyIdUseCase
+    private _createDeapartmentUseCase:CreateDepartmentUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -125,22 +119,13 @@ export class CompanyController {
     res.status(StatusCodes.OK).json(result);
   };
 
-  createDepartmentWithManager = async (req: AuthRequest, res: Response) => {
-  const data = { ...req.body, companyId: req.companyId }; 
+  
 
-  const result = await this._addDepartmentWithManagerUseCase.execute(data);
+// createEmployee = async(req:Request,res:Response)=>{
 
-  res.status(StatusCodes.CREATED).json({
-    message: "Department created successfully",
-    data: result
-  });
-};
-
-createEmployee = async(req:Request,res:Response)=>{
-
-  const result = await this._createEmployeeUseCase.execute(req.body)
-  res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",data:result})
-}
+//   const result = await this._createEmployeeUseCase.execute(req.body)
+//   res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",data:result})
+// }
 
 
 approveCompany=async(req:Request,res:Response)=>{
@@ -157,41 +142,49 @@ unapproveCompany=async(req:Request,res:Response)=>{
 }
 
 
-getDepartmentDetailsInACompany = async (req: AuthRequest, res: Response) => {
-  const companyId = req.companyId
+// getDepartmentDetailsInACompany = async (req: AuthRequest, res: Response) => {
+//   const companyId = req.companyId
 
-  if (!companyId) {
+//   if (!companyId) {
     
-    throw { status: 400, message: "Company ID is missing" };
-  }
+//     throw { status: 400, message: "Company ID is missing" };
+//   }
 
-  const response = await this._getAllDepartmentByCompanyId.execute(companyId);
+//   const response = await this._getAllDepartmentByCompanyId.execute(companyId);
 
-  return res.status(StatusCodes.OK).json({
-    message: "Department details fetched successfully",
-    data: response
-  });
-};
+//   return res.status(StatusCodes.OK).json({
+//     message: "Department details fetched successfully",
+//     data: response
+//   });
+// };
 
 
 
-getAllEmployeeByCompanyId = async (req: AuthRequest, res: Response) => {
+// getAllEmployeeByCompanyId = async (req: AuthRequest, res: Response) => {
   
-    const companyId = req.companyId;
+//     const companyId = req.companyId;
 
-    if (!companyId) {
-      return res.status(400).json({ message: "Company ID is missing" });
-    }
+//     if (!companyId) {
+//       return res.status(400).json({ message: "Company ID is missing" });
+//     }
 
-    const employees = await this._getAllEmployeeByCompanyId.execute(companyId);
+//     const employees = await this._getAllEmployeeByCompanyId.execute(companyId);
 
-    return res.status(200).json({
-      message: "Employee details fetched successfully",
-      data: employees,
-    });
+//     return res.status(200).json({
+//       message: "Employee details fetched successfully",
+//       data: employees,
+//     });
   
-};
+// };
+
+
+createDepartment=async(req:AuthRequest,res:Response)=>{
+  const companyId=req.companyId;
+  console.log("Company ID",companyId);
+  
+  const response = await this._createDeapartmentUseCase.execute({...req.body,companyId})
+  return res.status(StatusCodes.CREATED).json({message:"Department Created Successfully",response})
+}
 
 
 }
- 

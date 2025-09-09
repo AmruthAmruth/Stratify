@@ -49,9 +49,26 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
         const email = localStorage.getItem("email"); 
         if (!email) throw new Error("Email not found, please register again.");
 
-        await verifyOTP({ email, otp });
-        enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
-        navigate("/login");
+        await verifyOTP({ email, otp }).then((data)=>{
+          console.log("Verification data ",data);
+          enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
+          if (data.accessToken) {
+                const decoded: DecodedToken = jwtDecode(data.accessToken);
+                console.log("decoded", decoded);
+          
+                dispatch(
+                  setCredentials({
+                    accessToken: data.accessToken,
+                    role: decoded.role,
+                    userId: decoded.id,
+                  })
+                );
+          
+                navigate("/dashboard");
+              }
+        }).catch((err)=>console.log(err)
+        )
+        
       }
 
       if (context === "forgotPassword") {

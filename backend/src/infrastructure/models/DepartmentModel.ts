@@ -1,31 +1,38 @@
-import mongoose, { Schema, Document, Types, Model } from "mongoose";
+import mongoose, { Schema, Document, Types } from "mongoose";
 
-export interface IDepartmentDoc extends Document {
- _id: Types.ObjectId;
+export interface DepartmentDocument extends Document {
   name: string;
-  companyId: Types.ObjectId;
-  managerId?: Types.ObjectId | null;
   description?: string;
-  status?: "active" | "inactive";
+  companyId: Types.ObjectId;
+  managerId?: Types.ObjectId;
+  normalizedName: string;
   createdAt: Date;
   updatedAt: Date;
 }
 
-const DepartmentSchema = new Schema<IDepartmentDoc>(
+const DepartmentSchema = new Schema<DepartmentDocument>(
   {
     name: { type: String, required: true },
+    description: { type: String },
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
-    managerId: { type: Schema.Types.ObjectId, ref: "Manager", default: null },
-    description: { type: String },                
-  status: { type: String, enum: ["active", "inactive"], default: "active" }, 
+    managerId: { type: Schema.Types.ObjectId, ref: "Manager" },
+
+    // ✅ fix: not required, will be filled by hook
+    normalizedName: { type: String, lowercase: true, default: "" },
   },
   { timestamps: true }
 );
 
+DepartmentSchema.index({ companyId: 1, normalizedName: 1 }, { unique: true });
 
-const DepartmentModel: Model<IDepartmentDoc> = mongoose.model<IDepartmentDoc>(
+DepartmentSchema.pre("save", function (next) {
+  if (this.name) {
+    this.normalizedName = this.name.toLowerCase().trim();
+  }
+  next();
+});
+
+export const DepartmentModel = mongoose.model<DepartmentDocument>(
   "Department",
   DepartmentSchema
 );
-
-export default DepartmentModel;

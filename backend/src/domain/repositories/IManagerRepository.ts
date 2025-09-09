@@ -1,4 +1,4 @@
-import { Manager } from "../entities/Manager";
+import { Manager } from "../entities/Managers";
 
 export interface IManagerRepo {
   create(manager: Partial<Manager>): Promise<Manager>;

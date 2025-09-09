@@ -5,7 +5,7 @@ import { Messages } from "../../../shared/constants/messages";
 import { hashPassword } from "../../../shared/utils/password";
 
 import { Company } from "../../../domain/entities/Company";
-import { Manager } from "../../../domain/entities/Manager";
+import { Manager } from "../../../domain/entities/Managers";
 import { Employee } from "../../../domain/entities/Employee";
 
 type UserType = Company | Manager | Employee;

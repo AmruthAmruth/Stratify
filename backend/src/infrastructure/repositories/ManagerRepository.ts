@@ -1,5 +1,5 @@
 import mongoose, { Document } from "mongoose";
-import { Manager } from "../../domain/entities/Manager";
+import { Manager } from "../../domain/entities/Managers";
 import { IManagerRepo } from "../../domain/repositories/IManagerRepository";
 import ManagerModel, { IManagerDoc } from "../models/ManagerModel";
 

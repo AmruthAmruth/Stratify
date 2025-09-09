@@ -1,4 +1,3 @@
-
 import { RegisterCompanySchema } from "../../validators/CompanyValidator";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { SendOtpUseCase } from "./SendOTPUseCase";
@@ -15,40 +14,43 @@ export class RegisterCompanyUseCase {
   ) {}
 
   async execute(data: Company): Promise<Date> {
+    
     RegisterCompanySchema.parse(data);
+
     const existing = await this._companyRepo.findByEmail(data.email);
     if (existing) throw new Error(Messages.COMPANY_ALREADY_EXISTS);
 
-const existingInMobile = await this._companyRepo.findByPhone(data.phone);
-if (existingInMobile) throw new Error(Messages.PHONE_ALREADY_EXISTS);
- 
+    const existingInMobile = await this._companyRepo.findByPhone(data.phone);
+    if (existingInMobile) throw new Error(Messages.PHONE_ALREADY_EXISTS);
 
+    const hashedPassword = await hashPassword(data.password);
 
-const hasedPassword = await hashPassword(data.password)
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); 
 
-
-     const expiresAt = new Date(Date.now() + 30 * 60 * 1000); 
-      const tempData = new Company(
-     data.name,
-  data.email,
-  data.phone,
-  data.industry,
-  data.description,
-  data.businessRegNo,
-  data.address,
-  data.city,
-  data.state,
-  data.country,
-  data.zipcode,
-  hasedPassword, 
-  data.status,
-  undefined,
-  "company" ,
-  data.profileImage,
-  );
+    const tempData = new Company(
+      undefined,                
+      data.name,
+      data.email,
+      data.phone,
+      data.industry,
+      data.description,
+      data.businessRegNo,
+      data.address,
+      data.city,
+      data.state,
+      data.country,
+      data.zipcode,
+      hashedPassword,          
+      data.status ?? "pending",
+      "company",
+      data.profileImage,
+    );
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);
- const otpExpiresAt=   await this._sendOtpUseCase.execute(data.email); 
-  return otpExpiresAt
+
+    
+    const otpExpiresAt = await this._sendOtpUseCase.execute(data.email);
+
+    return otpExpiresAt;
   }
 }

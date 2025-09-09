@@ -23,28 +23,29 @@ export class VerifyCompanyOTPUseCase {
     const companyData = await this._tempRegRepo.findByEmail(email);
     if (!companyData) throw new Error("Registration data expired");
 
+  console.log("Company Data :",companyData);
   
     if (!companyData.password) throw new Error("Password is missing in temporary registration data");
 
     
     const createdCompany = await this._companyRepo.create(
       new Company(
-        companyData.name,
-        companyData.email,
-        companyData.phone,
-        companyData.industry,
-        companyData.description,
-        companyData.businessRegNo,
-        companyData.address,
-        companyData.city,
-        companyData.state,
-        companyData.country,
-        companyData.zipcode,
-        companyData.password, 
-        companyData.status,
-        undefined,
-        "company",
-        companyData.profileImage
+         undefined,                
+    companyData.name,        
+    companyData.email,        
+    companyData.phone,        
+    companyData.industry,     
+    companyData.description,
+    companyData.businessRegNo,
+    companyData.address,
+    companyData.city,
+    companyData.state,
+    companyData.country,
+    companyData.zipcode,
+    companyData.password,
+    companyData.status,
+    "company",                
+    companyData.profileImage
       )
     );
 
@@ -61,4 +62,4 @@ export class VerifyCompanyOTPUseCase {
 
     return { accessToken, refreshToken };
   }
-}
+} 

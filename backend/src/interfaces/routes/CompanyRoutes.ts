@@ -18,13 +18,14 @@ companyRouter.post('/forgotpassword',asyncHandler(controller.forgotPassword))
 companyRouter.post('/forgotpassword-verifyotp',asyncHandler(controller.verifyForgotPasswordOTP))
 companyRouter.post('/resetpassword',asyncHandler(controller.resetPassword))
 companyRouter.get('/companies',asyncHandler(controller.getPaginatedCompanies))
-companyRouter.get('/departments',authMiddleware(['company']),asyncHandler(controller.getDepartmentDetailsInACompany))
-companyRouter.get('/employee',authMiddleware(["company", "manager"]),asyncHandler(controller.getAllEmployeeByCompanyId))
-
+// companyRouter.get('/departments',authMiddleware(['company']),asyncHandler(controller.getDepartmentDetailsInACompany))
+// companyRouter.get('/employee',authMiddleware(["company", "manager"]),asyncHandler(controller.getAllEmployeeByCompanyId))
 companyRouter.get("/:id", asyncHandler(controller.getCompanyById));
-companyRouter.post('/department',authMiddleware(['company']),asyncHandler(controller.createDepartmentWithManager))
-companyRouter.post('/create-employee',authMiddleware(["company", "manager"]),asyncHandler(controller.createEmployee))
 companyRouter.post('/approve-company',asyncHandler(controller.approveCompany))
 companyRouter.post('/unapprove-company',asyncHandler(controller.unapproveCompany))
+
+companyRouter.post('/create-department',authMiddleware(["company"]),asyncHandler(controller.createDepartment))
+
+//companyRouter.post('/create-employee',authMiddleware(["company", "manager"]),asyncHandler(controller.createEmployee))
 export default companyRouter
   
