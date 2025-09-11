@@ -7,3 +7,4 @@ export interface ICreateManagerUseCase{
     execute(manager:CreateManagerDTO):Promise<Manager>
 }
 
+  

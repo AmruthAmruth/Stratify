@@ -19,6 +19,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team",
     element: <TeamPage/>
+  },
+  {
+    path: "department-details",
+    element: <DepartmentDetailsPage/>
   }
    
 ];

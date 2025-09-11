@@ -1,18 +1,7 @@
-export interface IGetAllDepartmentByCompanyId {
-  execute(companyId: string): Promise<CompanyDepartmentSummary>;
-}
 
-export interface DepartmentDetails {
-  departmentName: string;
-  managerName: string;
-  managerEmail: string;
-  managerPhone: string;
-  employeeCount: number;
-}
+import { DepartmentDetails } from "../../dto/company/CompanyDepartmentsDTO";
 
-export interface CompanyDepartmentSummary {
-  companyName: string;
-  totalDepartments: number;
-  totalEmployees: number;
-  departments: DepartmentDetails[];
+
+export interface IGetCompanyDepartmentUseCase{
+    execute(companyId:string):Promise<DepartmentDetails[]>
 }

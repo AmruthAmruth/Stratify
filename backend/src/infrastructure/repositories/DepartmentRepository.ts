@@ -66,4 +66,19 @@ async assignManager(departmentId: string, managerId: string): Promise<void> {
     { new: true } 
   ).exec();
 }
+
+async findDepartmentsByCompanyId(companyId: string): Promise<Department[]> {
+  const docs = await DepartmentModel.find({ companyId }).exec();
+  return docs.map(doc => 
+    new Department(
+      doc.id.toString(),
+      doc.name,
+      doc.description,
+      doc.companyId.toString(),
+      doc.managerId?.toString(),
+      doc.createdAt,
+      doc.updatedAt
+    )
+  );
+}
 }

@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { RegisterCompanyDTO } from "../dto/company/register-company-dto";
+import { RegisterCompanyDTO } from "../dto/company/CreateCompanyDTO";
 
 export const RegisterCompanySchema: z.ZodType<RegisterCompanyDTO> = z.object({
   name: z.string().min(3, "Name must be at least 3 characters"),

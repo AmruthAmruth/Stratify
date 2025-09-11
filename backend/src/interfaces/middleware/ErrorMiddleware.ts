@@ -1,4 +1,4 @@
-import { Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
 
 export class AppError extends Error {
   statusCode: number;
@@ -13,7 +13,8 @@ export class AppError extends Error {
 export const errorMiddleware = (
   err: AppError, 
   _req: Request,
-  res: Response
+  res: Response,
+  _next: NextFunction   
 ): void => {
   console.error("Error:", err);
 

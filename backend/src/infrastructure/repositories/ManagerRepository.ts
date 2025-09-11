@@ -89,4 +89,40 @@ export class ManagerRepository implements IManagerRepository{
    async updatePassword(email: string, password: string): Promise<void> {
        await ManagerModel.updateOne({ email }, { $set: { password } });
    }
+
+
+   async getUnassignedManagers(): Promise<{id:string,name:string}[]> {
+   const docs = await ManagerModel.find({
+    $or: [
+      { departmentId: { $exists: false } },
+      { departmentId: null }
+    ]
+  }).select("_id name"); 
+
+  return docs.map(doc => ({ id: doc.id.toString(), name: doc.name }));
+}
+
+async totalManagerInACompany(companyId: string): Promise<number> {
+   return await ManagerModel.countDocuments({companyId})
+}
+
+
+async findByCompanyId(companyId: string): Promise<Manager[]> {
+  const docs = await ManagerModel.find({ companyId });
+  return docs.map(doc => new Manager(
+    doc.id.toString(),
+    doc.name,
+    doc.email,
+    doc.phone,
+    doc.password,
+    doc.role,
+    doc.position,
+    doc.joiningDate,
+    doc.gender,
+    doc.dob,
+    doc.companyId.toString(),
+    doc.departmentId?.toString(),
+    doc.profileImage
+  ));
+}
 }

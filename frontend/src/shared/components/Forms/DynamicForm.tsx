@@ -1,11 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { ZodSchema } from "zod";
 
+interface SelectOption {
+  value: string;
+  label: string;
+}
+
 interface Field {
   name: string;
   label: string;
   type: string;
-  options?: string[]; // for select fields
+  options?: (string | SelectOption)[]; // supports both string[] and { value, label }[]
 }
 
 interface AuthFormProps {
@@ -23,7 +28,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
 }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [preview, setPreview] = useState<Record<string, string | ArrayBuffer | null>>({});
+  const [preview, setPreview] = useState<
+    Record<string, string | ArrayBuffer | null>
+  >({});
 
   useEffect(() => {
     const initialData: Record<string, unknown> = {};
@@ -33,7 +40,9 @@ const AuthForm: React.FC<AuthFormProps> = ({
     setFormData(initialData);
   }, [fields]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
     const { name, type, value, files } = e.target as HTMLInputElement;
 
     if (type === "file" && files?.[0]) {
@@ -53,7 +62,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const validateField = (name: string) => {
     const result = validationSchema.safeParse(formData);
     if (!result.success) {
-      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
+      const formatted = result.error.format() as Record<
+        string,
+        { _errors?: string[] }
+      >;
       const fieldError = formatted[name]?._errors?.[0] ?? "";
       setErrors((prev) => ({ ...prev, [name]: fieldError }));
     } else {
@@ -66,7 +78,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
     const result = validationSchema.safeParse(formData);
 
     if (!result.success) {
-      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
+      const formatted = result.error.format() as Record<
+        string,
+        { _errors?: string[] }
+      >;
       const fieldErrors: Record<string, string> = {};
       fields.forEach((field) => {
         fieldErrors[field.name] = formatted[field.name]?._errors?.[0] ?? "";
@@ -86,7 +101,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {fields.map((field) => {
-          const colSpan = field.type === "file" ? "col-span-1 md:col-span-2" : "";
+          const colSpan =
+            field.type === "file" ? "col-span-1 md:col-span-2" : "";
 
           return (
             <div key={field.name} className={`flex flex-col ${colSpan}`}>
@@ -137,8 +153,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          setPreview((prev) => ({ ...prev, [field.name]: null }));
-                          setFormData((prev) => ({ ...prev, [field.name]: null }));
+                          setPreview((prev) => ({
+                            ...prev,
+                            [field.name]: null,
+                          }));
+                          setFormData((prev) => ({
+                            ...prev,
+                            [field.name]: null,
+                          }));
                         }}
                         className="absolute top-2 right-2 bg-red-500/90 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 transition"
                       >
@@ -148,7 +170,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   )}
                 </div>
               ) : field.type === "select" ? (
-                // ✅ Select Dropdown
+                // ✅ Select Dropdown (supports string[] and { value, label }[])
                 <select
                   name={field.name}
                   value={formData[field.name] as string}
@@ -159,11 +181,20 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   }`}
                 >
                   <option value="">Select {field.label}</option>
-                  {field.options?.map((option) => (
-                    <option key={option} value={option}>
-                      {option.charAt(0).toUpperCase() + option.slice(1)}
-                    </option>
-                  ))}
+                  {field.options?.map((option, idx) => {
+                    if (typeof option === "string") {
+                      return (
+                        <option key={idx} value={option}>
+                          {option.charAt(0).toUpperCase() + option.slice(1)}
+                        </option>
+                      );
+                    }
+                    return (
+                      <option key={option.value} value={option.value}>
+                        {option.label}
+                      </option>
+                    );
+                  })}
                 </select>
               ) : (
                 // 📝 Regular Input

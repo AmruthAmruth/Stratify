@@ -8,4 +8,7 @@ export interface IManagerRepository{
     findById(id:string):Promise<Manager|null>
     findByEmail(email:string):Promise<Manager|null>
     updatePassword(email:string,password:string):Promise<void>
+    getUnassignedManagers():Promise<{id:string,name:string}[]>
+    totalManagerInACompany(companyId:string):Promise<number>
+    findByCompanyId(companyId:string):Promise<Manager[]>
 }

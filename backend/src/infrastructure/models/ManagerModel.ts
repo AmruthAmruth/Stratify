@@ -5,7 +5,7 @@ export interface ManagerDocument extends Document {
   email: string;
   phone: string;
   password: string;
-  role: "manager"; 
+  role: "manager";  
   position: string;
   joiningDate: Date;
   gender: "male" | "female" | "other";

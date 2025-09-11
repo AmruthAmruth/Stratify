@@ -3,9 +3,13 @@ import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import Table from "@/shared/components/Table/Table";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
-import { addDepartmentWithManagerFields } from "@/shared/components/Forms/formFields";
+import { addDepartment } from "@/shared/components/Forms/formFields";
 import { addDepartmentSchema } from "@/shared/utils/validations";
-import { addDepartmentwithManager, getAllDepartmentInACompany } from "@/services/company";
+import {
+  createDepartment,
+  getAllDepartmentInACompany,
+  getUnassignedManager,
+} from "@/services/company";
 import { useSnackbar } from "notistack";
 
 interface DepartmentDetails {
@@ -23,56 +27,89 @@ interface CompanyData {
   departments: DepartmentDetails[];
 }
 
+interface Manager {
+  id: string;
+  name: string;
+}
+
 const Department: React.FC = () => {
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [companyName, setCompanyName] = useState<string>("");
   const [currentPage, setCurrentPage] = useState<number>(1);
   const pageSize = 7;
-  const [loading, setLoading] = useState<boolean>(false); // for fetching
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false); // for adding
+  const [loading, setLoading] = useState<boolean>(false);
+  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [managers, setManagers] = useState<Manager[]>([]);
 
   const { enqueueSnackbar } = useSnackbar();
 
-  // Handle adding a department (from modal form)
-  const handleAddDepartment = async (values: unknown) => {
-    setSubmitLoading(true);
+  // ----------------------
+  // Add Department Handler
+  // ----------------------
+ const handleAddDepartment = async (values: any) => {
+  setSubmitLoading(true);
+
+  // Prepare payload
+  const payload: any = {
+    name: values.name,
+    description: values.description,
+    ...(values.managerId && values.managerId.trim() !== "" && { managerId: values.managerId }),
+  };
+
+  try {
+    // 1️⃣ Create department
+    const data = await createDepartment(payload);
+    console.log("Response Data", data);
+
+    enqueueSnackbar("Department Created Successfully!", {
+      variant: "success",
+      anchorOrigin: { vertical: "top", horizontal: "right" },
+    });
+
     try {
-      const data = await addDepartmentwithManager(values);
-      console.log("Response Data ", data);
-
-      enqueueSnackbar("Department and Manager Added Successfully! 🎉", {
-        variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
-      });
-
-      // refresh department list after adding
       const response = await getAllDepartmentInACompany();
       const companyData: CompanyData | undefined = response?.data;
       if (companyData && Array.isArray(companyData.departments)) {
         setDepartments(companyData.departments);
         setCompanyName(companyData.companyName);
       }
-
-      setIsModalOpen(false);
-    } catch (err: any) {
-      console.error("Error while creating manager and department", err);
-      enqueueSnackbar(err?.error || "Failed to create department. Try again.", {
-        variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
-      });
-    } finally {
-      setSubmitLoading(false);
+    } catch (refreshErr) {
+      console.error("Error refreshing departments:", refreshErr);
+  
     }
-  };
 
-  // Fetch departments on mount
+    setIsModalOpen(false);
+  } catch (err: any) {
+    console.error("Error while creating manager and department:", err);
+
+    const errorMessage =
+      err?.message || "Failed to create department. Try again.";
+
+    enqueueSnackbar(errorMessage, {
+      variant: "error",
+      anchorOrigin: { vertical: "top", horizontal: "right" },
+    });
+  } finally {
+    setSubmitLoading(false);
+  }
+};
+
+  // ----------------------
+  // Fetch Departments & Managers
+  // ----------------------
   useEffect(() => {
     const fetchDepartments = async () => {
       setLoading(true);
       try {
-        const response = await getAllDepartmentInACompany();
+        // Fetch unassigned managers
+        const managersResponse = await getUnassignedManager();
+        if (Array.isArray(managersResponse?.managers)) {
+          setManagers(managersResponse.managers);
+        }
 
+        // Fetch department data
+        const response = await getAllDepartmentInACompany();
         const data: CompanyData | undefined = response?.data;
         if (!data || !Array.isArray(data.departments)) {
           setDepartments([]);
@@ -94,20 +131,43 @@ const Department: React.FC = () => {
     fetchDepartments();
   }, []);
 
+  // ----------------------
   // Pagination
+  // ----------------------
   const paginatedData = departments.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
   const totalPages = Math.ceil(departments.length / pageSize);
 
+  // ----------------------
+  // Dynamic Form Fields
+  // ----------------------
+  const departmentFormFields = [
+    ...addDepartment,
+    {
+      name: "managerId",
+      label: "Assign Manager (optional)",
+      type: "select",
+      options: [
+        { value: "", label: "None" }, // optional "None" option
+        ...managers.map((m) => ({ value: m.id, label: m.name })),
+      ],
+    },
+  ];
+
+  // ----------------------
+  // Render
+  // ----------------------
   return (
     <div className="p-6 bg-gray-100">
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <DashboardCard
           title="Total Employees"
-          value={departments.reduce((acc, dept) => acc + dept.employeeCount, 0).toString()}
+          value={departments
+            .reduce((acc, dept) => acc + dept.employeeCount, 0)
+            .toString()}
           subtitle={`Across ${departments.length} Departments`}
           trend="up"
         />
@@ -173,7 +233,7 @@ const Department: React.FC = () => {
         title="Add Department"
       >
         <AuthForm
-          fields={addDepartmentWithManagerFields}
+          fields={departmentFormFields}
           validationSchema={addDepartmentSchema}
           onSubmit={handleAddDepartment}
           buttonText={submitLoading ? "Adding..." : "Add Department"}

@@ -1,74 +1,44 @@
-import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { IDepartmentRepo } from "../../../domain/repositories/IDepartmentRepository";
-import { IManagerRepo } from "../../../domain/repositories/IManagerRepository";
+import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
-import { Messages } from "../../../shared/constants/messages";
+import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
+import { DepartmentDetails } from "../../dto/company/CompanyDepartmentsDTO";
+import { IGetCompanyDepartmentUseCase } from "../../interfaces/company/IGetCompanyDepartmentsUseCase";
 
-interface DepartmentDetails {
-  departmentName: string;
-  managerName: string;
-  managerEmail: string;
-  managerPhone: string;
-  employeeCount: number;
-}
-
-interface CompanyDepartmentSummary {
-  companyName: string;
-  totalDepartments: number;
-  totalEmployees: number;
-  departments: DepartmentDetails[];
-}
-
-export class GetAllDepartmentByCompanyId {
+export class GetCompanyDepartmentUseCase
+  implements IGetCompanyDepartmentUseCase
+{
   constructor(
-    private readonly _companyRepo: ICompanyRepository,
-    private readonly _departmentRepo: IDepartmentRepo,
-    private readonly _managerRepo: IManagerRepo,
-    private readonly _employeeRepo: IEmployeeRepository
+    private _departmentRepo: IDepartmentRepository,
+    private _managerRepo: IManagerRepository,
+    private _employeeRepo: IEmployeeRepository
   ) {}
+  async execute(companyId: string): Promise<DepartmentDetails[]> {
+    const departments = await this._departmentRepo.findDepartmentsByCompanyId(
+      companyId
+    );
 
-async execute(companyId: string): Promise<CompanyDepartmentSummary> {
-  const company = await this._companyRepo.findById(companyId);
-  if (!company) throw new Error(Messages.COMPANY_NOT_FOUND);
+    const enrichedDepartments: DepartmentDetails[] = await Promise.all(
+      departments.map(async (dept) => {
+        let managerName = "Unassigned";
 
-  const departments = await this._departmentRepo.getAllDepartment(companyId);
-  if (!departments || departments.length === 0) {
-    throw new Error("Department Not found"); 
+        if (dept.managerId) {
+          const manager = await this._managerRepo.findById(dept.managerId);
+          if (manager) managerName = manager.name;
+        }
+
+        const numOfEmployees =
+          await this._employeeRepo.totalEmployeeInADepartment(dept.id!);
+
+        return {
+          id: dept.id!,
+          name: dept.name,
+          description: dept.description,
+          managerName,
+          numOfEmployees,
+        };
+      })
+    );
+
+    return enrichedDepartments;
   }
-  console.log(departments);
-  
-
-  const departmentDetails: DepartmentDetails[] = await Promise.all(
-    departments.map(async (dept) => {
-      const manager = dept.managerId
-        ? await this._managerRepo.findById(dept.managerId)
-        : null;
-
-      const employees = (await this._employeeRepo.findByDepartmentId(dept.id)) ?? [];
-
-console.log("Employee Details",employees);
-
-
-      return {
-        departmentName: dept.name,
-        managerName: manager?.name ?? "N/A",
-        managerEmail: manager?.email ?? "N/A",
-        managerPhone: manager?.phone ?? "N/A",
-        employeeCount: employees.length,
-      };
-    })
-  );
-
-  const totalEmployees = departmentDetails.reduce(
-    (sum, dept) => sum + dept.employeeCount,
-    0
-  );
-
-  return {
-    companyName: company.name,
-    totalDepartments: departments.length,
-    totalEmployees,
-    departments: departmentDetails,
-  };
-}
 }

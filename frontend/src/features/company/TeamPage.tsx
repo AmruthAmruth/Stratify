@@ -7,7 +7,6 @@ import { addMemberFields } from "@/shared/components/Forms/formFields";
 import { addMemberSchema } from "@/shared/utils/validations";
 import { createEmployee } from "@/services/company";
 import { enqueueSnackbar } from "notistack";
-
 interface TeamMember {
   id: string;
   name: string;

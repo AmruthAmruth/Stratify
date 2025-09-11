@@ -115,4 +115,60 @@ export class EmployeeRepository implements IEmployeeRepository {
   async updatePassword(email: string, password: string): Promise<void> {
       await EmployeeModel.updateOne({ email }, { $set: { password } });
   }
+
+ async totalEmployeeInADepartment(departmentId: string): Promise<number> {
+  return await EmployeeModel.countDocuments({ departmentId });
+}
+
+
+async findByDepartmentId(departmentId: string): Promise<Employee[]> {
+   const docs = await EmployeeModel.find({ departmentId });
+
+  return docs.map(doc => new Employee(
+    doc.id.toString(),
+    doc.name,
+    doc.email,
+    doc.phone,
+    doc.dob,
+    doc.joiningDate,
+    doc.position,
+    doc.password,
+    doc.companyId.toString(),
+    doc.departmentId.toString(),
+    doc.gender,
+    doc.role,
+    doc.managerId ? doc.managerId.toString() : undefined,
+    doc.profileImage ?? undefined,
+    doc.createdAt,
+    doc.updatedAt
+  ));
+}
+
+async totalEmployeeInACompany(companyId: string): Promise<number> {
+  return await EmployeeModel.countDocuments({companyId})
+}
+
+async findByCompanyId(companyId: string): Promise<Employee[]> {
+  const docs = await EmployeeModel.find({ companyId });
+    return docs.map(doc => new Employee(
+  doc.id.toString(),
+  doc.name,
+  doc.email,
+  doc.phone,
+  doc.dob,
+  doc.joiningDate,
+  doc.position,
+  doc.password,
+  doc.companyId.toString(),
+  doc.departmentId?.toString(),
+  doc.gender,
+  doc.role,
+  doc.managerId ? doc.managerId.toString() : undefined,
+  doc.profileImage ?? undefined,
+  doc.createdAt,
+  doc.updatedAt
+));
+}
+
+
 }

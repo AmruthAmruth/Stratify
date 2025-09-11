@@ -21,6 +21,10 @@ import { DepartmentRepository } from "../infrastructure/repositories/DepartmentR
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { CreateManagerUseCase } from "../application/use-cases/company/CreateManagerUseCase";
 import { CreateEmployeeUseCase } from "../application/use-cases/company/CreateEmployeeUseCase";
+import { GetUnassignedManagersUseCase } from "../application/use-cases/company/GetUnassignedManagersUseCase";
+import { GetCompanyDepartmentUseCase } from "../application/use-cases/company/GetCompanyDepartmentsUseCase";
+import { GetDepartmentDetailsUseCase } from "../application/use-cases/company/GetDepartmentDetailsUseCase";
+import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 
 export const companyDI = () => {
 
@@ -64,10 +68,15 @@ const departmentRepo = new DepartmentRepository()
 const createDepartmentUseCase= new CreateDepartmentUseCase(departmentRepo,managerRepo,companyRepo,emailService)
 const createManagerUseCase =new CreateManagerUseCase(companyRepo,managerRepo,departmentRepo,emailService)
 const createEmployeeUseCase = new CreateEmployeeUseCase(companyRepo,employeeRepo,departmentRepo,managerRepo,emailService)
+const getUnassignedManagers = new GetUnassignedManagersUseCase(managerRepo)
+const GetCompanyDepartment = new GetCompanyDepartmentUseCase(departmentRepo,managerRepo,employeeRepo)
+const GetDepartmentDetails = new GetDepartmentDetailsUseCase(departmentRepo,managerRepo,employeeRepo)
+const getCompanyMemebers = new GetCompanyMemebersUseCase(managerRepo,employeeRepo,departmentRepo)
+
 
   return new CompanyController(
     registerUseCase, 
-    verifyUseCase,
+    verifyUseCase, 
     getCompanyById, 
     companyLoginUseCase,
     resendOtpUseCase,
@@ -79,7 +88,11 @@ const createEmployeeUseCase = new CreateEmployeeUseCase(companyRepo,employeeRepo
     unapproveCompanyUseCase,
     createDepartmentUseCase,
 createManagerUseCase,
-createEmployeeUseCase
+createEmployeeUseCase,
+getUnassignedManagers,
+GetCompanyDepartment,
+GetDepartmentDetails,
+getCompanyMemebers
   );
 };
  

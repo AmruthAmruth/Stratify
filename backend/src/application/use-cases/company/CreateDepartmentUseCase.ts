@@ -3,7 +3,9 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateDepartmentDTO } from "../../dto/company/CreateDepartmentDTO";
 import { ICreateDepartmentUseCase } from "../../interfaces/company/ICreateDepartmentUseCase";
 
@@ -19,7 +21,7 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
 
     const company = await this._companyRepo.findById(data.companyId);
     if (!company) {
-      throw new Error(Messages.COMPANY_NOT_FOUND);
+       throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const existingDepartment = await this._departmentRepo.findByNameAndCompany(
@@ -27,17 +29,17 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       data.companyId
     );
     if (existingDepartment) {
-      throw new Error("Department already exists");
+       throw new AppError("Department already exists", 400);
     }
  let managerEmail: string | null = null;
 
     if (data.managerId) {
       const manager = await this._managerRepo.findById(data.managerId);
       if (!manager) {
-        throw new Error("Manager not found");
+           throw new AppError("Manager not found", 404);
       }
       if (manager.departmentId) {
-        throw new Error("Manager is already assigned to another department");
+          throw new AppError("Manager is already assigned to another department", 400);
       }
       managerEmail = manager.email;
     }

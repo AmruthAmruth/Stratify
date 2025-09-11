@@ -55,6 +55,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
    
     const tempPassword = await generateRandomPassword();
     const hashedPassword = await hashPassword(tempPassword);
+  const managerIdToAssign = department.managerId ? department.managerId.toString() : undefined;
 
     
     const employee = new Employee(
@@ -70,7 +71,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       employeeDto.departmentId,
       employeeDto.gender,
       "employee",
-      employeeDto.managerId,
+       employeeDto.managerId || managerIdToAssign,
       employeeDto.profileImage,
     );
 

@@ -22,15 +22,9 @@ export const loginFields = [
 ];
 
 
-export const addDepartmentWithManagerFields = [
-  { name: "departmentName", label: "Department Name", type: "text" },
-  { name: "departmentDescription", label: "Description", type: "textarea" },
-  { name: "departmentStatus", label: "Status", type: "select", options: ["active", "inactive"] },
-  { name: "managerName", label: "Manager Name", type: "text" },
-  { name: "managerEmail", label: "Manager Email", type: "email" },
-  { name: "managerPhone", label: "Manager Phone", type: "tel" },
-  { name: "managerJoiningDate", label: "Joining Date", type: "date" },
-  { name: "managerProfileImage", label: "Profile Image", type: "file" },
+export const addDepartment = [
+  { name: "name", label: "Department Name", type: "text" },
+  { name: "description", label: "Description", type: "textarea" },
 ];
 
 

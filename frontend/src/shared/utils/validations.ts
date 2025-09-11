@@ -34,27 +34,10 @@ export const loginSchema = z.object({
 
 
 export const addDepartmentSchema = z.object({
-  departmentName: z.string().min(2, "Department name must be at least 2 characters"),
-  departmentDescription: z.string().min(1, "Description is required").optional(),
-  departmentStatus: z.enum(["active", "inactive"], {
-    required_error: "Please select a department status",
-  }),
-  managerName: z.string().min(2, "Manager name must be at least 2 characters"),
-  managerEmail: z.string().email("Invalid email address"),
-  managerPhone: z
-    .string()
-    .regex(/^\+?[0-9]{10,15}$/, "Invalid phone number"), // allows + and 10–15 digits
-  managerJoiningDate: z
-    .string()
-    .refine((val) => !isNaN(Date.parse(val)), {
-      message: "Invalid date",
-    })
-    .optional(),
-    managerProfileImage: z
-      .instanceof(File)
-      .refine(file => file.size <= 5 * 1024 * 1024, "Max file size is 5MB")
-      .optional(),
+  name: z.string().min(2, "Department name must be at least 2 characters"),
+  description: z.string().min(1, "Description is required").optional(),
 });
+
 
 
 export const addMemberSchema = z.object({

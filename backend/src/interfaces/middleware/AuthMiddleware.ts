@@ -44,3 +44,4 @@ export const authMiddleware = (allowedRoles: ("company" | "manager" | "employee"
     }
   };
 };
+

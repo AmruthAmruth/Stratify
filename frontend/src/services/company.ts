@@ -1,5 +1,6 @@
 import api from './axiosInstance'
 
+
 export const getAllCompanies = async (params?: {
   page?: number;
   pageSize?: number;
@@ -8,31 +9,28 @@ export const getAllCompanies = async (params?: {
   sort?: Record<string, 1 | -1>;
 }) => {
   try {
-    const response = await api.get("/company/companies", {
-      params, 
-    });
+    const response = await api.get("/company/companies", { params });
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
 };
+
 
 export const getAllDepartmentInACompany = async () => {
   try {
-     const response = await api.get(`/company/departments`);
-     console.log("RESPONSE DATA",response.data)
-     return response.data;
+    const response = await api.get("/company/departments");
+    console.log("RESPONSE DATA", response.data);
+    return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
 };
- 
 
-export const addDepartmentwithManager = async (data: Record<string, unknown>) => {
+
+export const createDepartment = async (data: Record<string, unknown>) => {
   try {
-    
-    const response = await api.post("/company/department", data);
-
+    const response = await api.post("/company/create-department", data);
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
@@ -40,20 +38,31 @@ export const addDepartmentwithManager = async (data: Record<string, unknown>) =>
 };
 
 
-export const createEmployee = async (data:Record<string,unknown>)=>{
-  try{
-const response = await api.post("/company/employee", data);
-
+export const createEmployee = async (data: Record<string, unknown>) => {
+  try {
+    const response = await api.post("/company/create-employee", data);
     return response.data;
-  }catch(err:any){
+  } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
-}
+};
 
-export const getTeamMember=async()=>{
-  try{
-const response = await api.get('/company/depa')
-  }catch(err:any){
+
+export const getTeamMember = async () => {
+  try {
+    const response = await api.get("/company/team-members"); 
+    return response.data;
+  } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
-}
+};
+
+
+export const getUnassignedManager = async () => {
+  try {
+    const response = await api.get("/company/unassigned-managers");
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
