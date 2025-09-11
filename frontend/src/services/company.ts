@@ -19,8 +19,8 @@ export const getAllCompanies = async (params?: {
 
 export const getAllDepartmentInACompany = async () => {
   try {
-    const response = await api.get("/company/departments");
-    console.log("RESPONSE DATA", response.data);
+    const response = await api.get("/company/company-departments");
+   
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");

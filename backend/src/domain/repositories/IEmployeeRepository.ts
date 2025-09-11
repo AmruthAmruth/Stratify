@@ -12,4 +12,5 @@ export interface IEmployeeRepository{
      findByDepartmentId(departmentId:string):Promise<Employee[]>
      totalEmployeeInACompany(companyId:string):Promise<number>
      findByCompanyId(companyId:string):Promise<Employee[]>
+     findById(id:string):Promise<Employee|null>
 }

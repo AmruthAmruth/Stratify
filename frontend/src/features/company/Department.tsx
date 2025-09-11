@@ -12,19 +12,13 @@ import {
 } from "@/services/company";
 import { useSnackbar } from "notistack";
 
+// Updated interface to match API response
 interface DepartmentDetails {
-  departmentName: string;
+  id: string;
+  name: string;
+  description?: string;
   managerName: string;
-  managerEmail: string;
-  managerPhone: string;
-  employeeCount: number;
-}
-
-interface CompanyData {
-  companyName: string;
-  totalDepartments: number;
-  totalEmployees: number;
-  departments: DepartmentDetails[];
+  numOfEmployees: number;
 }
 
 interface Manager {
@@ -47,53 +41,55 @@ const Department: React.FC = () => {
   // ----------------------
   // Add Department Handler
   // ----------------------
- const handleAddDepartment = async (values: any) => {
-  setSubmitLoading(true);
+  const handleAddDepartment = async (values: any) => {
+    setSubmitLoading(true);
 
-  // Prepare payload
-  const payload: any = {
-    name: values.name,
-    description: values.description,
-    ...(values.managerId && values.managerId.trim() !== "" && { managerId: values.managerId }),
-  };
-
-  try {
-    // 1️⃣ Create department
-    const data = await createDepartment(payload);
-    console.log("Response Data", data);
-
-    enqueueSnackbar("Department Created Successfully!", {
-      variant: "success",
-      anchorOrigin: { vertical: "top", horizontal: "right" },
-    });
+    // Prepare payload
+    const payload: any = {
+      name: values.name,
+      description: values.description,
+      ...(values.managerId && values.managerId.trim() !== "" && { managerId: values.managerId }),
+    };
 
     try {
-      const response = await getAllDepartmentInACompany();
-      const companyData: CompanyData | undefined = response?.data;
-      if (companyData && Array.isArray(companyData.departments)) {
-        setDepartments(companyData.departments);
-        setCompanyName(companyData.companyName);
+      // 1️⃣ Create department
+      const data = await createDepartment(payload);
+      console.log("Response Data", data);
+
+      enqueueSnackbar("Department Created Successfully!", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+
+      try {
+        const response = await getAllDepartmentInACompany();
+        console.log("Refresh Response:", response);
+        
+        // Updated to handle the actual API response structure
+        if (response && Array.isArray(response.response)) {
+          setDepartments(response.response);
+        } else if (response && Array.isArray(response)) {
+          setDepartments(response);
+        }
+      } catch (refreshErr) {
+        console.error("Error refreshing departments:", refreshErr);
       }
-    } catch (refreshErr) {
-      console.error("Error refreshing departments:", refreshErr);
-  
+
+      setIsModalOpen(false);
+    } catch (err: any) {
+      console.error("Error while creating department:", err);
+
+      const errorMessage =
+        err?.message || "Failed to create department. Try again.";
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+    } finally {
+      setSubmitLoading(false);
     }
-
-    setIsModalOpen(false);
-  } catch (err: any) {
-    console.error("Error while creating manager and department:", err);
-
-    const errorMessage =
-      err?.message || "Failed to create department. Try again.";
-
-    enqueueSnackbar(errorMessage, {
-      variant: "error",
-      anchorOrigin: { vertical: "top", horizontal: "right" },
-    });
-  } finally {
-    setSubmitLoading(false);
-  }
-};
+  };
 
   // ----------------------
   // Fetch Departments & Managers
@@ -110,15 +106,21 @@ const Department: React.FC = () => {
 
         // Fetch department data
         const response = await getAllDepartmentInACompany();
-        const data: CompanyData | undefined = response?.data;
-        if (!data || !Array.isArray(data.departments)) {
+        console.log("Response Data:", response);
+        
+        // Handle the actual API response structure
+        if (response && Array.isArray(response.response)) {
+          setDepartments(response.response);
+        } else if (response && Array.isArray(response)) {
+          setDepartments(response);
+        } else {
+          console.warn("Unexpected response structure:", response);
           setDepartments([]);
-          setCompanyName("");
-          return;
         }
-
-        setDepartments(data.departments);
-        setCompanyName(data.companyName);
+        
+        // You might want to set company name from somewhere else or make it optional
+        // setCompanyName(response?.companyName || "Your Company");
+        
       } catch (err) {
         console.error("Error fetching departments:", err);
         setDepartments([]);
@@ -157,6 +159,11 @@ const Department: React.FC = () => {
   ];
 
   // ----------------------
+  // Calculate total employees
+  // ----------------------
+  const totalEmployees = departments.reduce((acc, dept) => acc + dept.numOfEmployees, 0);
+
+  // ----------------------
   // Render
   // ----------------------
   return (
@@ -165,23 +172,21 @@ const Department: React.FC = () => {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <DashboardCard
           title="Total Employees"
-          value={departments
-            .reduce((acc, dept) => acc + dept.employeeCount, 0)
-            .toString()}
+          value={totalEmployees.toString()}
           subtitle={`Across ${departments.length} Departments`}
           trend="up"
         />
         <DashboardCard
-          title="Active Projects"
-          value="35"
-          subtitle="8 Completed this Month"
+          title="Active Departments"
+          value={departments.length.toString()}
+          subtitle="Currently Active"
           trend="up"
         />
         <DashboardCard
-          title="Budget Utilization"
-          value="72%"
-          subtitle="Q3 Department Spending"
-          trend="down"
+          title="Assigned Managers"
+          value={departments.filter(dept => dept.managerName !== 'Unassigned').length.toString()}
+          subtitle="With Department Heads"
+          trend="up"
         />
       </div>
 
@@ -206,9 +211,10 @@ const Department: React.FC = () => {
         ) : (
           <Table
             columns={[
-              { key: "departmentName", label: "Department Name" },
+              { key: "name", label: "Department Name" },
               { key: "managerName", label: "Head of Department" },
-              { key: "managerPhone", label: "Phone" },
+              { key: "numOfEmployees", label: "Employees" },
+              { key: "description", label: "Description" },
             ]}
             data={paginatedData}
             currentPage={currentPage}
@@ -219,7 +225,7 @@ const Department: React.FC = () => {
                 label: "View More",
                 type: "custom",
                 onClick: (row) =>
-                  alert(`Viewing details for ${row.departmentName}`),
+                  alert(`Viewing details for ${row.name}`),
               },
             ]}
           />

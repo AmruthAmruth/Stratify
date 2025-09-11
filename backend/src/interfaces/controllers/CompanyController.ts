@@ -24,6 +24,7 @@ import { GetUnassignedManagersUseCase } from "../../application/use-cases/compan
 import { GetCompanyDepartmentUseCase } from "../../application/use-cases/company/GetCompanyDepartmentsUseCase";
 import { GetDepartmentDetailsUseCase } from "../../application/use-cases/company/GetDepartmentDetailsUseCase";
 import { GetCompanyMemebersUseCase } from "../../application/use-cases/company/GetCompanyMembersUseCase";
+import { GetProfileUseCase } from "../../application/use-cases/company/GetProfileUseCase";
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -47,7 +48,8 @@ export class CompanyController {
     private _getUnassignedManagersUseCase:GetUnassignedManagersUseCase,
     private _getCompanyDepartmentsUseCase:GetCompanyDepartmentUseCase,
     private _getDepartmentDetailsUseCase:GetDepartmentDetailsUseCase,
-    private _getCompanyMembersUseCase:GetCompanyMemebersUseCase
+    private _getCompanyMembersUseCase:GetCompanyMemebersUseCase,
+    private _getProfileOfTeamMemeber:GetProfileUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -192,5 +194,11 @@ getCompanyMembers=async(req:AuthRequest,res:Response)=>{
   return res.status(StatusCodes.OK).json({response})
 }
 
+
+getProfileOfTeamMemeber=async(req:Request,res:Response)=>{
+  const {id}=req.body
+  const response = await this._getProfileOfTeamMemeber.execute(id);
+  return res.status(StatusCodes.OK).json({response})
+}
 
 }

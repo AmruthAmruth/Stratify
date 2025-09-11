@@ -1,21 +1,17 @@
-
-
-
 export interface ProfileDTO {
   id: string;
   name: string;
   email: string;
   phone: string;
+  role: string;
   position: string;
-  joiningDate: Date;
-  dob: Date;
-  gender: "male" | "female" | "other";
   companyId: string;
-  companyName?: string;        
   departmentId?: string;
-  departmentName?: string;      
-  managerId?: string;           
-  managerName?: string;        
+  departmentName?: string; 
   profileImage?: string;
-  role: "Manager" | "Employee"; 
+  dob: Date;
+  gender?: string;
+  joiningDate: Date;
+  experience?: number; 
+  age?: number;        
 }

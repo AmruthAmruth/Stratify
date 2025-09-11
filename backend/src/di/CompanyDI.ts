@@ -25,6 +25,7 @@ import { GetUnassignedManagersUseCase } from "../application/use-cases/company/G
 import { GetCompanyDepartmentUseCase } from "../application/use-cases/company/GetCompanyDepartmentsUseCase";
 import { GetDepartmentDetailsUseCase } from "../application/use-cases/company/GetDepartmentDetailsUseCase";
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
+import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
 
 export const companyDI = () => {
 
@@ -72,7 +73,7 @@ const getUnassignedManagers = new GetUnassignedManagersUseCase(managerRepo)
 const GetCompanyDepartment = new GetCompanyDepartmentUseCase(departmentRepo,managerRepo,employeeRepo)
 const GetDepartmentDetails = new GetDepartmentDetailsUseCase(departmentRepo,managerRepo,employeeRepo)
 const getCompanyMemebers = new GetCompanyMemebersUseCase(managerRepo,employeeRepo,departmentRepo)
-
+const getProfileOfTeamMemeber= new GetProfileUseCase(managerRepo,employeeRepo,departmentRepo)
 
   return new CompanyController(
     registerUseCase, 
@@ -92,7 +93,8 @@ createEmployeeUseCase,
 getUnassignedManagers,
 GetCompanyDepartment,
 GetDepartmentDetails,
-getCompanyMemebers
+getCompanyMemebers,
+getProfileOfTeamMemeber
   );
 };
  
