@@ -48,6 +48,18 @@ export const createEmployee = async (data: Record<string, unknown>) => {
 };
 
 
+
+
+export const createManager= async (data: Record<string, unknown>) => {
+  try {
+    const response = await api.post("/company/create-manager", data);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
 export const getTeamMember = async () => {
   try {
     const response = await api.get("/company/team-members"); 
@@ -68,6 +80,16 @@ export const getUnassignedManager = async () => {
 };
 
 
+export const getUnassignedDepartments = async () => {
+  try {
+    const response = await api.get("/company/unassigned-department");
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
   export const getDepartmentDetails = async (departmentId: string) => {
     try {
       const response = await api.get(`/company/department-details/${departmentId}`);
@@ -78,8 +100,30 @@ export const getUnassignedManager = async () => {
       throw err.response?.data || new Error("Network error");
     }
 
-
-
-    
-
 }
+
+
+
+
+  export const getTeamMemeberProfile=async(profileId:string)=>{
+      try {
+      const response = await api.get(`/company/team-member-profile/${profileId}`);
+      console.log("Here is the response ",response.data);
+      
+      return response.data;
+    } catch (err: any) {
+      throw err.response?.data || new Error("Network error");
+    }
+  }
+
+
+  export const getCompanyProfile=async(profileId:string)=>{
+     try {
+      const response = await api.get(`/company/company/${profileId}`);
+      console.log("Here is the response ",response.data);
+      
+      return response.data;
+    } catch (err: any) {
+      throw err.response?.data || new Error("Network error");
+    }
+  }

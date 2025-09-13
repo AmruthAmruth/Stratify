@@ -19,13 +19,14 @@ companyRouter.post("/resetpassword", asyncHandler(controller.resetPassword));
 
 // 🔹 Company-related actions
 companyRouter.get("/companies", asyncHandler(controller.getPaginatedCompanies));
-companyRouter.get("/unassigned-managers", asyncHandler(controller.getUnassignedManager));
+companyRouter.get("/unassigned-managers",authMiddleware(["company"]),asyncHandler(controller.getUnassignedManager));
+companyRouter.get("/unassigned-department",authMiddleware(["company"]),asyncHandler(controller.getUnassignedDepartment));
 companyRouter.get('/company-departments',authMiddleware(["company"]),asyncHandler(controller.getCompanyDepartments))
 companyRouter.get('/company-employees',authMiddleware(["company"]),asyncHandler(controller.getCompanyMembers))
-companyRouter.get('/team-member-profile',asyncHandler(controller.getProfileOfTeamMemeber))
 
+companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))
 companyRouter.get('/department-details/:id', asyncHandler(controller.getDepartmentDetails))
-
+companyRouter.get('/company/:id',asyncHandler(controller.getCompany))
 
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post("/unapprove-company", asyncHandler(controller.unapproveCompany));

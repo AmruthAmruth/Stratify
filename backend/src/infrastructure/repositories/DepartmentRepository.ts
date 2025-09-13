@@ -81,4 +81,23 @@ async findDepartmentsByCompanyId(companyId: string): Promise<Department[]> {
     )
   );
 }
+
+
+
+  async getUnassignedDepartments(companyId:string): Promise<{id:string,name:string}[]> {
+   const docs = await DepartmentModel.find({
+       companyId: companyId, 
+       $or: [
+         { managerId: { $exists: false } },
+         { managerId: null }
+       ]
+     }).select("_id name");
+   
+     return docs.map(doc => ({
+       id: doc.id.toString(), 
+       name: doc.name
+     }));
+}
+
+
 }

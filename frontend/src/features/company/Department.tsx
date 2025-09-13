@@ -3,11 +3,13 @@ import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import Table from "@/shared/components/Table/Table";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
-import { addDepartment } from "@/shared/components/Forms/formFields";
+import { addDepartment, addManager } from "@/shared/components/Forms/formFields";
 import { addDepartmentSchema } from "@/shared/utils/validations";
 import {
   createDepartment,
+  createManager,
   getAllDepartmentInACompany,
+  getUnassignedDepartments,
   getUnassignedManager,
 } from "@/services/company";
 import { useSnackbar } from "notistack";
@@ -28,6 +30,12 @@ interface Manager {
   name: string;
 }
 
+interface UnassignedDepartment {
+  id: string;
+  name: string;
+  description?: string;
+}
+
 const Department: React.FC = () => {
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [companyName, setCompanyName] = useState<string>("");
@@ -35,8 +43,13 @@ const Department: React.FC = () => {
   const pageSize = 7;
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  
+  // Separate modal states
+  const [isDepartmentModalOpen, setIsDepartmentModalOpen] = useState<boolean>(false);
+  const [isManagerModalOpen, setIsManagerModalOpen] = useState<boolean>(false);
+  
   const [managers, setManagers] = useState<Manager[]>([]);
+  const [unassignedDepartments, setUnassignedDepartments] = useState<UnassignedDepartment[]>([]);
   
   // Search and Filter States
   const [searchTerm, setSearchTerm] = useState<string>("");
@@ -45,6 +58,29 @@ const Department: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const { enqueueSnackbar } = useSnackbar();
+
+  // ----------------------
+  // Fetch Unassigned Departments
+  // ----------------------
+  const fetchUnassignedDepartments = async () => {
+    try {
+      const response = await getUnassignedDepartments();
+      console.log("Unassigned Departments Response:", response);
+      
+      // Handle the response structure based on your API
+      if (response && Array.isArray(response.departments)) {
+        setUnassignedDepartments(response.departments);
+      } else if (response && Array.isArray(response)) {
+        setUnassignedDepartments(response);
+      } else {
+        console.warn("Unexpected unassigned departments response structure:", response);
+        setUnassignedDepartments([]);
+      }
+    } catch (err) {
+      console.error("Error fetching unassigned departments:", err);
+      setUnassignedDepartments([]);
+    }
+  };
 
   // ----------------------
   // Add Department Handler
@@ -69,21 +105,33 @@ const Department: React.FC = () => {
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
 
+      // Refresh all data after creating department
       try {
-        const response = await getAllDepartmentInACompany();
-        console.log("Refresh Response:", response);
+        const [departmentsResponse, managersResponse] = await Promise.all([
+          getAllDepartmentInACompany(),
+          getUnassignedManager()
+        ]);
         
-        // Updated to handle the actual API response structure
-        if (response && Array.isArray(response.response)) {
-          setDepartments(response.response);
-        } else if (response && Array.isArray(response)) {
-          setDepartments(response);
+        // Update departments
+        if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
+          setDepartments(departmentsResponse.response);
+        } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
+          setDepartments(departmentsResponse);
         }
+
+        // Update managers
+        if (Array.isArray(managersResponse?.managers)) {
+          setManagers(managersResponse.managers);
+        }
+
+        // Refresh unassigned departments as the new department might be unassigned
+        await fetchUnassignedDepartments();
+        
       } catch (refreshErr) {
-        console.error("Error refreshing departments:", refreshErr);
+        console.error("Error refreshing data:", refreshErr);
       }
 
-      setIsModalOpen(false);
+      setIsDepartmentModalOpen(false);
     } catch (err: any) {
       console.error("Error while creating department:", err);
 
@@ -99,49 +147,126 @@ const Department: React.FC = () => {
     }
   };
 
-const navigate = useNavigate()
+  // ----------------------
+  // Add Manager Handler (Updated)
+  // ----------------------
+  const handleAddManager = async (values: any) => {
+  setSubmitLoading(true);
+
+  try {
+    // Build payload
+    const payload = {
+      ...values,
+      ...(values.departmentId?.trim() && { departmentId: values.departmentId }),
+    };
+
+    // Create manager
+    const data = await createManager(payload);
+    console.log("Manager added successfully", data);
+
+    enqueueSnackbar("Manager Added Successfully!", {
+      variant: "success",
+      anchorOrigin: { vertical: "top", horizontal: "right" },
+    });
+
+    // Refresh managers + departments
+    try {
+      const [managersResponse, departmentsResponse] = await Promise.all([
+        getUnassignedManager(),
+        getAllDepartmentInACompany(),
+      ]);
+
+      if (Array.isArray(managersResponse?.managers)) {
+        setManagers(managersResponse.managers);
+      }
+
+      if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
+        setDepartments(departmentsResponse.response);
+      } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
+        setDepartments(departmentsResponse);
+      }
+
+      await fetchUnassignedDepartments();
+    } catch (refreshErr) {
+      console.error("Error refreshing data:", refreshErr);
+    }
+
+    setIsManagerModalOpen(false);
+  } catch (err: any) {
+    console.error("Error while adding manager:", err);
+
+    const errorMessage =
+      err?.message || "Failed to add manager. Try again.";
+
+    enqueueSnackbar(errorMessage, {
+      variant: "error",
+      anchorOrigin: { vertical: "top", horizontal: "right" },
+    });
+  } finally {
+    setSubmitLoading(false);
+  }
+};
+
+
+  const navigate = useNavigate();
 
   const handleViewDepartment = (departmentId: string) => {
-  navigate(`/department-details/${departmentId}`);
-};
+    navigate(`/department-details/${departmentId}`);
+  };
+
   // ----------------------
-  // Fetch Departments & Managers
+  // Fetch Initial Data
   // ----------------------
   useEffect(() => {
-    const fetchDepartments = async () => {
+    const fetchInitialData = async () => {
       setLoading(true);
       try {
-        // Fetch unassigned managers
-        const managersResponse = await getUnassignedManager();
+        // Fetch all data in parallel
+        const [managersResponse, departmentsResponse] = await Promise.all([
+          getUnassignedManager(),
+          getAllDepartmentInACompany()
+        ]);
+
+        // Update managers
         if (Array.isArray(managersResponse?.managers)) {
           setManagers(managersResponse.managers);
         }
 
-        // Fetch department data
-        const response = await getAllDepartmentInACompany();
-        console.log("Response Data:", response);
-        
-        // Handle the actual API response structure
-        if (response && Array.isArray(response.response)) {
-          setDepartments(response.response);
-        } else if (response && Array.isArray(response)) {
-          setDepartments(response);
+        // Update departments
+        if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
+          setDepartments(departmentsResponse.response);
+        } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
+          setDepartments(departmentsResponse);
         } else {
-          console.warn("Unexpected response structure:", response);
+          console.warn("Unexpected departments response structure:", departmentsResponse);
           setDepartments([]);
         }
+
+        // Fetch unassigned departments
+        await fetchUnassignedDepartments();
         
       } catch (err) {
-        console.error("Error fetching departments:", err);
+        console.error("Error fetching initial data:", err);
         setDepartments([]);
+        setManagers([]);
+        setUnassignedDepartments([]);
         setCompanyName("");
       } finally {
         setLoading(false);
       }
     };
 
-    fetchDepartments();
+    fetchInitialData();
   }, []);
+
+  // ----------------------
+  // Fetch unassigned departments when manager modal opens
+  // ----------------------
+  useEffect(() => {
+    if (isManagerModalOpen) {
+      fetchUnassignedDepartments();
+    }
+  }, [isManagerModalOpen]);
 
   // ----------------------
   // Search and Filter Logic
@@ -219,7 +344,7 @@ const navigate = useNavigate()
   const uniqueManagers = [...new Set(departments.map(dept => dept.managerName))].sort();
 
   // ----------------------
-  // Dynamic Form Fields
+  // Dynamic Form Fields for Department
   // ----------------------
   const departmentFormFields = [
     ...addDepartment,
@@ -230,6 +355,25 @@ const navigate = useNavigate()
       options: [
         { value: "", label: "None" },
         ...managers.map((m) => ({ value: m.id, label: m.name })),
+      ],
+    },
+  ];
+
+  // ----------------------
+  // Dynamic Form Fields for Manager (UPDATED to use unassigned departments)
+  // ----------------------
+  const managerFormFields = [
+    ...addManager,
+    {
+      name: "departmentId",
+      label: "Assign to Department (optional)",
+      type: "select",
+      options: [
+        { value: "", label: "No Department" },
+        ...unassignedDepartments.map((dept) => ({ 
+          value: dept.id, 
+          label: dept.name 
+        })),
       ],
     },
   ];
@@ -259,10 +403,10 @@ const navigate = useNavigate()
           trend="up"
         />
         <DashboardCard
-          title="Assigned Managers"
-          value={sortedDepartments.filter(dept => dept.managerName !== 'Unassigned').length.toString()}
-          subtitle="With Department Heads"
-          trend="up"
+          title="Unassigned Departments"
+          value={unassignedDepartments.length.toString()}
+          subtitle="Without Managers"
+          trend={unassignedDepartments.length > 0 ? "down" : "up"}
         />
       </div>
 
@@ -272,33 +416,41 @@ const navigate = useNavigate()
           <h2 className="text-2xl font-bold text-gray-800">
             {companyName ? `${companyName} Departments` : "Departments"}
           </h2>
-          <button
-            className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all shadow-sm"
-            onClick={() => setIsModalOpen(true)}
-          >
-            + Add Department
-          </button>
+          
+          {/* Action Buttons */}
+          <div className="flex gap-3">
+            <button
+              className="bg-blue-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-blue-700 transition-all shadow-sm"
+              onClick={() => setIsDepartmentModalOpen(true)}
+            >
+              + Add Department
+            </button>
+            <button
+              className="bg-green-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-green-700 transition-all shadow-sm"
+              onClick={() => setIsManagerModalOpen(true)}
+            >
+              + Add Manager
+            </button>
+          </div>
         </div>
 
-        
-
         <TableFilterBar
-  searchTerm={searchTerm}
-  setSearchTerm={setSearchTerm}
-  filterOptions={uniqueManagers}
-  filterValue={filterManager}
-  setFilterValue={setFilterManager}
-  sortOptions={[
-    { key: "name", label: "Department Name" },
-    { key: "managerName", label: "Manager Name" },  
-    { key: "numOfEmployees", label: "Employee Count" },
-  ]}
-  sortBy={sortBy}
-  setSortBy={setSortBy}
-  sortOrder={sortOrder}
-  setSortOrder={setSortOrder}
-  onClearFilters={clearFilters}
-/>
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          filterOptions={uniqueManagers}
+          filterValue={filterManager}
+          setFilterValue={setFilterManager}
+          sortOptions={[
+            { key: "name", label: "Department Name" },
+            { key: "managerName", label: "Manager Name" },  
+            { key: "numOfEmployees", label: "Employee Count" },
+          ]}
+          sortBy={sortBy}
+          setSortBy={setSortBy}
+          sortOrder={sortOrder}
+          setSortOrder={setSortOrder}
+          onClearFilters={clearFilters}
+        />
 
         {/* Results Info */}
         {(searchTerm || filterManager) && (
@@ -339,9 +491,6 @@ const navigate = useNavigate()
             )}
           </div>
         ) : (
-
-          
-
           <Table
             columns={[
               { key: "name", label: "Department Name" },
@@ -357,31 +506,27 @@ const navigate = useNavigate()
               {
                 label: "View More",
                 type: "custom",
-                onClick: (row) =>
-                 handleViewDepartment(row.id),
+                onClick: (row) => handleViewDepartment(row.id),
               },
-               {
+              {
                 label: "message",
                 type: "approve",
-                onClick: (row) =>
-                  alert(`Viewing details for ${row.name}`),
+                onClick: (row) => alert(`Viewing details for ${row.name}`),
               },
-               {
+              {
                 label: "Edit",
                 type: "edit",
-                onClick: (row) =>
-                  alert(`Viewing details for ${row.name}`),
+                onClick: (row) => alert(`Viewing details for ${row.name}`),
               },
-               
             ]}
           />
         )}
       </div>
 
-      {/* Modal with Add Department Form */}
+      {/* Add Department Modal */}
       <Modal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isDepartmentModalOpen}
+        onClose={() => setIsDepartmentModalOpen(false)}
         title="Add Department"
       >
         <AuthForm
@@ -393,6 +538,54 @@ const navigate = useNavigate()
         {submitLoading && (
           <div className="flex justify-center mt-4">
             <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+      </Modal>
+
+      {/* Add Manager Modal (UPDATED) */}
+      <Modal
+        isOpen={isManagerModalOpen}
+        onClose={() => setIsManagerModalOpen(false)}
+        title="Add Manager"
+      >
+        <AuthForm
+          fields={managerFormFields}
+          validationSchema={addDepartmentSchema} // You might want to create a separate schema for managers
+          onSubmit={handleAddManager}
+          buttonText={submitLoading ? "Adding..." : "Add Manager"}
+        />
+        {submitLoading && (
+          <div className="flex justify-center mt-4">
+            <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+        
+        {/* Show available departments info */}
+        {unassignedDepartments.length === 0 ? (
+          <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
+            <p className="text-sm text-yellow-800">
+              ⚠️ All departments currently have managers assigned. 
+              You can still add a manager without assigning to a department.
+            </p>
+            <div className="text-xs text-gray-600 mt-2">
+              <p>Debug info:</p>
+              <p>• Unassigned departments count: {unassignedDepartments.length}</p>
+              <p>• Total departments: {departments.length}</p>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded-md">
+            <p className="text-sm text-blue-800">
+              ℹ️ {unassignedDepartments.length} department{unassignedDepartments.length !== 1 ? 's' : ''} available for assignment:
+            </p>
+            <div className="text-xs text-blue-700 mt-1">
+              {unassignedDepartments.map((dept, index) => (
+                <span key={dept.id}>
+                  {dept.name}
+                  {index < unassignedDepartments.length - 1 ? ', ' : ''}
+                </span>
+              ))}
+            </div>
           </div>
         )}
       </Modal>

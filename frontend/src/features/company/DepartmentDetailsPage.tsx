@@ -12,7 +12,7 @@ import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import Table from "@/shared/components/Table/Table";
 import { createEmployee, getDepartmentDetails } from "@/services/company";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import { addMember } from "@/shared/components/Forms/formFields";
@@ -20,11 +20,12 @@ import { addMemberSchema } from "@/shared/utils/validations";
 import { useSnackbar } from "notistack";
 // TypeScript Interfaces
 interface TeamMember {
+  id:string;
   name: string;
   position: string;
   email: string;
   phone: string;
-  status?: "Active" | "Inactive"; // optional, default to Active
+  status?: "Active" | "Inactive"; 
 }
 
 interface DepartmentResponse {
@@ -124,7 +125,7 @@ const handleAddMember = (values: any) => {
   const employeeData = useMemo(() => {
     if (!department?.teamMembers) return [];
     return department.teamMembers.map((member, idx) => ({
-      id: idx + 1,
+      id: member.id,
       name: member.name,
       position: member.position,
       email: member.email,
@@ -193,12 +194,18 @@ const handleAddMember = (values: any) => {
     { key: "phone", label: "Phone" },
     { key: "status", label: "Status" }
   ];
+const navigate = useNavigate()
+  const handleViewProfile=(profileId:string)=>{
+
+    
+    navigate(`/team-member-profile/${profileId}`);
+  }
 
   const tableActions = [
     {
       type: "edit",
       label: "View More",
-      onClick: (row: any) => console.log("View employee:", row)
+      onClick: (row: any) => handleViewProfile(row.id)
     },
     {
       type: "approve",

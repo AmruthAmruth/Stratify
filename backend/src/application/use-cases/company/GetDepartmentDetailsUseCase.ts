@@ -22,7 +22,7 @@ export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetails
       throw new AppError("Department Not Found",StatusCodes.NOT_FOUND)
     }
 
-        let headOfDepartment: string | undefined;
+    let headOfDepartment: string | undefined;
     let headEmail: string | undefined;
     let headPhone: string | undefined;
     let headPosition: string | undefined;
@@ -31,6 +31,7 @@ export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetails
        if (department.managerId) {
       const manager = await this._managerRepo.findById(department.managerId);
       if (manager) {
+
         headOfDepartment = manager.name;
         headEmail = manager.email;
         headPhone = manager.phone;
@@ -41,6 +42,7 @@ export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetails
 
     const employees = await this._employeeRepo.findByDepartmentId(department.id!);
     const teamMembers: TeamMemberDTO[] = employees.map(emp => ({
+      id:emp.id,
       name: emp.name,
       position: emp.position,
       email: emp.email,

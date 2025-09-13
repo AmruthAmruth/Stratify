@@ -39,3 +39,15 @@ export const addMember = [
   { name: "position", label: "Position", type: "text" },
   { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] }
 ];
+
+
+
+export const addManager = [
+  { name: "name", label: "Full Name", type: "text" },
+  { name: "email", label: "Email Address", type: "email" },
+  { name: "phone", label: "Phone Number", type: "text" },
+  { name: "dob", label: "Date of Birth", type: "date" },
+  { name: "joiningDate", label: "Joining Date", type: "date" },
+  { name: "position", label: "Position", type: "text" },
+  { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] }
+];

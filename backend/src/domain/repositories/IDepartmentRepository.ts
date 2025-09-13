@@ -11,4 +11,5 @@ export interface IDepartmentRepository{
    findById(id:string):Promise<Department|null>
    assignManager(departmentId:string,managerId:string):Promise<void>
    findDepartmentsByCompanyId(companyId:string):Promise<Department[]>
+   getUnassignedDepartments(companyId:string):Promise<{id:string,name:string}[]>
 }

@@ -12,8 +12,8 @@ export class GetUnassignedManagersUseCase implements IGetUnassignedManagers{
         private _managerRepo:IManagerRepository
     ){}
 
-    async execute(): Promise<UnassignedManagerDTO[]> {
-         const managers = await this._managerRepo.getUnassignedManagers();
+    async execute(id:string): Promise<UnassignedManagerDTO[]> {
+         const managers = await this._managerRepo.getUnassignedManagers(id);
        return managers.map(m => ({ id: m.id!, name: m.name }));
        
     }

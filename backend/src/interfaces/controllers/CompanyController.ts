@@ -25,6 +25,9 @@ import { GetCompanyDepartmentUseCase } from "../../application/use-cases/company
 import { GetDepartmentDetailsUseCase } from "../../application/use-cases/company/GetDepartmentDetailsUseCase";
 import { GetCompanyMemebersUseCase } from "../../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../../application/use-cases/company/GetProfileUseCase";
+import { GetCompanyByIdUseCase } from "../../application/use-cases/company/GetCompanyUseCase";
+import { GetUnassignedDepartmentUseCase } from "../../application/use-cases/company/GetUnassignedDepartments";
+
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
 }
@@ -49,7 +52,9 @@ export class CompanyController {
     private _getCompanyDepartmentsUseCase:GetCompanyDepartmentUseCase,
     private _getDepartmentDetailsUseCase:GetDepartmentDetailsUseCase,
     private _getCompanyMembersUseCase:GetCompanyMemebersUseCase,
-    private _getProfileOfTeamMemeber:GetProfileUseCase
+    private _getProfileOfTeamMemeber:GetProfileUseCase,
+    private _getCompany:GetCompanyByIdUseCase,
+    private _getUnassinedDepartment:GetUnassignedDepartmentUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -168,9 +173,18 @@ createEmployee=async(req:AuthRequest,res:Response)=>{
   return res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",response})
 }
 
-getUnassignedManager=async(_req:Request,res:Response)=>{
-const managers = await this._getUnassignedManagersUseCase.execute();
+getUnassignedManager=async(req:AuthRequest,res:Response)=>{
+  const companyId = req.companyId
+const managers = await this._getUnassignedManagersUseCase.execute(companyId!);
     return res.status(200).json({ managers });
+}
+
+
+getUnassignedDepartment=async(req:AuthRequest,res:Response)=>{
+  const companyId=req.companyId;
+  const departments = await this._getUnassinedDepartment.execute(companyId!);
+  return res.status(200).json({departments})
+
 }
 
 getCompanyDepartments=async(req:AuthRequest,res:Response)=>{
@@ -196,9 +210,18 @@ getCompanyMembers=async(req:AuthRequest,res:Response)=>{
 
 
 getProfileOfTeamMemeber=async(req:Request,res:Response)=>{
-  const {id}=req.body
+   const { id } = req.params;
   const response = await this._getProfileOfTeamMemeber.execute(id);
   return res.status(StatusCodes.OK).json({response})
 }
+
+
+getCompany=async(req:Request,res:Response)=>{
+  const {id}=req.params;
+  const response = await this._getCompany.execute(id);
+  return res.status(StatusCodes.OK).json({response})
+}
+
+
 
 }

@@ -91,17 +91,21 @@ export class ManagerRepository implements IManagerRepository{
    }
 
 
-   async getUnassignedManagers(): Promise<{id:string,name:string}[]> {
-   const docs = await ManagerModel.find({
+   async getUnassignedManagers(companyId: string): Promise<{ id: string; name: string }[]> {
+  const docs = await ManagerModel.find({
+    companyId: companyId, 
     $or: [
       { departmentId: { $exists: false } },
       { departmentId: null }
     ]
-  }).select("_id name"); 
+  }).select("_id name");
 
-  return docs.map(doc => ({ id: doc.id.toString(), name: doc.name }));
+  return docs.map(doc => ({
+    id: doc.id.toString(), 
+    name: doc.name
+  }));
 }
-
+ 
 async totalManagerInACompany(companyId: string): Promise<number> {
    return await ManagerModel.countDocuments({companyId})
 }
@@ -110,7 +114,7 @@ async totalManagerInACompany(companyId: string): Promise<number> {
 async findByCompanyId(companyId: string): Promise<Manager[]> {
   const docs = await ManagerModel.find({ companyId });
   return docs.map(doc => new Manager(
-    doc.id.toString(),
+    doc.id.toString(), 
     doc.name,
     doc.email,
     doc.phone,

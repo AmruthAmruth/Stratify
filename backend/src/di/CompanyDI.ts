@@ -26,6 +26,7 @@ import { GetCompanyDepartmentUseCase } from "../application/use-cases/company/Ge
 import { GetDepartmentDetailsUseCase } from "../application/use-cases/company/GetDepartmentDetailsUseCase";
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
+import { GetUnassignedDepartmentUseCase } from "../application/use-cases/company/GetUnassignedDepartments";
 
 export const companyDI = () => {
 
@@ -70,11 +71,12 @@ const createDepartmentUseCase= new CreateDepartmentUseCase(departmentRepo,manage
 const createManagerUseCase =new CreateManagerUseCase(companyRepo,managerRepo,departmentRepo,emailService)
 const createEmployeeUseCase = new CreateEmployeeUseCase(companyRepo,employeeRepo,departmentRepo,managerRepo,emailService)
 const getUnassignedManagers = new GetUnassignedManagersUseCase(managerRepo)
+const getUnassignedDepartment= new GetUnassignedDepartmentUseCase(departmentRepo)
 const GetCompanyDepartment = new GetCompanyDepartmentUseCase(departmentRepo,managerRepo,employeeRepo)
 const GetDepartmentDetails = new GetDepartmentDetailsUseCase(departmentRepo,managerRepo,employeeRepo)
 const getCompanyMemebers = new GetCompanyMemebersUseCase(managerRepo,employeeRepo,departmentRepo)
 const getProfileOfTeamMemeber= new GetProfileUseCase(managerRepo,employeeRepo,departmentRepo)
-
+const getCompany = new GetCompanyByIdUseCase(companyRepo)
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -94,7 +96,9 @@ getUnassignedManagers,
 GetCompanyDepartment,
 GetDepartmentDetails,
 getCompanyMemebers,
-getProfileOfTeamMemeber
+getProfileOfTeamMemeber,
+getCompany,
+getUnassignedDepartment
   );
 };
  

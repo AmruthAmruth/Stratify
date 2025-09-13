@@ -1,6 +1,7 @@
 
 
 export interface TeamMemberDTO {
+  id:string | undefined;
   name: string;
   position: string;
   email: string;
