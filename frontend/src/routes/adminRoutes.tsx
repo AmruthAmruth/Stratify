@@ -19,11 +19,11 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team",
     element: <TeamPage/>
-  },
-  {
-    path: "department-details",
-    element: <DepartmentDetailsPage/>
   }
+  ,{
+  path: "department-details/:id",
+  element: <DepartmentDetailsPage/>
+}
    
 ];
 

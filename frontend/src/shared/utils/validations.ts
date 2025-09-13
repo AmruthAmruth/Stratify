@@ -46,19 +46,17 @@ export const addMemberSchema = z.object({
   phone: z
     .string()
     .min(10, "Phone number must be at least 10 digits")
-    .regex(/^[0-9]+$/, "Phone number must contain only digits"),
-  position: z.string().min(1, "Position is required"),
-  status: z.enum(["active", "inactive", "suspended"], {
-    required_error: "Status is required",
-  }),
+    .max(15, "Phone number must be at most 15 digits")
+    .regex(/^\+?[0-9\s]+$/, "Phone number must contain only digits and optional +"),
   dob: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid date of birth",
   }),
-  joinDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+  joiningDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid joining date",
   }),
-  avatar: z
-    .instanceof(File)
-    .refine((file) => file.size <= 5 * 1024 * 1024, "Max file size is 5MB")
-    .optional(),
+  position: z.string().min(1, "Position is required"),
+  departmentId: z.string().optional(),
+  gender: z.enum(["male", "female", "other"], {
+    required_error: "Gender is required",
+  }),
 });

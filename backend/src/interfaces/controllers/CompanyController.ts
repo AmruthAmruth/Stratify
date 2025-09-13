@@ -181,8 +181,8 @@ getCompanyDepartments=async(req:AuthRequest,res:Response)=>{
 
 
 getDepartmentDetails=async(req:Request,res:Response)=>{
-  const {departmentId} = req.body
-  const response = await this._getDepartmentDetailsUseCase.execute(departmentId);
+   const { id } = req.params;
+  const response = await this._getDepartmentDetailsUseCase.execute(id);
   return res.status(StatusCodes.OK).json({response})
 
 }

@@ -8,7 +8,7 @@ import AboutPage from "@/features/Genaral/About";
 import ContactPage from "@/features/Genaral/Contact";
 import OTPPage from "@/shared/OTP/OTPPage";
 import ResetPassword from "@/features/auth/ResetPassword";
-import DepartmentDetailsPage from "@/features/company/DepartmentDetailsPage";
+import ProfilePage from "@/features/company/ProfilePage";
 
 
 const genaralRoutes: RouteObject[] = [
@@ -49,12 +49,11 @@ const genaralRoutes: RouteObject[] = [
   {
     path: "contact",
     element: <ContactPage/>,
-  },
-  {
-    path: "department-details",
-    element: <DepartmentDetailsPage/>
   }
-  
+  ,{
+  path: "profile",
+  element: <ProfilePage/>
+}
   
   
 ];

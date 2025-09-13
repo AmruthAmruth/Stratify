@@ -1,3 +1,5 @@
+import DatePicker from "react-datepicker";
+import "react-datepicker/dist/react-datepicker.css";
 import React, { useState, useEffect } from "react";
 import { ZodSchema } from "zod";
 
@@ -196,7 +198,25 @@ const AuthForm: React.FC<AuthFormProps> = ({
                     );
                   })}
                 </select>
-              ) : (
+              ) : field.type === "date" ? (
+  // 📅 Date Picker
+  <DatePicker
+    selected={
+      formData[field.name]
+        ? new Date(formData[field.name] as string)
+        : null
+    }
+    onChange={(date: Date | null) => {
+      setFormData((prev) => ({ ...prev, [field.name]: date?.toISOString() || "" }));
+    }}
+    onBlur={() => validateField(field.name)}
+    dateFormat="yyyy-MM-dd"
+    className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
+      errors[field.name] ? "border-red-500" : "border-gray-300"
+    }`}
+    placeholderText={`Select ${field.label}`}
+  /> 
+) : (
                 // 📝 Regular Input
                 <input
                   type={field.type}

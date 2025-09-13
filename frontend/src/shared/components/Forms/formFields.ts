@@ -30,13 +30,12 @@ export const addDepartment = [
 
 
 
-export const addMemberFields = [
+export const addMember = [
   { name: "name", label: "Full Name", type: "text" },
-  { name: "email", label: "Email", type: "email" },
-  { name: "phone", label: "Phone", type: "text" },
-  { name: "position", label: "Position", type: "text" },
-  { name: "status", label: "Status", type: "select", options: ["active", "inactive", "suspended"] },
+  { name: "email", label: "Email Address", type: "email" },
+  { name: "phone", label: "Phone Number", type: "text" },
   { name: "dob", label: "Date of Birth", type: "date" },
-  { name: "joinDate", label: "Joining Date", type: "date" },
-  { name: "avatar", label: "Profile Image", type: "file" },
+  { name: "joiningDate", label: "Joining Date", type: "date" },
+  { name: "position", label: "Position", type: "text" },
+  { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] }
 ];

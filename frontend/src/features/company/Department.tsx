@@ -11,6 +11,8 @@ import {
   getUnassignedManager,
 } from "@/services/company";
 import { useSnackbar } from "notistack";
+import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
+import { useNavigate } from "react-router-dom";
 
 // Updated interface to match API response
 interface DepartmentDetails {
@@ -35,6 +37,12 @@ const Department: React.FC = () => {
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [managers, setManagers] = useState<Manager[]>([]);
+  
+  // Search and Filter States
+  const [searchTerm, setSearchTerm] = useState<string>("");
+  const [filterManager, setFilterManager] = useState<string>("");
+  const [sortBy, setSortBy] = useState<string>("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
 
   const { enqueueSnackbar } = useSnackbar();
 
@@ -52,7 +60,7 @@ const Department: React.FC = () => {
     };
 
     try {
-      // 1️⃣ Create department
+      // Create department
       const data = await createDepartment(payload);
       console.log("Response Data", data);
 
@@ -91,6 +99,11 @@ const Department: React.FC = () => {
     }
   };
 
+const navigate = useNavigate()
+
+  const handleViewDepartment = (departmentId: string) => {
+  navigate(`/department-details/${departmentId}`);
+};
   // ----------------------
   // Fetch Departments & Managers
   // ----------------------
@@ -118,9 +131,6 @@ const Department: React.FC = () => {
           setDepartments([]);
         }
         
-        // You might want to set company name from somewhere else or make it optional
-        // setCompanyName(response?.companyName || "Your Company");
-        
       } catch (err) {
         console.error("Error fetching departments:", err);
         setDepartments([]);
@@ -134,13 +144,79 @@ const Department: React.FC = () => {
   }, []);
 
   // ----------------------
-  // Pagination
+  // Search and Filter Logic
   // ----------------------
-  const paginatedData = departments.slice(
+  const filteredDepartments = departments.filter((dept) => {
+    // Search filter
+    const matchesSearch = 
+      dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      dept.managerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      (dept.description && dept.description.toLowerCase().includes(searchTerm.toLowerCase()));
+
+    // Manager filter
+    const matchesManager = !filterManager || dept.managerName === filterManager;
+
+    return matchesSearch && matchesManager;
+  });
+
+  // ----------------------
+  // Sorting Logic
+  // ----------------------
+  const sortedDepartments = [...filteredDepartments].sort((a, b) => {
+    if (!sortBy) return 0;
+
+    let aValue, bValue;
+    switch (sortBy) {
+      case "name":
+        aValue = a.name.toLowerCase();
+        bValue = b.name.toLowerCase();
+        break;
+      case "managerName":
+        aValue = a.managerName.toLowerCase();
+        bValue = b.managerName.toLowerCase();
+        break;
+      case "numOfEmployees":
+        aValue = a.numOfEmployees;
+        bValue = b.numOfEmployees;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) return sortOrder === "asc" ? -1 : 1;
+    if (aValue > bValue) return sortOrder === "asc" ? 1 : -1;
+    return 0;
+  });
+
+  // ----------------------
+  // Pagination (updated to use filtered/sorted data)
+  // ----------------------
+  const paginatedData = sortedDepartments.slice(
     (currentPage - 1) * pageSize,
     currentPage * pageSize
   );
-  const totalPages = Math.ceil(departments.length / pageSize);
+  const totalPages = Math.ceil(sortedDepartments.length / pageSize);
+
+  // Reset to first page when search/filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, filterManager, sortBy, sortOrder]);
+
+  // ----------------------
+  // Clear Filters
+  // ----------------------
+  const clearFilters = () => {
+    setSearchTerm("");
+    setFilterManager("");
+    setSortBy("");
+    setSortOrder("asc");
+    setCurrentPage(1);
+  };
+
+  // ----------------------
+  // Get unique managers for filter dropdown
+  // ----------------------
+  const uniqueManagers = [...new Set(departments.map(dept => dept.managerName))].sort();
 
   // ----------------------
   // Dynamic Form Fields
@@ -152,16 +228,16 @@ const Department: React.FC = () => {
       label: "Assign Manager (optional)",
       type: "select",
       options: [
-        { value: "", label: "None" }, // optional "None" option
+        { value: "", label: "None" },
         ...managers.map((m) => ({ value: m.id, label: m.name })),
       ],
     },
   ];
 
   // ----------------------
-  // Calculate total employees
+  // Calculate total employees (updated to use filtered data)
   // ----------------------
-  const totalEmployees = departments.reduce((acc, dept) => acc + dept.numOfEmployees, 0);
+  const totalEmployees = sortedDepartments.reduce((acc, dept) => acc + dept.numOfEmployees, 0);
 
   // ----------------------
   // Render
@@ -173,18 +249,18 @@ const Department: React.FC = () => {
         <DashboardCard
           title="Total Employees"
           value={totalEmployees.toString()}
-          subtitle={`Across ${departments.length} Departments`}
+          subtitle={`Across ${sortedDepartments.length} Departments${searchTerm || filterManager ? ' (filtered)' : ''}`}
           trend="up"
         />
         <DashboardCard
           title="Active Departments"
-          value={departments.length.toString()}
-          subtitle="Currently Active"
+          value={sortedDepartments.length.toString()}
+          subtitle={`Total: ${departments.length} departments`}
           trend="up"
         />
         <DashboardCard
           title="Assigned Managers"
-          value={departments.filter(dept => dept.managerName !== 'Unassigned').length.toString()}
+          value={sortedDepartments.filter(dept => dept.managerName !== 'Unassigned').length.toString()}
           subtitle="With Department Heads"
           trend="up"
         />
@@ -204,11 +280,68 @@ const Department: React.FC = () => {
           </button>
         </div>
 
+        
+
+        <TableFilterBar
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+  filterOptions={uniqueManagers}
+  filterValue={filterManager}
+  setFilterValue={setFilterManager}
+  sortOptions={[
+    { key: "name", label: "Department Name" },
+    { key: "managerName", label: "Manager Name" },  
+    { key: "numOfEmployees", label: "Employee Count" },
+  ]}
+  sortBy={sortBy}
+  setSortBy={setSortBy}
+  sortOrder={sortOrder}
+  setSortOrder={setSortOrder}
+  onClearFilters={clearFilters}
+/>
+
+        {/* Results Info */}
+        {(searchTerm || filterManager) && (
+          <div className="mb-4 text-sm text-gray-600">
+            Showing {sortedDepartments.length} of {departments.length} departments
+            {searchTerm && (
+              <span className="ml-1">
+                matching "<span className="font-medium">{searchTerm}</span>"
+              </span>
+            )}
+            {filterManager && (
+              <span className="ml-1">
+                with manager "<span className="font-medium">{filterManager}</span>"
+              </span>
+            )}
+          </div>
+        )}
+
         {loading ? (
-          <p>Loading departments...</p>
-        ) : departments.length === 0 ? (
-          <p>No departments found.</p>
+          <div className="flex justify-center py-8">
+            <div className="flex items-center space-x-2">
+              <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+              <span>Loading departments...</span>
+            </div>
+          </div>
+        ) : sortedDepartments.length === 0 ? (
+          <div className="text-center py-8">
+            {departments.length === 0 ? (
+              <div>
+                <p className="text-gray-500 text-lg">No departments found.</p>
+                <p className="text-gray-400 text-sm mt-1">Create your first department to get started.</p>
+              </div>
+            ) : (
+              <div>
+                <p className="text-gray-500 text-lg">No departments match your search criteria.</p>
+                <p className="text-gray-400 text-sm mt-1">Try adjusting your filters or search terms.</p>
+              </div>
+            )}
+          </div>
         ) : (
+
+          
+
           <Table
             columns={[
               { key: "name", label: "Department Name" },
@@ -225,8 +358,21 @@ const Department: React.FC = () => {
                 label: "View More",
                 type: "custom",
                 onClick: (row) =>
+                 handleViewDepartment(row.id),
+              },
+               {
+                label: "message",
+                type: "approve",
+                onClick: (row) =>
                   alert(`Viewing details for ${row.name}`),
               },
+               {
+                label: "Edit",
+                type: "edit",
+                onClick: (row) =>
+                  alert(`Viewing details for ${row.name}`),
+              },
+               
             ]}
           />
         )}

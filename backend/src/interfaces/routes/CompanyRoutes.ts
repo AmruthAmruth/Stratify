@@ -21,10 +21,10 @@ companyRouter.post("/resetpassword", asyncHandler(controller.resetPassword));
 companyRouter.get("/companies", asyncHandler(controller.getPaginatedCompanies));
 companyRouter.get("/unassigned-managers", asyncHandler(controller.getUnassignedManager));
 companyRouter.get('/company-departments',authMiddleware(["company"]),asyncHandler(controller.getCompanyDepartments))
-companyRouter.get('/department-details',asyncHandler(controller.getDepartmentDetails))
 companyRouter.get('/company-employees',authMiddleware(["company"]),asyncHandler(controller.getCompanyMembers))
 companyRouter.get('/team-member-profile',asyncHandler(controller.getProfileOfTeamMemeber))
 
+companyRouter.get('/department-details/:id', asyncHandler(controller.getDepartmentDetails))
 
 
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));

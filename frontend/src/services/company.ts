@@ -66,3 +66,20 @@ export const getUnassignedManager = async () => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+  export const getDepartmentDetails = async (departmentId: string) => {
+    try {
+      const response = await api.get(`/company/department-details/${departmentId}`);
+      console.log("Here is the response ",response.data);
+      
+      return response.data;
+    } catch (err: any) {
+      throw err.response?.data || new Error("Network error");
+    }
+
+
+
+    
+
+}
