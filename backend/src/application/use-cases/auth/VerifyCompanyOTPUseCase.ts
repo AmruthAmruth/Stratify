@@ -4,12 +4,14 @@ import { ITempRegistrationRepository } from "../../../domain/repositories/ITempR
 import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/token";
 import { Messages } from "../../../shared/constants/messages";
 import { Company } from "../../../domain/entities/Company";
+import { ICreateTrialSubscriptionUseCase } from "../../interfaces/company/ICreateTrialSubscriptionUseCase";
 
 export class VerifyCompanyOTPUseCase {
   constructor(
     private _otpRepo: IOTPRepository,
     private _companyRepo: ICompanyRepository,
-    private _tempRegRepo: ITempRegistrationRepository
+    private _tempRegRepo: ITempRegistrationRepository,
+    private _createTrialSubscriptionUseCase:ICreateTrialSubscriptionUseCase
   ) {}
 
   async execute(email: string, otp: string): Promise<{ accessToken: string; refreshToken: string }> {
@@ -51,6 +53,7 @@ export class VerifyCompanyOTPUseCase {
 
     if (!createdCompany.id) throw new Error("Company ID is missing after creation");
 
+     await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
     
     const payload = { id: createdCompany.id, role: createdCompany.role };
     const accessToken = generateAccessToken(payload);

@@ -7,11 +7,13 @@ import { LoginSchema } from "../../application/validators/LoginValidator";
 import { CookieConfig } from "../../config/CookieConfig";
 import { ILoginUseCase } from "../../application/interfaces/super-admin/ILoginUseCase";
 import { IRefreashTokenUseCase } from "../../application/interfaces/super-admin/IRefreashTokenUseCase";
+import { ICreatePlanUseCase } from "../../application/interfaces/super-admin/ICreatePlanUseCase";
 
 export class SuperAdminController {
   constructor(
     private readonly _loginUseCase: ILoginUseCase,
-    private readonly _refreshTokenUseCase: IRefreashTokenUseCase
+    private readonly _refreshTokenUseCase: IRefreashTokenUseCase,
+    private _createPlan :ICreatePlanUseCase
   ) {}
 
   login = async (req: Request, res: Response) => {
@@ -62,6 +64,14 @@ export class SuperAdminController {
 
     res.json({ accessToken });
   };
+
+
+
+  createPlan = async (req: Request, res: Response) => {
+  const { plan, amount, durationInMonths } = req.body;
+  const createdPlan = await this._createPlan.execute({ plan, amount, durationInMonths });
+  res.json({ message: "Plan created successfully", plan: createdPlan });
+};
 
 
 }

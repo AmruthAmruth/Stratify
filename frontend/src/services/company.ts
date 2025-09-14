@@ -127,3 +127,41 @@ export const getUnassignedDepartments = async () => {
       throw err.response?.data || new Error("Network error");
     }
   }
+
+
+  export const listSubscriptionPlan = async () => {
+  try {
+    const response = await api.get(`/company/subscription-plans`);
+    
+    return response.data; 
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+  export const createSubscriptionPlan = async (planName: string) => {
+  try {
+    const response = await api.post("/company/purchase", { planName });
+    
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+
+  export const verifyPayment = async (payload: {
+  orderId: string;
+  paymentId: string;
+  signature: string;
+  planName: string;
+}) => {
+  try {
+    const response = await api.post("/company/verify-payment", payload);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Payment verification failed");
+  }
+};

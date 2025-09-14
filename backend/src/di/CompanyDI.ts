@@ -27,6 +27,12 @@ import { GetDepartmentDetailsUseCase } from "../application/use-cases/company/Ge
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
 import { GetUnassignedDepartmentUseCase } from "../application/use-cases/company/GetUnassignedDepartments";
+import { CreateTrialSubscriptionUseCase } from "../application/use-cases/company/CreateTrialSubscriptionUseCase";
+import { SubscriptionRepository } from "../infrastructure/repositories/SubscriptionRepository";
+import { PurchaseSubscriptionUseCase } from "../application/use-cases/company/PurchaseSubscriptionUseCase";
+import { RazorpayService } from "../infrastructure/services/RazorpayService";
+import { PlanPriceRepostory } from "../infrastructure/repositories/PlanPriceRepository";
+import { ListSubscriptionPlansUseCase } from "../application/use-cases/company/ListSubscriptionPlansUseCase";
 
 export const companyDI = () => {
 
@@ -37,7 +43,8 @@ export const companyDI = () => {
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
 const managerRepo = new ManagerRepository()
 const employeeRepo = new EmployeeRepository()
-
+const subscriptionRepo = new SubscriptionRepository()
+const createTrialSubscriptionUseCase=new CreateTrialSubscriptionUseCase(subscriptionRepo)
 
 
   const registerUseCase = new RegisterCompanyUseCase(
@@ -49,7 +56,8 @@ const employeeRepo = new EmployeeRepository()
   const verifyUseCase = new VerifyCompanyOTPUseCase(
     otpRepo,
     companyRepo,
-    tempRegRepo
+    tempRegRepo,
+    createTrialSubscriptionUseCase
   );
  
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
@@ -77,6 +85,12 @@ const GetDepartmentDetails = new GetDepartmentDetailsUseCase(departmentRepo,mana
 const getCompanyMemebers = new GetCompanyMemebersUseCase(managerRepo,employeeRepo,departmentRepo)
 const getProfileOfTeamMemeber= new GetProfileUseCase(managerRepo,employeeRepo,departmentRepo)
 const getCompany = new GetCompanyByIdUseCase(companyRepo)
+
+const razorpay = new RazorpayService()
+const planRepo = new PlanPriceRepostory()
+const subscriptionPurchase = new PurchaseSubscriptionUseCase(subscriptionRepo,planRepo,razorpay)
+const listSubscriptionPlan = new ListSubscriptionPlansUseCase(planRepo)
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -98,7 +112,9 @@ GetDepartmentDetails,
 getCompanyMemebers,
 getProfileOfTeamMemeber,
 getCompany,
-getUnassignedDepartment
+getUnassignedDepartment,
+subscriptionPurchase,
+listSubscriptionPlan
   );
 };
  

@@ -27,6 +27,8 @@ import { GetCompanyMemebersUseCase } from "../../application/use-cases/company/G
 import { GetProfileUseCase } from "../../application/use-cases/company/GetProfileUseCase";
 import { GetCompanyByIdUseCase } from "../../application/use-cases/company/GetCompanyUseCase";
 import { GetUnassignedDepartmentUseCase } from "../../application/use-cases/company/GetUnassignedDepartments";
+import { PurchaseSubscriptionUseCase } from "../../application/use-cases/company/PurchaseSubscriptionUseCase";
+import { ListSubscriptionPlansUseCase } from "../../application/use-cases/company/ListSubscriptionPlansUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -54,7 +56,9 @@ export class CompanyController {
     private _getCompanyMembersUseCase:GetCompanyMemebersUseCase,
     private _getProfileOfTeamMemeber:GetProfileUseCase,
     private _getCompany:GetCompanyByIdUseCase,
-    private _getUnassinedDepartment:GetUnassignedDepartmentUseCase
+    private _getUnassinedDepartment:GetUnassignedDepartmentUseCase,
+    private _subscriptionPurchaseUseCase:PurchaseSubscriptionUseCase,
+    private _listSubscriptionPlanUseCase:ListSubscriptionPlansUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -222,6 +226,39 @@ getCompany=async(req:Request,res:Response)=>{
   return res.status(StatusCodes.OK).json({response})
 }
 
+
+listPlans=async(_req:Request,res:Response)=>{
+  const response = await this._listSubscriptionPlanUseCase.execute();
+ res.status(StatusCodes.OK).json(response)
+}
+
+
+purchasePlan=async(req:AuthRequest,res:Response)=>{
+  const {planName} = req.body
+  console.log("Here calling");
+  
+  const subscription = await this._subscriptionPurchaseUseCase.execute(planName)
+  res.status(StatusCodes.CREATED).json({ message: "Subscription purchased successfully", subscription });
+}
+
+
+verifyPayment = async (req: AuthRequest, res: Response) => {
+  const companyId = req.companyId!;
+  const { orderId, paymentId, signature, planName } = req.body;
+
+   const subscription = await this._subscriptionPurchaseUseCase.verifyAndActivate(
+    companyId,
+    planName,
+    orderId,
+    paymentId,
+    signature
+  );
+
+   res.status(StatusCodes.OK).json({
+    message: "Payment verified & subscription activated",
+    subscription,
+  });
+}
 
 
 }

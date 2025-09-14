@@ -47,10 +47,11 @@ api.interceptors.response.use(
         store.dispatch(clearCredentials());
         window.location.href = "/login";
       }
-    }
+    } 
 
     return Promise.reject(error);
   }
 );
 
 export default api;
+ 
