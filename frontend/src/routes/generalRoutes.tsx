@@ -9,6 +9,8 @@ import ContactPage from "@/features/Genaral/Contact";
 import OTPPage from "@/shared/OTP/OTPPage";
 import ResetPassword from "@/features/auth/ResetPassword";
 import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
+import CompanyPendingApproval from "@/features/Genaral/CompanyPendingApproval";
+import SubscriptionPlans from "@/features/Genaral/SubscriptionPurchase";
 
 
 const genaralRoutes: RouteObject[] = [
@@ -52,7 +54,13 @@ const genaralRoutes: RouteObject[] = [
   },{
   path: "company-profile",
   element: <CompanyProfilePage/>
-}
+},{
+  path:"company-pending-approval",
+  element:<CompanyPendingApproval/>
+},{
+    path: "subscription-purchase/:companyId",
+    element: <SubscriptionPlans />,
+  }
   
   
 ];

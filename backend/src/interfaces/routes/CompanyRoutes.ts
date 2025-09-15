@@ -25,10 +25,10 @@ companyRouter.get('/company-departments',authMiddleware(["company"]),asyncHandle
 companyRouter.get('/company-employees',authMiddleware(["company"]),asyncHandler(controller.getCompanyMembers))
 companyRouter.get('/subscription-plans',asyncHandler(controller.listPlans))
 
-
 companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))
 companyRouter.get('/department-details/:id', asyncHandler(controller.getDepartmentDetails))
 companyRouter.get('/company/:id',asyncHandler(controller.getCompany))
+companyRouter.get('/manager-departments/:managerId',asyncHandler(controller.getDepartmentsByAManager))
 
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post("/unapprove-company", asyncHandler(controller.unapproveCompany));
@@ -40,5 +40,8 @@ companyRouter.post("/create-employee", authMiddleware(["company", "manager"]), a
 
 companyRouter.post("/purchase",authMiddleware(["company"]),asyncHandler(controller.purchasePlan))
 companyRouter.post("/verify-payment",authMiddleware(["company"]),asyncHandler(controller.verifyPayment));
+
+companyRouter.post('/purchase-unauthenticated',asyncHandler(controller.createSubscriptionPlanForUnauthenticated))
+companyRouter.post('/verify-payment-unauthorized',asyncHandler(controller.verifyPaymentForUnauthenticated))
 export default companyRouter;
  

@@ -2,7 +2,7 @@ import { Subscription } from "../../../domain/entities/Subscription";
 
 
 export interface IPurchaseSubscriptionUseCase{
-    execute(planName:string):Promise<{
+    execute(planName:string,companyId:string):Promise<{
     orderId: string;
     amount: number;
     currency: string;

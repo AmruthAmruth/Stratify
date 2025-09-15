@@ -52,20 +52,21 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
         await verifyOTP({ email, otp }).then((data)=>{
           console.log("Verification data ",data);
           enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
-          if (data.accessToken) {
-                const decoded: DecodedToken = jwtDecode(data.accessToken);
-                console.log("decoded", decoded);
+          navigate('/company-pending-approval')
+          // if (data.accessToken) {
+          //       const decoded: DecodedToken = jwtDecode(data.accessToken);
+          //       console.log("decoded", decoded);
           
-                dispatch(
-                  setCredentials({
-                    accessToken: data.accessToken,
-                    role: decoded.role,
-                    userId: decoded.id,
-                  })
-                );
+          //       dispatch(
+          //         setCredentials({
+          //           accessToken: data.accessToken,
+          //           role: decoded.role,
+          //           userId: decoded.id,
+          //         })
+          //       );
           
-                navigate("/dashboard");
-              }
+          //       navigate("/dashboard");
+          //     }
         }).catch((err)=>console.log(err)
         )
         

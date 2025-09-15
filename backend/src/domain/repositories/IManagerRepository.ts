@@ -11,4 +11,5 @@ export interface IManagerRepository{
     getUnassignedManagers(companyId:string):Promise<{id:string,name:string}[]>
     totalManagerInACompany(companyId:string):Promise<number>
     findByCompanyId(companyId:string):Promise<Manager[]>
+    
 }

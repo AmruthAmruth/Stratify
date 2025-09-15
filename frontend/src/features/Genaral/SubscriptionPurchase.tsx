@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { listSubscriptionPlan, createSubscriptionPlan, verifyPayment } from "@/services/company";
+import { useParams, useNavigate } from "react-router-dom";
+import { listSubscriptionPlan, createSubscriptionPlanForUnauthenticated, verifyPaymentForUnauthenticated } from "@/services/company";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useSnackbar } from "notistack";
@@ -15,8 +16,21 @@ interface Plan {
 const SubscriptionPlans: React.FC = () => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
+  const { companyId } = useParams<{ companyId: string }>();
   const company = useSelector((state: RootState) => state.auth);
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
+
+  // Load Razorpay SDK dynamically
+  const loadRazorpayScript = (): Promise<boolean> => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
   useEffect(() => {
     const fetchPlans = async () => {
@@ -30,17 +44,21 @@ const SubscriptionPlans: React.FC = () => {
       }
     };
     fetchPlans();
-  }, []);
+  }, [enqueueSnackbar]);
 
   const handleBuy = async (plan: Plan) => {
     try {
-      const orderData = await createSubscriptionPlan(plan.plan);
+      const orderData = await createSubscriptionPlanForUnauthenticated(plan.plan, companyId);
       const subscription = orderData.subscription;
 
-      if (!window.Razorpay) {
-        enqueueSnackbar("Razorpay SDK not loaded", { variant: "warning" });
+      // Load Razorpay SDK
+      const isLoaded = await loadRazorpayScript();
+      if (!isLoaded) {
+        enqueueSnackbar("Failed to load Razorpay SDK", { variant: "error" });
         return;
       }
+     
+      
 
       const options = {
         key: subscription.key,
@@ -51,13 +69,17 @@ const SubscriptionPlans: React.FC = () => {
         description: `Purchase ${plan.plan}`,
         handler: async (response: any) => {
           try {
-            await verifyPayment({
+            await verifyPaymentForUnauthenticated({
               orderId: response.razorpay_order_id,
               paymentId: response.razorpay_payment_id,
               signature: response.razorpay_signature,
               planName: plan.plan,
+              companyId,
             });
             enqueueSnackbar("Payment successful & subscription activated!", { variant: "success" });
+
+            // Redirect to login after success
+            navigate("/login");
           } catch {
             enqueueSnackbar("Payment verification failed.", { variant: "error" });
           }

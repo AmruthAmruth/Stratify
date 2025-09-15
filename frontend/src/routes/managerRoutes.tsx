@@ -1,4 +1,5 @@
-import DepartmentDetailsPage from "@/features/manager/DepartmentDetails";
+import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
+import DepartmentDetailsPage from "@/features/manager/ManagerDepartmentDetials";
 import type { RouteObject } from "react-router-dom";
 
 const managerRoutes: RouteObject[] = [
@@ -13,7 +14,7 @@ const managerRoutes: RouteObject[] = [
   
   {
     path: "department",
-    element: <DepartmentDetailsPage/>,
+    element: <ManagerDepartmentDetails/>,
   },
 ];
 

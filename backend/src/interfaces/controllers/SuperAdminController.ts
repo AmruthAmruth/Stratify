@@ -8,12 +8,16 @@ import { CookieConfig } from "../../config/CookieConfig";
 import { ILoginUseCase } from "../../application/interfaces/super-admin/ILoginUseCase";
 import { IRefreashTokenUseCase } from "../../application/interfaces/super-admin/IRefreashTokenUseCase";
 import { ICreatePlanUseCase } from "../../application/interfaces/super-admin/ICreatePlanUseCase";
+import { IUpdatePlanUseCase } from "../../application/interfaces/super-admin/IUpdatePlanUseCase";
+import { IDeletePlanUseCase } from "../../application/interfaces/super-admin/IDeletePlanUseCase";
 
 export class SuperAdminController {
   constructor(
     private readonly _loginUseCase: ILoginUseCase,
     private readonly _refreshTokenUseCase: IRefreashTokenUseCase,
-    private _createPlan :ICreatePlanUseCase
+    private _createPlan :ICreatePlanUseCase,
+    private _updatePlan:IUpdatePlanUseCase,
+    private _deletePlan:IDeletePlanUseCase
   ) {}
 
   login = async (req: Request, res: Response) => {
@@ -68,10 +72,24 @@ export class SuperAdminController {
 
 
   createPlan = async (req: Request, res: Response) => {
-  const { plan, amount, durationInMonths } = req.body;
-  const createdPlan = await this._createPlan.execute({ plan, amount, durationInMonths });
+  const { plan, description, amount, durationInMonths } = req.body;
+  const createdPlan = await this._createPlan.execute({ plan, description, amount, durationInMonths });
   res.json({ message: "Plan created successfully", plan: createdPlan });
 };
 
+
+deletePlan=async(req:Request,res:Response)=>{
+  const {plan}=req.body;
+  await this._deletePlan.execute(plan)
+  res.status(StatusCodes.OK).json({message:"Deleted Plan Successfully"})
+}
+
+
+updatePlan=async(req:Request,res:Response)=>{
+  const { plan, description, amount, durationInMonths } = req.body;
+  await this._updatePlan.execute(plan, description, amount, durationInMonths);
+  res.status(StatusCodes.OK).json({message:"Updated Plan Successfully"})
+
+}
 
 }

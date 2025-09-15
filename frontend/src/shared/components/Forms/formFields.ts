@@ -51,3 +51,13 @@ export const addManager = [
   { name: "position", label: "Position", type: "text" },
   { name: "gender", label: "Gender", type: "select", options: ["male", "female", "other"] }
 ];
+
+
+
+
+export const planFormFields = [
+  { name: "plan", label: "Plan Name", type: "text" },
+  { name: "description", label: "Description", type: "textarea" },
+  { name: "amount", label: "Amount (₹)", type: "number" },
+  { name: "durationInMonths", label: "Duration (Months)", type: "number" },
+];

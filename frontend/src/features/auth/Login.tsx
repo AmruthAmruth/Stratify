@@ -33,9 +33,8 @@ const handleLogin = async (values: LoginValues) => {
   try {
     const data = await companyLogin(values);
     console.log("Login Successful", data);
-    enqueueSnackbar("Login successful!", {
-          variant: "success",
-        });
+
+    enqueueSnackbar("Login successful!", { variant: "success" });
 
     if (data.accessToken) {
       const decoded: DecodedToken = jwtDecode(data.accessToken);
@@ -51,14 +50,30 @@ const handleLogin = async (values: LoginValues) => {
 
       navigate("/dashboard");
     }
-  } catch (err) {
+  } catch (err: any) {
     console.error("Login failed:", err);
-   
-        enqueueSnackbar(err?.error || "Registration failed", {
-          variant: "error",
-        });
+
+    const errorMessage = err?.message || "Login failed";
+
+    // check if it's the subscription error
+    if (
+      errorMessage ===
+        "Your subscription is not active. Please subscribe to continue." &&
+      err?.details?.companyId
+    ) {
+      const companyId = err.details.companyId; // ✅ safe access
+      enqueueSnackbar("Redirecting to subscription purchase page...", {
+        variant: "info",
+      });
+      navigate(`/subscription-purchase/${companyId}`);
+      return;
+    }
+
+    // otherwise show normal error
+    enqueueSnackbar(errorMessage, { variant: "error" });
   }
 };
+
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-50">

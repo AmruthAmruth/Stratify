@@ -33,6 +33,7 @@ import { PurchaseSubscriptionUseCase } from "../application/use-cases/company/Pu
 import { RazorpayService } from "../infrastructure/services/RazorpayService";
 import { PlanPriceRepostory } from "../infrastructure/repositories/PlanPriceRepository";
 import { ListSubscriptionPlansUseCase } from "../application/use-cases/company/ListSubscriptionPlansUseCase";
+import { GetManagerDepartmentsUseCase } from "../application/use-cases/company/GetDepartmentUnderMangerUseCase";
 
 export const companyDI = () => {
 
@@ -61,7 +62,7 @@ const createTrialSubscriptionUseCase=new CreateTrialSubscriptionUseCase(subscrip
   );
  
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
-  const companyLoginUseCase = new CompanyLoginUseCase(companyRepo,managerRepo,employeeRepo);
+  const companyLoginUseCase = new CompanyLoginUseCase(companyRepo,managerRepo,employeeRepo,subscriptionRepo);
 
 const resendOtpUseCase = new ResendOtpUseCase(otpRepo,emailService,tempRegRepo);
 const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo,managerRepo,employeeRepo,sendOtpUseCase)
@@ -91,6 +92,10 @@ const planRepo = new PlanPriceRepostory()
 const subscriptionPurchase = new PurchaseSubscriptionUseCase(subscriptionRepo,planRepo,razorpay)
 const listSubscriptionPlan = new ListSubscriptionPlansUseCase(planRepo)
 
+
+const getManagerDepartments = new GetManagerDepartmentsUseCase(departmentRepo,employeeRepo)
+
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -114,7 +119,8 @@ getProfileOfTeamMemeber,
 getCompany,
 getUnassignedDepartment,
 subscriptionPurchase,
-listSubscriptionPlan
+listSubscriptionPlan,
+getManagerDepartments
   );
 };
  

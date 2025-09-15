@@ -2,50 +2,88 @@ import React, { useEffect, useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom"; 
 import Table from "../../shared/components/Table/Table";
 import TableFilterBar from "../../shared/components/FilterBar/TableFilterBar";
-import { getAllCompanies } from "@/services/company";
+import { approveCompany, getAllCompanies, unapproveCompany } from "@/services/company";
+import { useSnackbar } from "notistack";
 
 const AllCompanies = () => {
   const [companies, setCompanies] = useState<any[]>([]);
+  const [allCompanies, setAllCompanies] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("All");
   const [sortBy, setSortBy] = useState("name");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+  const [isSearchMode, setIsSearchMode] = useState(false);
+  const [loadingActions, setLoadingActions] = useState<{ [key: string]: boolean }>({});
+  const [isLoading, setIsLoading] = useState(true);
   const pageSize = 6;
 
   const navigate = useNavigate();
+  const { enqueueSnackbar } = useSnackbar();
 
+  // Fetch ALL companies for search functionality
   useEffect(() => {
-    const fetchCompanies = async () => {
+    const fetchAllCompanies = async () => {
       try {
-        const response = await getAllCompanies({ page: currentPage, pageSize });
-        setCompanies(response.data);
-        setTotalPages(Math.ceil(response.total / pageSize));
+        setIsLoading(true);
+        const response = await getAllCompanies({ page: 1, pageSize: 9999 });
+        setAllCompanies(response.data || []);
       } catch (error) {
-        console.error("Failed to fetch companies:", error);
+        console.error("Failed to fetch all companies:", error);
+        enqueueSnackbar("Failed to fetch companies", { variant: "error" });
+      } finally {
+        setIsLoading(false);
       }
     };
 
-    fetchCompanies();
-  }, [currentPage]);
+    fetchAllCompanies();
+  }, [enqueueSnackbar]);
 
-  const filteredCompanies = useMemo(() => {
-    let data = [...companies];
+  // Fetch paginated companies only when NOT in search mode
+  useEffect(() => {
+    if (!isSearchMode && !isLoading) {
+      const fetchCompanies = async () => {
+        try {
+          const response = await getAllCompanies({ page: currentPage, pageSize });
+          setCompanies(response.data || []);
+          setTotalPages(Math.ceil(response.total / pageSize));
+        } catch (error) {
+          console.error("Failed to fetch companies:", error);
+          enqueueSnackbar("Failed to fetch paginated companies", { variant: "error" });
+        }
+      };
+
+      fetchCompanies();
+    }
+  }, [currentPage, isSearchMode, isLoading, enqueueSnackbar]);
+
+  // Reset to page 1 when search/filter changes
+  useEffect(() => {
+    setCurrentPage(1);
+    
+    // Determine if we're in search mode
+    const hasActiveSearch = searchTerm.trim() !== "" || filterValue !== "All";
+    setIsSearchMode(hasActiveSearch);
+  }, [searchTerm, filterValue, sortBy, sortOrder]);
+
+  // Process companies based on search/filter mode
+  const processedCompanies = useMemo(() => {
+    let data = isSearchMode ? [...allCompanies] : [...companies];
 
     if (filterValue !== "All") {
       data = data.filter(
-        (c) => c.status.toLowerCase() === filterValue.toLowerCase()
+        (c) => c.status?.toLowerCase() === filterValue.toLowerCase()
       );
     }
 
-    if (searchTerm) {
+    if (searchTerm.trim()) {
       const term = searchTerm.toLowerCase();
       data = data.filter(
         (c) =>
-          c.name.toLowerCase().includes(term) ||
-          c.email.toLowerCase().includes(term) ||
-          c.city.toLowerCase().includes(term)
+          c.name?.toLowerCase().includes(term) ||
+          c.email?.toLowerCase().includes(term) ||
+          c.city?.toLowerCase().includes(term)
       );
     }
 
@@ -58,35 +96,76 @@ const AllCompanies = () => {
     });
 
     return data;
-  }, [companies, searchTerm, filterValue, sortBy, sortOrder]);
+  }, [companies, allCompanies, searchTerm, filterValue, sortBy, sortOrder, isSearchMode]);
+
+  const searchTotalPages = Math.ceil(processedCompanies.length / pageSize);
+  const paginatedCompanies = useMemo(() => {
+    if (isSearchMode) {
+      const start = (currentPage - 1) * pageSize;
+      return processedCompanies.slice(start, start + pageSize);
+    }
+    return processedCompanies;
+  }, [processedCompanies, currentPage, isSearchMode]);
+
+  const displayTotalPages = isSearchMode ? searchTotalPages : totalPages;
 
   const clearFilters = () => {
     setSearchTerm("");
     setFilterValue("All");
     setSortBy("name");
     setSortOrder("asc");
+    setCurrentPage(1);
   };
 
-  // ✅ Navigate to profile
+  // Navigate to profile
   const handleViewProfile = (profileId: string) => {
     navigate(`/company-profile/${profileId}`);
   };
 
-  // ✅ Approve/Reject handlers
-  const handleApprove = (id: string) => {
-    setCompanies((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: "Approved" } : c
-      )
-    );
+  // Approve company handler
+  const handleApprove = async (companyId: string) => {
+    try {
+      setLoadingActions(prev => ({ ...prev, [companyId]: true }));
+      
+      const response = await approveCompany(companyId);
+      
+      // Update both arrays
+      const updateStatus = (prev: any[]) =>
+        prev.map((c) => c.id === companyId ? { ...c, status: "Approved" } : c);
+      
+      setCompanies(updateStatus);
+      setAllCompanies(updateStatus);
+      
+      enqueueSnackbar("Company approved successfully!", { variant: "success" });
+    } catch (error) {
+      console.error("Failed to approve company:", error);
+      enqueueSnackbar("Failed to approve company. Please try again.", { variant: "error" });
+    } finally {
+      setLoadingActions(prev => ({ ...prev, [companyId]: false }));
+    }
   };
 
-  const handleReject = (id: string) => {
-    setCompanies((prev) =>
-      prev.map((c) =>
-        c.id === id ? { ...c, status: "Rejected" } : c
-      )
-    );
+  // Reject/Unapprove company handler
+  const handleReject = async (companyId: string) => {
+    try {
+      setLoadingActions(prev => ({ ...prev, [companyId]: true }));
+      
+      const response = await unapproveCompany(companyId);
+      
+      // Update both arrays
+      const updateStatus = (prev: any[]) =>
+        prev.map((c) => c.id === companyId ? { ...c, status: "Rejected" } : c);
+      
+      setCompanies(updateStatus);
+      setAllCompanies(updateStatus);
+      
+      enqueueSnackbar("Company rejected successfully!", { variant: "success" });
+    } catch (error) {
+      console.error("Failed to reject company:", error);
+      enqueueSnackbar("Failed to reject company. Please try again.", { variant: "error" });
+    } finally {
+      setLoadingActions(prev => ({ ...prev, [companyId]: false }));
+    }
   };
 
   const tableColumns = [
@@ -100,45 +179,100 @@ const AllCompanies = () => {
 
   const renderCell = (row: any, key: string) => {
     if (key === "actions") {
-      const status = row.status?.toLowerCase(); // normalize to lowercase
+      const status = row.status?.toLowerCase();
+      const isActionLoading = loadingActions[row.id];
+      
       return (
         <div className="flex gap-2">
-          {/* Always show View More */}
           <button
             onClick={() => handleViewProfile(row.id)}
-            className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600"
+            className="px-3 py-1 text-sm bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
           >
             View More
           </button>
 
-          {/* Show Approve only if Pending or Rejected */}
           {(status === "pending" || status === "rejected") && (
             <button
               onClick={() => handleApprove(row.id)}
-              className="px-3 py-1 text-sm bg-green-500 text-white rounded-lg hover:bg-green-600"
+              disabled={isActionLoading}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                isActionLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-green-500 hover:bg-green-600 text-white"
+              }`}
             >
-              Approve
+              {isActionLoading ? "Loading..." : "Approve"}
             </button>
           )}
 
-          {/* Show Reject only if Pending or Approved */}
           {(status === "pending" || status === "approved") && (
             <button
               onClick={() => handleReject(row.id)}
-              className="px-3 py-1 text-sm bg-red-500 text-white rounded-lg hover:bg-red-600"
+              disabled={isActionLoading}
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
+                isActionLoading
+                  ? "bg-gray-400 cursor-not-allowed"
+                  : "bg-red-500 hover:bg-red-600 text-white"
+              }`}
             >
-              Reject
+              {isActionLoading ? "Loading..." : "Reject"}
             </button>
           )}
         </div>
       );
     }
-    return row[key];
+
+    // Add status styling
+    if (key === "status") {
+      const status = row[key]?.toLowerCase();
+      const statusColors = {
+        approved: "text-green-600 bg-green-100",
+        pending: "text-yellow-600 bg-yellow-100",
+        rejected: "text-red-600 bg-red-100",
+        active: "text-blue-600 bg-blue-100",
+        inactive: "text-gray-600 bg-gray-100"
+      };
+      
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
+          statusColors[status] || "text-gray-600 bg-gray-100"
+        }`}>
+          {row[key]}
+        </span>
+      );
+    }
+
+    return row[key] || "-";
   };
+
+  if (isLoading) {
+    return (
+      <div className="flex justify-center items-center h-64">
+        <div className="text-lg text-gray-600">Loading companies...</div>
+      </div>
+    );
+  }
 
   return (
     <div>
       <h2 className="text-xl font-bold mb-4">All Companies</h2>
+
+      {/* Show search results info */}
+      {isSearchMode && (
+        <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
+          <p className="text-blue-700">
+            {searchTerm && (
+              <>Found <strong>{processedCompanies.length}</strong> companies matching "{searchTerm}"</>
+            )}
+            {!searchTerm && filterValue !== "All" && (
+              <>Showing <strong>{processedCompanies.length}</strong> companies with status "{filterValue}"</>
+            )}
+            {processedCompanies.length > pageSize && (
+              <span> (showing {Math.min(pageSize, paginatedCompanies.length)} per page)</span>
+            )}
+          </p>
+        </div>
+      )}
 
       <TableFilterBar
         searchTerm={searchTerm}
@@ -162,12 +296,21 @@ const AllCompanies = () => {
 
       <Table
         columns={tableColumns}
-        data={filteredCompanies}
+        data={paginatedCompanies}
         currentPage={currentPage}
-        totalPages={totalPages}
+        totalPages={displayTotalPages}
         onPageChange={setCurrentPage}
-        renderCell={renderCell} // ✅ use custom renderer
+        renderCell={renderCell}
       />
+
+      {/* Show result info */}
+      <div className="mt-4 text-sm text-gray-600">
+        {isSearchMode ? (
+          <>Showing {paginatedCompanies.length} of {processedCompanies.length} filtered results</>
+        ) : (
+          <>Showing page {currentPage} of {totalPages} | Total companies: {allCompanies.length}</>
+        )}
+      </div>
     </div>
   );
 };

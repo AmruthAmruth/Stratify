@@ -1,7 +1,7 @@
 import type { RouteObject } from "react-router";
 import SuperAdminDashboard from "../features/superAdmin/SuperAdminDashboard";
 import Companies from "../features/superAdmin/AllCompanies";
-import Plans from "../features/superAdmin/Plans"
+import Plans from "../features/superAdmin/ManagePlans"
 import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
 const superAdminRoutes: RouteObject[] = [
   {

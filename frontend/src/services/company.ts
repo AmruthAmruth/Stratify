@@ -143,10 +143,35 @@ export const getUnassignedDepartments = async () => {
   export const createSubscriptionPlan = async (planName: string) => {
   try {
     const response = await api.post("/company/purchase", { planName });
-    
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+export const createSubscriptionPlanForUnauthenticated =async (planName: string,comapnyId:string) => {
+  try {
+    const response = await api.post("/company/purchase-unauthenticated", { planName,comapnyId });
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+export const verifyPaymentForUnauthenticated = async (payload: {
+  orderId: string;
+  paymentId: string;
+  signature: string;
+  planName: string;
+  companyId:string
+}) => {
+  try {
+    const response = await api.post("/company/verify-payment-unauthorized", payload);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Payment verification failed");
   }
 };
 
@@ -163,5 +188,37 @@ export const getUnassignedDepartments = async () => {
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Payment verification failed");
+  }
+};
+
+
+
+export const approveCompany=async(companyId:string)=>{
+    try {
+    const response = await api.post("/company/approve-company", { companyId });
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+}
+
+
+export const unapproveCompany=async(companyId:string)=>{
+    try {
+    const response = await api.post("/company/unapprove-company", { companyId });
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+}
+
+
+
+export const getManagerDepartments = async (managerId: string) => {
+  try {
+    const response = await api.get(`/company/manager-departments/${managerId}`);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
   }
 };

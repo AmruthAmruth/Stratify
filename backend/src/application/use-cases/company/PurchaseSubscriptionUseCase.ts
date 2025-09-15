@@ -15,7 +15,14 @@ export class PurchaseSubscriptionUseCase implements IPurchaseSubscriptionUseCase
   ) {}
 
   
-  async execute( planName: string) {
+  async execute( planName: string,companyId:string) {
+
+      const activeSubscription = await this._subscriptionRepo.getActiveByCompany(companyId);
+    if (activeSubscription) {
+     // throw new AppError("Company already has an active subscription");
+    }
+
+
     const plan = await this._planRepo.getPlan(planName);
     if (!plan) throw new AppError("Plan not found");
 

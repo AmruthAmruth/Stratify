@@ -100,4 +100,12 @@ async findDepartmentsByCompanyId(companyId: string): Promise<Department[]> {
 }
 
 
+async findByManagerId(managerId: string): Promise<{ id: string; name: string }[]> {
+  const docs = await DepartmentModel.find({ managerId }).exec();
+  return docs.map(doc => ({
+    id: doc.id.toString(),
+    name: doc.name
+  }));
+}
+
 }

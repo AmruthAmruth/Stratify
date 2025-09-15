@@ -18,10 +18,10 @@ export class CreatePlanUseCase implements ICreatePlanUseCase{
     }
 
 
-    const plan = new PlanPrice(input.plan, input.amount, input.durationInMonths);
+    const plan = new PlanPrice(input.plan,input.description, input.amount, input.durationInMonths);
 
 
- await this._planPriceRepo.setPlan(plan.plan, plan.amount, plan.durationInMonths);
+ await this._planPriceRepo.setPlan(plan.plan, plan.description, plan.amount, plan.durationInMonths);
 
     return plan;
 

@@ -12,7 +12,7 @@ interface Field {
   name: string;
   label: string;
   type: string;
-  options?: (string | SelectOption)[]; // supports both string[] and { value, label }[]
+  options?: (string | SelectOption)[];
 }
 
 interface AuthFormProps {
@@ -20,6 +20,7 @@ interface AuthFormProps {
   validationSchema: ZodSchema;
   onSubmit: (values: Record<string, unknown>) => void;
   buttonText: string;
+  initialValues?: Record<string, unknown>; // ✅ Added
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -27,20 +28,22 @@ const AuthForm: React.FC<AuthFormProps> = ({
   validationSchema,
   onSubmit,
   buttonText,
+  initialValues,
 }) => {
   const [formData, setFormData] = useState<Record<string, unknown>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
-  const [preview, setPreview] = useState<
-    Record<string, string | ArrayBuffer | null>
-  >({});
+  const [preview, setPreview] = useState<Record<string, string | ArrayBuffer | null>>({});
 
+  // 🔹 Initialize formData from fields or initialValues
   useEffect(() => {
     const initialData: Record<string, unknown> = {};
     fields.forEach((field) => {
-      initialData[field.name] = field.type === "file" ? null : "";
+      // prioritize initialValues if provided
+      initialData[field.name] =
+        initialValues?.[field.name] ?? (field.type === "file" ? null : "");
     });
     setFormData(initialData);
-  }, [fields]);
+  }, [fields, initialValues]); // ✅ watch initialValues changes
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -64,10 +67,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const validateField = (name: string) => {
     const result = validationSchema.safeParse(formData);
     if (!result.success) {
-      const formatted = result.error.format() as Record<
-        string,
-        { _errors?: string[] }
-      >;
+      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
       const fieldError = formatted[name]?._errors?.[0] ?? "";
       setErrors((prev) => ({ ...prev, [name]: fieldError }));
     } else {
@@ -80,10 +80,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
     const result = validationSchema.safeParse(formData);
 
     if (!result.success) {
-      const formatted = result.error.format() as Record<
-        string,
-        { _errors?: string[] }
-      >;
+      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
       const fieldErrors: Record<string, string> = {};
       fields.forEach((field) => {
         fieldErrors[field.name] = formatted[field.name]?._errors?.[0] ?? "";
@@ -103,17 +100,13 @@ const AuthForm: React.FC<AuthFormProps> = ({
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {fields.map((field) => {
-          const colSpan =
-            field.type === "file" ? "col-span-1 md:col-span-2" : "";
+          const colSpan = field.type === "file" ? "col-span-1 md:col-span-2" : "";
 
           return (
             <div key={field.name} className={`flex flex-col ${colSpan}`}>
-              <label className="block font-medium text-gray-600 mb-2">
-                {field.label}
-              </label>
+              <label className="block font-medium text-gray-600 mb-2">{field.label}</label>
 
               {field.type === "file" ? (
-                // 📂 File Upload
                 <div className="flex flex-col gap-3">
                   <label
                     htmlFor={field.name}
@@ -155,14 +148,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
                       <button
                         type="button"
                         onClick={() => {
-                          setPreview((prev) => ({
-                            ...prev,
-                            [field.name]: null,
-                          }));
-                          setFormData((prev) => ({
-                            ...prev,
-                            [field.name]: null,
-                          }));
+                          setPreview((prev) => ({ ...prev, [field.name]: null }));
+                          setFormData((prev) => ({ ...prev, [field.name]: null }));
                         }}
                         className="absolute top-2 right-2 bg-red-500/90 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 transition"
                       >
@@ -172,7 +159,6 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   )}
                 </div>
               ) : field.type === "select" ? (
-                // ✅ Select Dropdown (supports string[] and { value, label }[])
                 <select
                   name={field.name}
                   value={formData[field.name] as string}
@@ -199,28 +185,30 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   })}
                 </select>
               ) : field.type === "date" ? (
-  // 📅 Date Picker
-  <DatePicker
-    selected={
-      formData[field.name]
-        ? new Date(formData[field.name] as string)
-        : null
-    }
-    onChange={(date: Date | null) => {
-      setFormData((prev) => ({ ...prev, [field.name]: date?.toISOString() || "" }));
-    }}
-    onBlur={() => validateField(field.name)}
-    dateFormat="yyyy-MM-dd"
-    className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
-      errors[field.name] ? "border-red-500" : "border-gray-300"
-    }`}
-    placeholderText={`Select ${field.label}`}
-  /> 
-) : (
-                // 📝 Regular Input
+                <DatePicker
+                  selected={
+                    formData[field.name]
+                      ? new Date(formData[field.name] as string)
+                      : null
+                  }
+                  onChange={(date: Date | null) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [field.name]: date?.toISOString() || "",
+                    }))
+                  }
+                  onBlur={() => validateField(field.name)}
+                  dateFormat="yyyy-MM-dd"
+                  className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
+                    errors[field.name] ? "border-red-500" : "border-gray-300"
+                  }`}
+                  placeholderText={`Select ${field.label}`}
+                />
+              ) : (
                 <input
                   type={field.type}
                   name={field.name}
+                  value={formData[field.name] as string} // ✅ set value
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
                   className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
