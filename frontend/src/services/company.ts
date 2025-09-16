@@ -222,3 +222,13 @@ export const getManagerDepartments = async (managerId: string) => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+export const listPurchasedCompany=async()=>{
+   try {
+    const response = await api.get('company/list-purchased-company');
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+}

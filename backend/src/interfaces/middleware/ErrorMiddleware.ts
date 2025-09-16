@@ -2,9 +2,9 @@ import { Request, Response, NextFunction } from "express";
 
 export class AppError extends Error {
   statusCode: number;
-  details?: any; 
+  details?: unknown; 
 
-  constructor(message: string, statusCode: number = 500, details?: any) {
+  constructor(message: string, statusCode: number = 500, details?: unknown) {
     super(message);
     this.statusCode = statusCode;
     this.details = details;
@@ -12,9 +12,8 @@ export class AppError extends Error {
   }
 }
 
-
 export const errorMiddleware = (
-  err: any,
+  err: Error | AppError,
   _req: Request,
   res: Response,
   _next: NextFunction
@@ -25,7 +24,7 @@ export const errorMiddleware = (
     res.status(err.statusCode || 500).json({
       status: "error",
       message: err.message,
-      ...(err.details ? { details: err.details } : {}), 
+      ...(err.details ? { details: err.details } : {}),
     });
   } else {
     res.status(500).json({

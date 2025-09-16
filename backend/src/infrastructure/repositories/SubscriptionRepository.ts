@@ -106,4 +106,23 @@ async deletePlan(plan: string): Promise<void> {
       doc.paymentId
     );
   }
+
+
+
+  async listAllPlan(): Promise<Subscription[]> {
+    const docs = await SubscriptionModel.find();
+    return docs.map(
+      (doc) =>
+        new Subscription(
+          doc.id,
+          doc.companyId,
+          doc.startDate,
+          doc.endDate,
+          doc.status as "active" | "expired" | "trial" | "cancelled",
+          doc.plan,
+          doc.amount,
+          doc.paymentId
+        )
+    );
+  }
 }

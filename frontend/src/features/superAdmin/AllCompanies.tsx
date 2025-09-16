@@ -12,8 +12,8 @@ const AllCompanies = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("All");
-  const [sortBy, setSortBy] = useState("name");
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
+const [sortBy, setSortBy] = useState<string | null>(null); 
+const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [loadingActions, setLoadingActions] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);

@@ -5,11 +5,12 @@ import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { LoginSchema } from "../../application/validators/LoginValidator";
 import { CookieConfig } from "../../config/CookieConfig";
-import { ILoginUseCase } from "../../application/interfaces/super-admin/ILoginUseCase";
-import { IRefreashTokenUseCase } from "../../application/interfaces/super-admin/IRefreashTokenUseCase";
-import { ICreatePlanUseCase } from "../../application/interfaces/super-admin/ICreatePlanUseCase";
-import { IUpdatePlanUseCase } from "../../application/interfaces/super-admin/IUpdatePlanUseCase";
-import { IDeletePlanUseCase } from "../../application/interfaces/super-admin/IDeletePlanUseCase";
+import { ILoginUseCase } from "../../application/interfaces/authentication/ILoginUseCase";
+import { IRefreashTokenUseCase } from "../../application/interfaces/authentication/IRefreashTokenUseCase";
+import { ICreatePlanUseCase } from "../../application/interfaces/subscriptions/ICreatePlanUseCase";
+import { IUpdatePlanUseCase } from "../../application/interfaces/subscriptions/IUpdatePlanUseCase";
+import { IDeletePlanUseCase } from "../../application/interfaces/subscriptions/IDeletePlanUseCase";
+import { IListPurchasedPlanUseCase } from "../../application/interfaces/subscriptions/IListPurchasedPlanUseCase";
 
 export class SuperAdminController {
   constructor(
@@ -17,7 +18,9 @@ export class SuperAdminController {
     private readonly _refreshTokenUseCase: IRefreashTokenUseCase,
     private _createPlan :ICreatePlanUseCase,
     private _updatePlan:IUpdatePlanUseCase,
-    private _deletePlan:IDeletePlanUseCase
+    private _deletePlan:IDeletePlanUseCase,
+    private _listCompanyPurchasedPlan:IListPurchasedPlanUseCase
+
   ) {}
 
   login = async (req: Request, res: Response) => {
@@ -68,7 +71,7 @@ export class SuperAdminController {
 
     res.json({ accessToken });
   };
-
+ 
 
 
   createPlan = async (req: Request, res: Response) => {
@@ -86,9 +89,21 @@ deletePlan=async(req:Request,res:Response)=>{
 
 
 updatePlan=async(req:Request,res:Response)=>{
+  
+  
   const { plan, description, amount, durationInMonths } = req.body;
   await this._updatePlan.execute(plan, description, amount, durationInMonths);
   res.status(StatusCodes.OK).json({message:"Updated Plan Successfully"})
+
+}
+
+
+
+listPurchasedPlan=async(_req:Request,res:Response)=>{
+  
+  
+const response=  await this._listCompanyPurchasedPlan.execute();
+  res.status(StatusCodes.OK).json(response)
 
 }
 

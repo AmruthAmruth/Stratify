@@ -10,4 +10,5 @@ export interface ISubscriptionRepository {
   updatePlan(subscription:Subscription):Promise<Subscription>
   deletePlan(plan:string):Promise<void>
   findByCompanyId(companyId:string):Promise<Subscription|null>
+  listAllPlan():Promise<Subscription[]>
 }

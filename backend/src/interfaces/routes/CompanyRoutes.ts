@@ -7,7 +7,7 @@ import { authMiddleware } from "../middleware/AuthMiddleware";
 const companyRouter = Router();
 const controller = companyDI();  
 
-// 🔹 Auth & basic flows
+
 companyRouter.post("/register", upload.single("profileImage"), asyncHandler(controller.register));
 companyRouter.post("/verify-otp", asyncHandler(controller.verifyOTP));
 companyRouter.post("/login", asyncHandler(controller.login));
@@ -17,7 +17,7 @@ companyRouter.post("/forgotpassword", asyncHandler(controller.forgotPassword));
 companyRouter.post("/forgotpassword-verifyotp", asyncHandler(controller.verifyForgotPasswordOTP));
 companyRouter.post("/resetpassword", asyncHandler(controller.resetPassword));
 
-// 🔹 Company-related actions
+
 companyRouter.get("/companies", asyncHandler(controller.getPaginatedCompanies));
 companyRouter.get("/unassigned-managers",authMiddleware(["company"]),asyncHandler(controller.getUnassignedManager));
 companyRouter.get("/unassigned-department",authMiddleware(["company"]),asyncHandler(controller.getUnassignedDepartment));
@@ -33,7 +33,7 @@ companyRouter.get('/manager-departments/:managerId',asyncHandler(controller.getD
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post("/unapprove-company", asyncHandler(controller.unapproveCompany));
 
-// 🔹 Creation routes
+
 companyRouter.post("/create-department", authMiddleware(["company"]), asyncHandler(controller.createDepartment));
 companyRouter.post("/create-manager", authMiddleware(["company"]), asyncHandler(controller.createManager));
 companyRouter.post("/create-employee", authMiddleware(["company", "manager"]), asyncHandler(controller.createEmployee));

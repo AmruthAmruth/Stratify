@@ -21,10 +21,14 @@ export const updateSubscription = async (data: Record<string, unknown>) => {
 export const deleteSubscription = async (plan: string) => {
   try {
     const response = await api.delete("/super-admin/delete-plan", {
-      data: { plan } 
+      data: { plan }
     });
     return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
+  } catch (err: unknown) {
+    if (err instanceof Error) {
+      throw err; 
+    } else {
+      throw new Error("Network error"); 
+    }
   }
 };

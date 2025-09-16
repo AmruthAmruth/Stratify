@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
 
-import { IRegisterCompanyUseCase } from "../../application/interfaces/auth/IRegisterCompanyUseCase";
-import { IVerifyCompanyOTPUseCase } from "../../application/interfaces/auth/IVerifyCompanyOTPUseCase";
+import { IRegisterCompanyUseCase } from "../../application/interfaces/authentication/IRegisterCompanyUseCase";
+import { IVerifyCompanyOTPUseCase } from "../../application/interfaces/authentication/IVerifyCompanyOTPUseCase";
 import { IGetCompanyByIdUseCase } from "../../application/interfaces/company/IGetCompanyUseCase";
-import { ICompanyLoginUseCase } from "../../application/interfaces/auth/ICompanyLoginUseCase";
-import { IResendOtpUseCase } from "../../application/interfaces/auth/IResentOTPUseCase";
-import { IForgotPasswordUseCase } from "../../application/interfaces/auth/IForgotPasswordUseCase";
-import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/auth/IVerifyForgotPasswordOTPUseCase";
-import { IResetPasswordUseCase } from "../../application/interfaces/auth/IResetPasswordOTPUseCase";
+import { ICompanyLoginUseCase } from "../../application/interfaces/authentication/ICompanyLoginUseCase";
+import { IResendOtpUseCase } from "../../application/interfaces/authentication/IResentOTPUseCase";
+import { IForgotPasswordUseCase } from "../../application/interfaces/authentication/IForgotPasswordUseCase";
+import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/authentication/IVerifyForgotPasswordOTPUseCase";
+import { IResetPasswordUseCase } from "../../application/interfaces/authentication/IResetPasswordOTPUseCase";
 import { IGetPaginatedCompaniesUseCase } from "../../application/interfaces/company/IListCompanyUseCase";
 
 import { LoginDTO, LoginSchema } from "../../application/validators/LoginValidator";
@@ -16,20 +16,23 @@ import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/CookieConfig";
 import { IApproveCompanyUseCase } from "../../application/interfaces/company/IApproveCompanyUseCase";
 import { IUnapproveCompany } from "../../application/interfaces/company/IUnapprovedCompanyUseCase";
-import { CreateDepartmentUseCase } from "../../application/use-cases/company/CreateDepartmentUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import { CreateManagerUseCase } from "../../application/use-cases/company/CreateManagerUseCase";
-import { CreateEmployeeUseCase } from "../../application/use-cases/company/CreateEmployeeUseCase";
-import { GetUnassignedManagersUseCase } from "../../application/use-cases/company/GetUnassignedManagersUseCase";
-import { GetCompanyDepartmentUseCase } from "../../application/use-cases/company/GetCompanyDepartmentsUseCase";
-import { GetDepartmentDetailsUseCase } from "../../application/use-cases/company/GetDepartmentDetailsUseCase";
-import { GetCompanyMemebersUseCase } from "../../application/use-cases/company/GetCompanyMembersUseCase";
-import { GetProfileUseCase } from "../../application/use-cases/company/GetProfileUseCase";
-import { GetCompanyByIdUseCase } from "../../application/use-cases/company/GetCompanyUseCase";
-import { GetUnassignedDepartmentUseCase } from "../../application/use-cases/company/GetUnassignedDepartments";
-import { PurchaseSubscriptionUseCase } from "../../application/use-cases/company/PurchaseSubscriptionUseCase";
-import { ListSubscriptionPlansUseCase } from "../../application/use-cases/company/ListSubscriptionPlansUseCase";
-import { GetManagerDepartmentsUseCase } from "../../application/use-cases/company/GetDepartmentUnderMangerUseCase";
+import { GetUnassignedManagersUseCase } from "../../application/use-cases/managers/GetUnassignedManagersUseCase";
+import { GetUnassignedDepartmentUseCase } from "../../application/use-cases/departments/GetUnassignedDepartments";
+import { GetManagerDepartmentsUseCase } from "../../application/use-cases/departments/GetDepartmentUnderMangerUseCase";
+import { CreateManagerSchema } from "../../application/validators/CreateManager";
+import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
+import { CreatePlanSchema } from "../../application/validators/CreatePlan";
+import { DepartmentDetailsSchema } from "../../application/validators/CreateDepartment";
+import { ICreateDepartmentUseCase } from "../../application/interfaces/departments/ICreateDepartmentUseCase";
+import { ICreateManagerUseCase } from "../../application/interfaces/managers/ICreateManagerUseCase";
+import { ICreateEmployeeUseCase } from "../../application/interfaces/employees/ICreateEmployeeUseCase";
+import { IGetCompanyDepartmentUseCase } from "../../application/interfaces/departments/IGetCompanyDepartmentsUseCase";
+import { IGetCompanyDepartmentDetailsUseCase } from "../../application/interfaces/departments/IGetDepartmentDetailsUseCase";
+import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company/IGetCompanyMembersUseCase";
+import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
+import { IPurchaseSubscriptionUseCase } from "../../application/interfaces/subscriptions/IPurchaseSubscriptionUseCase";
+import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subscriptions/IListSubscriptionPlansUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -48,18 +51,18 @@ export class CompanyController {
     private _getPaginatedCompaniesUseCase: IGetPaginatedCompaniesUseCase,
     private _approveCompanyUseCase:IApproveCompanyUseCase,
     private _unapproveCompanyUseCase:IUnapproveCompany,
-    private _createDeapartmentUseCase:CreateDepartmentUseCase,
-    private _createManagerUseCase:CreateManagerUseCase,
-    private _createEmployeeUseCase:CreateEmployeeUseCase,
+    private _createDeapartmentUseCase:ICreateDepartmentUseCase,
+    private _createManagerUseCase:ICreateManagerUseCase,
+    private _createEmployeeUseCase:ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase:GetUnassignedManagersUseCase,
-    private _getCompanyDepartmentsUseCase:GetCompanyDepartmentUseCase,
-    private _getDepartmentDetailsUseCase:GetDepartmentDetailsUseCase,
-    private _getCompanyMembersUseCase:GetCompanyMemebersUseCase,
-    private _getProfileOfTeamMemeber:GetProfileUseCase,
-    private _getCompany:GetCompanyByIdUseCase,
+    private _getCompanyDepartmentsUseCase:IGetCompanyDepartmentUseCase,
+    private _getDepartmentDetailsUseCase:IGetCompanyDepartmentDetailsUseCase,
+    private _getCompanyMembersUseCase:IGetCompanyMemebersUseCase,
+    private _getProfileOfTeamMemeber:IGetProfileUseCase,
+    private _getCompany:IGetCompanyByIdUseCase,
     private _getUnassinedDepartment:GetUnassignedDepartmentUseCase,
-    private _subscriptionPurchaseUseCase:PurchaseSubscriptionUseCase,
-    private _listSubscriptionPlanUseCase:ListSubscriptionPlansUseCase,
+    private _subscriptionPurchaseUseCase:IPurchaseSubscriptionUseCase,
+    private _listSubscriptionPlanUseCase:IListSubscriptionPlansUseCase,
     private _getManagerDepartments:GetManagerDepartmentsUseCase
   ) {}
 
@@ -82,7 +85,7 @@ export class CompanyController {
     res.status(StatusCodes.OK).json({ message: Messages.OTP_RESENT });
   };
 
-  login = async (req: Request, res: Response) => {
+  login = async (req: Request, res: Response) => {  
     const result = LoginSchema.safeParse(req.body);
     
     if (!result.success) {
@@ -143,7 +146,7 @@ export class CompanyController {
     });
     res.status(StatusCodes.OK).json(result);
   };
-
+  
 
 approveCompany=async(req:Request,res:Response)=>{
   const { companyId } = req.body;
@@ -160,19 +163,58 @@ unapproveCompany=async(req:Request,res:Response)=>{
 
 
 createDepartment=async(req:AuthRequest,res:Response)=>{
+ const result = DepartmentDetailsSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        status: "error",
+        errors: result.error.issues.map(issue => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+      return;
+    }
+
   const companyId=req.companyId;
   const response = await this._createDeapartmentUseCase.execute({...req.body,companyId})
   return res.status(StatusCodes.CREATED).json({message:"Department Created Successfully",response})
 }
 
-
+ 
 createManager=async(req:AuthRequest,res:Response)=>{
+   const result = CreateManagerSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        status: "error",
+        errors: result.error.issues.map(issue => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+      return;
+    }
   const companyId=req.companyId;
   const response = await this._createManagerUseCase.execute({...req.body,companyId})
   return res.status(StatusCodes.CREATED).json({message:"Manager Created Successfully",response})
 }
 
 createEmployee=async(req:AuthRequest,res:Response)=>{
+
+ const result = CreateEmployeeSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        status: "error",
+        errors: result.error.issues.map(issue => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+      return;
+    }
+
   const creatorId = req.companyId! 
    const employeeDto = req.body;
   const response = await this._createEmployeeUseCase.execute(employeeDto,creatorId)
@@ -236,6 +278,18 @@ listPlans=async(_req:Request,res:Response)=>{
 
 
 purchasePlan=async(req:AuthRequest,res:Response)=>{
+   const result = CreatePlanSchema.safeParse(req.body);
+    
+    if (!result.success) {
+      res.status(StatusCodes.BAD_REQUEST).json({
+        status: "error",
+        errors: result.error.issues.map(issue => ({
+          field: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
+      return;
+    }
     const companyId = req.companyId!; 
   const {planName} = req.body
   console.log("Here calling");

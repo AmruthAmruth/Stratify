@@ -1,5 +1,6 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 
 
@@ -11,7 +12,7 @@ export class UnapproveCompany{
     async execute(id:string):Promise<void>{
 
         const company = await this._companyRepo.findById(id);
-        if(!company) throw new Error(Messages.COMPANY_NOT_FOUND)
+        if(!company) throw new AppError(Messages.COMPANY_NOT_FOUND)
 
         await this._companyRepo.unapproveCompany(id);
 

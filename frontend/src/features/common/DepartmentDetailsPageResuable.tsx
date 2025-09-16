@@ -20,6 +20,7 @@ import AuthForm from "@/shared/components/Forms/DynamicForm";
 import { addMember } from "@/shared/components/Forms/formFields";
 import { addMemberSchema } from "@/shared/utils/validations";
 import { useSnackbar } from "notistack";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 
 // TypeScript Interfaces
@@ -65,81 +66,64 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [isDepartmentSelectorOpen, setIsDepartmentSelectorOpen] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(true);
 
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   
   const [department, setDepartment] = useState<DepartmentResponse | null>(null);
+  const [departments, setDepartments] = useState<Department[]>([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>(id || "");
 
-  // Dummy data for manager departments (multiple departments a manager handles)
-  
- const managerId = (state: RootState) => state.auth.userId;
+  // Get manager ID from Redux store
+  const managerId = useSelector((state: RootState) => state.auth.userId);
 
- useEffect(() => {
-  if (role === "manager" && managerId) {
-    getManagerDepartments(managerId)
-      .then((data) => {
-        setDepartments(data || []); // ✅ store departments
-        if (data.length > 0 && !selectedDepartmentId) {
-          setSelectedDepartmentId(data[0].id); // default to first department
-        }
-      })
-      .catch((err) => {
-        console.error("Error fetching manager departments:", err);
-      });
-  }
-}, [role, managerId]);
-
-
-  const managerDepartments: Department[] = [
-    { id: "1", name: "Engineering", memberCount: 12, status: "Active" },
-    { id: "2", name: "Product Development", memberCount: 8, status: "Active" },
-    { id: "3", name: "Quality Assurance", memberCount: 6, status: "Active" },
-  ];
-
-  // Dummy department data if API fails or for demo
-  const dummyDepartment: DepartmentResponse = {
-    departmentName: role === 'manager' ? 
-      (managerDepartments.find(d => d.id === selectedDepartmentId)?.name || "Engineering") :
-      "Engineering Department",
-    description: "Our engineering team is responsible for developing and maintaining our core products and services. We focus on innovation, quality, and scalable solutions.",
-    headOfDepartment: "Sarah Johnson",
-    headEmail: "sarah.johnson@company.com",
-    headPhone: "+1 (555) 123-4567",
-    headPosition: "VP of Engineering",
-    teamMembers: [
-      { id: "1", name: "John Doe", position: "Senior Developer", email: "john.doe@company.com", phone: "+1 (555) 123-4568", status: "Active" },
-      { id: "2", name: "Jane Smith", position: "Frontend Developer", email: "jane.smith@company.com", phone: "+1 (555) 123-4569", status: "Active" },
-      { id: "3", name: "Mike Wilson", position: "Backend Developer", email: "mike.wilson@company.com", phone: "+1 (555) 123-4570", status: "Active" },
-      { id: "4", name: "Lisa Brown", position: "DevOps Engineer", email: "lisa.brown@company.com", phone: "+1 (555) 123-4571", status: "Inactive" },
-      { id: "5", name: "David Lee", position: "QA Engineer", email: "david.lee@company.com", phone: "+1 (555) 123-4572", status: "Active" },
-    ]
-  };
+  // Fetch manager departments when role is manager
+  useEffect(() => {
+    if (role === "manager" && managerId) {
+      setLoading(true);
+      getManagerDepartments(managerId)
+        .then((data) => {
+          setDepartments(data || []);
+          if (data && data.length > 0 && !selectedDepartmentId) {
+            setSelectedDepartmentId(data[0].id); // default to first department
+          }
+        })
+        .catch((err) => {
+          console.error("Error fetching manager departments:", err);
+          enqueueSnackbar("Failed to fetch manager departments", { variant: "error" });
+        })
+        .finally(() => {
+          setLoading(false);
+        });
+    } else if (role === "company") {
+      setLoading(false);
+    }
+  }, [role, managerId, selectedDepartmentId]);
 
   // Fetch department details
   useEffect(() => {
     const departmentId = role === 'company' ? id : selectedDepartmentId;
-    if (departmentId) {
+    
+    if (departmentId && !loading) {
       getDepartmentDetails(departmentId)
         .then((data) => {
           setDepartment(data.response);
         })
         .catch((err) => {
           console.error("Error while fetching department:", err);
-          // Use dummy data as fallback
-          setDepartment(dummyDepartment);
+          enqueueSnackbar("Failed to fetch department details", { variant: "error" });
         });
-    } else {
-      // Use dummy data if no ID
-      setDepartment(dummyDepartment);
     }
-  }, [id, selectedDepartmentId, role]);
+  }, [id, selectedDepartmentId, role, loading]);
 
   const handleAddMember = (values: any) => {
     const departmentId = role === 'company' ? id : selectedDepartmentId;
-    if (!departmentId) return;
+    if (!departmentId) {
+      enqueueSnackbar("No department selected", { variant: "error" });
+      return;
+    }
 
     setSubmitLoading(true);
 
@@ -153,49 +137,19 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         console.log("Member added successfully:", data);
         enqueueSnackbar("Member added successfully!", { variant: "success" });
         setIsModalOpen(false);
+        
         // Refresh department details
         getDepartmentDetails(departmentId)
-          .then((refreshedData) => setDepartment(refreshedData.response))
+          .then((refreshedData) => {
+            setDepartment(refreshedData.response);
+          })
           .catch((err) => {
             console.error("Error refreshing department:", err);
-            // Add to dummy data for demo
-            if (department) {
-              const newMember = {
-                id: Date.now().toString(),
-                name: values.name,
-                position: values.position,
-                email: values.email,
-                phone: values.phone,
-                status: "Active" as const
-              };
-              setDepartment({
-                ...department,
-                teamMembers: [...department.teamMembers, newMember]
-              });
-            }
           });
       })
       .catch((err) => {
         console.error("Error creating employee:", err.message);
         enqueueSnackbar("Failed to add member. Please try again.", { variant: "error" });
-        
-        // For demo purposes, still add to dummy data
-        if (department) {
-          const newMember = {
-            id: Date.now().toString(),
-            name: values.name,
-            position: values.position,
-            email: values.email,
-            phone: values.phone,
-            status: "Active" as const
-          };
-          setDepartment({
-            ...department,
-            teamMembers: [...department.teamMembers, newMember]
-          });
-          enqueueSnackbar("Member added successfully! (Demo mode)", { variant: "success" });
-          setIsModalOpen(false);
-        }
       })
       .finally(() => {
         setSubmitLoading(false);
@@ -224,7 +178,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           avatar:
             "https://ui-avatars.com/api/?name=" +
             encodeURIComponent(department.headOfDepartment),
-          experience: 5,
+          experience: 5, // This might need to come from API if available
         },
       }
     : null;
@@ -242,19 +196,19 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     }));
   }, [department]);
 
-  // Overview data
-  const overviewData = {
-    totalProjects: 24,
+  // Overview data based on real data
+  const overviewData = useMemo(() => ({
+    totalProjects: 24, // This might need to come from API
     totalTeamMembers: employeeData.length,
     activeMembers: employeeData.filter((e) => e.status === "Active").length,
     inactiveMembers: employeeData.filter((e) => e.status === "Inactive").length,
-  };
+  }), [employeeData]);
 
-  const performanceChartData = {
+  const performanceChartData = useMemo(() => ({
     labels: ["Active Projects", "Completed Projects", "Team Members", "Efficiency %"],
-    data: [12, 45, employeeData.length, 85],
+    data: [12, 45, employeeData.length, 85], // Some values might need to come from API
     backgroundColors: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"]
-  };
+  }), [employeeData.length]);
 
   // Filter and sort logic
   const filteredEmployees = useMemo(() => {
@@ -344,8 +298,58 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
 
   // Get current department name for manager view
   const currentDepartmentName = role === 'manager' 
-    ? managerDepartments.find(dept => dept.id === selectedDepartmentId)?.name || departmentData?.name || 'Department'
+    ? departments.find(dept => dept.id === selectedDepartmentId)?.name || departmentData?.name || 'Department'
     : departmentData?.name || 'Department';
+
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-600">Loading department details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if manager has no departments
+  if (role === 'manager' && departments.length === 0) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Departments Assigned</h2>
+          <p className="text-gray-600">You are not assigned to manage any departments yet.</p>
+          <button 
+            onClick={handleBackToDepartments}
+            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Dashboard
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no department data available
+  if (!department) {
+    return (
+      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+        <div className="text-center">
+          <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Department Not Found</h2>
+          <p className="text-gray-600">The requested department details could not be loaded.</p>
+          <button 
+            onClick={handleBackToDepartments}
+            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Departments
+          </button>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -380,7 +384,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
             </div>
 
             {/* Department Selector for Manager */}
-            {role === 'manager' && managerDepartments.length > 1 && (
+            {role === 'manager' && departments.length > 1 && (
               <div className="relative">
                 <button
                   onClick={() => setIsDepartmentSelectorOpen(!isDepartmentSelectorOpen)}
@@ -398,7 +402,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                       Select Department
                     </div>
-                    {managerDepartments.map((dept) => (
+                    {departments.map((dept) => (
                       <button
                         key={dept.id}
                         onClick={() => handleDepartmentChange(dept.id)}
@@ -425,24 +429,18 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         {/* Department Info */}
         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8 hover:shadow-md transition-shadow duration-300">
           <div className="flex flex-col gap-8">
-            {departmentData ? (
-              <>
-                <div className="mb-6">
-                  <div className="flex items-center mb-4">
-                    <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full mr-4"></div>
-                    <h2 className="text-3xl font-bold text-gray-900">{departmentData.name}</h2>
-                    {role === 'manager' && (
-                      <span className="ml-4 px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                        You manage this department
-                      </span>
-                    )}
-                  </div>
-                  <p className="text-gray-600 leading-relaxed text-lg">{departmentData.description}</p>
-                </div>
-              </>
-            ) : (
-              <p>Loading department details...</p>
-            )}
+            <div className="mb-6">
+              <div className="flex items-center mb-4">
+                <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full mr-4"></div>
+                <h2 className="text-3xl font-bold text-gray-900">{departmentData.name}</h2>
+                {role === 'manager' && (
+                  <span className="ml-4 px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
+                    You manage this department
+                  </span>
+                )}
+              </div>
+              <p className="text-gray-600 leading-relaxed text-lg">{departmentData.description}</p>
+            </div>
           </div>
         </div>
 

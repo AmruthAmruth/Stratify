@@ -5,6 +5,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Dashboard", path: "/dashboard" },
     { label: "Companies", path: "/companies" },
     { label: "Plans", path: "/plans" },
+    { label: "Purchased Company", path: "/purchased-comapny" },
     { label: "Messages", path: "/message" },
     { label: "Payments", path: "/payments" },
     { label: "Notification", path: "/notification" },

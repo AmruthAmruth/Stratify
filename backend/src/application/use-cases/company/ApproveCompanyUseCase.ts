@@ -1,5 +1,6 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 
 
@@ -14,8 +15,8 @@ export class ApproveCompany{
     async execute(id:string):Promise<void>{
 
         const company = await this._companyRepo.findById(id);
-        if(!company) throw new Error(Messages.COMPANY_NOT_FOUND)
-            if(company.status=="approved") throw new Error("Company Already Approved")
+        if(!company) throw new AppError(Messages.COMPANY_NOT_FOUND)
+            if(company.status=="approved") throw new AppError("Company Already Approved")
 
        await this._companyRepo.approveCompany(id)
 

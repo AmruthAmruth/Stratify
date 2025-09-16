@@ -19,6 +19,10 @@ const superAdminRoutes: RouteObject[] = [
   path: "company-profile/:id",
   element: <CompanyProfilePage/>
 }
+,{
+  path: "purchased-comapny",
+  element: <CompanyProfilePage/>
+}
 ];
 
 export default superAdminRoutes;

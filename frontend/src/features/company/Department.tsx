@@ -192,7 +192,7 @@ const Department: React.FC = () => {
     }
 
     setIsManagerModalOpen(false);
-  } catch (err: any) {
+  } catch (err: unknown) {
     console.error("Error while adding manager:", err);
 
     const errorMessage =

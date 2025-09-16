@@ -103,14 +103,24 @@ const SubscriptionPlans: React.FC = () => {
   if (plans.length === 0) return <div className="text-center mt-20 text-gray-500">No subscription plans available</div>;
 
   return (
-    <div className="max-w-6xl mx-auto mt-12 px-4">
-      <h1 className="text-4xl font-extrabold text-center mb-12 text-gray-800">Choose Your Subscription</h1>
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
-        {plans.map((plan) => (
-          <PlanCard key={plan.plan} plan={plan} mode="company" onBuy={handleBuy} />
-        ))}
+<div className="w-full h-screen bg-white flex flex-col items-center justify-center px-6 py-12">
+  <h1 className="text-4xl font-extrabold text-center mb-16 text-black">
+    Choose Your Subscription
+  </h1>
+
+  <div className="w-full h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10">
+    {plans.map((plan) => (
+      <div
+        key={plan.plan}
+        className="w-full h-full bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col justify-between"
+      >
+        <PlanCard plan={plan} mode="company" onBuy={handleBuy} />
       </div>
-    </div>
+    ))}
+  </div>
+</div>
+
+
   );
 };
 
