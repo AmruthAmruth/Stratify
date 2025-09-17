@@ -8,8 +8,9 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Messages } from "../../../shared/constants/messages";
 import { generateRandomPassword, hashPassword } from "../../../shared/utils/password";
-import { CreateEmployeeDTO } from "../../dto/company/CreateEmployeeDTO";
+import { CreateEmployeeDTO } from "../../dto/employees/CreateEmployeeDTO";
 import { ICreateEmployeeUseCase } from "../../interfaces/employees/ICreateEmployeeUseCase";
+import { employeeWelcomeTemplate } from "../../templates/EmployeeWelcomeTemplate";
 
 export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
   constructor(
@@ -77,15 +78,20 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
 
     const createdEmployee = await this._employeeRepo.create(employee);
 
+
+
+const html = employeeWelcomeTemplate(
+  createdEmployee.name,
+  company.name,
+  department.name,
+  createdEmployee.position,
+  tempPassword
+);
+
     await this._emailService.sendEmail(
       createdEmployee.email,
-      `Welcome to ${company.name}`,
-      `Hello ${createdEmployee.name},\n\n` +
-        `You have been successfully added as an employee at ${company.name} in the "${department.name}" department ` +
-        `as a "${createdEmployee.position}".\n\n` +
-        `Your temporary login password is: ${tempPassword}\n` +
-        `Please log in and change your password as soon as possible.\n\n` +
-        `Best regards,\n${company.name} HR`
+      `👋 Welcome to ${company.name}!`,
+      html
     );
 
     return createdEmployee;

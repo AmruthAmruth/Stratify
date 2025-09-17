@@ -1,7 +1,7 @@
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
-import { DepartmentDetails } from "../../dto/company/CompanyDepartmentsDTO";
+import { DepartmentDetails } from "../../dto/departments/CompanyDepartmentsDTO";
 import { IGetCompanyDepartmentUseCase } from "../../interfaces/departments/IGetCompanyDepartmentsUseCase";
 
 export class GetCompanyDepartmentUseCase

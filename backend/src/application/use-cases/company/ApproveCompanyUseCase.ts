@@ -2,6 +2,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IEmailService } from "../../../domain/repositories/IEmailService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
+import { approveCompanyTemplate } from "../../templates/ApproveCompanyTemplate";
 
 
 
@@ -19,19 +20,13 @@ export class ApproveCompany{
             if(company.status=="approved") throw new AppError("Company Already Approved")
 
        await this._companyRepo.approveCompany(id)
+         const html = approveCompanyTemplate(company.name);
+
 
       await this._emailService.sendEmail( 
   company.email,
   `Your Company "${company.name}" Has Been Approved`,
-  `Dear ${company.name} Team,
-
-We are pleased to inform you that your company registration has been successfully approved.  
-You can now access your account and start managing your company with ease through our platform.
-
-Welcome aboard, and we look forward to supporting your growth.
-
-Best regards,  
-The Stratify Team`
+  html
 );
 
     }

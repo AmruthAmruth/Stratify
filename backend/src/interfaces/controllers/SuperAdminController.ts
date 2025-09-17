@@ -1,5 +1,5 @@
 
-import { LoginDTO } from "../../application/dto/auth/LoginDTO";
+import { LoginDTO } from "../../application/dto/authentication/LoginDTO";
 import { Request, Response } from "express";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";

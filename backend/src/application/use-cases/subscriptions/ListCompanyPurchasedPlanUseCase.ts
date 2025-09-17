@@ -1,7 +1,7 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
-import { PurchasePlanDTO } from "../../dto/company/CompanyPurchasedPlanDTO";
+import { PurchasePlanDTO } from "../../dto/subscriptions/CompanyPurchasedPlanDTO";
 import { IListPurchasedPlanUseCase } from "../../interfaces/subscriptions/IListPurchasedPlanUseCase";
 
 export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCase {

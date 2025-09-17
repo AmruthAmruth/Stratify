@@ -275,24 +275,22 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
       )}
 
       <TableFilterBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filterOptions={["Active", "Pending", "Inactive", "Approved", "Rejected"]}
-        filterValue={filterValue}
-        setFilterValue={setFilterValue}
-        sortOptions={[
-          { key: "name", label: "Name" },
-          { key: "status", label: "Status" },
-          { key: "city", label: "City" },
-        ]}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-        onClearFilters={clearFilters}
-        searchPlaceholder="Search companies..."
-        filterLabel="All Status"
-      />
+  searchTerm={searchTerm}
+  setSearchTerm={setSearchTerm}
+  filterOptions={["Active", "Pending", "Inactive", "Approved", "Rejected"]}
+  filterValue={filterValue}
+  setFilterValue={setFilterValue}
+  sortOptions={[
+    { key: "name", label: "Name" },
+    { key: "status", label: "Status" },
+    { key: "city", label: "City" },
+  ]}
+  sortBy={sortBy}
+  setSortBy={setSortBy}
+  sortOrder={sortOrder}
+  setSortOrder={setSortOrder}
+  onClearFilters={clearFilters}
+/>
 
       <Table
         columns={tableColumns}

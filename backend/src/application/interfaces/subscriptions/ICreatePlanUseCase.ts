@@ -1,5 +1,5 @@
 import { PlanPrice } from "../../../domain/entities/PlanPrice";
-import { CreatePlanDTO } from "../../dto/company/CreatePlanDTO";
+import { CreatePlanDTO } from "../../dto/subscriptions/CreatePlanDTO";
 
 
 export interface ICreatePlanUseCase{

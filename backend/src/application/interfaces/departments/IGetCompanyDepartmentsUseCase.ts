@@ -1,5 +1,5 @@
 
-import { DepartmentDetails } from "../../dto/company/CompanyDepartmentsDTO";
+import { DepartmentDetails } from "../../dto/departments/CompanyDepartmentsDTO";
 
 
 export interface IGetCompanyDepartmentUseCase{

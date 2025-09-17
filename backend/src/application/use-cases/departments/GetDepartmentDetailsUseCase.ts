@@ -3,7 +3,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { DepartmentDetailsDTO, TeamMemberDTO } from "../../dto/company/DepartmentDetailsDTO";
+import { DepartmentDetailsDTO, TeamMemberDTO } from "../../dto/departments/DepartmentDetailsDTO";
 import { IGetCompanyDepartmentDetailsUseCase } from "../../interfaces/departments/IGetDepartmentDetailsUseCase";
 
 

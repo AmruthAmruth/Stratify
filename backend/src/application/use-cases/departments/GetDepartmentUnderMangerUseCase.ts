@@ -1,7 +1,7 @@
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IGetDepartmentUnderManagerUseCase } from "../../interfaces/departments/IGetDepartmentsUnderManagerUseCase";
-import { ManagerDepartmentResponseDTO } from "../../dto/company/ManagerDepartmentResponseDTO";
+import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepartmentResponseDTO";
 
 export class GetManagerDepartmentsUseCase implements IGetDepartmentUnderManagerUseCase {
   constructor(

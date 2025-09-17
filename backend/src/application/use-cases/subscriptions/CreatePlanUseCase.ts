@@ -1,7 +1,7 @@
 import { PlanPrice } from "../../../domain/entities/PlanPrice";
 import { IPlanPriceRepository } from "../../../domain/repositories/IPlanPriceRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
-import { CreatePlanDTO } from "../../dto/company/CreatePlanDTO";
+import { CreatePlanDTO } from "../../dto/subscriptions/CreatePlanDTO";
 import { ICreatePlanUseCase } from "../../interfaces/subscriptions/ICreatePlanUseCase";
 
 

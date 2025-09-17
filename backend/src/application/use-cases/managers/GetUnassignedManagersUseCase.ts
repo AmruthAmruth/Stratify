@@ -1,6 +1,6 @@
 
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
-import { UnassignedManagerDTO } from "../../dto/company/UnassignedManagerDTO";
+import { UnassignedManagerDTO } from "../../dto/managers/UnassignedManagerDTO";
 import { IGetUnassignedManagers } from "../../interfaces/managers/IGetUnassignedManagers";
 
 

@@ -1,4 +1,4 @@
-import { ManagerDepartmentResponseDTO } from "../../dto/company/ManagerDepartmentResponseDTO";
+import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepartmentResponseDTO";
 
 
 

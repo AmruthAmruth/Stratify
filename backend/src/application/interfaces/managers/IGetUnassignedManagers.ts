@@ -1,5 +1,5 @@
 
-import { UnassignedManagerDTO } from "../../dto/company/UnassignedManagerDTO";
+import { UnassignedManagerDTO } from "../../dto/managers/UnassignedManagerDTO";
 
 
 export interface IGetUnassignedManagers{

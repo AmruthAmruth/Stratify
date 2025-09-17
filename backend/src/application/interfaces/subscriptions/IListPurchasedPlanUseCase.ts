@@ -1,4 +1,4 @@
-import { PurchasePlanDTO } from "../../dto/company/CompanyPurchasedPlanDTO";
+import { PurchasePlanDTO } from "../../dto/subscriptions/CompanyPurchasedPlanDTO";
 
 
 

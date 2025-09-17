@@ -1,4 +1,4 @@
-import { DepartmentDetailsDTO } from "../../dto/company/DepartmentDetailsDTO";
+import { DepartmentDetailsDTO } from "../../dto/departments/DepartmentDetailsDTO";
 
 
 export interface IGetCompanyDepartmentDetailsUseCase{

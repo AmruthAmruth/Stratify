@@ -2,6 +2,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IEmailService } from "../../../domain/repositories/IEmailService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
+import { unapproveCompanyTemplate } from "../../templates/UnapproveCompanyTemplate";
 
 
 export class UnapproveCompany{
@@ -16,21 +17,12 @@ export class UnapproveCompany{
 
         await this._companyRepo.unapproveCompany(id);
 
+    const html = unapproveCompanyTemplate(company.name);
         
         await this._emailService.sendEmail( 
   company.email,
   `Your Company "${company.name}" Registration Was Not Approved`,
-  `Dear ${company.name} Team,
-
-We regret to inform you that your company registration has not been approved at this time.  
-This decision may be due to incomplete information, eligibility requirements, or other verification criteria.
-
-If you believe this was a mistake or would like to reapply, please review the requirements and submit the necessary details through our platform.
-
-Thank you for your interest in Stratify, and we appreciate your understanding.
-
-Best regards,  
-The Stratify Team`
+  html
 );
 
 

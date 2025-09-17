@@ -1,5 +1,5 @@
 import { Manager } from "../../../domain/entities/Manager";
-import { CreateManagerDTO } from "../../dto/company/CreateManagerDTO";
+import { CreateManagerDTO } from "../../dto/managers/CreateManagerDTO";
 
 
 

@@ -1,5 +1,5 @@
 import { Employee } from "../../../domain/entities/Employee";
-import { CreateEmployeeDTO } from "../../dto/company/CreateEmployeeDTO";
+import { CreateEmployeeDTO } from "../../dto/employees/CreateEmployeeDTO";
 
 
 

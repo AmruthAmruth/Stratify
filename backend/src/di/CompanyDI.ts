@@ -89,7 +89,7 @@ const getCompany = new GetCompanyByIdUseCase(companyRepo)
 
 const razorpay = new RazorpayService()
 const planRepo = new PlanPriceRepostory()
-const subscriptionPurchase = new PurchaseSubscriptionUseCase(subscriptionRepo,planRepo,razorpay)
+const subscriptionPurchase = new PurchaseSubscriptionUseCase(subscriptionRepo,planRepo,razorpay,emailService,companyRepo)
 const listSubscriptionPlan = new ListSubscriptionPlansUseCase(planRepo)
 
 

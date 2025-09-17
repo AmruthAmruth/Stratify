@@ -5,8 +5,9 @@ import { IEmailService } from "../../../domain/repositories/IEmailService";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Messages } from "../../../shared/constants/messages";
 import { generateRandomPassword, hashPassword } from "../../../shared/utils/password";
-import { CreateManagerDTO } from "../../dto/company/CreateManagerDTO";
+import { CreateManagerDTO } from "../../dto/managers/CreateManagerDTO";
 import { ICreateManagerUseCase } from "../../interfaces/managers/ICreateManagerUseCase";
+import { managerWelcomeTemplate } from "../../templates/ManagerWelcomeTemplate";
 
 export class CreateManagerUseCase implements ICreateManagerUseCase {
   constructor(
@@ -70,22 +71,17 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
       await this._departmentRepo.assignManager(managerDto.departmentId, createdManager.id!);
     }
 
+    const html = managerWelcomeTemplate(
+    createdManager.name,
+    company.name,
+    createdManager.position,
+    tempPassword,
+    department ? department.name : undefined)
    
     await this._emailService.sendEmail(
       createdManager.email,
       `Welcome to ${company.name} as Manager`,
-      `Hello ${createdManager.name},
-
-      You have been successfully added as a Manager at ${company.name}${
-        department ? ` in the "${department.name}" department` : ""
-      }.
-
-      Your temporary login password is: ${tempPassword}
-
-      Please log in and change your password as soon as possible.
-
-      Best regards,  
-      ${company.name} HR`
+      html
     );
 
     return createdManager;

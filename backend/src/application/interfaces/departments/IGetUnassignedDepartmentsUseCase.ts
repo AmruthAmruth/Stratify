@@ -1,4 +1,4 @@
-import { UnassignedDepartmentDTO } from "../../dto/company/UnassignedDepartmentDTO";
+import { UnassignedDepartmentDTO } from "../../dto/departments/UnassignedDepartmentDTO";
 
 
 
