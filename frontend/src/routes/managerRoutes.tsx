@@ -5,7 +5,7 @@ import type { RouteObject } from "react-router-dom";
 const managerRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <h1>Manager</h1>,
+    element: <h1 className="text-black">Manager</h1>,
   },
   {
     path: "companies",

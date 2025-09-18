@@ -1,9 +1,9 @@
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
-import { IGetDepartmentUnderManagerUseCase } from "../../interfaces/departments/IGetDepartmentsUnderManagerUseCase";
 import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepartmentResponseDTO";
+import { IGetManagerDepartmentsUseCase } from "../../interfaces/departments/IGetManagerDepartmentsUseCase";
 
-export class GetManagerDepartmentsUseCase implements IGetDepartmentUnderManagerUseCase {
+export class GetManagerDepartmentsUseCase implements IGetManagerDepartmentsUseCase {
   constructor(
     private _departmentRepo: IDepartmentRepository,
     private _employeeRepo: IEmployeeRepository

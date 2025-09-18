@@ -17,9 +17,6 @@ import { CookieConfig } from "../../config/CookieConfig";
 import { IApproveCompanyUseCase } from "../../application/interfaces/company/IApproveCompanyUseCase";
 import { IUnapproveCompany } from "../../application/interfaces/company/IUnapprovedCompanyUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import { GetUnassignedManagersUseCase } from "../../application/use-cases/managers/GetUnassignedManagersUseCase";
-import { GetUnassignedDepartmentUseCase } from "../../application/use-cases/departments/GetUnassignedDepartments";
-import { GetManagerDepartmentsUseCase } from "../../application/use-cases/departments/GetDepartmentUnderMangerUseCase";
 import { CreateManagerSchema } from "../../application/validators/CreateManager";
 import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
 import { CreatePlanSchema } from "../../application/validators/CreatePlan";
@@ -33,6 +30,9 @@ import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company
 import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
 import { IPurchaseSubscriptionUseCase } from "../../application/interfaces/subscriptions/IPurchaseSubscriptionUseCase";
 import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subscriptions/IListSubscriptionPlansUseCase";
+import { IGetUnassignedDepartments } from "../../application/interfaces/departments/IGetUnassignedDepartmentsUseCase";
+import { IGetManagerDepartmentsUseCase } from "../../application/interfaces/departments/IGetManagerDepartmentsUseCase";
+import { IGetUnassignedManagersUseCase } from "../../application/interfaces/managers/IGetUnassignedManagersUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -54,16 +54,16 @@ export class CompanyController {
     private _createDeapartmentUseCase:ICreateDepartmentUseCase,
     private _createManagerUseCase:ICreateManagerUseCase,
     private _createEmployeeUseCase:ICreateEmployeeUseCase,
-    private _getUnassignedManagersUseCase:GetUnassignedManagersUseCase,
+    private _getUnassignedManagersUseCase:IGetUnassignedManagersUseCase,
     private _getCompanyDepartmentsUseCase:IGetCompanyDepartmentUseCase,
     private _getDepartmentDetailsUseCase:IGetCompanyDepartmentDetailsUseCase,
     private _getCompanyMembersUseCase:IGetCompanyMemebersUseCase,
     private _getProfileOfTeamMemeber:IGetProfileUseCase,
     private _getCompany:IGetCompanyByIdUseCase,
-    private _getUnassinedDepartment:GetUnassignedDepartmentUseCase,
+    private _getUnassinedDepartment:IGetUnassignedDepartments,
     private _subscriptionPurchaseUseCase:IPurchaseSubscriptionUseCase,
     private _listSubscriptionPlanUseCase:IListSubscriptionPlansUseCase,
-    private _getManagerDepartments:GetManagerDepartmentsUseCase
+    private _getManagerDepartments:IGetManagerDepartmentsUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -156,8 +156,8 @@ approveCompany=async(req:Request,res:Response)=>{
 
 
 unapproveCompany=async(req:Request,res:Response)=>{
-  const {companyId} = req.body;
-  await this._unapproveCompanyUseCase.execute(companyId);
+  const {companyId,reason} = req.body;
+  await this._unapproveCompanyUseCase.execute(companyId,reason);
   res.status(StatusCodes.OK).json({message:"Company Unapproved Successfully.!"})
 }
 
@@ -300,7 +300,7 @@ purchasePlan=async(req:AuthRequest,res:Response)=>{
 
 
 verifyPayment = async (req: AuthRequest, res: Response) => {
-  const companyId = req.companyId!;
+  const companyId = req.companyId!; 
   const { orderId, paymentId, signature, planName } = req.body;
 
    const subscription = await this._subscriptionPurchaseUseCase.verifyAndActivate(
@@ -321,7 +321,7 @@ verifyPayment = async (req: AuthRequest, res: Response) => {
 getDepartmentsByAManager=async (req:Request,res:Response)=>{
   const {managerId}=req.params
   const response= await this._getManagerDepartments.execute(managerId)
-  return res.status(StatusCodes.OK).json(response)
+  return res.status(StatusCodes.OK).json(response) 
 }
 
 

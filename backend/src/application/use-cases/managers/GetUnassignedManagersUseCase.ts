@@ -1,12 +1,12 @@
 
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { UnassignedManagerDTO } from "../../dto/managers/UnassignedManagerDTO";
-import { IGetUnassignedManagers } from "../../interfaces/managers/IGetUnassignedManagers";
+import { IGetUnassignedManagersUseCase } from "../../interfaces/managers/IGetUnassignedManagersUseCase";
 
 
 
 
-export class GetUnassignedManagersUseCase implements IGetUnassignedManagers{
+export class GetUnassignedManagersUseCase implements IGetUnassignedManagersUseCase{
 
     constructor(
         private _managerRepo:IManagerRepository

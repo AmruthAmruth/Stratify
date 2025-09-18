@@ -56,6 +56,7 @@ export class SuperAdminController {
   }
 
   refresh = async (req: Request, res: Response) => {
+    
     const refreshToken = req.cookies.refreshToken;
     if (!refreshToken) {
       res.status(StatusCodes.UNAUTHORIZED).json({

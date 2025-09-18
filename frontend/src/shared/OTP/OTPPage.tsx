@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReusableOTP from "@/shared/components/OTP/ReusableOTP";
 import { Users } from "lucide-react";
-import { forgotpasswordVerifyOTP, resendOTP, verifyOTP } from "@/services/authApi";
+import { forgotPasswordVerifyOTP, resendOTP, verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { jwtDecode } from "jwt-decode";
@@ -76,7 +76,7 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
         const email = localStorage.getItem("email"); 
         if (!email) throw new Error("Email not found, please try again.");
 
-        await forgotpasswordVerifyOTP({ email, otp });
+        await forgotPasswordVerifyOTP({ email, otp });
         enqueueSnackbar("OTP verified! You can now reset your password.", { variant: "success" });
         navigate("/reset-password"); 
       }

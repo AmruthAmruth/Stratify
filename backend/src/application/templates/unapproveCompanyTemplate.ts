@@ -1,4 +1,7 @@
-export const unapproveCompanyTemplate = (companyName: string): string => {
+export const unapproveCompanyTemplate = (
+  companyName: string,
+  reason: string
+): string => {
   return `
   <!DOCTYPE html>
   <html lang="en">
@@ -31,6 +34,15 @@ export const unapproveCompanyTemplate = (companyName: string): string => {
         color: #333333;
         line-height: 1.6;
       }
+      .reason-box {
+        background: #fff3f3;
+        border-left: 4px solid #d9534f;
+        padding: 12px;
+        margin: 15px 0;
+        border-radius: 5px;
+        color: #a94442;
+        font-size: 14px;
+      }
       .footer {
         margin-top: 25px;
         font-size: 12px;
@@ -58,8 +70,10 @@ export const unapproveCompanyTemplate = (companyName: string): string => {
         <p>Dear <strong>${companyName} Team</strong>,</p>
         <p>
           We regret to inform you that your company registration has not been approved at this time.  
-          This decision may be due to incomplete information, eligibility requirements, or other verification criteria.
         </p>
+        <div class="reason-box">
+          <strong>Reason:</strong> ${reason}
+        </div>
         <p>
           If you believe this was a mistake or would like to reapply, please review the requirements and submit the necessary details through our platform.
         </p>

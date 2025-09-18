@@ -61,3 +61,14 @@ export const planFormFields = [
   { name: "amount", label: "Amount (₹)", type: "number" },
   { name: "durationInMonths", label: "Duration (Months)", type: "number" },
 ];
+
+
+
+export const rejectionFormFields = [
+    {
+      name: "reason",
+      label: "Rejection Reason",
+      type: "textarea",
+      placeholder: "Please provide a reason for rejection...",
+    }
+  ];

@@ -61,7 +61,7 @@ const genaralRoutes: RouteObject[] = [
     path: "subscription-purchase/:companyId",
     element: <SubscriptionPlans />,
   }
-  
+   
   
 ];
 

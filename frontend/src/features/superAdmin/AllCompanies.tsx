@@ -4,6 +4,11 @@ import Table from "../../shared/components/Table/Table";
 import TableFilterBar from "../../shared/components/FilterBar/TableFilterBar";
 import { approveCompany, getAllCompanies, unapproveCompany } from "@/services/company";
 import { useSnackbar } from "notistack";
+import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
+import Modal from "@/shared/components/ModalFrom/ModalForm";
+import AuthForm from "@/shared/components/Forms/DynamicForm";
+import { rejectionFormFields } from "@/shared/components/Forms/formFields";
+import { rejectionValidationSchema } from "@/shared/utils/validations";
 
 const AllCompanies = () => {
   const [companies, setCompanies] = useState<any[]>([]);
@@ -12,17 +17,34 @@ const AllCompanies = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("All");
-const [sortBy, setSortBy] = useState<string | null>(null); 
-const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
+  const [sortBy, setSortBy] = useState<string | null>(null); 
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [loadingActions, setLoadingActions] = useState<{ [key: string]: boolean }>({});
   const [isLoading, setIsLoading] = useState(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
   const pageSize = 6;
 
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
 
-  // Fetch ALL companies for search functionality
+  // Confirm modal state for approval
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    companyId?: string;
+    message?: string;
+  }>({ isOpen: false });
+
+  // Rejection modal state
+  const [rejectionModal, setRejectionModal] = useState<{
+    isOpen: boolean;
+    companyId?: string;
+  }>({ isOpen: false });
+
+  
+
+ 
+ 
   useEffect(() => {
     const fetchAllCompanies = async () => {
       try {
@@ -61,8 +83,6 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   // Reset to page 1 when search/filter changes
   useEffect(() => {
     setCurrentPage(1);
-    
-    // Determine if we're in search mode
     const hasActiveSearch = searchTerm.trim() !== "" || filterValue !== "All";
     setIsSearchMode(hasActiveSearch);
   }, [searchTerm, filterValue, sortBy, sortOrder]);
@@ -87,13 +107,15 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
       );
     }
 
-    data.sort((a, b) => {
-      const valA = a[sortBy] ? a[sortBy].toString().toLowerCase() : "";
-      const valB = b[sortBy] ? b[sortBy].toString().toLowerCase() : "";
-      if (valA < valB) return sortOrder === "asc" ? -1 : 1;
-      if (valA > valB) return sortOrder === "asc" ? 1 : -1;
-      return 0;
-    });
+    if (sortBy) {
+      data.sort((a, b) => {
+        const valA = a[sortBy] ? a[sortBy].toString().toLowerCase() : "";
+        const valB = b[sortBy] ? b[sortBy].toString().toLowerCase() : "";
+        if (valA < valB) return sortOrder === "asc" ? -1 : 1;
+        if (valA > valB) return sortOrder === "asc" ? 1 : -1;
+        return 0;
+      });
+    }
 
     return data;
   }, [companies, allCompanies, searchTerm, filterValue, sortBy, sortOrder, isSearchMode]);
@@ -117,56 +139,96 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
     setCurrentPage(1);
   };
 
-  // Navigate to profile
   const handleViewProfile = (profileId: string) => {
     navigate(`/company-profile/${profileId}`);
   };
 
-  // Approve company handler
-  const handleApprove = async (companyId: string) => {
+  // Open confirm dialog for approval
+  const openApprovalConfirmDialog = (companyId: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      companyId,
+      message: "Are you sure you want to approve this company?",
+    });
+  };
+
+  // Open rejection modal
+  const openRejectionModal = (companyId: string) => {
+    setRejectionModal({
+      isOpen: true,
+      companyId,
+    });
+  };
+
+  // Handle approval confirmation
+  const handleApprovalConfirm = async () => {
+    if (!confirmDialog.companyId) return;
+
+    const { companyId } = confirmDialog;
+
     try {
       setLoadingActions(prev => ({ ...prev, [companyId]: true }));
-      
-      const response = await approveCompany(companyId);
-      
-      // Update both arrays
+
+      await approveCompany(companyId);
+
       const updateStatus = (prev: any[]) =>
-        prev.map((c) => c.id === companyId ? { ...c, status: "Approved" } : c);
-      
+        prev.map(c =>
+          c.id === companyId
+            ? { ...c, status: "Approved" }
+            : c
+        );
+
       setCompanies(updateStatus);
       setAllCompanies(updateStatus);
-      
+
       enqueueSnackbar("Company approved successfully!", { variant: "success" });
     } catch (error) {
       console.error("Failed to approve company:", error);
       enqueueSnackbar("Failed to approve company. Please try again.", { variant: "error" });
     } finally {
       setLoadingActions(prev => ({ ...prev, [companyId]: false }));
+      setConfirmDialog({ isOpen: false });
     }
   };
 
-  // Reject/Unapprove company handler
-  const handleReject = async (companyId: string) => {
+  // Handle rejection with reason
+  const handleRejectionSubmit = async (formData: { reason: string }) => {
+    if (!rejectionModal.companyId) return;
+
+    const { companyId } = rejectionModal;
+
     try {
+      setSubmitLoading(true);
       setLoadingActions(prev => ({ ...prev, [companyId]: true }));
-      
-      const response = await unapproveCompany(companyId);
-      
-      // Update both arrays
+console.log(formData.reason);
+
+      // Pass both companyId and rejection reason to backend
+      await unapproveCompany(companyId, formData.reason);
+
       const updateStatus = (prev: any[]) =>
-        prev.map((c) => c.id === companyId ? { ...c, status: "Rejected" } : c);
-      
+        prev.map(c =>
+          c.id === companyId
+            ? { ...c, status: "Rejected", rejectionReason: formData.reason }
+            : c
+        );
+
       setCompanies(updateStatus);
       setAllCompanies(updateStatus);
-      
+
       enqueueSnackbar("Company rejected successfully!", { variant: "success" });
+      setRejectionModal({ isOpen: false });
     } catch (error) {
       console.error("Failed to reject company:", error);
       enqueueSnackbar("Failed to reject company. Please try again.", { variant: "error" });
     } finally {
+      setSubmitLoading(false);
       setLoadingActions(prev => ({ ...prev, [companyId]: false }));
     }
   };
+
+  const handleApprovalCancel = () => setConfirmDialog({ isOpen: false });
+
+  const handleRejectionCancel = () => setRejectionModal({ isOpen: false });
 
   const tableColumns = [
     { key: "name", label: "Company Name" },
@@ -181,7 +243,7 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
     if (key === "actions") {
       const status = row.status?.toLowerCase();
       const isActionLoading = loadingActions[row.id];
-      
+
       return (
         <div className="flex gap-2">
           <button
@@ -193,7 +255,7 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
           {(status === "pending" || status === "rejected") && (
             <button
-              onClick={() => handleApprove(row.id)}
+              onClick={() => openApprovalConfirmDialog(row.id)}
               disabled={isActionLoading}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${
                 isActionLoading
@@ -207,7 +269,7 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
 
           {(status === "pending" || status === "approved") && (
             <button
-              onClick={() => handleReject(row.id)}
+              onClick={() => openRejectionModal(row.id)}
               disabled={isActionLoading}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${
                 isActionLoading
@@ -222,7 +284,6 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
       );
     }
 
-    // Add status styling
     if (key === "status") {
       const status = row[key]?.toLowerCase();
       const statusColors = {
@@ -232,7 +293,7 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
         active: "text-blue-600 bg-blue-100",
         inactive: "text-gray-600 bg-gray-100"
       };
-      
+
       return (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${
           statusColors[status] || "text-gray-600 bg-gray-100"
@@ -257,7 +318,6 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
     <div>
       <h2 className="text-xl font-bold mb-4">All Companies</h2>
 
-      {/* Show search results info */}
       {isSearchMode && (
         <div className="mb-4 p-3 bg-blue-50 border-l-4 border-blue-400 rounded-r-lg">
           <p className="text-blue-700">
@@ -275,22 +335,22 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
       )}
 
       <TableFilterBar
-  searchTerm={searchTerm}
-  setSearchTerm={setSearchTerm}
-  filterOptions={["Active", "Pending", "Inactive", "Approved", "Rejected"]}
-  filterValue={filterValue}
-  setFilterValue={setFilterValue}
-  sortOptions={[
-    { key: "name", label: "Name" },
-    { key: "status", label: "Status" },
-    { key: "city", label: "City" },
-  ]}
-  sortBy={sortBy}
-  setSortBy={setSortBy}
-  sortOrder={sortOrder}
-  setSortOrder={setSortOrder}
-  onClearFilters={clearFilters}
-/>
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterOptions={["Active", "Pending", "Inactive", "Approved", "Rejected"]}
+        filterValue={filterValue}
+        setFilterValue={setFilterValue}
+        sortOptions={[
+          { key: "name", label: "Name" },
+          { key: "status", label: "Status" },
+          { key: "city", label: "City" },
+        ]}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        onClearFilters={clearFilters}
+      />
 
       <Table
         columns={tableColumns}
@@ -301,7 +361,6 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
         renderCell={renderCell}
       />
 
-      {/* Show result info */}
       <div className="mt-4 text-sm text-gray-600">
         {isSearchMode ? (
           <>Showing {paginatedCompanies.length} of {processedCompanies.length} filtered results</>
@@ -309,6 +368,34 @@ const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
           <>Showing page {currentPage} of {totalPages} | Total companies: {allCompanies.length}</>
         )}
       </div>
+
+      {/* Approval Confirm Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        message={confirmDialog.message || ""}
+        onConfirm={handleApprovalConfirm}
+        onCancel={handleApprovalCancel}
+      />
+
+      {/* Rejection Modal with Form */}
+      <Modal
+        isOpen={rejectionModal.isOpen}
+        onClose={handleRejectionCancel}
+        title="Reject Company"
+      >
+        <AuthForm
+          fields={rejectionFormFields}
+          validationSchema={rejectionValidationSchema}
+          onSubmit={handleRejectionSubmit}
+          initialValues={{ reason: "" }}
+          buttonText={submitLoading ? "Rejecting..." : "Reject Company"}
+        />
+        {submitLoading && (
+          <div className="flex justify-center mt-4">
+            <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

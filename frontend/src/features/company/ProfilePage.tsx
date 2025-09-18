@@ -15,9 +15,9 @@ import {
   BarChart3,
   FolderKanban,
 } from "lucide-react";
-import { getTeamMemeberProfile } from "@/services/company";
 import { useParams } from "react-router-dom";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
+import { getTeamMemberProfile } from "@/services/company";
 
 interface Profile {
   id: string;
@@ -44,7 +44,7 @@ const ProfilePage: React.FC = () => {
 
   useEffect(() => {
     if (id) {
-      getTeamMemeberProfile(id)
+      getTeamMemberProfile(id)
         .then((data) => {
           setProfile(data.response);
         })

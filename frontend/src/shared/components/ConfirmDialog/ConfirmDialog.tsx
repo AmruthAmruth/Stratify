@@ -22,22 +22,22 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onCancel} title={title}>
-  <p className="mb-6 text-black">{message}</p>
-  <div className="flex justify-end gap-4">
-    <button
-      onClick={onCancel}
-      className="py-2 px-4 rounded-lg border border-gray-300 hover:bg-gray-100 transition text-black"
-    >
-      {cancelText}
-    </button>
-    <button
-      onClick={onConfirm}
-      className="py-2 px-4 rounded-lg bg-red-600 text-white hover:bg-red-700 transition"
-    >
-      {confirmText}
-    </button>
-  </div>
-</Modal>
+      <p className="mb-6 text-gray-800 text-lg">{message}</p>
+      <div className="flex justify-end gap-3">
+        <button
+          onClick={onCancel}
+          className="py-2 px-5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-100 transition shadow-sm"
+        >
+          {cancelText}
+        </button>
+        <button
+          onClick={onConfirm}
+          className="py-2 px-5 rounded-full bg-gradient-to-r from-red-500 to-pink-500 text-white font-semibold hover:from-red-600 hover:to-pink-600 shadow-lg transition transform hover:scale-105"
+        >
+          {confirmText}
+        </button>
+      </div>
+    </Modal>
   );
 };
 

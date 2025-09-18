@@ -1,6 +1,5 @@
 import Department from "@/features/company/Department";
 import CompanyDepartmentDetails from "@/features/company/DepartmentDetailsPage";
-import DepartmentDetailsPage from "@/features/company/DepartmentDetailsPage";
 import ProfilePage from "@/features/company/ProfilePage";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";

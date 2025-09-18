@@ -8,7 +8,7 @@ import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
 import companyRouter from "./interfaces/routes/CompanyRoutes";
 import cors from 'cors';
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
-
+import cookieParser from "cookie-parser";
 dotenv.config();
 
 const app = express();
@@ -19,15 +19,15 @@ app.use(cors({
   credentials: true
 }));
 
-app.use(express.json());
+app.use(express.json()); 
 app.use(express.urlencoded({ extended: true }));
-
+app.use(cookieParser()); 
 const logDirectory = path.join(__dirname, "logs");
 
-
+ 
 const accessLogStream = rfs.createStream("access.log", {
-  interval: "1d",  
-  path: logDirectory,
+  interval: "1d",   
+  path: logDirectory,  
   maxFiles: 7      
 });
 

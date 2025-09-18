@@ -2,5 +2,5 @@
 
 
 export interface IUnapproveCompany{
-    execute(id:string):Promise<void>
+    execute(id:string,reason:string):Promise<void>
 }

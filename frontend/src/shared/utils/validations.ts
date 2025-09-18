@@ -66,6 +66,12 @@ export const addMemberSchema = z.object({
 export const addPlanSchema = z.object({
   plan: z.string().min(1, "Plan is required"),
   description: z.string().min(1, "Description is required"),
-  amount: z.coerce.number().min(0, "Amount must be >= 0"),
+  amount: z.coerce.number().min(499, "Amount must be >= 499"),
   durationInMonths: z.coerce.number().min(1, "Duration must be >= 1 month"),
+});
+
+
+export const rejectionValidationSchema=z.object({
+  reason: z.string().min(1, "Reason is required"),
+ 
 });

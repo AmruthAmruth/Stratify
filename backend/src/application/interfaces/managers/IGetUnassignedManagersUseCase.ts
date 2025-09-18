@@ -2,6 +2,6 @@
 import { UnassignedManagerDTO } from "../../dto/managers/UnassignedManagerDTO";
 
 
-export interface IGetUnassignedManagers{
+export interface IGetUnassignedManagersUseCase{
     execute(id:string):Promise<UnassignedManagerDTO[]>
 }

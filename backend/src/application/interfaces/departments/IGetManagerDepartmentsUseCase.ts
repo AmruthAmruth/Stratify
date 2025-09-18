@@ -3,6 +3,6 @@ import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepar
 
 
 
-export interface IGetDepartmentUnderManagerUseCase{
+export interface IGetManagerDepartmentsUseCase{
     execute(managerId:string):Promise<ManagerDepartmentResponseDTO[]>
 }

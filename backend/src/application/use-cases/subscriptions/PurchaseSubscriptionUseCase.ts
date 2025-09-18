@@ -32,7 +32,7 @@ export class PurchaseSubscriptionUseCase implements IPurchaseSubscriptionUseCase
 
     return {
       orderId: order.id,
-      amount: Number(order.amount),
+      amount: Number(order.amount), 
       currency: order.currency,
       key: process.env.RAZORPAY_KEY_ID,
       planName: plan.plan,
