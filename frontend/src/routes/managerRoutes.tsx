@@ -1,5 +1,4 @@
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
-import DepartmentDetailsPage from "@/features/manager/ManagerDepartmentDetials";
 import type { RouteObject } from "react-router-dom";
 
 const managerRoutes: RouteObject[] = [

@@ -26,7 +26,7 @@ export class ManagerRepository implements IManagerRepository{
     });
 
     return new Manager(
-      doc.id.toString(),
+      doc.id.toString(), 
       doc.name,
       doc.email,
       doc.phone,

@@ -1,17 +1,19 @@
 import { Project } from "../entities/Project";
 
-export interface IProjectRepository {
-
-  create(project: Project): Promise<Project>;
-
- 
-  update(project: Project): Promise<Project>;
 
 
-  findById(projectId: string): Promise<Project | null>;
-
-
-  findByCompany(companyId: string): Promise<Project[]>;
-
-  delete(projectId: string): Promise<void>;
+export interface IProjectRepository{
+   create(project: Project): Promise<Project>;
+  findById(id: string): Promise<Project | null>;
+  findAll(filter?: {
+    departmentId?: string;
+    projectLeadId?: string;
+    status?: string;
+  }): Promise<Project[]>;
+  update(project: Project): Promise<void>;
+  delete(id: string): Promise<void>;
+  count(filter?: {
+    departmentId?: string;
+    status?: string;
+  }): Promise<number>;
 }
