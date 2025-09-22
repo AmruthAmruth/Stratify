@@ -3,7 +3,7 @@ import { Messages } from "../../shared/constants/messages";
 import jwt from "jsonwebtoken";
 
 export interface AuthRequest extends Request {
-  companyId?: string;
+  userId?: string;
   role?: string;
 }
 
@@ -34,7 +34,7 @@ export const authMiddleware = (allowedRoles: ("company" | "manager" | "employee"
 
     
       req.role = decoded.role;
-      req.companyId = decoded.id; 
+      req.userId = decoded.id; 
  
       console.log("Decoded Token:", decoded);
       next();

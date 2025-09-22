@@ -176,7 +176,7 @@ createDepartment=async(req:AuthRequest,res:Response)=>{
       return;
     }
 
-  const companyId=req.companyId;
+  const companyId=req.userId;
   const response = await this._createDeapartmentUseCase.execute({...req.body,companyId})
   return res.status(StatusCodes.CREATED).json({message:"Department Created Successfully",response})
 }
@@ -195,7 +195,7 @@ createManager=async(req:AuthRequest,res:Response)=>{
       });
       return;
     }
-  const companyId=req.companyId;
+  const companyId=req.userId;
   const response = await this._createManagerUseCase.execute({...req.body,companyId})
   return res.status(StatusCodes.CREATED).json({message:"Manager Created Successfully",response})
 }
@@ -215,28 +215,28 @@ createEmployee=async(req:AuthRequest,res:Response)=>{
       return;
     }
 
-  const creatorId = req.companyId! 
+  const creatorId = req.userId! 
    const employeeDto = req.body;
   const response = await this._createEmployeeUseCase.execute(employeeDto,creatorId)
   return res.status(StatusCodes.CREATED).json({message:"Employee Created Successfully",response})
 }
 
 getUnassignedManager=async(req:AuthRequest,res:Response)=>{
-  const companyId = req.companyId
+  const companyId = req.userId
 const managers = await this._getUnassignedManagersUseCase.execute(companyId!);
     return res.status(200).json({ managers });
 }
 
 
 getUnassignedDepartment=async(req:AuthRequest,res:Response)=>{
-  const companyId=req.companyId;
+  const companyId=req.userId;
   const departments = await this._getUnassinedDepartment.execute(companyId!);
   return res.status(200).json({departments})
 
 }
 
 getCompanyDepartments=async(req:AuthRequest,res:Response)=>{
-  const companyId= req.companyId!
+  const companyId= req.userId!
   const response = await this._getCompanyDepartmentsUseCase.execute(companyId)
   return res.status(StatusCodes.OK).json({response})
 }
@@ -251,7 +251,7 @@ getDepartmentDetails=async(req:Request,res:Response)=>{
 
 
 getCompanyMembers=async(req:AuthRequest,res:Response)=>{
-  const companyId = req.companyId
+  const companyId = req.userId
   const response = await this._getCompanyMembersUseCase.execute(companyId!)
   return res.status(StatusCodes.OK).json({response})
 }
@@ -290,7 +290,7 @@ purchasePlan=async(req:AuthRequest,res:Response)=>{
       });
       return;
     }
-    const companyId = req.companyId!; 
+    const companyId = req.userId!; 
   const {planName} = req.body
   console.log("Here calling");
   
@@ -300,7 +300,7 @@ purchasePlan=async(req:AuthRequest,res:Response)=>{
 
 
 verifyPayment = async (req: AuthRequest, res: Response) => {
-  const companyId = req.companyId!; 
+  const companyId = req.userId!; 
   const { orderId, paymentId, signature, planName } = req.body;
 
    const subscription = await this._subscriptionPurchaseUseCase.verifyAndActivate(
