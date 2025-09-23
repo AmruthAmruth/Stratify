@@ -1,89 +1,92 @@
 import { Project } from "../../domain/entities/Project";
 import { IProjectRepository } from "../../domain/repositories/IProjectRepository";
-import { ProjectDocument, ProjectModel } from "../models/ProjectModel";
+import { ProjectModel, ProjectDocument } from "../models/ProjectModel"; // adjust path
+import { Types } from "mongoose";
 
 export class ProjectRepository implements IProjectRepository {
-
-  private mapToDomain(projectDoc: ProjectDocument): Project {
-    return new Project(
-      projectDoc.id.toString(),
-      projectDoc.name,
-      projectDoc.key,
-      projectDoc.description,
-      projectDoc.startDate || new Date(),
-      projectDoc.endDate || new Date(),
-      projectDoc.status,
-      projectDoc.departmentId.toString(),
-      projectDoc.projectLeadId.toString(),
-      projectDoc.assignedEmployeeIds.map(id => id.toString()),
-      projectDoc.backlogIds.map(id => id.toString()),
-      projectDoc.sprintIds.map(id => id.toString()),
-      projectDoc.createdAt,
-      projectDoc.updatedAt
-    );
-  }
 
   async create(project: Project): Promise<Project> {
     const created = await ProjectModel.create({
       name: project.name,
       key: project.key,
       description: project.description,
-      companyId: project.departmentId, 
-      departmentId: project.departmentId,
-      createdBy: project.projectLeadId,
-      createdByModel: "Manager", 
-      projectLeadId: project.projectLeadId,
-      assignedEmployeeIds: project.assignedEmployeeIds,
-      backlogIds: project.backlogIds,
-      sprintIds: project.sprintIds,
-      status: project.status,
       startDate: project.startDate,
       endDate: project.endDate,
+      status: project.status,
+      departmentId: new Types.ObjectId(project.departmentId),
+      projectLeadId: new Types.ObjectId(project.projectLeadId),
+      createdBy: new Types.ObjectId(project.createdBy),
+      createdByModel: "Manager", 
     });
 
-    return this.mapToDomain(created);
+    return this.mapToEntity(created);
   }
 
-  async update(project: Project): Promise<void> {
-    await ProjectModel.findByIdAndUpdate(project.id, {
-      name: project.name,
-      key: project.key,
-      description: project.description,
-      status: project.status,
-      startDate: project.startDate,
-      endDate: project.endDate,
-      projectLeadId: project.projectLeadId,
-      assignedEmployeeIds: project.assignedEmployeeIds,
-      backlogIds: project.backlogIds,
-      sprintIds: project.sprintIds,
-    }, { new: true });
+
+  async update(project: Project): Promise<Project> {
+    const updated = await ProjectModel.findByIdAndUpdate(
+      project.id,
+      {
+        name: project.name,
+        key: project.key,
+        description: project.description,
+        startDate: project.startDate,
+        endDate: project.endDate,
+        status: project.status,
+        departmentId: new Types.ObjectId(project.departmentId),
+        projectLeadId: new Types.ObjectId(project.projectLeadId),
+        updatedAt: new Date(),
+      },
+      { new: true }
+    );
+
+    if (!updated) throw new Error("Project not found");
+    return this.mapToEntity(updated);
   }
 
-  async delete(id: string): Promise<void> {
-    await ProjectModel.findByIdAndDelete(id);
+  
+  async delete(projectId: string): Promise<void> {
+    const deleted = await ProjectModel.findByIdAndDelete(projectId);
+    if (!deleted) throw new Error("Project not found");
   }
 
-  async findById(id: string): Promise<Project | null> {
-    const projectDoc = await ProjectModel.findById(id);
-    if (!projectDoc) return null;
-    return this.mapToDomain(projectDoc);
+  
+  async findById(projectId: string): Promise<Project | null> {
+    const project = await ProjectModel.findById(projectId);
+    return project ? this.mapToEntity(project) : null;
   }
 
-  async findAll(filter?: { departmentId?: string; projectLeadId?: string; status?: string; }): Promise<Project[]> {
-    const query: any = {};
-    if (filter?.departmentId) query.departmentId = filter.departmentId;
-    if (filter?.projectLeadId) query.projectLeadId = filter.projectLeadId;
-    if (filter?.status) query.status = filter.status;
-
-    const projectDocs = await ProjectModel.find(query);
-    return projectDocs.map(this.mapToDomain);
+  
+  async findAll(): Promise<Project[]> {
+    const projects = await ProjectModel.find();
+    return projects.map(this.mapToEntity);
   }
 
-  async count(filter?: { departmentId?: string; status?: string; }): Promise<number> {
-    const query: any = {};
-    if (filter?.departmentId) query.departmentId = filter.departmentId;
-    if (filter?.status) query.status = filter.status;
 
-    return ProjectModel.countDocuments(query);
+ async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
+  const project = await ProjectModel.findOne({
+    name: name,
+    companyId: new Types.ObjectId(companyId)
+  });
+
+  return project ? this.mapToEntity(project) : null;
+}
+
+  
+  private mapToEntity(doc: ProjectDocument): Project {
+    return new Project(
+      doc.id.toString(),
+      doc.name,
+      doc.key,
+      doc.description,
+      doc.startDate,
+      doc.endDate,
+      doc.status,
+      doc.departmentId.toString(),
+      doc.projectLeadId.toString(),
+      doc.createdBy.toString(),
+      doc.createdAt,
+      doc.updatedAt
+    );
   }
 }

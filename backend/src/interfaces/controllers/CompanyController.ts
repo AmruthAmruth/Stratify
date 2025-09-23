@@ -33,6 +33,7 @@ import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subs
 import { IGetUnassignedDepartments } from "../../application/interfaces/departments/IGetUnassignedDepartmentsUseCase";
 import { IGetManagerDepartmentsUseCase } from "../../application/interfaces/departments/IGetManagerDepartmentsUseCase";
 import { IGetUnassignedManagersUseCase } from "../../application/interfaces/managers/IGetUnassignedManagersUseCase";
+import { ICreateProjectUseCase } from "../../application/interfaces/project/ICreateProjectUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -63,7 +64,8 @@ export class CompanyController {
     private _getUnassinedDepartment:IGetUnassignedDepartments,
     private _subscriptionPurchaseUseCase:IPurchaseSubscriptionUseCase,
     private _listSubscriptionPlanUseCase:IListSubscriptionPlansUseCase,
-    private _getManagerDepartments:IGetManagerDepartmentsUseCase
+    private _getManagerDepartments:IGetManagerDepartmentsUseCase,
+    private _createProject:ICreateProjectUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -352,5 +354,16 @@ verifyPaymentForUnauthenticated=async (req: Request, res: Response) => {
   });
 }
 
+
+
+
+createProject = async (req:AuthRequest,res:Response)=>{
+  const createdBy=req.userId;
+   const projectDTO = { ...req.body, createdBy };
+  const response = await this._createProject.execute(projectDTO)
+  return res.status(StatusCodes.CREATED).json(response)
+}
+
+  
 
 }

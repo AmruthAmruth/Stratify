@@ -34,6 +34,8 @@ import { RazorpayService } from "../infrastructure/services/RazorpayService";
 import { PlanPriceRepostory } from "../infrastructure/repositories/PlanPriceRepository";
 import { ListSubscriptionPlansUseCase } from "../application/use-cases/subscriptions/ListSubscriptionPlansUseCase";
 import { GetManagerDepartmentsUseCase } from "../application/use-cases/departments/GetDepartmentUnderMangerUseCase";
+import { CreateProjectUseCase } from "../application/use-cases/project/CreateProjectUseCase";
+import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
 
 export const companyDI = () => {
 
@@ -94,7 +96,8 @@ const listSubscriptionPlan = new ListSubscriptionPlansUseCase(planRepo)
 
 
 const getManagerDepartments = new GetManagerDepartmentsUseCase(departmentRepo,employeeRepo)
-
+const projectRepo = new ProjectRepository()
+const createProject = new CreateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo)
 
   return new CompanyController(
     registerUseCase, 
@@ -120,7 +123,8 @@ getCompany,
 getUnassignedDepartment,
 subscriptionPurchase,
 listSubscriptionPlan,
-getManagerDepartments
+getManagerDepartments,
+createProject
   );
 };
  
