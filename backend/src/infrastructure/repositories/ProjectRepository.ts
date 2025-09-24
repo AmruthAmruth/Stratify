@@ -1,10 +1,10 @@
 import { Project } from "../../domain/entities/Project";
 import { IProjectRepository } from "../../domain/repositories/IProjectRepository";
-import { ProjectModel, ProjectDocument } from "../models/ProjectModel"; // adjust path
+import { ProjectModel, ProjectDocument } from "../models/ProjectModel";
 import { Types } from "mongoose";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
 
 export class ProjectRepository implements IProjectRepository {
-
   async create(project: Project): Promise<Project> {
     const created = await ProjectModel.create({
       name: project.name,
@@ -16,12 +16,12 @@ export class ProjectRepository implements IProjectRepository {
       departmentId: new Types.ObjectId(project.departmentId),
       projectLeadId: new Types.ObjectId(project.projectLeadId),
       createdBy: new Types.ObjectId(project.createdBy),
-      createdByModel: "Manager", 
+      createdByModel: project.createdByModel,           // ✅ dynamic
+      companyId: new Types.ObjectId(project.companyId), // ✅ added
     });
 
     return this.mapToEntity(created);
   }
-
 
   async update(project: Project): Promise<Project> {
     const updated = await ProjectModel.findByIdAndUpdate(
@@ -40,39 +40,34 @@ export class ProjectRepository implements IProjectRepository {
       { new: true }
     );
 
-    if (!updated) throw new Error("Project not found");
+    if (!updated) throw new AppError("Project not found", 404);
     return this.mapToEntity(updated);
   }
 
-  
   async delete(projectId: string): Promise<void> {
     const deleted = await ProjectModel.findByIdAndDelete(projectId);
-    if (!deleted) throw new Error("Project not found");
+    if (!deleted) throw new AppError("Project not found", 404);
   }
 
-  
   async findById(projectId: string): Promise<Project | null> {
     const project = await ProjectModel.findById(projectId);
     return project ? this.mapToEntity(project) : null;
   }
 
-  
   async findAll(): Promise<Project[]> {
     const projects = await ProjectModel.find();
     return projects.map(this.mapToEntity);
   }
 
+  async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
+    const project = await ProjectModel.findOne({
+      companyId: new Types.ObjectId(companyId),
+      normalizedName: name.toLowerCase().trim(), // ✅ use normalized name
+    });
 
- async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
-  const project = await ProjectModel.findOne({
-    name: name,
-    companyId: new Types.ObjectId(companyId)
-  });
+    return project ? this.mapToEntity(project) : null;
+  }
 
-  return project ? this.mapToEntity(project) : null;
-}
-
-  
   private mapToEntity(doc: ProjectDocument): Project {
     return new Project(
       doc.id.toString(),
@@ -85,6 +80,8 @@ export class ProjectRepository implements IProjectRepository {
       doc.departmentId.toString(),
       doc.projectLeadId.toString(),
       doc.createdBy.toString(),
+      doc.createdByModel,        // ✅ added
+      doc.companyId.toString(),  // ✅ added
       doc.createdAt,
       doc.updatedAt
     );

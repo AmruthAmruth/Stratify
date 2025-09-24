@@ -361,7 +361,7 @@ createProject = async (req:AuthRequest,res:Response)=>{
   const createdBy=req.userId;
    const projectDTO = { ...req.body, createdBy };
   const response = await this._createProject.execute(projectDTO)
-  return res.status(StatusCodes.CREATED).json(response)
+  return res.status(StatusCodes.CREATED).json({message:"Project Created Successfully",response})
 }
 
   

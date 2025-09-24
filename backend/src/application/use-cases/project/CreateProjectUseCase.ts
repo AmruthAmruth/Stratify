@@ -16,47 +16,43 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
   ) {}
 
   async execute(projectDTO: CreateProjectDTO): Promise<Project> {
-    
     let creatorExists = false;
     let companyId: string | undefined;
+    let createdByModel: "Company" | "Manager" | undefined;
 
- 
     const company = await this._companyRepo.findById(projectDTO.createdBy);
     if (company) {
-      
       creatorExists = true;
       companyId = company.id;
+      createdByModel = "Company";
     }
 
     if (!creatorExists) {
       const manager = await this._managerRepo.findById(projectDTO.createdBy);
       if (manager) {
-      
         creatorExists = true;
         companyId = manager.companyId;
+        createdByModel = "Manager";
       }
     }
 
-    if (!creatorExists) {
+    if (!creatorExists || !companyId || !createdByModel) {
       throw new AppError("Creator not found", 404);
     }
 
-    
     const department = await this._departmentRepo.findById(projectDTO.departmentId);
     if (!department) {
       throw new AppError("Department not found", 404);
     }
 
- 
     const existingProject = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
-      companyId!
+      companyId
     );
     if (existingProject) {
       throw new AppError("Project name already exists for this company", 400);
     }
 
- 
     const project = new Project(
       undefined,
       projectDTO.name,
@@ -66,14 +62,14 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       projectDTO.endDate,
       projectDTO.status ?? "Planned",
       projectDTO.departmentId,
-      department.managerId ?? projectDTO.createdBy, 
-      projectDTO.createdBy, 
+      department.managerId ?? projectDTO.createdBy,
+      projectDTO.createdBy,
+      createdByModel,
+      companyId,
       new Date(),
       new Date()
     );
 
-  
-    const createdProject = await this._projectRepo.create(project);
-    return createdProject;
+    return await this._projectRepo.create(project);
   }
 }
