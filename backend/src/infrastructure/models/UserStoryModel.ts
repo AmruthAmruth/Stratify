@@ -8,7 +8,8 @@ export interface UserStoryDocument extends Document {
   priority: "Low" | "Medium" | "High";
   status: "To Do" | "In Progress" | "Done";
   storyPoints: number;                        
-  capacity: number;                           
+  capacity: number;   
+sprintId?: string;                         
   assignedTo?: Types.ObjectId;                
   createdAt: Date;
   updatedAt: Date;
@@ -24,6 +25,7 @@ const UserStorySchema = new Schema<UserStoryDocument>(
     status: { type: String, enum: ["To Do", "In Progress", "Done"], default: "To Do" },
     storyPoints: { type: Number, required: true },
     capacity: { type: Number, required: true },
+    sprintId:{type: Schema.Types.ObjectId, ref: "Sprint"},
     assignedTo: { type: Schema.Types.ObjectId, ref: "Employee" },
   },
   { timestamps: true }

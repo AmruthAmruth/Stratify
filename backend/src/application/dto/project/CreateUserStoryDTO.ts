@@ -7,5 +7,6 @@ export interface CreateUserStoryDTO {
   status?: "To Do" | "In Progress" | "Done"; 
   storyPoints: number;                     
   capacity: number;                        
-  assignedTo?: string;                     
+  assignedTo?: string;     
+  sprintId?:string                
 }

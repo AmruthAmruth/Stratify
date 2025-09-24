@@ -18,6 +18,9 @@ export class UserStoryRepository implements IUserStoryRepository {
       assignedTo: userStory.assignedTo
         ? new Types.ObjectId(userStory.assignedTo)
         : null,
+       sprintId: userStory.sprintId
+        ? new Types.ObjectId(userStory.sprintId)
+        : null,
     }).save();
 
     return new UserStory(
@@ -31,6 +34,7 @@ export class UserStoryRepository implements IUserStoryRepository {
       created.storyPoints,
       created.capacity,
       created.assignedTo?.toString(),
+      created.sprintId?.toString(),
       created.createdAt,
       created.updatedAt
     );
@@ -51,6 +55,9 @@ export class UserStoryRepository implements IUserStoryRepository {
         assignedTo: userStory.assignedTo
           ? new Types.ObjectId(userStory.assignedTo)
           : null,
+          sprintId: userStory.sprintId
+        ? new Types.ObjectId(userStory.sprintId)
+        : null,
         updatedAt: new Date(),
       },
       { new: true }
@@ -71,6 +78,7 @@ export class UserStoryRepository implements IUserStoryRepository {
       updated.storyPoints,
       updated.capacity,
       updated.assignedTo?.toString(),
+      updated.sprintId?.toString(),
       updated.createdAt,
       updated.updatedAt
     );
@@ -91,6 +99,7 @@ export class UserStoryRepository implements IUserStoryRepository {
       doc.storyPoints,
       doc.capacity,
       doc.assignedTo?.toString(),
+      doc.sprintId?.toString(),
       doc.createdAt,
       doc.updatedAt
     );
@@ -114,6 +123,7 @@ export class UserStoryRepository implements IUserStoryRepository {
           doc.storyPoints,
           doc.capacity,
           doc.assignedTo?.toString(),
+          doc.sprintId?.toString(),
           doc.createdAt,
           doc.updatedAt
         )

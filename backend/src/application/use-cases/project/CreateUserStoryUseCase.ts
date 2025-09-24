@@ -24,6 +24,7 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase{
       userStoryDTO.storyPoints,
       userStoryDTO.capacity,
       userStoryDTO.assignedTo,
+      userStoryDTO.sprintId,
       new Date(),
       new Date()
     );
