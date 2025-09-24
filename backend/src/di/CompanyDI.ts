@@ -36,6 +36,8 @@ import { ListSubscriptionPlansUseCase } from "../application/use-cases/subscript
 import { GetManagerDepartmentsUseCase } from "../application/use-cases/departments/GetDepartmentUnderMangerUseCase";
 import { CreateProjectUseCase } from "../application/use-cases/project/CreateProjectUseCase";
 import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
+import { CreateUserStoryUseCase } from "../application/use-cases/project/CreateUserStoryUseCase";
+import { UserStoryRepository } from "../infrastructure/repositories/UserStoryRepository";
 
 export const companyDI = () => {
 
@@ -99,6 +101,10 @@ const getManagerDepartments = new GetManagerDepartmentsUseCase(departmentRepo,em
 const projectRepo = new ProjectRepository()
 const createProject = new CreateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo)
 
+const UserStoryRepo = new UserStoryRepository();
+
+const CreateUserStory = new CreateUserStoryUseCase(UserStoryRepo)
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -124,7 +130,8 @@ getUnassignedDepartment,
 subscriptionPurchase,
 listSubscriptionPlan,
 getManagerDepartments,
-createProject
+createProject,
+CreateUserStory
   );
 };
  

@@ -34,6 +34,7 @@ import { IGetUnassignedDepartments } from "../../application/interfaces/departme
 import { IGetManagerDepartmentsUseCase } from "../../application/interfaces/departments/IGetManagerDepartmentsUseCase";
 import { IGetUnassignedManagersUseCase } from "../../application/interfaces/managers/IGetUnassignedManagersUseCase";
 import { ICreateProjectUseCase } from "../../application/interfaces/project/ICreateProjectUseCase";
+import { ICreateUserStoryUseCase } from "../../application/interfaces/project/ICreateUserStoryUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -65,7 +66,8 @@ export class CompanyController {
     private _subscriptionPurchaseUseCase:IPurchaseSubscriptionUseCase,
     private _listSubscriptionPlanUseCase:IListSubscriptionPlansUseCase,
     private _getManagerDepartments:IGetManagerDepartmentsUseCase,
-    private _createProject:ICreateProjectUseCase
+    private _createProject:ICreateProjectUseCase,
+    private _createUserStory:ICreateUserStoryUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -364,6 +366,13 @@ createProject = async (req:AuthRequest,res:Response)=>{
   return res.status(StatusCodes.CREATED).json({message:"Project Created Successfully",response})
 }
 
-  
+
+createUserStory=async(req:AuthRequest,res:Response)=>{
+  const createdBy=req.userId;
+  const userStoryDTO={...req.body,createdBy};
+  const response = await this._createUserStory.execute(userStoryDTO)
+  return res.status(StatusCodes.CREATED).json({message:"User Story Created Successfully",response})
+}
+
 
 }
