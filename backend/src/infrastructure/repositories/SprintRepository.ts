@@ -4,25 +4,30 @@ import { ISprintRepository } from "../../domain/repositories/ISprintRepository";
 import { SprintModel } from "../models/SprintModel";
 
 export class SprintRepository implements ISprintRepository {
-
   async create(sprint: Sprint): Promise<Sprint> {
     const created = await new SprintModel({
       name: sprint.name,
+      description:sprint.description,
       projectId: new Types.ObjectId(sprint.projectId),
       startDate: sprint.startDate,
       endDate: sprint.endDate,
-      goal: sprint.goal,
       status: sprint.status ?? "Planned",
+      teamCapacity: sprint.teamCapacity,
+      totalStoryPoints: sprint.totalStoryPoints ?? 0,
+      createdBy: new Types.ObjectId(sprint.createdBy),
     }).save();
 
     return new Sprint(
       created.id.toString(),
       created.name,
+      created.description,
       created.projectId.toString(),
       created.startDate,
       created.endDate,
-      created.goal,
       created.status,
+      created.teamCapacity,
+      created.totalStoryPoints,
+      created.createdBy.toString(),
       created.createdAt,
       created.updatedAt
     );
@@ -35,8 +40,9 @@ export class SprintRepository implements ISprintRepository {
         name: sprint.name,
         startDate: sprint.startDate,
         endDate: sprint.endDate,
-        goal: sprint.goal,
         status: sprint.status,
+        teamCapacity: sprint.teamCapacity,
+        totalStoryPoints: sprint.totalStoryPoints,
       },
       { new: true }
     ).exec();
@@ -46,48 +52,60 @@ export class SprintRepository implements ISprintRepository {
     return new Sprint(
       updated.id.toString(),
       updated.name,
+      updated.description,
       updated.projectId.toString(),
       updated.startDate,
       updated.endDate,
-      updated.goal,
       updated.status,
+      updated.teamCapacity,
+      updated.totalStoryPoints,
+      updated.createdBy.toString(),
       updated.createdAt,
       updated.updatedAt
     );
   }
 
   async findById(id: string): Promise<Sprint | null> {
-    const doc = await SprintModel.findById(id).exec();
+    const doc = await SprintModel.findById(new Types.ObjectId(id)).exec();
     if (!doc) return null;
 
     return new Sprint(
       doc.id.toString(),
       doc.name,
+      doc.description,
       doc.projectId.toString(),
       doc.startDate,
       doc.endDate,
-      doc.goal,
       doc.status,
+      doc.teamCapacity,
+      doc.totalStoryPoints,
+      doc.createdBy.toString(),
       doc.createdAt,
       doc.updatedAt
     );
   }
 
   async findByProject(projectId: string): Promise<Sprint[]> {
-    const docs = await SprintModel.find({ projectId: new Types.ObjectId(projectId) }).exec();
+    const docs = await SprintModel.find({
+      projectId: new Types.ObjectId(projectId),
+    }).exec();
 
-    return docs.map(doc => 
-      new Sprint(
-        doc.id.toString(),
-        doc.name,
-        doc.projectId.toString(),
-        doc.startDate,
-        doc.endDate,
-        doc.goal,
-        doc.status,
-        doc.createdAt,
-        doc.updatedAt
-      )
+    return docs.map(
+      (doc) =>
+        new Sprint(
+          doc.id.toString(),
+          doc.name,
+          doc.description,
+          doc.projectId.toString(),
+          doc.startDate,
+          doc.endDate,
+          doc.status,
+          doc.teamCapacity,
+          doc.totalStoryPoints,
+          doc.createdBy.toString(),
+          doc.createdAt,
+          doc.updatedAt
+        )
     );
   }
 

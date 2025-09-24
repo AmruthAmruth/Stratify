@@ -36,6 +36,7 @@ import { IGetUnassignedManagersUseCase } from "../../application/interfaces/mana
 import { ICreateProjectUseCase } from "../../application/interfaces/project/ICreateProjectUseCase";
 import { ICreateUserStoryUseCase } from "../../application/interfaces/project/ICreateUserStoryUseCase";
 import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICreateBacklogUseCase";
+import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -69,7 +70,8 @@ export class CompanyController {
     private _getManagerDepartments:IGetManagerDepartmentsUseCase,
     private _createProject:ICreateProjectUseCase,
     private _createUserStory:ICreateUserStoryUseCase,
-    private _createBackLog:ICreateBacklogUseCase
+    private _createBackLog:ICreateBacklogUseCase,
+    private _createSprint:ICreateSprintUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -382,6 +384,14 @@ createBackLog=async(req:AuthRequest,res:Response)=>{
   const backlogDTO={...req.body,createdBy};
   const response = await this._createBackLog.execute(backlogDTO);
    return res.status(StatusCodes.CREATED).json({message:"Back log Created Successfully",response}) 
+}
+
+
+createSprint = async(req:AuthRequest,res:Response)=>{
+  const createdBy = req.userId;
+  const sprintDTO={...req.body,createdBy};
+  const response = await this._createSprint.execute(sprintDTO);
+   return res.status(StatusCodes.CREATED).json({message:"Sprint Created Successfully",response})
 }
 
 

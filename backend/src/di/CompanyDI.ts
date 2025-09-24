@@ -40,6 +40,8 @@ import { CreateUserStoryUseCase } from "../application/use-cases/project/CreateU
 import { UserStoryRepository } from "../infrastructure/repositories/UserStoryRepository";
 import { BacklogRepository } from "../infrastructure/repositories/BacklogRepository";
 import { CreateBacklogUseCase } from "../application/use-cases/project/CreateBacklogUseCase";
+import { SprintRepository } from "../infrastructure/repositories/SprintRepository";
+import { CreateSprintUseCase } from "../application/use-cases/project/CreateSprintUseCase";
 
 export const companyDI = () => {
 
@@ -112,7 +114,9 @@ const backLogRepo = new BacklogRepository()
 
 
 const createBackLog = new CreateBacklogUseCase(backLogRepo)
+const sprintRepo= new SprintRepository();
 
+const createSprint= new CreateSprintUseCase(sprintRepo)
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -140,7 +144,8 @@ listSubscriptionPlan,
 getManagerDepartments,
 createProject,
 CreateUserStory,
-createBackLog
+createBackLog,
+createSprint
   );
 };
  
