@@ -62,12 +62,12 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       projectDTO.endDate,
       projectDTO.status ?? "Planned",
       projectDTO.departmentId,
-      department.managerId ?? projectDTO.createdBy,
+      department.managerId ?? projectDTO.createdBy, 
       projectDTO.createdBy,
       createdByModel,
       companyId,
-      new Date(),
-      new Date()
+      projectDTO.teamMemberIds ?? [], 
+      projectDTO.backlogIds ?? []    
     );
 
     return await this._projectRepo.create(project);

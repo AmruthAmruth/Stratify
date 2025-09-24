@@ -16,8 +16,10 @@ export class ProjectRepository implements IProjectRepository {
       departmentId: new Types.ObjectId(project.departmentId),
       projectLeadId: new Types.ObjectId(project.projectLeadId),
       createdBy: new Types.ObjectId(project.createdBy),
-      createdByModel: project.createdByModel,           // ✅ dynamic
-      companyId: new Types.ObjectId(project.companyId), // ✅ added
+      createdByModel: project.createdByModel,
+      companyId: new Types.ObjectId(project.companyId),
+      teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
+      backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
     });
 
     return this.mapToEntity(created);
@@ -35,6 +37,8 @@ export class ProjectRepository implements IProjectRepository {
         status: project.status,
         departmentId: new Types.ObjectId(project.departmentId),
         projectLeadId: new Types.ObjectId(project.projectLeadId),
+        teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
+        backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
         updatedAt: new Date(),
       },
       { new: true }
@@ -62,7 +66,7 @@ export class ProjectRepository implements IProjectRepository {
   async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
     const project = await ProjectModel.findOne({
       companyId: new Types.ObjectId(companyId),
-      normalizedName: name.toLowerCase().trim(), // ✅ use normalized name
+      normalizedName: name.toLowerCase().trim(),
     });
 
     return project ? this.mapToEntity(project) : null;
@@ -80,8 +84,10 @@ export class ProjectRepository implements IProjectRepository {
       doc.departmentId.toString(),
       doc.projectLeadId.toString(),
       doc.createdBy.toString(),
-      doc.createdByModel,        // ✅ added
-      doc.companyId.toString(),  // ✅ added
+      doc.createdByModel,
+      doc.companyId.toString(),
+      doc.teamMemberIds?.map(id => id.toString()),
+      doc.backlogIds?.map(id => id.toString()),
       doc.createdAt,
       doc.updatedAt
     );
