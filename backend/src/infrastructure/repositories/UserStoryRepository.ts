@@ -10,34 +10,16 @@ export class UserStoryRepository implements IUserStoryRepository {
       title: userStory.title,
       description: userStory.description,
       projectId: new Types.ObjectId(userStory.projectId),
+      backlogId: userStory.backlogId ? new Types.ObjectId(userStory.backlogId) : undefined,
       createdBy: new Types.ObjectId(userStory.createdBy),
       priority: userStory.priority,
       status: userStory.status,
       storyPoints: userStory.storyPoints,
-      capacity: userStory.capacity,
-      assignedTo: userStory.assignedTo
-        ? new Types.ObjectId(userStory.assignedTo)
-        : null,
-       sprintId: userStory.sprintId
-        ? new Types.ObjectId(userStory.sprintId)
-        : null,
+      assignedToIds: userStory.assignedToIds?.map(id => new Types.ObjectId(id)),
+      acceptanceCriteria: userStory.acceptanceCriteria,
     }).save();
 
-    return new UserStory(
-      created.id.toString(),
-      created.title,
-      created.description,
-      created.projectId.toString(),
-      created.createdBy.toString(),
-      created.priority,
-      created.status,
-      created.storyPoints,
-      created.capacity,
-      created.assignedTo?.toString(),
-      created.sprintId?.toString(),
-      created.createdAt,
-      created.updatedAt
-    );
+    return this.mapToEntity(created);
   }
 
   async update(userStory: UserStory): Promise<UserStory> {
@@ -47,17 +29,14 @@ export class UserStoryRepository implements IUserStoryRepository {
         title: userStory.title,
         description: userStory.description,
         projectId: new Types.ObjectId(userStory.projectId),
+        backlogId: userStory.backlogId ? new Types.ObjectId(userStory.backlogId) : undefined,
         createdBy: new Types.ObjectId(userStory.createdBy),
         priority: userStory.priority,
         status: userStory.status,
         storyPoints: userStory.storyPoints,
-        capacity: userStory.capacity,
-        assignedTo: userStory.assignedTo
-          ? new Types.ObjectId(userStory.assignedTo)
-          : null,
-          sprintId: userStory.sprintId
-        ? new Types.ObjectId(userStory.sprintId)
-        : null,
+        sprintId: userStory.sprintId ? new Types.ObjectId(userStory.sprintId) : undefined,
+        assignedToIds: userStory.assignedToIds?.map(id => new Types.ObjectId(id)),
+        acceptanceCriteria: userStory.acceptanceCriteria,
         updatedAt: new Date(),
       },
       { new: true }
@@ -67,42 +46,12 @@ export class UserStoryRepository implements IUserStoryRepository {
       throw new Error("User story not found");
     }
 
-    return new UserStory(
-      updated.id.toString(),
-      updated.title,
-      updated.description,
-      updated.projectId.toString(),
-      updated.createdBy.toString(),
-      updated.priority,
-      updated.status,
-      updated.storyPoints,
-      updated.capacity,
-      updated.assignedTo?.toString(),
-      updated.sprintId?.toString(),
-      updated.createdAt,
-      updated.updatedAt
-    );
+    return this.mapToEntity(updated);
   }
 
   async findById(id: string): Promise<UserStory | null> {
     const doc = await UserStoryModel.findById(new Types.ObjectId(id)).exec();
-    if (!doc) return null;
-
-    return new UserStory(
-      doc.id.toString(),
-      doc.title,
-      doc.description,
-      doc.projectId.toString(),
-      doc.createdBy.toString(),
-      doc.priority,
-      doc.status,
-      doc.storyPoints,
-      doc.capacity,
-      doc.assignedTo?.toString(),
-      doc.sprintId?.toString(),
-      doc.createdAt,
-      doc.updatedAt
-    );
+    return doc ? this.mapToEntity(doc) : null;
   }
 
   async findByProject(projectId: string): Promise<UserStory[]> {
@@ -110,27 +59,29 @@ export class UserStoryRepository implements IUserStoryRepository {
       projectId: new Types.ObjectId(projectId),
     }).exec();
 
-    return docs.map(
-      (doc) =>
-        new UserStory(
-          doc.id.toString(),
-          doc.title,
-          doc.description,
-          doc.projectId.toString(),
-          doc.createdBy.toString(),
-          doc.priority,
-          doc.status,
-          doc.storyPoints,
-          doc.capacity,
-          doc.assignedTo?.toString(),
-          doc.sprintId?.toString(),
-          doc.createdAt,
-          doc.updatedAt
-        )
-    );
+    return docs.map(this.mapToEntity);
   }
 
   async delete(id: string): Promise<void> {
     await UserStoryModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
+  }
+
+  private mapToEntity(doc: any): UserStory {
+    return new UserStory(
+      doc.id.toString(),
+      doc.title,
+      doc.description,
+      doc.projectId.toString(),
+      doc.backlogId?.toString(),
+      doc.createdBy.toString(),
+      doc.priority,
+      doc.status,
+      doc.storyPoints,
+      doc.sprintId?.toString(),
+      doc.assignedToIds?.map((id: Types.ObjectId) => id.toString()),
+      doc.acceptanceCriteria,
+      doc.createdAt,
+      doc.updatedAt
+    );
   }
 }
