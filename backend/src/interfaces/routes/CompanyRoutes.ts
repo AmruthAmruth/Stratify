@@ -49,5 +49,10 @@ companyRouter.post('/create-user-story',authMiddleware(["company","manager"]),as
 companyRouter.post('/create-backlog',authMiddleware(["company","manager"]),asyncHandler(controller.createBackLog))
 companyRouter.post('/create-sprint',authMiddleware(["company","manager"]),asyncHandler(controller.createSprint))
 companyRouter.post('/create-task',asyncHandler(controller.createTask))
+
+
+companyRouter.post('/create-leave',asyncHandler(controller.createLeave))
+
+
 export default companyRouter;
  

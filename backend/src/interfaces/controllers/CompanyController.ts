@@ -38,6 +38,7 @@ import { ICreateUserStoryUseCase } from "../../application/interfaces/project/IC
 import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICreateBacklogUseCase";
 import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
 import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
+import { ICreateLeaveUseCase } from "../../application/interfaces/leave/ICreateLeaveUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -73,7 +74,8 @@ export class CompanyController {
     private _createUserStory:ICreateUserStoryUseCase,
     private _createBackLog:ICreateBacklogUseCase,
     private _createSprint:ICreateSprintUseCase,
-    private _createTask:ICreateTaskUseCase
+    private _createTask:ICreateTaskUseCase,
+    private _createLeave:ICreateLeaveUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -402,6 +404,12 @@ createTask=async(req:Request,res:Response)=>{
    return res.status(StatusCodes.CREATED).json({message:"Task Created Successfully",response})
 }
 
+
+
+createLeave=async(req:Request,res:Response)=>{
+  const response = await this._createLeave.execute(req.body);
+   return res.status(StatusCodes.CREATED).json({message:"Leave Created Successfully",response})
+}
 
 
 
