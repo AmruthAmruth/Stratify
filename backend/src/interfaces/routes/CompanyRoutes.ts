@@ -45,5 +45,6 @@ companyRouter.post('/purchase-unauthenticated',asyncHandler(controller.createSub
 companyRouter.post('/verify-payment-unauthorized',asyncHandler(controller.verifyPaymentForUnauthenticated))
 companyRouter.post('/create-project',authMiddleware(["company","manager"]),asyncHandler(controller.createProject))
 companyRouter.post('/create-user-story',authMiddleware(["company","manager"]),asyncHandler(controller.createUserStory))
+companyRouter.post('/create-backlog',authMiddleware(["company","manager"]),asyncHandler(controller.createBackLog))
 export default companyRouter;
  

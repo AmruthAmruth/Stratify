@@ -38,6 +38,8 @@ import { CreateProjectUseCase } from "../application/use-cases/project/CreatePro
 import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
 import { CreateUserStoryUseCase } from "../application/use-cases/project/CreateUserStoryUseCase";
 import { UserStoryRepository } from "../infrastructure/repositories/UserStoryRepository";
+import { BacklogRepository } from "../infrastructure/repositories/BacklogRepository";
+import { CreateBacklogUseCase } from "../application/use-cases/project/CreateBacklogUseCase";
 
 export const companyDI = () => {
 
@@ -105,6 +107,12 @@ const UserStoryRepo = new UserStoryRepository();
 
 const CreateUserStory = new CreateUserStoryUseCase(UserStoryRepo)
 
+
+const backLogRepo = new BacklogRepository()
+
+
+const createBackLog = new CreateBacklogUseCase(backLogRepo)
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -131,7 +139,8 @@ subscriptionPurchase,
 listSubscriptionPlan,
 getManagerDepartments,
 createProject,
-CreateUserStory
+CreateUserStory,
+createBackLog
   );
 };
  
