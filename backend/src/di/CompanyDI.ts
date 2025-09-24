@@ -42,6 +42,8 @@ import { BacklogRepository } from "../infrastructure/repositories/BacklogReposit
 import { CreateBacklogUseCase } from "../application/use-cases/project/CreateBacklogUseCase";
 import { SprintRepository } from "../infrastructure/repositories/SprintRepository";
 import { CreateSprintUseCase } from "../application/use-cases/project/CreateSprintUseCase";
+import { TaskRepository } from "../infrastructure/repositories/TaskRepository";
+import { CreateTaskUseCase } from "../application/use-cases/project/CreateTaskUseCase";
 
 export const companyDI = () => {
 
@@ -115,8 +117,13 @@ const backLogRepo = new BacklogRepository()
 
 const createBackLog = new CreateBacklogUseCase(backLogRepo)
 const sprintRepo= new SprintRepository();
-
 const createSprint= new CreateSprintUseCase(sprintRepo)
+
+
+const taskRepo= new TaskRepository();
+
+const createTask = new CreateTaskUseCase(taskRepo)
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -145,7 +152,8 @@ getManagerDepartments,
 createProject,
 CreateUserStory,
 createBackLog,
-createSprint
+createSprint,
+createTask
   );
 };
  

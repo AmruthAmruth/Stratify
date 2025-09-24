@@ -37,6 +37,7 @@ import { ICreateProjectUseCase } from "../../application/interfaces/project/ICre
 import { ICreateUserStoryUseCase } from "../../application/interfaces/project/ICreateUserStoryUseCase";
 import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICreateBacklogUseCase";
 import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
+import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -71,7 +72,8 @@ export class CompanyController {
     private _createProject:ICreateProjectUseCase,
     private _createUserStory:ICreateUserStoryUseCase,
     private _createBackLog:ICreateBacklogUseCase,
-    private _createSprint:ICreateSprintUseCase
+    private _createSprint:ICreateSprintUseCase,
+    private _createTask:ICreateTaskUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -393,6 +395,14 @@ createSprint = async(req:AuthRequest,res:Response)=>{
   const response = await this._createSprint.execute(sprintDTO);
    return res.status(StatusCodes.CREATED).json({message:"Sprint Created Successfully",response})
 }
+
+
+createTask=async(req:Request,res:Response)=>{
+  const response = await this._createTask.execute(req.body);
+   return res.status(StatusCodes.CREATED).json({message:"Task Created Successfully",response})
+}
+
+
 
 
 }
