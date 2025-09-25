@@ -60,9 +60,6 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
       throw new AppError("Backlog name already exists in this project", StatusCodes.BAD_REQUEST);
     }
 
-
-
-
     const backlog = new Backlog(
       undefined, 
       backlogDTO.projectId,

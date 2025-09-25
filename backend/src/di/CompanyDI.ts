@@ -107,28 +107,32 @@ const listSubscriptionPlan = new ListSubscriptionPlansUseCase(planRepo)
 
 const getManagerDepartments = new GetManagerDepartmentsUseCase(departmentRepo,employeeRepo)
 const projectRepo = new ProjectRepository()
-const createProject = new CreateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo)
+const createProject = new CreateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo,employeeRepo)
 
 const UserStoryRepo = new UserStoryRepository();
-
-const CreateUserStory = new CreateUserStoryUseCase(UserStoryRepo)
-
 
 const backLogRepo = new BacklogRepository()
 
 
-const createBackLog = new CreateBacklogUseCase(backLogRepo)
+const CreateUserStory = new CreateUserStoryUseCase(UserStoryRepo,backLogRepo,projectRepo,employeeRepo)
+
+
+
+
+const createBackLog = new CreateBacklogUseCase(backLogRepo,companyRepo,managerRepo,projectRepo)
 const sprintRepo= new SprintRepository();
-const createSprint= new CreateSprintUseCase(sprintRepo)
+const createSprint= new CreateSprintUseCase(sprintRepo,projectRepo)
 
 
 const taskRepo= new TaskRepository();
 
-const createTask = new CreateTaskUseCase(taskRepo)
+const createTask = new CreateTaskUseCase(taskRepo,UserStoryRepo,employeeRepo,projectRepo)
 
 const leaveRepo=new LeaveRepository();
 
-const createLeave = new CreateLeaveUseCase(leaveRepo)
+const createLeave = new CreateLeaveUseCase(leaveRepo,employeeRepo)
+
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
