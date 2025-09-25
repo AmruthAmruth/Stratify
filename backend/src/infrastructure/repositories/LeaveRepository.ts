@@ -71,4 +71,31 @@ export class LeaveRepository implements ILeaveRepository {
       doc.updatedAt
     );
   }
+
+
+  async findOverlappingLeave(employeeId: string, startDate: Date, endDate: Date): Promise<Leave | null> {
+    const overlapping = await LeaveModel.findOne({
+    employeeId: new Types.ObjectId(employeeId),
+    $or: [
+      {
+        startDate: { $lte: endDate },
+        endDate: { $gte: startDate },
+      },
+    ],
+  }).exec();
+
+  if (!overlapping) return null;
+
+  return new Leave(
+    overlapping.id.toString(),
+    overlapping.employeeId.toString(),
+    overlapping.startDate,
+    overlapping.endDate,
+    overlapping.type,
+    overlapping.status,
+    overlapping.reason,
+    overlapping.createdAt,
+    overlapping.updatedAt
+  );
+  }
 }
