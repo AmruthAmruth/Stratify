@@ -112,4 +112,36 @@ export class SprintRepository implements ISprintRepository {
   async delete(id: string): Promise<void> {
     await SprintModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
+
+
+
+  async findOverlappingSprint(projectId: string, startDate: Date, endDate: Date): Promise<Sprint | null> {
+     const overlapping = await SprintModel.findOne({
+    projectId: new Types.ObjectId(projectId),
+    $or: [
+      { startDate: { $lte: endDate }, endDate: { $gte: startDate } } 
+    ]
+  }).exec();
+
+
+   if (!overlapping) return null;
+
+
+    return new Sprint(
+    overlapping.id.toString(),
+    overlapping.name,
+    overlapping.description,
+    overlapping.projectId.toString(),
+    overlapping.startDate,
+    overlapping.endDate,
+    overlapping.status,
+    overlapping.teamCapacity,
+    overlapping.totalStoryPoints,
+    overlapping.createdBy.toString(),
+    overlapping.createdAt,
+    overlapping.updatedAt
+  );
+
+  }
 }
+
