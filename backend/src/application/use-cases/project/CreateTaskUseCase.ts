@@ -1,5 +1,6 @@
 import { Task } from "../../../domain/entities/Task";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
+import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ITaskRepository } from "../../../domain/repositories/ITaskRepository";
 import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
@@ -10,7 +11,8 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
   constructor(
     private readonly _taskRepo: ITaskRepository,
     private readonly _userStoryRepo: IUserStoryRepository,
-    private readonly _employeeRepo: IEmployeeRepository
+    private readonly _employeeRepo: IEmployeeRepository,
+    private readonly _projectRepo:IProjectRepository
   ) {}
 
   async execute(taskDTO: CreateTaskDTO): Promise<Task> {
@@ -25,12 +27,13 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
         throw new AppError(`Assigned user with ID ${taskDTO.assignedToId} does not exist`, 404);
       }
 
-      if (employee.companyId !== userStory.projectId) { 
+      const project = await this._projectRepo.findById(userStory.projectId);
+      if (employee.companyId !== project?.companyId) { 
         throw new AppError(`Assigned user does not belong to the same company as the user story`, 400);
       }
     }
 
-    
+
     
 
     const task = new Task(

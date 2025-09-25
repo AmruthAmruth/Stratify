@@ -88,7 +88,6 @@ if (existingProjectKey) {
       createdByModel,
       companyId,
       projectDTO.teamMemberIds ?? [],
-      projectDTO.backlogIds ?? [],
       now,  
       now   
     );

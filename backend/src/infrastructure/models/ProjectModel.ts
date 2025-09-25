@@ -13,7 +13,6 @@ export interface ProjectDocument extends Document {
   createdByModel: "Company" | "Manager";
   companyId: Types.ObjectId;
   teamMemberIds?: Types.ObjectId[];
-  backlogIds?: Types.ObjectId[];
   normalizedName: string;
   createdAt: Date;
   updatedAt: Date;
@@ -36,7 +35,6 @@ const ProjectSchema = new Schema<ProjectDocument>({
   createdByModel: { type: String, required: true, enum: ["Company", "Manager"] },
   companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   teamMemberIds: [{ type: Schema.Types.ObjectId, ref: "Employee" }],
-  backlogIds: [{ type: Schema.Types.ObjectId, ref: "Backlog" }],
   normalizedName: { type: String, lowercase: true, default: "" },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true },

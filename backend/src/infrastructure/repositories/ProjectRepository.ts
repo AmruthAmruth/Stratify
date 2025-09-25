@@ -19,7 +19,6 @@ export class ProjectRepository implements IProjectRepository {
       createdByModel: project.createdByModel,
       companyId: new Types.ObjectId(project.companyId),
       teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
-      backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     });
@@ -40,7 +39,6 @@ export class ProjectRepository implements IProjectRepository {
         departmentId: new Types.ObjectId(project.departmentId),
         projectLeadId: new Types.ObjectId(project.projectLeadId),
         teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
-        backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
         updatedAt: new Date(), 
       },
       { new: true }
@@ -98,7 +96,6 @@ export class ProjectRepository implements IProjectRepository {
       doc.createdByModel,
       doc.companyId.toString(),
       doc.teamMemberIds?.map(id => id.toString()),
-      doc.backlogIds?.map(id => id.toString()),
       doc.createdAt,
       doc.updatedAt
     );

@@ -12,8 +12,7 @@ export class Project {
     public createdBy: string,
     public createdByModel: "Company" | "Manager",   
     public companyId: string,         
-    public teamMemberIds?: string[],         
-    public backlogIds?: string[],                 
+    public teamMemberIds?: string[],              
     public createdAt?: Date,
     public updatedAt?: Date
   ) {}

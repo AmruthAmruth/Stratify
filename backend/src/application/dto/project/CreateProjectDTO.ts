@@ -8,5 +8,4 @@ export interface CreateProjectDTO {
   createdBy: string;
   status?: "Planned" | "Active" | "Completed" | "Archived";
   teamMemberIds?: string[];  
-  backlogIds?: string[];    
 }
