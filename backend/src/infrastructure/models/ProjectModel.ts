@@ -19,32 +19,30 @@ export interface ProjectDocument extends Document {
   updatedAt: Date;
 }
 
-const ProjectSchema = new Schema<ProjectDocument>(
-  {
-    name: { type: String, required: true },
-    key: { type: String, required: true },
-    description: { type: String, required: true },
-    startDate: { type: Date, required: true },
-    endDate: { type: Date, required: true },
-    status: {
-      type: String,
-      enum: ["Planned", "Active", "Completed", "Archived"],
-      default: "Planned",
-    },
-    departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
-    projectLeadId: { type: Schema.Types.ObjectId, ref: "Manager", required: true },
-    createdBy: { type: Schema.Types.ObjectId, required: true, refPath: "createdByModel" },
-    createdByModel: { type: String, required: true, enum: ["Company", "Manager"] },
-    companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
-    teamMemberIds: [{ type: Schema.Types.ObjectId, ref: "Employee" }],
-    backlogIds: [{ type: Schema.Types.ObjectId, ref: "Backlog" }],
-    normalizedName: { type: String, lowercase: true, default: "" },
+const ProjectSchema = new Schema<ProjectDocument>({
+  name: { type: String, required: true },
+  key: { type: String, required: true },
+  description: { type: String, required: true },
+  startDate: { type: Date, required: true },
+  endDate: { type: Date, required: true },
+  status: {
+    type: String,
+    enum: ["Planned", "Active", "Completed", "Archived"],
+    default: "Planned",
   },
-  { timestamps: true }
-);
+  departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
+  projectLeadId: { type: Schema.Types.ObjectId, ref: "Manager", required: true },
+  createdBy: { type: Schema.Types.ObjectId, required: true, refPath: "createdByModel" },
+  createdByModel: { type: String, required: true, enum: ["Company", "Manager"] },
+  companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
+  teamMemberIds: [{ type: Schema.Types.ObjectId, ref: "Employee" }],
+  backlogIds: [{ type: Schema.Types.ObjectId, ref: "Backlog" }],
+  normalizedName: { type: String, lowercase: true, default: "" },
+  createdAt: { type: Date, required: true },
+  updatedAt: { type: Date, required: true },
+});
 
 ProjectSchema.index({ companyId: 1, normalizedName: 1 }, { unique: true });
-
 
 ProjectSchema.pre("save", function (next) {
   if (this.key) this.key = this.key.toUpperCase().trim();

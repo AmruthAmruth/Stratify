@@ -20,6 +20,8 @@ export class ProjectRepository implements IProjectRepository {
       companyId: new Types.ObjectId(project.companyId),
       teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
       backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
+      createdAt: project.createdAt,
+      updatedAt: project.updatedAt,
     });
 
     return this.mapToEntity(created);
@@ -39,7 +41,7 @@ export class ProjectRepository implements IProjectRepository {
         projectLeadId: new Types.ObjectId(project.projectLeadId),
         teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
         backlogIds: project.backlogIds?.map(id => new Types.ObjectId(id)),
-        updatedAt: new Date(),
+        updatedAt: new Date(), 
       },
       { new: true }
     );

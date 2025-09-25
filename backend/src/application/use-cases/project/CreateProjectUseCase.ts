@@ -53,6 +53,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       throw new AppError("Project name already exists for this company", 400);
     }
 
+    const now = new Date();
+
     const project = new Project(
       undefined,
       projectDTO.name,
@@ -62,12 +64,14 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       projectDTO.endDate,
       projectDTO.status ?? "Planned",
       projectDTO.departmentId,
-      department.managerId ?? projectDTO.createdBy, 
+      department.managerId ?? projectDTO.createdBy,
       projectDTO.createdBy,
       createdByModel,
       companyId,
-      projectDTO.teamMemberIds ?? [], 
-      projectDTO.backlogIds ?? []    
+      projectDTO.teamMemberIds ?? [],
+      projectDTO.backlogIds ?? [],
+      now,  
+      now   
     );
 
     return await this._projectRepo.create(project);
