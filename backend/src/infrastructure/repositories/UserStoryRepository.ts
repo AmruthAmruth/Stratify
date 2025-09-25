@@ -66,6 +66,18 @@ export class UserStoryRepository implements IUserStoryRepository {
     await UserStoryModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
+
+
+async findByNameAndBackLogId(name: string, backlogId: string): Promise<UserStory | null> {
+  const doc = await UserStoryModel.findOne({
+    title:name,
+    backlogId
+  })
+return doc ? this.mapToEntity(doc) : null;
+
+}
+
+
   private mapToEntity(doc: UserStoryDocument): UserStory {
   return new UserStory(
     doc.id.toString(),
@@ -84,4 +96,9 @@ export class UserStoryRepository implements IUserStoryRepository {
     doc.updatedAt
   );
 }
+
+
+
+
+
 }

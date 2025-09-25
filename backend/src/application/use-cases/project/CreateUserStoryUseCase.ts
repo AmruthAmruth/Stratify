@@ -27,6 +27,11 @@ const backlog = await this._backlogRepo.findById(userStoryDTO.backlogId);
     }
 
 
+    const existingUserStory= await this._userStoryRepo.findByNameAndBackLogId(userStoryDTO.title,userStoryDTO.backlogId)
+   if(existingUserStory){
+    throw new AppError("Already existing the user story title",StatusCodes.BAD_REQUEST)
+   }
+
 
        const project = await this._projectRepo.findById(userStoryDTO.projectId);
     if (!project) throw new AppError("Project not found", StatusCodes.NOT_FOUND);

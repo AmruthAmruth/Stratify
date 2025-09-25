@@ -46,6 +46,7 @@ import { TaskRepository } from "../infrastructure/repositories/TaskRepository";
 import { CreateTaskUseCase } from "../application/use-cases/project/CreateTaskUseCase";
 import { LeaveRepository } from "../infrastructure/repositories/LeaveRepository";
 import { CreateLeaveUseCase } from "../application/use-cases/leave/CreateLeaveUseCase";
+import { GetProjectsByCompanyUseCase } from "../application/use-cases/project/GetProjectsByCompanyUseCase";
 
 export const companyDI = () => {
 
@@ -133,6 +134,8 @@ const leaveRepo=new LeaveRepository();
 const createLeave = new CreateLeaveUseCase(leaveRepo,employeeRepo)
 
 
+const getProjectsByCompany= new GetProjectsByCompanyUseCase(projectRepo,managerRepo,departmentRepo)
+
   return new CompanyController(
     registerUseCase, 
     verifyUseCase, 
@@ -163,7 +166,8 @@ CreateUserStory,
 createBackLog,
 createSprint,
 createTask,
-createLeave
+createLeave,
+getProjectsByCompany
   );
 };
  

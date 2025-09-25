@@ -25,10 +25,21 @@ companyRouter.get('/company-departments',authMiddleware(["company"]),asyncHandle
 companyRouter.get('/company-employees',authMiddleware(["company"]),asyncHandler(controller.getCompanyMembers))
 companyRouter.get('/subscription-plans',asyncHandler(controller.listPlans))
 
+
+companyRouter.get('/company-projects',authMiddleware(["company"]),asyncHandler(controller.getProjectsByCompany))
+
+
+
 companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))
 companyRouter.get('/department-details/:id', asyncHandler(controller.getDepartmentDetails))
 companyRouter.get('/company/:id',asyncHandler(controller.getCompany))
 companyRouter.get('/manager-departments/:managerId',asyncHandler(controller.getDepartmentsByAManager))
+
+
+
+
+
+
 
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post("/unapprove-company", asyncHandler(controller.unapproveCompany));
@@ -52,6 +63,8 @@ companyRouter.post('/create-task',asyncHandler(controller.createTask))
 
 
 companyRouter.post('/create-leave',asyncHandler(controller.createLeave))
+
+
 
 
 export default companyRouter;
