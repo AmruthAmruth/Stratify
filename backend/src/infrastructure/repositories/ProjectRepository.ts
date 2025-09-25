@@ -106,6 +106,31 @@ export class ProjectRepository implements IProjectRepository {
   }));
 }
 
+
+
+async findByDepartmentId(departmentId: string): Promise<Partial<Project>[]> {
+  const projects = await ProjectModel.find(
+    { departmentId },
+    {
+      name: 1,
+      description: 1,
+      status: 1,
+      startDate: 1,
+      endDate: 1
+    }
+  );
+
+  return projects.map((doc) => ({
+    id: doc.id.toString(),
+    name: doc.name,
+    description: doc.description,
+    status: doc.status,
+    startDate: doc.startDate,
+    endDate: doc.endDate,
+  }));
+}
+
+
   private mapToEntity(doc: ProjectDocument): Project {
     return new Project(
       doc.id.toString(),

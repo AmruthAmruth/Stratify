@@ -40,6 +40,7 @@ import { ICreateSprintUseCase } from "../../application/interfaces/project/ICrea
 import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
 import { ICreateLeaveUseCase } from "../../application/interfaces/leave/ICreateLeaveUseCase";
 import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/project/IGetProjectsByCompanyUseCase";
+import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -77,7 +78,8 @@ export class CompanyController {
     private _createSprint:ICreateSprintUseCase,
     private _createTask:ICreateTaskUseCase,
     private _createLeave:ICreateLeaveUseCase,
-    private _getProjectsByCompany:IGetProjectsByCompanyUseCase
+    private _getProjectsByCompany:IGetProjectsByCompanyUseCase,
+    private _getProjectsByDepartment:IGetProjectsByDepartmentUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -418,6 +420,13 @@ createLeave=async(req:Request,res:Response)=>{
 getProjectsByCompany=async(req:AuthRequest,res:Response)=>{
     const companyId=req.userId
   const response = await this._getProjectsByCompany.execute(companyId!)
+  return res.status(StatusCodes.OK).json(response)
+}
+
+
+getProjectsByDepartment=async(req:AuthRequest,res:Response)=>{
+  const {id}=req.params
+  const response = await this._getProjectsByDepartment.execute(id!);
   return res.status(StatusCodes.OK).json(response)
 }
 
