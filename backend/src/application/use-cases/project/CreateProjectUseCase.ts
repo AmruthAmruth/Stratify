@@ -5,6 +5,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { ICreateProjectUseCase } from "../../interfaces/project/ICreateProjectUseCase";
 
@@ -67,17 +68,7 @@ if (existingProjectKey) {
 
     
 
-     if (projectDTO.teamMemberIds && projectDTO.teamMemberIds.length > 0) {
-      for (const memberId of projectDTO.teamMemberIds) {
-        const employee = await this._employeeRepo.findById(memberId);
-        if (!employee) {
-          throw new AppError(`Team member with ID ${memberId} does not exist`, 404);
-        }
-        if (employee.companyId !== companyId) {
-          throw new AppError(`Team member with ID ${memberId} does not belong to the creator's company`, 400);
-        }
-      }
-    }
+   await validateEmployees(this._employeeRepo, projectDTO.teamMemberIds, companyId, "Team member");
 
 
 
