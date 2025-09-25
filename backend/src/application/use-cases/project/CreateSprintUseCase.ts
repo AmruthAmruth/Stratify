@@ -2,6 +2,7 @@ import { Sprint } from "../../../domain/entities/Sprint";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateSprintDTO } from "../../dto/project/CreateSprintDTO";
 import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseCase";
 
@@ -19,7 +20,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase{
 
 
  const project = await this._projectRepo.findById(sprintDTO.projectId);
-    if (!project) throw new AppError("Project not found", 404);
+    if (!project) throw new AppError("Project not found", StatusCodes.NOT_FOUND);
 
 
 
@@ -32,7 +33,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase{
     if (overlappingSprint) {
       throw new AppError(
         `Sprint overlaps with existing sprint "${overlappingSprint.name}"`,
-        400
+        StatusCodes.BAD_REQUEST
       );
     }
 
@@ -54,7 +55,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase{
       now, 
       now
          );
-         
+
     return await this._sprintRepo.create(sprint);
     }
 

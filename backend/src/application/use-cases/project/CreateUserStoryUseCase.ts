@@ -4,6 +4,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateUserStoryDTO } from "../../dto/project/CreateUserStoryDTO";
 import { ICreateUserStoryUseCase } from "../../interfaces/project/ICreateUserStoryUseCase";
@@ -19,16 +20,16 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
   async execute(userStoryDTO: CreateUserStoryDTO): Promise<UserStory> {
 
 const backlog = await this._backlogRepo.findById(userStoryDTO.backlogId);
-    if (!backlog) throw new AppError("Backlog not found", 404);
+    if (!backlog) throw new AppError("Backlog not found", StatusCodes.NOT_FOUND);
 
     if (backlog.projectId !== userStoryDTO.projectId) {
-      throw new AppError("Backlog does not belong to the given project", 400);
+      throw new AppError("Backlog does not belong to the given project", StatusCodes.BAD_REQUEST);
     }
 
 
 
        const project = await this._projectRepo.findById(userStoryDTO.projectId);
-    if (!project) throw new AppError("Project not found", 404);
+    if (!project) throw new AppError("Project not found", StatusCodes.NOT_FOUND);
 
  await validateEmployees(this._employeeRepo, userStoryDTO.assignedToIds, project.companyId, "Assigned user");
 

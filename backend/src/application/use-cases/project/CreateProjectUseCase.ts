@@ -5,6 +5,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { ICreateProjectUseCase } from "../../interfaces/project/ICreateProjectUseCase";
@@ -40,12 +41,12 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     }
 
     if (!creatorExists || !companyId || !createdByModel) {
-      throw new AppError("Creator not found", 404);
+      throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
     }
 
     const department = await this._departmentRepo.findById(projectDTO.departmentId);
     if (!department) {
-      throw new AppError("Department not found", 404);
+      throw new AppError("Department not found", StatusCodes.NOT_FOUND);
     }
 
     if (department.companyId !== companyId) throw new AppError('Department does not belong to creator company', 400);
@@ -55,13 +56,13 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       companyId
     );
     if (existingProjectName) {
-      throw new AppError("Project name already exists for this company", 400);
+      throw new AppError("Project name already exists for this company", StatusCodes.BAD_REQUEST);
     }
 
     const existingProjectKey= await this._projectRepo.findByKeyAndCompany(projectDTO.key,companyId)
 
 if (existingProjectKey) {
-      throw new AppError("Project Key name already exists for this company", 400);
+      throw new AppError("Project Key name already exists for this company", StatusCodes.BAD_REQUEST);
     }
 
 

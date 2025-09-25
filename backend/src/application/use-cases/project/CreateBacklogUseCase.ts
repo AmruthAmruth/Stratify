@@ -4,6 +4,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateBacklogDTO } from "../../dto/project/CreateBacklogDTO";
 import { ICreateBacklogUseCase } from "../../interfaces/project/ICreateBacklogUseCase";
 
@@ -39,16 +40,16 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
     }
 
      if (!creatorExists || !createdByModel || !companyId) {
-      throw new AppError("Creator not found", 404);
+      throw new AppError("Creator not found", StatusCodes.BAD_REQUEST);
     }
 
  const project = await this._projectRepo.findById(backlogDTO.projectId);
     if (!project) {
-      throw new AppError("Project not found", 404);
+      throw new AppError("Project not found", StatusCodes.BAD_REQUEST);
     }
 
     if (project.companyId !== companyId) {
-      throw new AppError("Project does not belong to the creator's company", 400);
+      throw new AppError("Project does not belong to the creator's company", StatusCodes.BAD_REQUEST);
     }
 
     const existingBacklog = await this._backlogRepo.findByNameAndProject(
@@ -56,7 +57,7 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
       backlogDTO.projectId
     );
     if (existingBacklog) {
-      throw new AppError("Backlog name already exists in this project", 400);
+      throw new AppError("Backlog name already exists in this project", StatusCodes.BAD_REQUEST);
     }
 
 
