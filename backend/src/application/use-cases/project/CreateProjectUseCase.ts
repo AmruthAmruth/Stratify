@@ -45,13 +45,21 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       throw new AppError("Department not found", 404);
     }
 
-    const existingProject = await this._projectRepo.findByNameAndCompany(
+    const existingProjectName = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
       companyId
     );
-    if (existingProject) {
+    if (existingProjectName) {
       throw new AppError("Project name already exists for this company", 400);
     }
+
+    const existingProjectKey= await this._projectRepo.findByKeyAndCompany(projectDTO.key,companyId)
+
+if (existingProjectKey) {
+      throw new AppError("Project Key name already exists for this company", 400);
+    }
+
+
 
     const now = new Date();
 

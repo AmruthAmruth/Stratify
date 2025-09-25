@@ -74,6 +74,15 @@ export class ProjectRepository implements IProjectRepository {
     return project ? this.mapToEntity(project) : null;
   }
 
+
+  async findByKeyAndCompany(key: string, companyId: string): Promise<Project | null> {
+    const project = await ProjectModel.findOne({
+     companyId: new Types.ObjectId(companyId),
+      key:key
+    })
+     return project ? this.mapToEntity(project) : null;
+  }
+
   private mapToEntity(doc: ProjectDocument): Project {
     return new Project(
       doc.id.toString(),

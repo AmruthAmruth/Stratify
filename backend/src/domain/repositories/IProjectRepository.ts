@@ -8,4 +8,5 @@ export interface IProjectRepository{
     findById(projectId: string): Promise<Project | null>;
   findAll(): Promise<Project[]>;
 findByNameAndCompany(name:string,companyId:string):Promise<Project|null>
+findByKeyAndCompany(key:string,companyId:string):Promise<Project|null>
 }
