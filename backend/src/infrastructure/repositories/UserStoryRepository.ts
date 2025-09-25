@@ -1,7 +1,7 @@
 import { Types } from "mongoose";
 import { UserStory } from "../../domain/entities/UserStory";
 import { IUserStoryRepository } from "../../domain/repositories/IUserStoryRepository";
-import { UserStoryModel } from "../models/UserStoryModel";
+import { UserStoryDocument, UserStoryModel } from "../models/UserStoryModel";
 
 export class UserStoryRepository implements IUserStoryRepository {
 
@@ -66,22 +66,22 @@ export class UserStoryRepository implements IUserStoryRepository {
     await UserStoryModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  private mapToEntity(doc: any): UserStory {
-    return new UserStory(
-      doc.id.toString(),
-      doc.title,
-      doc.description,
-      doc.projectId.toString(),
-      doc.backlogId?.toString(),
-      doc.createdBy.toString(),
-      doc.priority,
-      doc.status,
-      doc.storyPoints,
-      doc.sprintId?.toString(),
-      doc.assignedToIds?.map((id: Types.ObjectId) => id.toString()),
-      doc.acceptanceCriteria,
-      doc.createdAt,
-      doc.updatedAt
-    );
-  }
+  private mapToEntity(doc: UserStoryDocument): UserStory {
+  return new UserStory(
+    doc.id.toString(),
+    doc.title,
+    doc.description,
+    doc.projectId.toString(),
+    doc.backlogId ? doc.backlogId.toString() : "",
+    doc.createdBy.toString(),
+    doc.priority,
+    doc.status,
+    doc.storyPoints,
+    doc.sprintId?.toString(),
+    doc.assignedToIds?.map((id: Types.ObjectId) => id.toString()),
+    doc.acceptanceCriteria,
+    doc.createdAt,
+    doc.updatedAt
+  );
+}
 }
