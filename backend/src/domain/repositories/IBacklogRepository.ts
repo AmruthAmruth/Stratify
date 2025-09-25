@@ -10,4 +10,6 @@ export interface IBacklogRepository {
   update(backlog: Backlog): Promise<Backlog>;
 
   delete(id: string): Promise<void>;
+
+  findByNameAndProject(name:string,projectId:string):Promise<Backlog|null>
 }

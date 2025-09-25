@@ -1,13 +1,66 @@
 import { Backlog } from "../../../domain/entities/Backlog";
 import { IBacklogRepository } from "../../../domain/repositories/IBacklogRepository";
+import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
+import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
+import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { CreateBacklogDTO } from "../../dto/project/CreateBacklogDTO";
 import { ICreateBacklogUseCase } from "../../interfaces/project/ICreateBacklogUseCase";
 
 export class CreateBacklogUseCase implements ICreateBacklogUseCase {
-  constructor(private readonly _backlogRepo: IBacklogRepository) {}
+  constructor(
+    private _backlogRepo: IBacklogRepository,
+    private _companyRepo:ICompanyRepository,
+    private _managerRepo:IManagerRepository,
+    private _projectRepo:IProjectRepository
+  ) {}
 
   async execute(backlogDTO: CreateBacklogDTO): Promise<Backlog> {
    
+     let creatorExists = false;
+    let createdByModel: "Company" | "Manager" | undefined;
+    let companyId: string | undefined;
+
+const company = await this._companyRepo.findById(backlogDTO.createdBy);
+    if (company) {
+      creatorExists = true;
+      createdByModel = "Company";
+      companyId = company.id;
+    }
+
+
+     if (!creatorExists) {
+      const manager = await this._managerRepo.findById(backlogDTO.createdBy);
+      if (manager) {
+        creatorExists = true;
+        createdByModel = "Manager";
+        companyId = manager.companyId;
+      }
+    }
+
+     if (!creatorExists || !createdByModel || !companyId) {
+      throw new AppError("Creator not found", 404);
+    }
+
+ const project = await this._projectRepo.findById(backlogDTO.projectId);
+    if (!project) {
+      throw new AppError("Project not found", 404);
+    }
+
+    if (project.companyId !== companyId) {
+      throw new AppError("Project does not belong to the creator's company", 400);
+    }
+
+    const existingBacklog = await this._backlogRepo.findByNameAndProject(
+      backlogDTO.name,
+      backlogDTO.projectId
+    );
+    if (existingBacklog) {
+      throw new AppError("Backlog name already exists in this project", 400);
+    }
+
+
+
 
     const backlog = new Backlog(
       undefined, 

@@ -83,4 +83,23 @@ export class BacklogRepository implements IBacklogRepository {
   async delete(id: string): Promise<void> {
     await BacklogModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
+
+
+  async findByNameAndProject(name: string, projectId: string): Promise<Backlog | null> {
+     const doc = await BacklogModel.findOne({
+      name,
+      projectId
+     })
+
+     if(!doc) return null;
+       return new Backlog(
+      doc.id.toString(),
+      doc.projectId.toString(),
+      doc.name,
+      doc.description,
+      doc.createdBy.toString(),
+      doc.createdAt,
+      doc.updatedAt
+    );
+  }
 }
