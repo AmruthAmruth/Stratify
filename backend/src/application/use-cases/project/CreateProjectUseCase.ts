@@ -1,6 +1,7 @@
 import { Project } from "../../../domain/entities/Project";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
+import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
@@ -12,7 +13,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     private _projectRepo: IProjectRepository,
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
-    private _departmentRepo: IDepartmentRepository
+    private _departmentRepo: IDepartmentRepository,
+    private _employeeRepo: IEmployeeRepository 
   ) {}
 
   async execute(projectDTO: CreateProjectDTO): Promise<Project> {
@@ -45,6 +47,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       throw new AppError("Department not found", 404);
     }
 
+    if (department.companyId !== companyId) throw new AppError('Department does not belong to creator company', 400);
+
     const existingProjectName = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
       companyId
@@ -57,6 +61,20 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 
 if (existingProjectKey) {
       throw new AppError("Project Key name already exists for this company", 400);
+    }
+
+
+
+     if (projectDTO.teamMemberIds && projectDTO.teamMemberIds.length > 0) {
+      for (const memberId of projectDTO.teamMemberIds) {
+        const employee = await this._employeeRepo.findById(memberId);
+        if (!employee) {
+          throw new AppError(`Team member with ID ${memberId} does not exist`, 404);
+        }
+        if (employee.companyId !== companyId) {
+          throw new AppError(`Team member with ID ${memberId} does not belong to the creator's company`, 400);
+        }
+      }
     }
 
 
