@@ -1,5 +1,3 @@
-
-
 export interface GetProjectsByCompanyDTO {
   projectName: string;
   projectDescription: string;
@@ -7,4 +5,15 @@ export interface GetProjectsByCompanyDTO {
   projectLead: string;  
   status: "Planned" | "Active" | "Completed" | "Archived";
   remainingTimeInDays: number; 
+}
+
+export interface GetProjectsByCompanyResponse {
+  projects: GetProjectsByCompanyDTO[];
+  counts: {
+    total: number;
+    planned: number;
+    active: number;
+    completed: number;
+    archived: number;
+  };
 }

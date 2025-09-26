@@ -3,7 +3,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { GetProjectsByCompanyDTO } from "../../dto/project/GetProjectsByCompanyDTO";
+import { GetProjectsByCompanyDTO, GetProjectsByCompanyResponse } from "../../dto/project/GetProjectsByCompanyDTO";
 import { IGetProjectsByCompanyUseCase } from "../../interfaces/project/IGetProjectsByCompanyUseCase";
 
 export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase {
@@ -13,7 +13,7 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
     private _departmentRepo: IDepartmentRepository
   ) {}
 
-  async execute(companyId: string): Promise<GetProjectsByCompanyDTO[]> {
+  async execute(companyId: string): Promise<GetProjectsByCompanyResponse> {
     const projects = await this._projectRepo.findByCompanyId(companyId);
 
     if (!projects || projects.length === 0) {
@@ -22,16 +22,13 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
 
     const result: GetProjectsByCompanyDTO[] = await Promise.all(
       projects.map(async (project) => {
-       
-        const lead =
-          project.projectLeadId
-            ? await this._managerRepo.findById(project.projectLeadId)
-            : null;
+        const lead = project.projectLeadId
+          ? await this._managerRepo.findById(project.projectLeadId)
+          : null;
 
-        const department =
-          project.departmentId
-            ? await this._departmentRepo.findById(project.departmentId)
-            : null;
+        const department = project.departmentId
+          ? await this._departmentRepo.findById(project.departmentId)
+          : null;
 
         let remainingTimeInDays = 0;
         if (project.endDate) {
@@ -52,6 +49,15 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
       })
     );
 
-    return result;
+    
+    const counts = {
+      total: result.length,
+      planned: result.filter((p) => p.status === "Planned").length,
+      active: result.filter((p) => p.status === "Active").length,
+      completed: result.filter((p) => p.status === "Completed").length,
+      archived: result.filter((p) => p.status === "Archived").length,
+    };
+
+    return { projects: result, counts };
   }
 }
