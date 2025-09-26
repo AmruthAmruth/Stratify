@@ -13,4 +13,5 @@ export interface IDepartmentRepository{
    findDepartmentsByCompanyId(companyId:string):Promise<Department[]>
    getUnassignedDepartments(companyId:string):Promise<{id:string,name:string}[]>
    findByManagerId(managerId:string):Promise<{id:string,name:string}[]>
+   
 }

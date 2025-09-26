@@ -131,7 +131,7 @@ export const companyDI = () => {
   const createSprint = new CreateSprintUseCase(sprintRepo, projectRepo);
   const createTask = new CreateTaskUseCase(taskRepo, userStoryRepo, employeeRepo, projectRepo);
   const getProjectsByCompany = new GetProjectsByCompanyUseCase(projectRepo, managerRepo, departmentRepo);
-  const getProjectsByDepartment = new GetProjectsByDepartmentUseCase(projectRepo);
+  const getProjectsByDepartment = new GetProjectsByDepartmentUseCase(projectRepo,managerRepo);
 
   // Leave Use Case
   const createLeave = new CreateLeaveUseCase(leaveRepo, employeeRepo);

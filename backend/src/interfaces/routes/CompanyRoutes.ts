@@ -27,7 +27,7 @@ companyRouter.get('/subscription-plans',asyncHandler(controller.listPlans))
 
 
 companyRouter.get('/company-projects',authMiddleware(["company"]),asyncHandler(controller.getProjectsByCompany))
-companyRouter.get('/department-projects/:id',asyncHandler(controller.getProjectsByDepartment))
+companyRouter.get('/department-projects',authMiddleware(["manager"]),asyncHandler(controller.getProjectsByDepartment))
 
 
 companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))

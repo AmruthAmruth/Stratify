@@ -17,8 +17,7 @@ interface JwtPayload {
 export const authMiddleware = (allowedRoles: ("company" | "manager" | "employee")[] = []) => {
   return (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {
-      console.log("Authorization Header:", req.headers);
-
+     
       const authHeader = req.headers.authorization;
       if (!authHeader?.startsWith("Bearer ")) {
         return next({ status: 401, message: Messages.UNAUTHORIZED_ACCESS });

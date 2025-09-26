@@ -1,6 +1,7 @@
 import Department from "@/features/company/Department";
 import CompanyDepartmentDetails from "@/features/company/DepartmentDetailsPage";
 import ProfilePage from "@/features/company/ProfilePage";
+import Projects from "@/features/company/CompanyProjects";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
@@ -33,7 +34,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team-member-profile/:id",
     element: <ProfilePage />,
-  },
+  },{
+      path: "projects",
+      element: <Projects />,
+    },
 ];
 
 export default adminRoutes;

@@ -44,3 +44,12 @@ export const SUPER_ADMIN_ROUTES = {
   UPDATE_PLAN: "/super-admin/update-plan",
   DELETE_PLAN: "/super-admin/delete-plan",
 };
+
+
+
+
+
+export const PROJECT_ROUTES = {
+  COMPANY_PROJECTS:"/company/company-projects",
+  DEPARTMENT_PROJECTS:"/company/department-projects"
+};

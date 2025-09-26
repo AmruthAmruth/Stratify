@@ -2,7 +2,7 @@ export interface GetProjectsByCompanyDTO {
   projectName: string;
   projectDescription: string;
   departmentName: string;
-  projectLead: string;  
+  projectLead: string;
   status: "Planned" | "Active" | "Completed" | "Archived";
   remainingTimeInDays: number; 
 }
@@ -15,5 +15,6 @@ export interface GetProjectsByCompanyResponse {
     active: number;
     completed: number;
     archived: number;
+   
   };
 }

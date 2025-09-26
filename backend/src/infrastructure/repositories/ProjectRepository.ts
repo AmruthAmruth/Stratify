@@ -91,7 +91,8 @@ export class ProjectRepository implements IProjectRepository {
       projectLeadId: 1,
       status: 1,
       startDate: 1,
-      endDate: 1
+      endDate: 1,
+      departmentId:1
     }
   );
 
@@ -102,6 +103,7 @@ export class ProjectRepository implements IProjectRepository {
     status: doc.status,
     startDate: doc.startDate,
     endDate: doc.endDate,
+    departmentId:doc.departmentId?.toString(),
     projectLeadId: doc.projectLeadId?.toString()
   }));
 }
@@ -116,7 +118,7 @@ async findByDepartmentId(departmentId: string): Promise<Partial<Project>[]> {
       description: 1,
       status: 1,
       startDate: 1,
-      endDate: 1
+      endDate: 1,
     }
   );
 

@@ -11,57 +11,59 @@ import ResetPassword from "@/features/auth/ResetPassword";
 import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
 import CompanyPendingApproval from "@/features/Genaral/CompanyPendingApproval";
 import SubscriptionPlans from "@/features/Genaral/SubscriptionPurchase";
-
-
 const genaralRoutes: RouteObject[] = [
   {
     path: "",
-    element: <Homepage/>,
+    element: <Homepage />,
   },
   {
     path: "login",
-    element: <LoginForm/>, 
+    element: <LoginForm />,
   },
   {
     path: "super-admin-login",
-    element: <SuperAdminLogin/>,
+    element: <SuperAdminLogin />,
   },
   {
     path: "register",
-    element: <RegisterForm/>,
+    element: <RegisterForm />,
   },
-   {
+  {
     path: "verify-otp",
-    element: <OTPPage context="register"/>,
+    element: <OTPPage context="register" />,
   },
-   {
+  {
     path: "forgot-otp",
-    element: <OTPPage context="forgotPassword"/>,
-  },{
+    element: <OTPPage context="forgotPassword" />,
+  },
+  {
     path: "forgot-password",
-    element: <ForgotPassword/>,
-  },{
+    element: <ForgotPassword />,
+  },
+  {
     path: "reset-password",
-    element: <ResetPassword/>,
-  }
-  ,{
+    element: <ResetPassword />,
+  },
+  {
     path: "about",
-    element: <AboutPage/>,
+    element: <AboutPage />,
   },
   {
     path: "contact",
-    element: <ContactPage/>,
-  },{
-  path: "company-profile",
-  element: <CompanyProfilePage/>
-},{
-  path:"company-pending-approval",
-  element:<CompanyPendingApproval/>
-},{
+    element: <ContactPage />,
+  },
+  {
+    path: "company-profile",
+    element: <CompanyProfilePage />,
+  },
+  {
+    path: "company-pending-approval",
+    element: <CompanyPendingApproval />,
+  },
+  {
     path: "subscription-purchase/:companyId",
     element: <SubscriptionPlans />,
-  }
-   
+  },
   
 ];
 

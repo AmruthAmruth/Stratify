@@ -46,6 +46,8 @@ export class DepartmentRepository implements IDepartmentRepository {
 
 
   async findById(id: string): Promise<Department | null> {
+    console.log("Department ID", id);
+    
     const doc = await DepartmentModel.findById(id);
     if(!doc) return null;
     return new Department(

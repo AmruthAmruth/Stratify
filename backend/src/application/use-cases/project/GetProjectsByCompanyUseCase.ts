@@ -15,8 +15,9 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
 
   async execute(companyId: string): Promise<GetProjectsByCompanyResponse> {
     const projects = await this._projectRepo.findByCompanyId(companyId);
-
-    if (!projects || projects.length === 0) {
+  console.log(projects);
+  
+    if (!projects || projects.length === 0) { 
       throw new AppError("Projects not found", StatusCodes.NOT_FOUND);
     }
 
@@ -24,11 +25,12 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
       projects.map(async (project) => {
         const lead = project.projectLeadId
           ? await this._managerRepo.findById(project.projectLeadId)
-          : null;
-
+          : null; 
+ 
         const department = project.departmentId
           ? await this._departmentRepo.findById(project.departmentId)
           : null;
+
 
         let remainingTimeInDays = 0;
         if (project.endDate) {

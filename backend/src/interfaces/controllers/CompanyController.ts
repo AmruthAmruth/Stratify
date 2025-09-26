@@ -425,8 +425,8 @@ getProjectsByCompany=async(req:AuthRequest,res:Response)=>{
 
 
 getProjectsByDepartment=async(req:AuthRequest,res:Response)=>{
-  const {id}=req.params
-  const response = await this._getProjectsByDepartment.execute(id!);
+  const managerId=req.userId
+  const response = await this._getProjectsByDepartment.execute(managerId!);
   return res.status(StatusCodes.OK).json(response)
 }
 
