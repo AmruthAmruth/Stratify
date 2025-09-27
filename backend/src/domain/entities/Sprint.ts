@@ -2,7 +2,7 @@ export class Sprint {
   constructor(
     public id: string | undefined,
     public name: string,
-     public description: string,  
+    public description: string,  
     public projectId: string,
     public startDate: Date,
     public endDate: Date,

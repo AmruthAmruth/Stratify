@@ -6,4 +6,5 @@ export interface ITaskRepository {
   update(sprint: Task): Promise<Task>;
   findById(id: string): Promise<Task | null>;
   delete(id: string): Promise<void>;
+  findByUserStoryId(userStoryId:string):Promise<Task[]>
 }

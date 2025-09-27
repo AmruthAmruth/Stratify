@@ -78,6 +78,16 @@ return doc ? this.mapToEntity(doc) : null;
 }
 
 
+
+async findByBacklogId(backlogId: string): Promise<UserStory[]> {
+  const docs = await UserStoryModel.find({
+    backlogId: new Types.ObjectId(backlogId),
+  }).exec();
+
+  return docs.map((doc) => this.mapToEntity(doc));
+}
+
+
   private mapToEntity(doc: UserStoryDocument): UserStory {
   return new UserStory(
     doc.id.toString(),

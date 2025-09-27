@@ -71,4 +71,29 @@ export class TaskRepository implements ITaskRepository {
       doc.updatedAt
     );
   }
+
+
+
+async findByUserStoryId(userStoryId: string): Promise<Task[]> {
+  const docs = await TaskModel.find({
+    userStoryId: new Types.ObjectId(userStoryId),
+  }).exec();
+
+  return docs.map(
+    (doc) =>
+      new Task(
+        doc.id.toString(),
+        doc.userStoryId.toString(),
+        doc.title,
+        doc.description,
+        doc.status,
+        doc.assignedToId?.toString(),
+        doc.createdAt,
+        doc.updatedAt
+      )
+  );
+}
+
+
+
 }
