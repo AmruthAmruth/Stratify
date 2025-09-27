@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface SprintDocument extends Document {
   name: string;
-  description:string;
+  description: string;
   projectId: Types.ObjectId;
   startDate: Date;
   endDate: Date;
@@ -10,6 +10,7 @@ export interface SprintDocument extends Document {
   teamCapacity: number;
   totalStoryPoints: number;
   createdBy: Types.ObjectId;
+  userStoryIds: Types.ObjectId[]; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -17,7 +18,7 @@ export interface SprintDocument extends Document {
 const SprintSchema = new Schema<SprintDocument>(
   {
     name: { type: String, required: true },
-    description:{type:String,required:true},
+    description: { type: String, required: true },
     projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
     startDate: { type: Date, required: true },
     endDate: { type: Date, required: true },
@@ -29,11 +30,11 @@ const SprintSchema = new Schema<SprintDocument>(
     teamCapacity: { type: Number, required: true },
     totalStoryPoints: { type: Number, default: 0 },
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
+    userStoryIds: [{ type: Schema.Types.ObjectId, ref: "UserStory", default: [] }], 
   },
   { timestamps: true }
 );
 
-SprintSchema.index({ projectId: 1, name: 1 }, { unique: true });
 
 export const SprintModel = mongoose.model<SprintDocument>(
   "Sprint",

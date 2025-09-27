@@ -28,7 +28,7 @@ companyRouter.get('/subscription-plans',asyncHandler(controller.listPlans))
 
 companyRouter.get('/company-projects',authMiddleware(["company"]),asyncHandler(controller.getProjectsByCompany))
 companyRouter.get('/department-projects',authMiddleware(["manager"]),asyncHandler(controller.getProjectsByDepartment))
-
+companyRouter.get('/project/:id',asyncHandler(controller.getProjectDetails))
 
 companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))
 companyRouter.get('/department-details/:id', asyncHandler(controller.getDepartmentDetails))
@@ -60,7 +60,7 @@ companyRouter.post('/create-user-story',authMiddleware(["company","manager"]),as
 companyRouter.post('/create-backlog',authMiddleware(["company","manager"]),asyncHandler(controller.createBackLog))
 companyRouter.post('/create-sprint',authMiddleware(["company","manager"]),asyncHandler(controller.createSprint))
 companyRouter.post('/create-task',asyncHandler(controller.createTask))
-
+companyRouter.post('/assigned-to-sprint',authMiddleware(["company","manager"]),asyncHandler(controller.assignUserStoryToSprint))
 
 companyRouter.post('/create-leave',asyncHandler(controller.createLeave))
 

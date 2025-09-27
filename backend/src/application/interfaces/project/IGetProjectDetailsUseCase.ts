@@ -1,5 +1,6 @@
-import { GetProjectDetailsDTO } from "../../dto/project/GetProjectDetailsDTO";
+import { ProjectDetailsDTO } from "../../dto/project/GetProjectDetailsDTO";
+
 
 export interface IGetProjectDetailsUseCase{
-    execute(projectId:string):Promise<GetProjectDetailsDTO>
+    execute(projectId:string):Promise<ProjectDetailsDTO>
 }

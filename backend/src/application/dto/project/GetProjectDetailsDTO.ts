@@ -30,9 +30,11 @@ export interface BacklogDTO {
 
 export interface SprintDTO {
   name: string;
+  description:string,
   startDate: Date;
   endDate: Date;
-  goal: string;
+  teamCapacity: number;
+  totalStoryPoints:number;
   status: "Planned" | "Active" | "Completed";
   userStories: UserStoryDTO[];
 }

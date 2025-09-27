@@ -10,6 +10,7 @@ export class Sprint {
     public teamCapacity: number,           
     public totalStoryPoints: number = 0,     
     public createdBy: string,
+    public userStoryIds: string[] = [],
     public createdAt?: Date,
     public updatedAt?: Date
   ) {}

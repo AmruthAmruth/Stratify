@@ -13,6 +13,7 @@ export class UserStory {
     public assignedToIds?: string[],          
     public acceptanceCriteria?: string,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
+    public userStoryIds: string[] = [] 
   ) {}
 }

@@ -13,13 +13,14 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
   constructor(
     private _userStoryRepo: IUserStoryRepository,
     private _backlogRepo: IBacklogRepository,
-    private _projectRepo: IProjectRepository,
+    private _projectRepo: IProjectRepository, 
     private _employeeRepo: IEmployeeRepository
   ) {}
 
   async execute(userStoryDTO: CreateUserStoryDTO): Promise<UserStory> {
 
 const backlog = await this._backlogRepo.findById(userStoryDTO.backlogId);
+
     if (!backlog) throw new AppError("Backlog not found", StatusCodes.NOT_FOUND);
 
     if (backlog.projectId !== userStoryDTO.projectId) {

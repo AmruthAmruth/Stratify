@@ -64,7 +64,7 @@ export class ProjectRepository implements IProjectRepository {
   }
 
   async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
-    const project = await ProjectModel.findOne({
+    const project = await ProjectModel.findOne({ 
       companyId: new Types.ObjectId(companyId),
       normalizedName: name.toLowerCase().trim(),
     });

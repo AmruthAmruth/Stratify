@@ -52,6 +52,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase{
       sprintDTO.teamCapacity,
       0,
       sprintDTO.createdBy,
+      [],
       now, 
       now
          );

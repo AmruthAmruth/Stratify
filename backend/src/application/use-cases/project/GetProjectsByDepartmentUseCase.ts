@@ -31,7 +31,7 @@ export class GetProjectsByDepartmentUseCase implements IGetProjectsByDepartmentU
       throw new AppError("Projects not found", StatusCodes.NOT_FOUND);
     }
 
-    let counts = {
+    const counts = {
       total: projects.length,
       planned: 0,
       active: 0,

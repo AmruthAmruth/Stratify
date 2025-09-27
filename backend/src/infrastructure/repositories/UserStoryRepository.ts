@@ -87,6 +87,61 @@ async findByBacklogId(backlogId: string): Promise<UserStory[]> {
   return docs.map((doc) => this.mapToEntity(doc));
 }
 
+async findBySprintId(sprintId: string): Promise<UserStory[]> {
+    const docs = await UserStoryModel.find({
+    backlogId: new Types.ObjectId(sprintId),
+  }).exec();
+
+  return docs.map((doc) => this.mapToEntity(doc));
+}
+
+
+async findByIds(userStoryIds: string[]): Promise<UserStory[]> {
+  const objectIds = userStoryIds.map(id => new Types.ObjectId(id));
+
+  const docs = await UserStoryModel.find({
+    _id: { $in: objectIds }
+  }).exec();
+
+  return docs.map(doc => this.mapToEntity(doc));
+}
+
+
+
+async updateUserStories(userStories: UserStory[]): Promise<UserStory[]> {
+  const updatedStories: UserStory[] = [];
+
+  for (const story of userStories) {
+    const updated = await UserStoryModel.findByIdAndUpdate(
+      new Types.ObjectId(story.id),
+      {
+        title: story.title,
+        description: story.description,
+        projectId: new Types.ObjectId(story.projectId),
+        backlogId: story.backlogId ? new Types.ObjectId(story.backlogId) : undefined,
+        createdBy: new Types.ObjectId(story.createdBy),
+        priority: story.priority,
+        status: story.status,
+        storyPoints: story.storyPoints,
+        sprintId: story.sprintId ? new Types.ObjectId(story.sprintId) : undefined,
+        assignedToIds: story.assignedToIds?.map(id => new Types.ObjectId(id)),
+        acceptanceCriteria: story.acceptanceCriteria,
+        updatedAt: new Date(),
+      },
+      { new: true }
+    ).exec();
+
+    if (!updated) {
+      throw new Error(`User story not found with id: ${story.id}`);
+    }
+
+    updatedStories.push(this.mapToEntity(updated));
+  }
+
+  return updatedStories;
+}
+
+
 
   private mapToEntity(doc: UserStoryDocument): UserStory {
   return new UserStory(
@@ -106,7 +161,6 @@ async findByBacklogId(backlogId: string): Promise<UserStory[]> {
     doc.updatedAt
   );
 }
-
 
 
 

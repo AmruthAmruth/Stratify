@@ -66,6 +66,8 @@ import { GetProjectsByDepartmentUseCase } from "../application/use-cases/project
 
 // Leave Use Case
 import { CreateLeaveUseCase } from "../application/use-cases/leave/CreateLeaveUseCase";
+import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
+import { AssignUserStoryToSprintUseCase } from "../application/use-cases/project/AssignUserStoryToSprintUseCase";
 
 export const companyDI = () => {
   // Repositories
@@ -132,6 +134,9 @@ export const companyDI = () => {
   const createTask = new CreateTaskUseCase(taskRepo, userStoryRepo, employeeRepo, projectRepo);
   const getProjectsByCompany = new GetProjectsByCompanyUseCase(projectRepo, managerRepo, departmentRepo);
   const getProjectsByDepartment = new GetProjectsByDepartmentUseCase(projectRepo,managerRepo);
+  const getProjectDetails=new GetProjectDetailsUseCase(projectRepo,backlogRepo,userStoryRepo,taskRepo,sprintRepo)
+  const AssignUserStoryToSprint = new AssignUserStoryToSprintUseCase(sprintRepo,userStoryRepo)
+
 
   // Leave Use Case
   const createLeave = new CreateLeaveUseCase(leaveRepo, employeeRepo);
@@ -147,7 +152,7 @@ export const companyDI = () => {
     resetPasswordUsecase,
     getPaginatedCompaniesUseCase,
     approveCompanyUseCase,
-    unapproveCompanyUseCase,
+    unapproveCompanyUseCase, 
     createDepartmentUseCase,
     createManagerUseCase,
     createEmployeeUseCase,
@@ -168,6 +173,8 @@ export const companyDI = () => {
     createTask,
     createLeave,
     getProjectsByCompany,
-    getProjectsByDepartment
+    getProjectsByDepartment,
+    getProjectDetails,
+    AssignUserStoryToSprint
   );
 };

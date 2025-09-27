@@ -8,4 +8,7 @@ export interface IUserStoryRepository {
   delete(id: string): Promise<void>;
   findByNameAndBackLogId(name:string,backlogId:string):Promise<UserStory|null>
   findByBacklogId(backlogId:string):Promise<UserStory[]>
+  findBySprintId(sprintId:string):Promise<UserStory[]>
+  findByIds(userStoryIds: string[]):Promise<UserStory[]>
+  updateUserStories(userStories: UserStory[]): Promise<UserStory[]>;
 }

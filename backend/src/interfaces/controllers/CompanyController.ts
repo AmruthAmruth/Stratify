@@ -41,6 +41,8 @@ import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreate
 import { ICreateLeaveUseCase } from "../../application/interfaces/leave/ICreateLeaveUseCase";
 import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/project/IGetProjectsByCompanyUseCase";
 import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
+import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
+import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -79,7 +81,9 @@ export class CompanyController {
     private _createTask:ICreateTaskUseCase,
     private _createLeave:ICreateLeaveUseCase,
     private _getProjectsByCompany:IGetProjectsByCompanyUseCase,
-    private _getProjectsByDepartment:IGetProjectsByDepartmentUseCase
+    private _getProjectsByDepartment:IGetProjectsByDepartmentUseCase,
+    private _getProjectDetails:IGetProjectDetailsUseCase,
+    private _assignUserStoryToSprint:IAssignUserStoryToSprintUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -429,6 +433,20 @@ getProjectsByDepartment=async(req:AuthRequest,res:Response)=>{
   const response = await this._getProjectsByDepartment.execute(managerId!);
   return res.status(StatusCodes.OK).json(response)
 }
+
+getProjectDetails=async(req:Request,res:Response)=>{
+  const {id}=req.params
+  const response = await this._getProjectDetails.execute(id);
+  return res.status(StatusCodes.OK).json(response)
+}
+
+
+assignUserStoryToSprint=async(req:AuthRequest,res:Response)=>{
+    const assignedBy = req.userId
+  const response = await this._assignUserStoryToSprint.execute({...req.body,assignedBy});
+  return res.status(StatusCodes.CREATED).json({message:"Assign User Story to Sprint is Successfull !",response})
+}
+
 
 
 }
