@@ -1,94 +1,133 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { enqueueSnackbar } from "notistack";
 
-import { getDepartmentProjects } from '@/services/projects';
-import DashboardCard from '@/shared/components/DashboardCards/Cards';
-import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
-import Table from '@/shared/components/Table/Table';
-import Modal from '@/shared/components/ModalFrom/ModalForm';
-import AuthForm from '@/shared/components/Forms/DynamicForm';
-import { createProjectFields } from '@/shared/components/Forms/formFields';
-import { createProjectSchema } from '@/shared/utils/validations';
+import { createProject, getDepartmentProjects } from "@/services/projects";
+import DashboardCard from "@/shared/components/DashboardCards/Cards";
+import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
+import Table from "@/shared/components/Table/Table";
+import Modal from "@/shared/components/ModalFrom/ModalForm";
+import AuthForm from "@/shared/components/Forms/DynamicForm";
+import { createProjectFields } from "@/shared/components/Forms/formFields";
+import { createProjectSchema } from "@/shared/utils/validations";
 
-const ManagerProjects = () => {
-  const [projects, setProjects] = useState<any>(null);
+interface Project {
+  id: string;
+  projectName: string;
+  projectDescription: string;
+  status: string;
+  projectLead?: string;
+  departmentName?: string;
+  remainingTimeInDays?: number;
+}
+
+interface ProjectsData {
+  departmentId: string;
+  projects: Project[];
+  counts: {
+    total: number;
+    planned: number;
+    active: number;
+    completed: number;
+  };
+}
+
+const ManagerProjects: React.FC = () => {
+  const [projects, setProjects] = useState<ProjectsData | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
-  const [searchTerm, setSearchTerm] = useState('');
-  const [filterStatus, setFilterStatus] = useState('');
-  const [sortBy, setSortBy] = useState('');
-  const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterStatus, setFilterStatus] = useState("");
+  const [sortBy, setSortBy] = useState("");
+  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const itemsPerPage = 6;
   const navigate = useNavigate();
 
-  // Fetch projects
+  // ---------------- Fetch projects ----------------
   useEffect(() => {
-    getDepartmentProjects().then((data) => {
-      setProjects(data);
-    });
+    const fetchProjects = async () => {
+      try {
+        const data = await getDepartmentProjects();
+        setProjects(data);
+      } catch (err) {
+        console.error("Error fetching projects:", err);
+      }
+    };
+    fetchProjects();
   }, []);
 
   if (!projects) {
-    return <div className="text-black">Loading...</div>;
+    return (
+      <div className="flex justify-center items-center h-full text-black">
+        Loading...
+      </div>
+    );
   }
-  
 
-  // ----------------------
-  // Handle Project Creation
-  // ----------------------
+  // ---------------- Create Project Handler ----------------
   const handleCreateProject = async (values: any) => {
+    setSubmitLoading(true);
     try {
-      setSubmitLoading(true);
-      console.log("VALUES : " , values)
-      console.log(projects);
-      
-    //  await createProject(values); // 🔹 API call
-      const updatedProjects = await getDepartmentProjects(); // refresh list
+      // Merge departmentId
+      const payload = { ...values, departmentId: projects.departmentId };
+
+      // API call
+      const res = await createProject(payload);
+      console.log("Project created successfully:", res);
+
+      enqueueSnackbar("Project Created Successfully!", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+
+      // Refresh projects
+      const updatedProjects = await getDepartmentProjects();
       setProjects(updatedProjects);
+
       setIsProjectModalOpen(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error creating project:", err);
+
+      const errorMessage =
+        (err as any)?.message || "Failed to create project. Try again.";
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  // ----------------------
-  // Filtering
-  // ----------------------
+  // ---------------- Filtering ----------------
   const filteredProjects = projects.projects
-    .filter((p: any) =>
-      p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    .filter((p: any) => (filterStatus ? p.status === filterStatus : true));
+    .filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((p) => (filterStatus ? p.status === filterStatus : true));
 
-  // ----------------------
-  // Sorting
-  // ----------------------
-  const sortedProjects = [...filteredProjects].sort((a: any, b: any) => {
+  // ---------------- Sorting ----------------
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortBy) return 0;
 
-    const aValue = a[sortBy] || '';
-    const bValue = b[sortBy] || '';
+    const aValue = a[sortBy as keyof Project] || "";
+    const bValue = b[sortBy as keyof Project] || "";
 
-    if (typeof aValue === 'string' && typeof bValue === 'string') {
-      return sortOrder === 'asc'
+    if (typeof aValue === "string" && typeof bValue === "string") {
+      return sortOrder === "asc"
         ? aValue.localeCompare(bValue)
         : bValue.localeCompare(aValue);
     }
 
-    if (typeof aValue === 'number' && typeof bValue === 'number') {
-      return sortOrder === 'asc' ? aValue - bValue : bValue - aValue;
+    if (typeof aValue === "number" && typeof bValue === "number") {
+      return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
     }
 
     return 0;
   });
 
-  // ----------------------
-  // Pagination
-  // ----------------------
+  // ---------------- Pagination ----------------
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -96,33 +135,24 @@ const ManagerProjects = () => {
     startIndex + itemsPerPage
   );
 
-  // ----------------------
-  // Unique status options
-  // ----------------------
-  const uniqueStatus = Array.from(
-    new Set(projects?.projects?.map((p: any) => p.status) || [])
-  );
+  // ---------------- Unique status options ----------------
+  const uniqueStatus = Array.from(new Set(projects.projects.map((p) => p.status)));
 
-  // ----------------------
-  // Clear filters
-  // ----------------------
+  // ---------------- Clear filters ----------------
   const clearFilters = () => {
-    setSearchTerm('');
-    setFilterStatus('');
-    setSortBy('');
-    setSortOrder('asc');
+    setSearchTerm("");
+    setFilterStatus("");
+    setSortBy("");
+    setSortOrder("asc");
   };
 
-  // ----------------------
-  // Navigate to project details
-  // ----------------------
+  // ---------------- Navigate to project details ----------------
   const handleViewProject = (projectId: string) => {
     navigate(`/project/${projectId}`);
   };
 
   return (
     <div className="text-black space-y-6">
-
       {/* ---------------- Create Project Button ---------------- */}
       <div className="flex justify-end mb-4">
         <button
@@ -139,25 +169,25 @@ const ManagerProjects = () => {
           title="Total Projects"
           value={projects.counts.total}
           subtitle="All department projects"
-          trend={projects.counts.total > 0 ? 'up' : 'down'}
+          trend={projects.counts.total > 0 ? "up" : "down"}
         />
         <DashboardCard
           title="Planned Projects"
           value={projects.counts.planned}
           subtitle="Not started yet"
-          trend={projects.counts.planned > 0 ? 'up' : 'down'}
+          trend={projects.counts.planned > 0 ? "up" : "down"}
         />
         <DashboardCard
           title="Active Projects"
           value={projects.counts.active}
           subtitle="Currently running"
-          trend={projects.counts.active > 0 ? 'up' : 'down'}
+          trend={projects.counts.active > 0 ? "up" : "down"}
         />
         <DashboardCard
           title="Completed Projects"
           value={projects.counts.completed}
           subtitle="Finished successfully"
-          trend={projects.counts.completed > 0 ? 'up' : 'down'}
+          trend={projects.counts.completed > 0 ? "up" : "down"}
         />
       </div>
 
@@ -169,10 +199,10 @@ const ManagerProjects = () => {
         filterValue={filterStatus}
         setFilterValue={setFilterStatus}
         sortOptions={[
-          { key: 'projectName', label: 'Project Name' },
-          { key: 'projectLead', label: 'Project Lead' },
-          { key: 'departmentName', label: 'Department' },
-          { key: 'remainingTimeInDays', label: 'Remaining Days' },
+          { key: "projectName", label: "Project Name" },
+          { key: "projectLead", label: "Project Lead" },
+          { key: "departmentName", label: "Department" },
+          { key: "remainingTimeInDays", label: "Remaining Days" },
         ]}
         sortBy={sortBy}
         setSortBy={setSortBy}
@@ -184,31 +214,19 @@ const ManagerProjects = () => {
       {/* ---------------- Projects table ---------------- */}
       <Table
         columns={[
-          { key: 'projectName', label: 'Project Name' },
-          { key: 'projectDescription', label: 'Project Description' },
-          { key: 'status', label: 'Status' },
-          { key: 'remainingTimeInDays', label: 'Remaining Days' },
+          { key: "projectName", label: "Project Name" },
+          { key: "projectDescription", label: "Project Description" },
+          { key: "status", label: "Status" },
+          { key: "remainingTimeInDays", label: "Remaining Days" },
         ]}
         data={paginatedData}
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
         actions={[
-          {
-            label: 'View More',
-            type: 'custom',
-            onClick: (row) => handleViewProject(row.id),
-          },
-          {
-            label: 'Edit',
-            type: 'edit',
-            onClick: (row) => alert(`Editing ${row.projectName}`),
-          },
-          {
-            label: 'Archive',
-            type: 'delete',
-            onClick: (row) => alert(`Archiving ${row.projectName}`),
-          },
+          { label: "View More", type: "custom", onClick: (row) => handleViewProject(row.id) },
+          { label: "Edit", type: "edit", onClick: (row) => alert(`Editing ${row.projectName}`) },
+          { label: "Archive", type: "delete", onClick: (row) => alert(`Archiving ${row.projectName}`) },
         ]}
       />
 
@@ -223,7 +241,9 @@ const ManagerProjects = () => {
           validationSchema={createProjectSchema}
           onSubmit={handleCreateProject}
           buttonText={submitLoading ? "Creating..." : "Create Project"}
+          disabled={submitLoading}
         />
+
         {submitLoading && (
           <div className="flex justify-center mt-4">
             <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>

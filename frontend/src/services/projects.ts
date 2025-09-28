@@ -37,3 +37,15 @@ export const getProjectDetails = async (id:string) => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+
+
+export const createProject = async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_PROJECT,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}

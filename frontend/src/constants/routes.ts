@@ -52,5 +52,6 @@ export const SUPER_ADMIN_ROUTES = {
 export const PROJECT_ROUTES = {
   COMPANY_PROJECTS:"/company/company-projects",
   DEPARTMENT_PROJECTS:"/company/department-projects",
-  PROJECT_DETAILS:(id: string) =>`company/project/${id}`
+  PROJECT_DETAILS:(id: string) =>`company/project/${id}`,
+  CREATE_PROJECT:"/company/create-project"
 };

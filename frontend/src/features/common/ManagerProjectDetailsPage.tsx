@@ -13,13 +13,16 @@ const ManagerProjectDetailsPage = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const [isBacklogModalOpen,setIsBacklogModalOpen]=useState(false)
 
   // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
   const [expandedStory, setExpandedStory] = useState(null);
  const { id } = useParams<{ id: string }>();
-  useEffect(() => {
+  
+ 
+ useEffect(() => {
     const fetchProjectData = async (id:string) => {
       try {
         setLoading(true);
@@ -324,6 +327,16 @@ const ManagerProjectDetailsPage = () => {
             </div>
           </div>
         </div>
+
+
+        <div className="flex justify-end mb-4">
+        <button
+         // onClick={() => setIsProjectModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          + Create Backlogs
+        </button>
+      </div>
 
         {/* Project Information */}
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 lg:p-8">
