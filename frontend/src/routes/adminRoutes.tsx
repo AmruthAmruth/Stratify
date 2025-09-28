@@ -5,6 +5,7 @@ import Projects from "@/features/company/CompanyProjects";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
+import ManagerProjectDetailsPage from "@/features/manager/ManagerProjectDetailsPage";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -38,6 +39,10 @@ const adminRoutes: RouteObject[] = [
       path: "projects",
       element: <Projects />,
     },
+    {
+    path: "project/:id",
+    element: <ManagerProjectDetailsPage />,
+  },
 ];
 
 export default adminRoutes;

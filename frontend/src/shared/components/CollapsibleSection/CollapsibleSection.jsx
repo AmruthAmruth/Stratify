@@ -278,7 +278,7 @@ const CollapsibleSection = ({
           </div>
         ))}
       </div>
-    </div>
+    </div>  
   );
 };
 

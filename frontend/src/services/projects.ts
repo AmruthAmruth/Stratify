@@ -24,3 +24,16 @@ export const getDepartmentProjects = async () => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+
+
+
+export const getProjectDetails = async (id:string) => {
+  try {
+    const response = await api.get(PROJECT_ROUTES.PROJECT_DETAILS(id));
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};

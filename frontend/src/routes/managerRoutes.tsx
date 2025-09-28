@@ -1,4 +1,5 @@
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
+import ManagerProjectDetailsPage from "@/features/manager/ManagerProjectDetailsPage";
 import ManagerProjects from "@/features/manager/ManagerProjects";
 import type { RouteObject } from "react-router-dom";
 
@@ -11,16 +12,19 @@ const managerRoutes: RouteObject[] = [
     path: "companies",
     element: <h1>Companies</h1>,
   },
-  
+
   {
     path: "department",
-    element: <ManagerDepartmentDetails/>,
+    element: <ManagerDepartmentDetails />,
   },
   {
     path: "projects",
-    element: <ManagerProjects/>,
+    element: <ManagerProjects />,
+  },
+  {
+    path: "project/:id",
+    element: <ManagerProjectDetailsPage />,
   },
 ];
-
 
 export default managerRoutes;

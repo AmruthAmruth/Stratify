@@ -1,10 +1,9 @@
-import { Types } from "mongoose";
+import { Types, HydratedDocument } from "mongoose";
 import { Sprint } from "../../domain/entities/Sprint";
 import { ISprintRepository } from "../../domain/repositories/ISprintRepository";
-import { SprintModel } from "../models/SprintModel";
+import { SprintModel, SprintDocument } from "../models/SprintModel";
 
 export class SprintRepository implements ISprintRepository {
-  
   async create(sprint: Sprint): Promise<Sprint> {
     const created = await new SprintModel({
       name: sprint.name,
@@ -16,7 +15,7 @@ export class SprintRepository implements ISprintRepository {
       teamCapacity: sprint.teamCapacity,
       totalStoryPoints: sprint.totalStoryPoints ?? 0,
       createdBy: new Types.ObjectId(sprint.createdBy),
-      userStoryIds: sprint.userStoryIds?.map(id => new Types.ObjectId(id)) || [],
+      userStoryIds: sprint.userStoryIds?.map((id) => new Types.ObjectId(id)) || [],
     }).save();
 
     return this.mapToEntity(created);
@@ -33,7 +32,7 @@ export class SprintRepository implements ISprintRepository {
         status: sprint.status,
         teamCapacity: sprint.teamCapacity,
         totalStoryPoints: sprint.totalStoryPoints,
-        userStoryIds: sprint.userStoryIds?.map(id => new Types.ObjectId(id)) || [],
+        userStoryIds: sprint.userStoryIds?.map((id) => new Types.ObjectId(id)) || [],
       },
       { new: true }
     ).exec();
@@ -53,28 +52,28 @@ export class SprintRepository implements ISprintRepository {
       projectId: new Types.ObjectId(projectId),
     }).exec();
 
-    return docs.map(this.mapToEntity);
+    return docs.map((doc) => this.mapToEntity(doc));
   }
 
   async delete(id: string): Promise<void> {
     await SprintModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async findOverlappingSprint(projectId: string, startDate: Date, endDate: Date): Promise<Sprint | null> {
+  async findOverlappingSprint(
+    projectId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Sprint | null> {
     const overlapping = await SprintModel.findOne({
       projectId: new Types.ObjectId(projectId),
-      $or: [
-        { startDate: { $lte: endDate }, endDate: { $gte: startDate } }
-      ]
+      $or: [{ startDate: { $lte: endDate }, endDate: { $gte: startDate } }],
     }).exec();
 
     return overlapping ? this.mapToEntity(overlapping) : null;
   }
 
-  // --------------------------
-  // Helper: map Mongoose doc to domain entity
-  // --------------------------
-  private mapToEntity(doc: any): Sprint {
+  
+  private mapToEntity(doc: HydratedDocument<SprintDocument>): Sprint {
     return new Sprint(
       doc.id.toString(),
       doc.name,
@@ -86,7 +85,7 @@ export class SprintRepository implements ISprintRepository {
       doc.teamCapacity,
       doc.totalStoryPoints,
       doc.createdBy.toString(),
-      doc.userStoryIds?.map((id: Types.ObjectId) => id.toString()) || [],
+      doc.userStoryIds?.map((id) => id.toString()) || [],
       doc.createdAt,
       doc.updatedAt
     );

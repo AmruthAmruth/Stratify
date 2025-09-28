@@ -1,242 +1,45 @@
-import React, { useState } from "react";
-import { Doughnut } from "react-chartjs-2";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
+import { getProjectDetails } from "@/services/projects";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const ManagerProjectDetailsPage = () => {
-  // Project Data from JSON
-  const project = {
-    name: "Developer PlatForm",
-    key: "DPF-001",
-    description: "A project to develop a scalable company management platform.",
-    startDate: "2025-10-01T00:00:00.000Z",
-    endDate: "2026-03-31T00:00:00.000Z",
-    status: "Planned",
-    projectLead: "68d65b4e441d94a5ffcf5bb6",
-    totalTeamMembers: 0,
-    remainingDays: 185,
-    backlogs: [
-      {
-        name: "User Authentication Module",
-        description:
-          "Implement login, registration, and password reset functionality.",
-        numberOfEmployees: 0,
-        userStories: [],
-      },
-      {
-        name: "User UX Module",
-        description: "Implement Home page desing.",
-        numberOfEmployees: 2,
-        userStories: [
-          {
-            name: "Implement Login API",
-            description:
-              "Create REST API endpoints for user login with JWT authentication.",
-            priority: "High",
-            status: "In Progress",
-            storyPoints: 5,
-            assignedTo: "",
-            tasks: [],
-          },
-          {
-            name: "Implement Login Desing",
-            description: "Create login page desing.",
-            priority: "High",
-            status: "Planned",
-            storyPoints: 5,
-            assignedTo: "",
-            tasks: [
-              {
-                name: "Create Login Desing",
-                description: "Desing the page.",
-                status: "Completed",
-              },
-              {
-                name: "Create Login Endpoint",
-                description:
-                  "Develop the POST /login endpoint with JWT authentication.",
-                status: "Planned",
-              },
-            ],
-          },
-          {
-            name: "Implement Registration Feature",
-            description:
-              "Create API endpoints and frontend forms for user registration with email verification.",
-            priority: "Medium",
-            status: "Completed",
-            storyPoints: 8,
-            assignedTo: "68c8d36f51d7e52255ed3771, 68c8aed00d5786939d1946c7",
-            tasks: [],
-          },
-        ],
-      },
-    ],
-    sprints: [
-      {
-        name: "Sprint 1 - User Authentication",
-        description:
-          "Implement user login, registration, and password reset functionality.",
-        startDate: "2025-10-01T00:00:00.000Z",
-        endDate: "2025-10-15T23:59:59.000Z",
-        teamCapacity: 40,
-        totalStoryPoints: 0,
-        status: "Completed",
-        userStories: [
-          {
-            name: "Implement Login Desing",
-            description: "Create login page desing.",
-            priority: "High",
-            status: "Planned",
-            storyPoints: 5,
-            assignedTo: "",
-            tasks: [
-              {
-                name: "Create Login Desing",
-                description: "Desing the page.",
-                status: "Planned",
-              },
-              {
-                name: "Create Login Endpoint",
-                description:
-                  "Develop the POST /login endpoint with JWT authentication.",
-                status: "Planned",
-              },
-            ],
-          },
-          {
-            name: "Implement Registration Feature",
-            description:
-              "Create API endpoints and frontend forms for user registration with email verification.",
-            priority: "Medium",
-            status: "Planned",
-            storyPoints: 8,
-            assignedTo: "68c8d36f51d7e52255ed3771, 68c8aed00d5786939d1946c7",
-            tasks: [],
-          },
-        ],
-      },
-    ],
-  };
-
-  // Calculate Statistics
-  const allUserStories = project.backlogs.flatMap((b) => b.userStories);
-  const allTasks = allUserStories.flatMap((us) => us.tasks);
-  const allSprintUserStories = project.sprints.flatMap((s) => s.userStories);
-
-  const taskCounts = {
-    Planned: allTasks.filter((t) => t.status === "Planned").length,
-    InProgress: allTasks.filter((t) => t.status === "InProgress").length,
-    Completed: allTasks.filter((t) => t.status === "Completed").length,
-  };
-
-  const userStoryCounts = {
-    Planned: allUserStories.filter((us) => us.status === "Planned").length,
-    InProgress: allUserStories.filter((us) => us.status === "InProgress")
-      .length,
-    Completed: allUserStories.filter((us) => us.status === "Completed").length,
-  };
-
-  const sprintCounts = {
-    Planned: project.sprints.filter((s) => s.status === "Planned").length,
-    Active: project.sprints.filter((s) => s.status === "Active").length,
-    Completed: project.sprints.filter((s) => s.status === "Completed").length,
-  };
-
-  const totalStoryPoints = allUserStories.reduce(
-    (sum, us) => sum + us.storyPoints,
-    0
-  );
-  const completedStoryPoints = allUserStories
-    .filter((us) => us.status === "Completed")
-    .reduce((sum, us) => sum + us.storyPoints, 0);
-
-  // Chart Data
-  const taskData = {
-    labels: ["Planned", "In Progress", "Completed"],
-    datasets: [
-      {
-        label: "Tasks",
-        data: [taskCounts.Planned, taskCounts.InProgress, taskCounts.Completed],
-        backgroundColor: ["#EF4444", "#F59E0B", "#10B981"],
-        borderColor: ["#DC2626", "#D97706", "#059669"],
-        borderWidth: 3,
-      },
-    ],
-  };
-
-  const storyData = {
-    labels: ["Planned", "In Progress", "Completed"],
-    datasets: [
-      {
-        label: "User Stories",
-        data: [
-          userStoryCounts.Planned,
-          userStoryCounts.InProgress,
-          userStoryCounts.Completed,
-        ],
-        backgroundColor: ["#8B5CF6", "#06B6D4", "#84CC16"],
-        borderColor: ["#7C3AED", "#0891B2", "#65A30D"],
-        borderWidth: 3,
-      },
-    ],
-  };
-
-  const sprintData = {
-    labels: ["Planned", "Active", "Completed"],
-    datasets: [
-      {
-        label: "Sprints",
-        data: [
-          sprintCounts.Planned,
-          sprintCounts.Active,
-          sprintCounts.Completed,
-        ],
-        backgroundColor: ["#6B7280", "#3B82F6", "#22C55E"],
-        borderColor: ["#4B5563", "#2563EB", "#16A34A"],
-        borderWidth: 3,
-      },
-    ],
-  };
-
-  // Chart Options
-  const chartOptions = {
-    responsive: true,
-    maintainAspectRatio: false,
-    plugins: {
-      legend: {
-        position: "bottom",
-        labels: {
-          padding: 20,
-          font: { size: 13, weight: 600 },
-          usePointStyle: true,
-          pointStyle: "circle",
-        },
-      },
-      title: {
-        display: true,
-        font: { size: 16, weight: 700 },
-        padding: 20,
-        color: "#1e293b",
-      },
-      tooltip: {
-        backgroundColor: "rgba(0, 0, 0, 0.8)",
-        titleFont: { size: 14, weight: 600 },
-        bodyFont: { size: 12 },
-        padding: 12,
-        cornerRadius: 8,
-      },
-    },
-  };
+  // State for project data
+  const [project, setProject] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
   const [expandedStory, setExpandedStory] = useState(null);
+ const { id } = useParams<{ id: string }>();
+  useEffect(() => {
+    const fetchProjectData = async (id:string) => {
+      try {
+        setLoading(true);
+        const data = await getProjectDetails(id);
+        console.log("DATA ", data);
+        setProject(data);
+        setError(null);
+      } catch (err) {
+        console.error("Error fetching project details:", err);
+        setError("Failed to load project details");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProjectData(id!);
+  }, [id]);
+
+
+
+
 
   // Utility Functions for Colors
   const getStatusColor = (status) => {
@@ -266,12 +69,84 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
+  // Loading state
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
+          <p className="mt-4 text-lg text-gray-600">Loading project details...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+            <strong className="font-bold">Error!</strong>
+            <span className="block sm:inline"> {error}</span>
+          </div>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
+  }
+
+  // No data state
+  if (!project) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-lg text-gray-600">No project data available</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Calculate Statistics
+  const allUserStories = project.backlogs?.flatMap((b) => b.userStories || []) || [];
+  const allTasks = allUserStories.flatMap((us) => us.tasks || []);
+
+  const taskCounts = {
+    Planned: allTasks.filter((t) => t.status === "Planned").length,
+    InProgress: allTasks.filter((t) => t.status === "InProgress" || t.status === "In Progress").length,
+    Completed: allTasks.filter((t) => t.status === "Completed").length,
+  };
+
+  const userStoryCounts = {
+    Planned: allUserStories.filter((us) => us.status === "Planned").length,
+    InProgress: allUserStories.filter((us) => us.status === "InProgress" || us.status === "In Progress").length,
+    Completed: allUserStories.filter((us) => us.status === "Completed").length,
+  };
+
+  const sprintCounts = {
+    Planned: (project.sprints || []).filter((s) => s.status === "Planned").length,
+    Active: (project.sprints || []).filter((s) => s.status === "Active").length,
+    Completed: (project.sprints || []).filter((s) => s.status === "Completed").length,
+  };
+
+  const totalStoryPoints = allUserStories.reduce(
+    (sum, us) => sum + (us.storyPoints || 0),
+    0
+  );
+  const completedStoryPoints = allUserStories
+    .filter((us) => us.status === "Completed")
+    .reduce((sum, us) => sum + (us.storyPoints || 0), 0);
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       {/* Header Section */}
-
-      <div className="  flex items-center justify-center p-4 pt-10">
-        <div className="max-w-5xl w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+      <div className="flex items-center justify-center p-4 pt-10">
+        <div className="max-w-6xl w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
           <div className="p-8 lg:p-10">
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Project Info */}
@@ -308,21 +183,20 @@ const ManagerProjectDetailsPage = () => {
       {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         {/* Analytics Dashboard */}
-
         <div className="space-y-8">
           {/* Metrics Grid Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <DashboardCard
               title="Team Size"
-              value={project.totalTeamMembers}
+              value={project.totalTeamMembers || 0}
               subtitle="Members"
-              trend={project.totalTeamMembers > 0 ? "up" : "down"}
+              trend={(project.totalTeamMembers || 0) > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Backlogs"
-              value={project.backlogs.length}
+              value={(project.backlogs || []).length}
               subtitle="Pending"
-              trend={project.backlogs.length > 0 ? "up" : "down"}
+              trend={(project.backlogs || []).length > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Story Points"
@@ -442,9 +316,9 @@ const ManagerProjectDetailsPage = () => {
               />
               <DashboardCard
                 title="Days Remaining"
-                value={project.remainingDays}
+                value={project.remainingDays || 0}
                 subtitle="Days"
-                trend={project.remainingDays > 0 ? "up" : "down"}
+                trend={(project.remainingDays || 0) > 0 ? "up" : "down"}
               />
             </div>
           </div>
@@ -473,7 +347,7 @@ const ManagerProjectDetailsPage = () => {
                 Project Lead
               </p>
               <p className="text-base font-semibold text-gray-900">
-                {project.projectLead}
+                {project.projectLead || "Not assigned"}
               </p>
             </div>
             <div className="space-y-1">
@@ -481,11 +355,14 @@ const ManagerProjectDetailsPage = () => {
                 Start Date
               </p>
               <p className="text-base font-semibold text-gray-900">
-                {new Date(project.startDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {project.startDate 
+                  ? new Date(project.startDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Not set"
+                }
               </p>
             </div>
             <div className="space-y-1">
@@ -493,11 +370,14 @@ const ManagerProjectDetailsPage = () => {
                 End Date
               </p>
               <p className="text-base font-semibold text-gray-900">
-                {new Date(project.endDate).toLocaleDateString("en-US", {
-                  year: "numeric",
-                  month: "long",
-                  day: "numeric",
-                })}
+                {project.endDate 
+                  ? new Date(project.endDate).toLocaleDateString("en-US", {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    })
+                  : "Not set"
+                }
               </p>
             </div>
             <div className="space-y-1">
@@ -505,65 +385,69 @@ const ManagerProjectDetailsPage = () => {
                 Remaining Days
               </p>
               <p className="text-base font-semibold text-gray-900">
-                {project.remainingDays}
+                {project.remainingDays || 0}
               </p>
             </div>
           </div>
         </div>
 
         {/* Sprints Section - Using Reusable Component */}
-        <CollapsibleSection
-          title="Sprints"
-          icon={
-            <svg
-              className="w-5 h-5 text-teal-600"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
-              />
-            </svg>
-          }
-          iconBgColor="bg-teal-100"
-          iconColor="text-teal-600"
-          data={project.sprints}
-          type="sprint"
-          expandedItem={expandedSprint}
-          setExpandedItem={setExpandedSprint}
-          expandedStory={expandedStory}
-          setExpandedStory={setExpandedStory}
-          getStatusColor={getStatusColor}
-          getPriorityColor={getPriorityColor}
-        />
+        {project.sprints && project.sprints.length > 0 && (
+          <CollapsibleSection
+            title="Sprints"
+            icon={
+              <svg
+                className="w-5 h-5 text-teal-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
+                />
+              </svg>
+            }
+            iconBgColor="bg-teal-100"
+            iconColor="text-teal-600"
+            data={project.sprints}
+            type="sprint"
+            expandedItem={expandedSprint}
+            setExpandedItem={setExpandedSprint}
+            expandedStory={expandedStory}
+            setExpandedStory={setExpandedStory}
+            getStatusColor={getStatusColor}
+            getPriorityColor={getPriorityColor}
+          />
+        )}
 
         {/* Backlogs Section - Using Reusable Component */}
-        <CollapsibleSection
-          title="Project Backlogs"
-          icon={
-            <svg
-              className="w-5 h-5 text-teal-600"
-              fill="currentColor"
-              viewBox="0 0 20 20"
-            >
-              <path
-                fillRule="evenodd"
-                d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
-              />
-            </svg>
-          }
-          iconBgColor="bg-purple-100"
-          iconColor="text-purple-600"
-          data={project.backlogs}
-          type="backlog"
-          expandedItem={expandedBacklog}
-          setExpandedItem={setExpandedBacklog}
-          expandedStory={expandedStory}
-          setExpandedStory={setExpandedStory}
-          getStatusColor={getStatusColor}
-          getPriorityColor={getPriorityColor}
-        />
+        {project.backlogs && project.backlogs.length > 0 && (
+          <CollapsibleSection
+            title="Project Backlogs"
+            icon={
+              <svg
+                className="w-5 h-5 text-teal-600"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
+                />
+              </svg>
+            }
+            iconBgColor="bg-purple-100"
+            iconColor="text-purple-600"
+            data={project.backlogs}
+            type="backlog"
+            expandedItem={expandedBacklog}
+            setExpandedItem={setExpandedBacklog}
+            expandedStory={expandedStory}
+            setExpandedStory={setExpandedStory}
+            getStatusColor={getStatusColor}
+            getPriorityColor={getPriorityColor}
+          />
+        )}
       </div>
     </div>
   );

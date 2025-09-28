@@ -15,4 +15,4 @@ superAdminRouter.post('/create-plan',asyncHandler(controllers.createPlan))
 superAdminRouter.put('/update-plan',asyncHandler(controllers.updatePlan))
 superAdminRouter.delete('/delete-plan',asyncHandler(controllers.deletePlan))
 superAdminRouter.get('/list-purchased-company',asyncHandler(controllers.listPurchasedPlan))
-export default superAdminRouter
+export default superAdminRouter 
