@@ -4,6 +4,7 @@ import CollapsibleSection from "@/shared/components/CollapsibleSection/Collapsib
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import { getProjectDetails } from "@/services/projects";
+import { useParams } from "react-router-dom";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
