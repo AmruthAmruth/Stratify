@@ -1,4 +1,5 @@
 export interface GetProjectsByCompanyDTO {
+  id:string | undefined;
   projectName: string;
   projectDescription: string;
   departmentName: string;

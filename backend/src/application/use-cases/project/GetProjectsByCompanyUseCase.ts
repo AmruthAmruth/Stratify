@@ -41,6 +41,7 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
         }
 
         return {
+          id:project.id,
           projectName: project.name ?? "Unnamed Project",
           projectDescription: project.description ?? "No description",
           departmentName: department?.name ?? "N/A",
