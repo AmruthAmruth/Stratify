@@ -89,3 +89,33 @@ export const createProjectFields = [
   //   name: "teamMemberIds", label: "Team Members", type: "multiselect",  options: []  // 🔹 fill with user list dynamically
   // }
 ];
+
+
+
+
+export const createBacklogsFields=[
+  { name: "name", label: "Backlog Title", type: "text" },
+  { name: "description", label: "Description", type: "text" },
+]
+
+
+
+
+
+
+export const createUserStoryFields=[
+  { name: "title", label: "Story Title", type: "text" },
+  { name: "description", label: "Description", type: "text" },
+  {  name: "priority",  label: "Priority",  type: "select", options: ["Low", "Medium", "High"] },
+  { name: "storyPoints", label: "Story Points", type: "number" },
+  {  name: "status",  label: "Status",  type: "select", options: ["To Do", "In Progress", "Done"] },
+  { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "text" },
+
+]
+
+
+export const createTaskFields=[
+  { name: "title", label: "Story Title", type: "text" },
+  { name: "description", label: "Description", type: "text" },
+  {  name: "status",  label: "Status",  type: "select", options: ["To Do", "In Progress", "Done"] },
+]

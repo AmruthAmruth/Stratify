@@ -94,3 +94,44 @@ export const createProjectSchema = z.object({
   }),
   
 });
+
+
+
+export const createBacklogsSchema = z.object({
+  name: z.string().min(1, "Title is required"),
+  description: z.string().min(1, "Description is required"),
+});
+
+
+
+
+export const createUserStorySchema = z.object({
+  title:  z.string().min(1, "Title is required"),
+
+  description:  z.string().min(1, "Description is required"),
+
+  priority: z.enum(["Low", "Medium", "High"], {
+    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
+  }),
+
+   storyPoints:  z.string().min(1, "Story Points is required"),
+
+   status: z.enum(["To Do", "In Progress", "In Progress"], {
+    required_error: "Status is required",
+  }),
+
+  acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required")
+});
+
+
+
+
+export const createTaskSchema = z.object({
+  title: z.string().min(1, "Title is required"),
+
+  description:  z.string().min(1, "Description is required"),
+
+  status: z.enum(["To Do", "In Progress", "Done"], {
+    errorMap: () => ({ message: "Status must be To Do, In Progress, or Done" }),
+  }),
+});

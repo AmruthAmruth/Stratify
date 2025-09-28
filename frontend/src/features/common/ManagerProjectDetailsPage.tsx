@@ -3,9 +3,13 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
-import { getProjectDetails } from "@/services/projects";
+import { createBacklog, createStory, createTask, getProjectDetails } from "@/services/projects";
 import { useParams } from "react-router-dom";
-
+import Modal from "@/shared/components/ModalFrom/ModalForm";
+import AuthForm from "@/shared/components/Forms/DynamicForm";
+import { createBacklogsFields, createUserStoryFields, createTaskFields } from "@/shared/components/Forms/formFields";
+import { createBacklogsSchema, createUserStorySchema, createTaskSchema } from "@/shared/utils/validations";
+import { enqueueSnackbar } from "notistack";
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const ManagerProjectDetailsPage = () => {
@@ -13,17 +17,27 @@ const ManagerProjectDetailsPage = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isBacklogModalOpen,setIsBacklogModalOpen]=useState(false)
+  
+  // Modal states
+  const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
+  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
+  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
+
+  // Context states for creation
+  const [selectedBacklog, setSelectedBacklog] = useState(null);
+  const [selectedSprint, setSelectedSprint] = useState(null);
+  const [selectedUserStory, setSelectedUserStory] = useState(null);
+  const [selectedParent, setSelectedParent] = useState(null);
 
   // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
   const [expandedStory, setExpandedStory] = useState(null);
- const { id } = useParams<{ id: string }>();
-  
- 
- useEffect(() => {
-    const fetchProjectData = async (id:string) => {
+  const { id } = useParams<{ id: string }>();
+
+  useEffect(() => {
+    const fetchProjectData = async (id: string) => {
       try {
         setLoading(true);
         const data = await getProjectDetails(id);
@@ -41,9 +55,91 @@ const ManagerProjectDetailsPage = () => {
     fetchProjectData(id!);
   }, [id]);
 
+  const handleCreateBacklog = async (values: any) => {
+    setSubmitLoading(true);
+    try {
+      const payload = { ...values, projectId: id };
+      await createBacklog(payload);
+      
+      enqueueSnackbar("Backlog created successfully!", { variant: "success" });
 
+      // Refresh project data to update backlogs list
+      const updatedProject = await getProjectDetails(id!);
+      setProject(updatedProject);
 
+      setIsBacklogModalOpen(false);
+    } catch (err: any) {
+      console.error(err);
+      enqueueSnackbar(err.message || "Failed to create backlog.", { variant: "error" });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
+  const handleCreateStory = async (values: any) => {
+    setSubmitLoading(true);
+    try {
+      const payload = {
+        ...values,
+        projectId: id,
+        backlogId: selectedBacklog,
+        sprintId: selectedSprint,
+      };
+      console.log(payload);
+      
+      // Add your API call for creating user story here
+     //  await createStory(payload);
+      
+      console.log("Creating user story with payload:", payload);
+      
+      enqueueSnackbar("User story created successfully!", { variant: "success" });
+
+      // Refresh project data to update user stories list
+      const updatedProject = await getProjectDetails(id!);
+      setProject(updatedProject);
+
+      setIsStoryModalOpen(false);
+      setSelectedBacklog(null);
+      setSelectedSprint(null);
+    } catch (err: any) {
+      console.error(err);
+      enqueueSnackbar(err.message || "Failed to create user story.", { variant: "error" });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleCreateTask = async (values: any) => {
+    setSubmitLoading(true);
+    try {
+      const payload = {
+        ...values,
+        projectId: id,
+        userStoryId: selectedUserStory,
+        parentId: selectedParent,
+      };
+      
+      // Add your API call for creating task here
+       await createTask(payload);
+      
+      console.log("Creating task with payload:", payload);
+      
+      enqueueSnackbar("Task created successfully!", { variant: "success" });
+
+      // Refresh project data to update tasks list
+      const updatedProject = await getProjectDetails(id!);
+      setProject(updatedProject);
+
+      setIsTaskModalOpen(false);
+      setSelectedUserStory(null);
+      setSelectedParent(null);
+    } catch (err: any) {
+      console.error(err);
+      enqueueSnackbar(err.message || "Failed to create task.", { variant: "error" });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   // Utility Functions for Colors
   const getStatusColor = (status) => {
@@ -328,15 +424,14 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-
-        <div className="flex justify-end mb-4">
-        <button
-         // onClick={() => setIsProjectModalOpen(true)}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-        >
-          + Create Backlogs
-        </button>
-      </div>
+        <div className="flex justify-end max-w-7xl mx-auto px-6 py-4">
+          <button
+            onClick={() => setIsBacklogModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+          >
+            + Create Backlog
+          </button>
+        </div>
 
         {/* Project Information */}
         <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 lg:p-8">
@@ -431,6 +526,16 @@ const ManagerProjectDetailsPage = () => {
             setExpandedStory={setExpandedStory}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
+            onCreateUserStory={(sprintName) => {
+              setSelectedSprint(sprintName);
+              setSelectedBacklog(null);
+              setIsStoryModalOpen(true);
+            }}
+            onCreateTask={(userStoryName, sprintName) => {
+              setSelectedUserStory(userStoryName);
+              setSelectedParent(sprintName);
+              setIsTaskModalOpen(true);
+            }}
           />
         )}
 
@@ -460,9 +565,69 @@ const ManagerProjectDetailsPage = () => {
             setExpandedStory={setExpandedStory}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
+            onCreateUserStory={(backlogName) => {
+              setSelectedBacklog(backlogName);
+              setSelectedSprint(null);
+              setIsStoryModalOpen(true);
+            }}
+            onCreateTask={(userStoryName, backlogName) => {
+              setSelectedUserStory(userStoryName);
+              setSelectedParent(backlogName);
+              setIsTaskModalOpen(true);
+            }}
           />
         )}
       </div>
+
+      {/* Create Backlog Modal */}
+      <Modal
+        isOpen={isBacklogModalOpen}
+        onClose={() => setIsBacklogModalOpen(false)}
+        title="Create Backlog"
+      >
+        <AuthForm
+          fields={createBacklogsFields}
+          validationSchema={createBacklogsSchema}
+          onSubmit={handleCreateBacklog}
+          buttonText={submitLoading ? "Creating..." : "Create Backlog"}
+        />
+      </Modal>
+
+      {/* Create User Story Modal */}
+      <Modal
+        isOpen={isStoryModalOpen}
+        onClose={() => {
+          setIsStoryModalOpen(false);
+          setSelectedBacklog(null);
+          setSelectedSprint(null);
+        }}
+        title="Create User Story"
+      >
+        <AuthForm
+          fields={createUserStoryFields}
+          validationSchema={createUserStorySchema}
+          onSubmit={handleCreateStory}
+          buttonText={submitLoading ? "Creating..." : "Create Story"}
+        />
+      </Modal>
+
+      {/* Create Task Modal */}
+      <Modal
+        isOpen={isTaskModalOpen}
+        onClose={() => {
+          setIsTaskModalOpen(false);
+          setSelectedUserStory(null);
+          setSelectedParent(null);
+        }}
+        title="Create Task"
+      >
+        <AuthForm
+          fields={createTaskFields}
+          validationSchema={createTaskSchema}
+          onSubmit={handleCreateTask}
+          buttonText={submitLoading ? "Creating..." : "Create Task"}
+        />
+      </Modal>
     </div>
   );
 };

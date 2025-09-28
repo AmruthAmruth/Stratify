@@ -49,3 +49,40 @@ export const createProject = async(data:Record<string, unknown>)=>{
     throw err.response?.data || new Error("Network error")
   }
 }
+
+
+export const createBacklog=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_BACKLOG,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+
+export const createStory=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_STORY,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+
+
+
+export const createTask=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_TASK,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+

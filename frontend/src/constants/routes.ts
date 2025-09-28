@@ -53,5 +53,9 @@ export const PROJECT_ROUTES = {
   COMPANY_PROJECTS:"/company/company-projects",
   DEPARTMENT_PROJECTS:"/company/department-projects",
   PROJECT_DETAILS:(id: string) =>`company/project/${id}`,
-  CREATE_PROJECT:"/company/create-project"
+  CREATE_PROJECT:"/company/create-project",
+  CREATE_BACKLOG:"company/create-backlog",
+  CREATE_STORY:"/company/create-story",
+  CREATE_TASK:"/company/craete-task"
+
 };

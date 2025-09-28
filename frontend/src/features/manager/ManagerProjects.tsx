@@ -42,6 +42,8 @@ const ManagerProjects: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
+
+
   const itemsPerPage = 6;
   const navigate = useNavigate();
 
