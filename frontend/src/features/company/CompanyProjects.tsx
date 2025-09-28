@@ -21,7 +21,7 @@ const Projects = () => {
     getCompanyProjects().then((data) => {
       setProjects(data);
     });
-  }, []);
+  }, []); 
 
   if (!projects) {
     return <div className="text-black">Loading...</div>;

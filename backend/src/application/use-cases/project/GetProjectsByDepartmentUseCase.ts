@@ -56,6 +56,7 @@ export class GetProjectsByDepartmentUseCase implements IGetProjectsByDepartmentU
         id:project.id,
         projectName: project.name ?? "Unnamed Project",
         projectDescription: project.description ?? "No description",
+        departmentId:project.departmentId,
         status,
         remainingTimeInDays,
       };

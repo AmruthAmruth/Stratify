@@ -75,3 +75,22 @@ export const rejectionValidationSchema=z.object({
   reason: z.string().min(1, "Reason is required"),
  
 });
+
+
+
+
+export const createProjectSchema = z.object({
+  name: z.string().min(1, "Project name is required"),
+  key: z.string().min(1, "Project key is required"),
+  description: z.string().min(1, "Description is required"),
+  startDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Start date is required",
+  }),
+  endDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "End date is required",
+  }),
+  status: z.enum(["Planned", "Active", "Completed", "Archived"], {
+    required_error: "Status is required",
+  }),
+  
+});

@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 import { getDepartmentProjects } from '@/services/projects';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
 import Table from '@/shared/components/Table/Table';
-import { Navigate, useNavigate } from 'react-router-dom';
+import Modal from '@/shared/components/ModalFrom/ModalForm';
+import AuthForm from '@/shared/components/Forms/DynamicForm';
+import { createProjectFields } from '@/shared/components/Forms/formFields';
+import { createProjectSchema } from '@/shared/utils/validations';
 
 const ManagerProjects = () => {
-  const [projects, setProjects] = useState<any>({
-    projects: [],
-    counts: { total: 0, planned: 0, active: 0, completed: 0, archived: 0 },
-  });
+  const [projects, setProjects] = useState<any>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [sortBy, setSortBy] = useState('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const itemsPerPage = 6;
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
+  const itemsPerPage = 6;
   const navigate = useNavigate();
+
   // Fetch projects
   useEffect(() => {
     getDepartmentProjects().then((data) => {
@@ -26,7 +30,26 @@ const ManagerProjects = () => {
     });
   }, []);
 
+  if (!projects) {
+    return <div className="text-black">Loading...</div>;
+  }
 
+  // ----------------------
+  // Handle Project Creation
+  // ----------------------
+  const handleCreateProject = async (values: any) => {
+    try {
+      setSubmitLoading(true);
+    //  await createProject(values); // 🔹 API call
+      const updatedProjects = await getDepartmentProjects(); // refresh list
+      setProjects(updatedProjects);
+      setIsProjectModalOpen(false);
+    } catch (err) {
+      console.error("Error creating project:", err);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
 
   // ----------------------
   // Filtering
@@ -86,20 +109,32 @@ const ManagerProjects = () => {
     setSortOrder('asc');
   };
 
-
-
-   const handleViewProject = (projectId: string) => {
+  // ----------------------
+  // Navigate to project details
+  // ----------------------
+  const handleViewProject = (projectId: string) => {
     navigate(`/project/${projectId}`);
   };
 
   return (
     <div className="text-black space-y-6">
-      {/* Dashboard cards */}
+
+      {/* ---------------- Create Project Button ---------------- */}
+      <div className="flex justify-end mb-4">
+        <button
+          onClick={() => setIsProjectModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          + Create Project
+        </button>
+      </div>
+
+      {/* ---------------- Dashboard cards ---------------- */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard
           title="Total Projects"
           value={projects.counts.total}
-          subtitle="All company projects"
+          subtitle="All department projects"
           trend={projects.counts.total > 0 ? 'up' : 'down'}
         />
         <DashboardCard
@@ -122,7 +157,7 @@ const ManagerProjects = () => {
         />
       </div>
 
-      {/* Filter bar */}
+      {/* ---------------- Filter bar ---------------- */}
       <TableFilterBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -142,7 +177,7 @@ const ManagerProjects = () => {
         onClearFilters={clearFilters}
       />
 
-      {/* Projects table */}
+      {/* ---------------- Projects table ---------------- */}
       <Table
         columns={[
           { key: 'projectName', label: 'Project Name' },
@@ -172,6 +207,25 @@ const ManagerProjects = () => {
           },
         ]}
       />
+
+      {/* ---------------- Create Project Modal ---------------- */}
+      <Modal
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
+        title="Create Project"
+      >
+        <AuthForm
+          fields={createProjectFields}
+          validationSchema={createProjectSchema}
+          onSubmit={handleCreateProject}
+          buttonText={submitLoading ? "Creating..." : "Create Project"}
+        />
+        {submitLoading && (
+          <div className="flex justify-center mt-4">
+            <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+          </div>
+        )}
+      </Modal>
     </div>
   );
 };

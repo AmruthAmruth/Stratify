@@ -37,11 +37,7 @@ const adminRoutes: RouteObject[] = [
   },{
       path: "projects",
       element: <Projects />,
-    },
-    {
-    path: "project/:id",
-    element: <ManagerProjectDetailsPage />,
-  },
+    }
 ];
 
 export default adminRoutes;
