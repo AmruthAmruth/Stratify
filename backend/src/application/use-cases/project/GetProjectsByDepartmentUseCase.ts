@@ -53,6 +53,7 @@ export class GetProjectsByDepartmentUseCase implements IGetProjectsByDepartmentU
       if (status === "Archived") counts.archived++;
 
       return {
+        id:project.id,
         projectName: project.name ?? "Unnamed Project",
         projectDescription: project.description ?? "No description",
         status,

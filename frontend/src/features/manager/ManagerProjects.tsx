@@ -1,8 +1,10 @@
+import React, { useEffect, useState } from 'react';
+
 import { getDepartmentProjects } from '@/services/projects';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
-import Table from '@/shared/components/Table/Table'; // ✅ Correct import
-import React, { useEffect, useState } from 'react';
+import Table from '@/shared/components/Table/Table';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 const ManagerProjects = () => {
   const [projects, setProjects] = useState<any>({
@@ -16,16 +18,28 @@ const ManagerProjects = () => {
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
   const itemsPerPage = 6;
 
+  const navigate = useNavigate();
+  // Fetch projects
+  useEffect(() => {
+    getDepartmentProjects().then((data) => {
+      setProjects(data);
+    });
+  }, []);
+
+
+
+  // ----------------------
   // Filtering
+  // ----------------------
   const filteredProjects = projects.projects
     .filter((p: any) =>
       p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((p: any) =>
-      filterStatus ? p.status === filterStatus : true
-    );
+    .filter((p: any) => (filterStatus ? p.status === filterStatus : true));
 
+  // ----------------------
   // Sorting
+  // ----------------------
   const sortedProjects = [...filteredProjects].sort((a: any, b: any) => {
     if (!sortBy) return 0;
 
@@ -45,7 +59,9 @@ const ManagerProjects = () => {
     return 0;
   });
 
+  // ----------------------
   // Pagination
+  // ----------------------
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -53,12 +69,16 @@ const ManagerProjects = () => {
     startIndex + itemsPerPage
   );
 
-  // Unique status options for filter
+  // ----------------------
+  // Unique status options
+  // ----------------------
   const uniqueStatus = Array.from(
     new Set(projects?.projects?.map((p: any) => p.status) || [])
   );
 
+  // ----------------------
   // Clear filters
+  // ----------------------
   const clearFilters = () => {
     setSearchTerm('');
     setFilterStatus('');
@@ -66,12 +86,11 @@ const ManagerProjects = () => {
     setSortOrder('asc');
   };
 
-  // Fetch projects
-  useEffect(() => {
-    getDepartmentProjects().then((data) => {
-      setProjects(data);
-    });
-  }, []);
+
+
+   const handleViewProject = (projectId: string) => {
+    navigate(`/project/${projectId}`);
+  };
 
   return (
     <div className="text-black space-y-6">
@@ -139,7 +158,7 @@ const ManagerProjects = () => {
           {
             label: 'View More',
             type: 'custom',
-            onClick: (row) => alert(`Viewing details for ${row.projectName}`),
+            onClick: (row) => handleViewProject(row.id),
           },
           {
             label: 'Edit',

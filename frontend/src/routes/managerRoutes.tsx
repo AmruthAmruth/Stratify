@@ -1,5 +1,5 @@
+import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
-import ManagerProjectDetailsPage from "@/features/manager/ManagerProjectDetailsPage";
 import ManagerProjects from "@/features/manager/ManagerProjects";
 import type { RouteObject } from "react-router-dom";
 

@@ -1,4 +1,5 @@
 export interface GetProjectsByDepartmentDTO {
+  id:string | undefined;
   projectName: string;
   projectDescription: string;
   status: "Planned" | "Active" | "Completed" | "Archived";
