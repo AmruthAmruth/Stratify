@@ -39,6 +39,7 @@ export class GetProjectsByDepartmentUseCase implements IGetProjectsByDepartmentU
       archived: 0,
     };
 
+
     const result: GetProjectsByDepartmentDTO[] = projects.map((project) => {
       const remainingTimeInDays = project.endDate
         ? Math.ceil((new Date(project.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
@@ -56,12 +57,11 @@ export class GetProjectsByDepartmentUseCase implements IGetProjectsByDepartmentU
         id:project.id,
         projectName: project.name ?? "Unnamed Project",
         projectDescription: project.description ?? "No description",
-        departmentId:project.departmentId,
         status,
         remainingTimeInDays,
       };
     });
 
-    return { projects: result, counts };
+    return { projects: result,departmentId, counts };
   }
 }

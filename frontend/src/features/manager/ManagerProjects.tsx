@@ -33,6 +33,7 @@ const ManagerProjects = () => {
   if (!projects) {
     return <div className="text-black">Loading...</div>;
   }
+  
 
   // ----------------------
   // Handle Project Creation
@@ -40,6 +41,9 @@ const ManagerProjects = () => {
   const handleCreateProject = async (values: any) => {
     try {
       setSubmitLoading(true);
+      console.log("VALUES : " , values)
+      console.log(projects);
+      
     //  await createProject(values); // 🔹 API call
       const updatedProjects = await getDepartmentProjects(); // refresh list
       setProjects(updatedProjects);

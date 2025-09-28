@@ -2,7 +2,6 @@ export interface GetProjectsByDepartmentDTO {
   id:string | undefined;
   projectName: string;
   projectDescription: string;
-  departmentId:string;
   status: "Planned" | "Active" | "Completed" | "Archived";
   remainingTimeInDays: number;
 }
@@ -10,6 +9,7 @@ export interface GetProjectsByDepartmentDTO {
 
 export interface GetProjectsByDepartmentResponse {
   projects: GetProjectsByDepartmentDTO[];
+  departmentId:string | undefined;
   counts: {
     total: number;
     planned: number;
