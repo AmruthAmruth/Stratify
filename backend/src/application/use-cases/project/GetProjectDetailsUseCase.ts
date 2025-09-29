@@ -27,6 +27,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
     const backlogs = await this._backlogsRepo.findByProjectId(projectId);
 
     const backlogDTOs: BacklogDTO[] = [];
+
     for (const backlog of backlogs) {
       const userStories = await this._userStoryRepo.findByBacklogId(backlog.id!);
 
@@ -37,6 +38,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         const tasks = await this._taskRepo.findByUserStoryId(story.id!);
 
         const taskDTOs: TaskDTO[] = tasks.map((task) => ({
+          taskId:task.id,
           name: task.title,
           description: task.description || "",
           status:
@@ -50,6 +52,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         story.assignedToIds?.forEach((id) => employeeIds.add(id));
 
         userStoryDTOs.push({
+          userStoryId:story.id,
           name: story.title,
           description: story.description,
           priority: story.priority,
@@ -68,6 +71,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
 
       backlogDTOs.push({
+        backlogId:backlog.id,
         name: backlog.name,
         description: backlog.description,
         numberOfEmployees: employeeIds.size,
@@ -102,6 +106,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         }));
 
         sprintUserStoryDTOs.push({
+          userStoryId:story.id,
           name: story.title,
           description: story.description,
           priority: story.priority,
@@ -120,6 +125,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
 
       sprintDTOs.push({
+        sprintId:sprint.id,
         name: sprint.name,
         description: sprint.description,
         startDate: sprint.startDate,
@@ -131,7 +137,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       });
     }
 
-    // 4. Calculate remaining days
+   
     const endDate = new Date(project.endDate);
     const now = new Date();
     const remainingDays = Math.max(
@@ -139,7 +145,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     );
 
-    // 5. Build final DTO
+  
     const dto: ProjectDetailsDTO = {
       name: project.name,
       key: project.key,
@@ -147,7 +153,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       startDate: project.startDate,
       endDate: project.endDate,
       status: project.status,
-      projectLead: project.projectLeadId, // consider resolving user name
+      projectLead: project.projectLeadId, 
       totalTeamMembers: project.teamMemberIds ? project.teamMemberIds.length : 0,
       remainingDays,
       backlogs: backlogDTOs,

@@ -1,4 +1,5 @@
 export interface TaskDTO {
+  taskId:string|undefined;
   name: string;
   description: string;
   status: "Planned" | "InProgress" | "Completed";
@@ -8,6 +9,7 @@ export interface TaskDTO {
 
 
 export interface UserStoryDTO {
+  userStoryId:string|undefined;
   name: string;
   description: string;
   priority: "Low" | "Medium" | "High";
@@ -20,6 +22,7 @@ export interface UserStoryDTO {
 
 
 export interface BacklogDTO {
+  backlogId:string|undefined;
   name: string;
   description: string;
   numberOfEmployees: number;
@@ -29,6 +32,7 @@ export interface BacklogDTO {
 
 
 export interface SprintDTO {
+  sprintId:string|undefined;
   name: string;
   description:string,
   startDate: Date;
