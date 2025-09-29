@@ -11,7 +11,6 @@ import ResetPassword from "@/features/auth/ResetPassword";
 import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
 import CompanyPendingApproval from "@/features/Genaral/CompanyPendingApproval";
 import SubscriptionPlans from "@/features/Genaral/SubscriptionPurchase";
-import Leave from "@/features/employee/Leave";
 const genaralRoutes: RouteObject[] = [
   {
     path: "",
@@ -65,10 +64,7 @@ const genaralRoutes: RouteObject[] = [
     path: "subscription-purchase/:companyId",
     element: <SubscriptionPlans />,
   },
-  {
-    path: "leave",
-    element: <Leave />,
-  }
+ 
   
   
 ];

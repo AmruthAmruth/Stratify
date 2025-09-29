@@ -1,3 +1,4 @@
+import Leave from "@/features/employee/Leave";
 import type { RouteObject } from "react-router";
 const teamRoutes: RouteObject[] = [
   {
@@ -5,8 +6,8 @@ const teamRoutes: RouteObject[] = [
     element: <h1>Team Dahsboard</h1>
   },
   {
-    path: "companies",
-    element: <h1>Companies</h1>
+    path: "leave-status",
+    element: <Leave/>
   }
 ];
 

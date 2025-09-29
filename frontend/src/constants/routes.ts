@@ -59,3 +59,12 @@ export const PROJECT_ROUTES = {
   CREATE_TASK:"/company/create-task"
  
 };
+
+
+
+
+export const LEAVE_ROUTES = {
+  CREATE_LEAVE:"/company/create-leave",
+  GET_EMPLOYEE_CURRENT_MONTHLEAVE:"/company/leaves"
+ 
+};

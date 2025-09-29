@@ -8,6 +8,7 @@ export class Leave {
     public status: "Pending" | "Approved" | "Rejected" = "Pending",
     public reason?: string,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
+    public month?: number 
   ) {}
 }

@@ -1,61 +1,46 @@
+import { getLeaveCurrentMonth } from '@/services/leave';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import Table from '@/shared/components/Table/Table';
 
-
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 const Leave = () => {
-  // Leave counts for dashboard
-  const leaveCounts = {
-    Casual: 2,
-    Sick: 2,
-    Earned: 1,
-  };
-
-  // Leave records
-  const leaveRecords = [
-    {
-      employeeId: "12345",
-      startDate: new Date("2025-10-01"),
-      endDate: new Date("2025-10-03"),
-      type: "Casual" as "Casual" | "Sick" | "Earned" | "Other",
-      status: "Pending" as "Pending" | "Approved" | "Rejected",
-      reason: "Family function"
-    },
-    {
-      employeeId: "12345",
-      startDate: new Date("2025-10-15"),
-      endDate: new Date("2025-10-16"),
-      type: "Sick" as "Casual" | "Sick" | "Earned" | "Other",
-      status: "Approved" as "Pending" | "Approved" | "Rejected",
-      reason: "Fever and rest"
-    },
-    {
-      employeeId: "12345",
-      startDate: new Date("2025-11-01"),
-      endDate: new Date("2025-11-05"),
-      type: "Earned" as "Casual" | "Sick" | "Earned" | "Other",
-      status: "Rejected" as "Pending" | "Approved" | "Rejected",
-      reason: "Vacation leave"
-    }
-  ];
+  // State for leave counts and records
+  const [leaveCounts, setLeaveCounts] = useState({
+    Casual: 0,
+    Sick: 0,
+    Earned: 0,
+  });
+  const [leaveRecords, setLeaveRecords] = useState<any[]>([]);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 5;
 
+  useEffect(() => {
+    getLeaveCurrentMonth().then((data) => {
+      console.log("Leaves", data);
+
+      // Update states with API response
+      if (data) {
+        setLeaveCounts(data.leaveCounts || { Casual: 0, Sick: 0, Earned: 0 });
+        setLeaveRecords(data.leaves || []);
+      }
+    });
+  }, []);
+
   // Map leave records to table-friendly format and add remaining days
   const paginatedData = leaveRecords
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map(record => ({
-      startDate: record.startDate.toDateString(),
-      endDate: record.endDate.toDateString(),
+      startDate: new Date(record.startDate).toDateString(),
+      endDate: new Date(record.endDate).toDateString(),
       status: record.status,
       reason: record.reason,
       type: record.type,
       remainingTimeInDays: Math.max(
         0,
-        Math.ceil((record.endDate.getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
+        Math.ceil((new Date(record.endDate).getTime() - new Date().getTime()) / (1000 * 60 * 60 * 24))
       ),
       id: record.employeeId
     }));

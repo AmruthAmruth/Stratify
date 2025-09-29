@@ -14,20 +14,20 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
   ) {}
 
   async execute(leaveDTO: CreateLeaveDTO): Promise<Leave> {
-    // 1️⃣ Check if employee exists
+    // 1. Check if employee exists
     const employee = await this._employeeRepo.findById(leaveDTO.employeeId);
     if (!employee) {
       throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
     }
 
-    // 2️⃣ Validate leave type and policy
+    // 2. Validate leave type and policy
     const leaveType = leaveDTO.type || "Casual";
     const policy = LEAVE_POLICY[leaveType];
     if (!policy) {
       throw new AppError(`Invalid leave type: ${leaveType}`, StatusCodes.BAD_REQUEST);
     }
 
-    // 3️⃣ Check overlapping leaves
+    // 3. Check overlapping leaves
     const overlappingLeave = await this._leaveRepo.findOverlappingLeave(
       leaveDTO.employeeId,
       leaveDTO.startDate,
@@ -37,20 +37,19 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       throw new AppError("Leave overlaps with existing leave", StatusCodes.BAD_REQUEST);
     }
 
-    // 4️⃣ Calculate number of leave days
+    // 4. Calculate leave days
     const start = new Date(leaveDTO.startDate);
     const end = new Date(leaveDTO.endDate);
     const days = Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
 
-    // 5️⃣ Monthly quota check (UTC-safe)
-    if (policy.monthlyQuota) {
-      const monthStart = new Date(Date.UTC(start.getFullYear(), start.getMonth(), 1, 0, 0, 0));
-      const monthEnd = new Date(Date.UTC(start.getFullYear(), start.getMonth() + 1, 0, 23, 59, 59));
+    // 5. Extract month (0 = January, 11 = December)
+    const leaveMonth = start.getMonth();
 
-      const usedThisMonth = await this._leaveRepo.countLeaveDays(
+    // 6. Check monthly quota
+    if (policy.monthlyQuota) {
+      const usedThisMonth = await this._leaveRepo.countLeaveDaysByMonth(
         leaveDTO.employeeId,
-        monthStart,
-        monthEnd,
+        leaveMonth,
         leaveType
       );
 
@@ -62,7 +61,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       }
     }
 
-    // 6️⃣ Annual quota check (UTC-safe)
+    // 7. Check annual quota
     if (policy.annualQuota) {
       const yearStart = new Date(Date.UTC(start.getFullYear(), 0, 1, 0, 0, 0));
       const yearEnd = new Date(Date.UTC(start.getFullYear(), 11, 31, 23, 59, 59));
@@ -82,20 +81,21 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       }
     }
 
-    // 7️⃣ Create the leave entity
+    // 8. Create leave with month field
     const leave = new Leave(
       undefined,
       leaveDTO.employeeId,
       start,
       end,
       leaveType,
-      "Pending", // default status
+      "Pending",
       leaveDTO.reason,
       new Date(),
-      new Date()
+      new Date(),
+      leaveMonth
     );
 
-    // 8️⃣ Save leave in repository
+    // 9. Save leave
     return await this._leaveRepo.create(leave);
   }
 }

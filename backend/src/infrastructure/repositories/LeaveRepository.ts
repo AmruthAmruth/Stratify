@@ -12,6 +12,7 @@ export class LeaveRepository implements ILeaveRepository {
       type: leave.type ?? "Casual",
       status: leave.status ?? "Pending",
       reason: leave.reason,
+      month: leave.startDate.getMonth(), // store month here
     }).save();
 
     return new Leave(
@@ -23,7 +24,8 @@ export class LeaveRepository implements ILeaveRepository {
       created.status,
       created.reason,
       created.createdAt,
-      created.updatedAt
+      created.updatedAt,
+      created.month
     );
   }
 
@@ -36,6 +38,7 @@ export class LeaveRepository implements ILeaveRepository {
         type: leave.type,
         status: leave.status,
         reason: leave.reason,
+        month: leave.startDate.getMonth(), // update month if startDate changed
       },
       { new: true }
     ).exec();
@@ -51,7 +54,8 @@ export class LeaveRepository implements ILeaveRepository {
       updated.status,
       updated.reason,
       updated.createdAt,
-      updated.updatedAt
+      updated.updatedAt,
+      updated.month
     );
   }
 
@@ -68,7 +72,8 @@ export class LeaveRepository implements ILeaveRepository {
       doc.status,
       doc.reason,
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
+      doc.month
     );
   }
 
@@ -80,10 +85,7 @@ export class LeaveRepository implements ILeaveRepository {
     const overlapping = await LeaveModel.findOne({
       employeeId: new Types.ObjectId(employeeId),
       $or: [
-        {
-          startDate: { $lte: endDate },
-          endDate: { $gte: startDate },
-        },
+        { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
       ],
     }).exec();
 
@@ -98,7 +100,8 @@ export class LeaveRepository implements ILeaveRepository {
       overlapping.status,
       overlapping.reason,
       overlapping.createdAt,
-      overlapping.updatedAt
+      overlapping.updatedAt,
+      overlapping.month
     );
   }
 
@@ -113,57 +116,84 @@ export class LeaveRepository implements ILeaveRepository {
       type: leaveType,
       status: { $in: ["Approved"] },
       $or: [
-        {
-          startDate: { $lte: end },
-          endDate: { $gte: start },
-        },
+        { startDate: { $lte: end }, endDate: { $gte: start } },
       ],
     }).exec();
 
     let totalDays = 0;
-
     for (const leave of leaves) {
       const leaveStart = leave.startDate < start ? start : leave.startDate;
       const leaveEnd = leave.endDate > end ? end : leave.endDate;
-
-      const diff =
-        Math.ceil(
-          (leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)
-        ) + 1;
-
-      totalDays += diff;
+      totalDays += Math.ceil((leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
     }
     return totalDays;
   }
 
-
-async getLeavesByEmployeeAndDateRange(
-    employeeId: string,
-    startOfMonth: Date,
-    endOfMonth: Date
-): Promise<Leave[]> {
-    const docs = await LeaveModel.find({
-        employeeId: new Types.ObjectId(employeeId),
-        startDate: { $lte: endOfMonth },
-        endDate: { $gte: startOfMonth },
+  async countLeaveDaysByMonth(employeeId: string, month: number, type: string): Promise<number> {
+    const leaves = await LeaveModel.find({
+      employeeId: new Types.ObjectId(employeeId),
+      month,
+      type,
+      status: { $in: ["Approved"] },
     }).exec();
 
-    return docs.map(
-        (doc) =>
-            new Leave(
-                doc.id.toString(),
-                doc.employeeId.toString(),
-                doc.startDate,
-                doc.endDate,
-                doc.type,
-                doc.status,
-                doc.reason,
-                doc.createdAt,
-                doc.updatedAt
-            )
-    );
-}
+    return leaves.reduce((sum, leave) => {
+      const start = leave.startDate;
+      const end = leave.endDate;
+      return sum + Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    }, 0);
+  }
 
+  async getLeavesByEmployeeAndDateRange(
+    startOfMonth: Date,
+    endOfMonth: Date
+  ): Promise<Leave[]> {
+    const docs = await LeaveModel.find({
+      startDate: { $lte: endOfMonth },
+      endDate: { $gte: startOfMonth },
+    })
+      .sort({ startDate: 1 })
+      .exec();
+
+    return docs.map(
+      (doc) =>
+        new Leave(
+          doc.id.toString(),
+          doc.employeeId.toString(),
+          doc.startDate,
+          doc.endDate,
+          doc.type,
+          doc.status,
+          doc.reason,
+          doc.createdAt,
+          doc.updatedAt,
+          doc.month
+        )
+    );
+  }
+
+  async findLeavesByEmployeeAndMonth(employeeId: string, month: number): Promise<Leave[]> {
+    const docs = await LeaveModel.find({
+      employeeId: new Types.ObjectId(employeeId),
+      month,
+    }).sort({ startDate: 1 }).exec();
+
+    return docs.map(
+      (doc) =>
+        new Leave(
+          doc.id.toString(),
+          doc.employeeId.toString(),
+          doc.startDate,
+          doc.endDate,
+          doc.type,
+          doc.status,
+          doc.reason,
+          doc.createdAt,
+          doc.updatedAt,
+          doc.month
+        )
+    );
+  }
 
 
 

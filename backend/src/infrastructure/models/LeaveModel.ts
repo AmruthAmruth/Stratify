@@ -7,6 +7,7 @@ export interface LeaveDocument extends Document {
   type: "Casual" | "Sick" | "Earned" | "Other";
   status: "Pending" | "Approved" | "Rejected";
   reason?: string;
+  month: number; 
   createdAt: Date;
   updatedAt: Date;
 }
@@ -27,6 +28,7 @@ const LeaveSchema = new Schema<LeaveDocument>(
       default: "Pending",
     },
     reason: { type: String },
+    month: { type: Number, required: true, min: 0, max: 11 }, 
   },
   { timestamps: true }
 );
