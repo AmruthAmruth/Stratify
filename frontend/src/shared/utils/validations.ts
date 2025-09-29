@@ -135,3 +135,21 @@ export const createTaskSchema = z.object({
     errorMap: () => ({ message: "Status must be To Do, In Progress, or Done" }),
   }),
 });
+
+
+
+export const createLeaveSchema = z.object({
+   startDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "Start date is required",
+  }),
+  endDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+    message: "End date is required",
+  }),
+
+status: z.enum(["Casual", "Sick", "Earned"], {
+    errorMap: () => ({ message: "Status must be To Do, In Progress, or Done" }),
+  }),
+
+ reason: z.string().min(1, "Reason is required"),
+
+});

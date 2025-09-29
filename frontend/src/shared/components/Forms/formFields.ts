@@ -118,4 +118,12 @@ export const createTaskFields=[
   { name: "title", label: "Story Title", type: "text" },
   { name: "description", label: "Description", type: "text" },
   {  name: "status",  label: "Status",  type: "select", options: ["To Do", "In Progress", "Done"] },
+
+]
+
+export const createLeaveFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
 ]

@@ -1,7 +1,10 @@
 import { getLeaveCurrentMonth } from '@/services/leave';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
+import AuthForm from '@/shared/components/Forms/DynamicForm';
+import { createLeaveFields } from '@/shared/components/Forms/formFields';
+import Modal from '@/shared/components/ModalFrom/ModalForm';
 import Table from '@/shared/components/Table/Table';
-
+import { createLeaveSchema } from '@/shared/utils/validations';
 import React, { useEffect, useState } from 'react';
 
 const Leave = () => {
@@ -12,6 +15,8 @@ const Leave = () => {
     Earned: 0,
   });
   const [leaveRecords, setLeaveRecords] = useState<any[]>([]);
+  const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   // Pagination state
   const [currentPage, setCurrentPage] = useState(1);
@@ -21,7 +26,6 @@ const Leave = () => {
     getLeaveCurrentMonth().then((data) => {
       console.log("Leaves", data);
 
-      // Update states with API response
       if (data) {
         setLeaveCounts(data.leaveCounts || { Casual: 0, Sick: 0, Earned: 0 });
         setLeaveRecords(data.leaves || []);
@@ -29,7 +33,7 @@ const Leave = () => {
     });
   }, []);
 
-  // Map leave records to table-friendly format and add remaining days
+  // Map leave records to table-friendly format
   const paginatedData = leaveRecords
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map(record => ({
@@ -51,8 +55,41 @@ const Leave = () => {
     alert(`Viewing details for leave ${id}`);
   };
 
+  const handleCreateLeave = async (values: any) => {
+    setSubmitLoading(true);
+    try {
+      console.log("Creating leave with values:", values);
+      // 👉 Call your createLeave service here if available
+      // await createLeave(values);
+
+      // Refresh data after creation
+      const updated = await getLeaveCurrentMonth();
+      if (updated) {
+        setLeaveCounts(updated.leaveCounts || { Casual: 0, Sick: 0, Earned: 0 });
+        setLeaveRecords(updated.leaves || []);
+      }
+
+      setIsLeaveModalOpen(false);
+    } catch (err: unknown) {
+      console.error("Error creating Leave:", err);
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
   return (
     <div className="bg-white text-black p-4">
+      {/* Header + Apply Leave button */}
+      <div className="flex justify-between items-center mb-6">
+        <h2 className="text-xl font-bold">Leave Dashboard</h2>
+        <button
+          onClick={() => setIsLeaveModalOpen(true)}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+        >
+          Apply Leave
+        </button>
+      </div>
+
       {/* Dashboard cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <DashboardCard
@@ -93,6 +130,21 @@ const Leave = () => {
           { label: "Archive", type: "delete", onClick: (row) => alert(`Archiving ${row.type} leave`) },
         ]}
       />
+
+      {/* Leave Modal */}
+      <Modal
+        isOpen={isLeaveModalOpen}
+        onClose={() => setIsLeaveModalOpen(false)}
+        title="Create Leave"
+      >
+        <AuthForm
+          fields={createLeaveFields}
+          validationSchema={createLeaveSchema}
+          onSubmit={handleCreateLeave}
+          buttonText={submitLoading ? "Creating..." : "Create Leave"}
+          disabled={submitLoading}
+        />
+      </Modal>
     </div>
   );
 };
