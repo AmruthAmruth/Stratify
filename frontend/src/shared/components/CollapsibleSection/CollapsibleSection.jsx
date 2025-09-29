@@ -125,8 +125,8 @@ const CollapsibleSection = ({
               </div>
               {expandedItem === itemName && (
                 <div className="p-6 space-y-6 bg-white border-t border-gray-200">
-                  {/* Create User Story Button - Pass itemId instead of itemName */}
-                  {onCreateUserStory && (
+                  {/* Create User Story Button - Only show for backlogs */}
+                  {type === 'backlog' && onCreateUserStory && (
                     <div className="flex justify-end mb-4">
                       <button
                         onClick={(e) => {
@@ -248,8 +248,8 @@ const CollapsibleSection = ({
                                   Tasks
                                 </h6>
                                 
-                                {/* Create Task Button - Pass userStoryId and itemId */}
-                                {onCreateTask && (
+                                {/* Create Task Button - Only show for backlogs */}
+                                {type === 'backlog' && onCreateTask && (
                                   <button
                                     onClick={(e) => {
                                       e.stopPropagation();
