@@ -72,30 +72,67 @@ export class LeaveRepository implements ILeaveRepository {
     );
   }
 
-
-  async findOverlappingLeave(employeeId: string, startDate: Date, endDate: Date): Promise<Leave | null> {
+  async findOverlappingLeave(
+    employeeId: string,
+    startDate: Date,
+    endDate: Date
+  ): Promise<Leave | null> {
     const overlapping = await LeaveModel.findOne({
-    employeeId: new Types.ObjectId(employeeId),
-    $or: [
-      {
-        startDate: { $lte: endDate },
-        endDate: { $gte: startDate },
-      },
-    ],
-  }).exec();
+      employeeId: new Types.ObjectId(employeeId),
+      $or: [
+        {
+          startDate: { $lte: endDate },
+          endDate: { $gte: startDate },
+        },
+      ],
+    }).exec();
 
-  if (!overlapping) return null;
+    if (!overlapping) return null;
 
-  return new Leave(
-    overlapping.id.toString(),
-    overlapping.employeeId.toString(),
-    overlapping.startDate,
-    overlapping.endDate,
-    overlapping.type,
-    overlapping.status,
-    overlapping.reason,
-    overlapping.createdAt,
-    overlapping.updatedAt
-  );
+    return new Leave(
+      overlapping.id.toString(),
+      overlapping.employeeId.toString(),
+      overlapping.startDate,
+      overlapping.endDate,
+      overlapping.type,
+      overlapping.status,
+      overlapping.reason,
+      overlapping.createdAt,
+      overlapping.updatedAt
+    );
+  }
+
+  async countLeaveDays(
+    employeeId: string,
+    start: Date,
+    end: Date,
+    leaveType: string
+  ): Promise<number> {
+    const leaves = await LeaveModel.find({
+      employeeId: new Types.ObjectId(employeeId),
+      type: leaveType,
+      status: { $in: ["Approved"] },
+      $or: [
+        {
+          startDate: { $lte: end },
+          endDate: { $gte: start },
+        },
+      ],
+    }).exec();
+
+    let totalDays = 0;
+
+    for (const leave of leaves) {
+      const leaveStart = leave.startDate < start ? start : leave.startDate;
+      const leaveEnd = leave.endDate > end ? end : leave.endDate;
+
+      const diff =
+        Math.ceil(
+          (leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)
+        ) + 1;
+
+      totalDays += diff;
+    }
+    return totalDays;
   }
 }

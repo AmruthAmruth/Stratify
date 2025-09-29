@@ -57,6 +57,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
     const tempPassword = await generateRandomPassword();
     const hashedPassword = await hashPassword(tempPassword);
   const managerIdToAssign = department.managerId ? department.managerId.toString() : undefined;
+console.log("Temp Password",tempPassword);
 
     
     const employee = new Employee(
