@@ -95,6 +95,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
 
 
         const taskDTOs: TaskDTO[] = tasks.map((task) => ({
+          taskId:task.id,
           name: task.title,
           description: task.description || "",
           status:

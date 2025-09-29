@@ -386,6 +386,8 @@ createProject = async (req:AuthRequest,res:Response)=>{
 createUserStory=async(req:AuthRequest,res:Response)=>{
   const createdBy=req.userId;
   const userStoryDTO={...req.body,createdBy};
+  
+  
   const response = await this._createUserStory.execute(userStoryDTO)
   return res.status(StatusCodes.CREATED).json({message:"User Story Created Successfully",response})
 }
@@ -408,7 +410,9 @@ createSprint = async(req:AuthRequest,res:Response)=>{
 
 
 createTask=async(req:Request,res:Response)=>{
+  console.log(req.body);
   const response = await this._createTask.execute(req.body);
+
    return res.status(StatusCodes.CREATED).json({message:"Task Created Successfully",response})
 }
 

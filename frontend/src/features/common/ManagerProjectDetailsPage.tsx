@@ -24,11 +24,11 @@ const ManagerProjectDetailsPage = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // Context states for creation
-  const [selectedBacklog, setSelectedBacklog] = useState(null);
-  const [selectedSprint, setSelectedSprint] = useState(null);
-  const [selectedUserStory, setSelectedUserStory] = useState(null);
-  const [selectedParent, setSelectedParent] = useState(null);
+  // Context states for creation - Store IDs instead of names
+  const [selectedBacklogId, setSelectedBacklogId] = useState(null);
+  const [selectedSprintId, setSelectedSprintId] = useState(null);
+  const [selectedUserStoryId, setSelectedUserStoryId] = useState(null);
+  const [selectedParentId, setSelectedParentId] = useState(null);
 
   // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
@@ -82,15 +82,12 @@ const ManagerProjectDetailsPage = () => {
       const payload = {
         ...values,
         projectId: id,
-        backlogId: selectedBacklog,
-        sprintId: selectedSprint,
+        backlogId: selectedBacklogId,
+        sprintId: selectedSprintId,
       };
-      console.log(payload);
-      
-      // Add your API call for creating user story here
-     //  await createStory(payload);
-      
       console.log("Creating user story with payload:", payload);
+      
+      await createStory(payload);
       
       enqueueSnackbar("User story created successfully!", { variant: "success" });
 
@@ -99,8 +96,8 @@ const ManagerProjectDetailsPage = () => {
       setProject(updatedProject);
 
       setIsStoryModalOpen(false);
-      setSelectedBacklog(null);
-      setSelectedSprint(null);
+      setSelectedBacklogId(null);
+      setSelectedSprintId(null);
     } catch (err: any) {
       console.error(err);
       enqueueSnackbar(err.message || "Failed to create user story.", { variant: "error" });
@@ -115,14 +112,13 @@ const ManagerProjectDetailsPage = () => {
       const payload = {
         ...values,
         projectId: id,
-        userStoryId: selectedUserStory,
-        parentId: selectedParent,
+        userStoryId: selectedUserStoryId,
+        parentId: selectedParentId,
       };
       
-      // Add your API call for creating task here
-       await createTask(payload);
-      
       console.log("Creating task with payload:", payload);
+      
+      await createTask(payload);
       
       enqueueSnackbar("Task created successfully!", { variant: "success" });
 
@@ -131,8 +127,8 @@ const ManagerProjectDetailsPage = () => {
       setProject(updatedProject);
 
       setIsTaskModalOpen(false);
-      setSelectedUserStory(null);
-      setSelectedParent(null);
+      setSelectedUserStoryId(null);
+      setSelectedParentId(null);
     } catch (err: any) {
       console.error(err);
       enqueueSnackbar(err.message || "Failed to create task.", { variant: "error" });
@@ -526,14 +522,14 @@ const ManagerProjectDetailsPage = () => {
             setExpandedStory={setExpandedStory}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
-            onCreateUserStory={(sprintName) => {
-              setSelectedSprint(sprintName);
-              setSelectedBacklog(null);
+            onCreateUserStory={(sprintId) => {
+              setSelectedSprintId(sprintId);
+              setSelectedBacklogId(null);
               setIsStoryModalOpen(true);
             }}
-            onCreateTask={(userStoryName, sprintName) => {
-              setSelectedUserStory(userStoryName);
-              setSelectedParent(sprintName);
+            onCreateTask={(userStoryId, sprintId) => {
+              setSelectedUserStoryId(userStoryId);
+              setSelectedParentId(sprintId);
               setIsTaskModalOpen(true);
             }}
           />
@@ -565,14 +561,14 @@ const ManagerProjectDetailsPage = () => {
             setExpandedStory={setExpandedStory}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
-            onCreateUserStory={(backlogName) => {
-              setSelectedBacklog(backlogName);
-              setSelectedSprint(null);
+            onCreateUserStory={(backlogId) => {
+              setSelectedBacklogId(backlogId);
+              setSelectedSprintId(null);
               setIsStoryModalOpen(true);
             }}
-            onCreateTask={(userStoryName, backlogName) => {
-              setSelectedUserStory(userStoryName);
-              setSelectedParent(backlogName);
+            onCreateTask={(userStoryId, backlogId) => {
+              setSelectedUserStoryId(userStoryId);
+              setSelectedParentId(backlogId);
               setIsTaskModalOpen(true);
             }}
           />
@@ -598,8 +594,8 @@ const ManagerProjectDetailsPage = () => {
         isOpen={isStoryModalOpen}
         onClose={() => {
           setIsStoryModalOpen(false);
-          setSelectedBacklog(null);
-          setSelectedSprint(null);
+          setSelectedBacklogId(null);
+          setSelectedSprintId(null);
         }}
         title="Create User Story"
       >
@@ -616,8 +612,8 @@ const ManagerProjectDetailsPage = () => {
         isOpen={isTaskModalOpen}
         onClose={() => {
           setIsTaskModalOpen(false);
-          setSelectedUserStory(null);
-          setSelectedParent(null);
+          setSelectedUserStoryId(null);
+          setSelectedParentId(null);
         }}
         title="Create Task"
       >
