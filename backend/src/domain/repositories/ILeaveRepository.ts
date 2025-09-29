@@ -7,5 +7,5 @@ export interface ILeaveRepository {
   findById(id: string): Promise<Leave | null>;
   findOverlappingLeave(employeeId:string,startDate:Date,endDate:Date):Promise<Leave|null>
   countLeaveDays(employeeId:string,start:Date,end:Date,leaveType:string):Promise<number>
- getCurrentMonthLeavesByEmployeeId(employeeId: string, month: number, year: number): Promise<Leave[]>;
+ getLeavesByEmployeeAndDateRange(employeeId:string,startOfMonth:Date,endOfMonth:Date):Promise<Leave[]>
 }

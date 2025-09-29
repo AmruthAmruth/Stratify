@@ -28,6 +28,12 @@ companyRouter.get('/subscription-plans',asyncHandler(controller.listPlans))
 
 companyRouter.get('/company-projects',authMiddleware(["company"]),asyncHandler(controller.getProjectsByCompany))
 companyRouter.get('/department-projects',authMiddleware(["manager"]),asyncHandler(controller.getProjectsByDepartment))
+
+
+companyRouter.get('/leaves',authMiddleware(["employee"]),asyncHandler(controller.getEmployeeCurrentMouthLeave))
+
+
+
 companyRouter.get('/project/:id',asyncHandler(controller.getProjectDetails))
 
 companyRouter.get('/team-member-profile/:id',asyncHandler(controller.getProfileOfTeamMemeber))

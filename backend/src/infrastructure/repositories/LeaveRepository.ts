@@ -137,41 +137,34 @@ export class LeaveRepository implements ILeaveRepository {
   }
 
 
-  async getCurrentMonthLeavesByEmployeeId(
-  employeeId: string,
-  month: number,
-  year: number
+async getLeavesByEmployeeAndDateRange(
+    employeeId: string,
+    startOfMonth: Date,
+    endOfMonth: Date
 ): Promise<Leave[]> {
-  
-  const startOfMonth = new Date(year, month - 1, 1); 
-  const endOfMonth = new Date(year, month, 0, 23, 59, 59, 999); 
-
- 
-  const docs = await LeaveModel.find({
-    employeeId: new Types.ObjectId(employeeId),
-    $or: [
-      {
+    const docs = await LeaveModel.find({
+        employeeId: new Types.ObjectId(employeeId),
         startDate: { $lte: endOfMonth },
         endDate: { $gte: startOfMonth },
-      },
-    ],
-  }).exec();
+    }).exec();
 
-
-  return docs.map(
-    (doc) =>
-      new Leave(
-        doc.id.toString(),
-        doc.employeeId.toString(),
-        doc.startDate,
-        doc.endDate,
-        doc.type,
-        doc.status,
-        doc.reason,
-        doc.createdAt,
-        doc.updatedAt
-      )
-  );
+    return docs.map(
+        (doc) =>
+            new Leave(
+                doc.id.toString(),
+                doc.employeeId.toString(),
+                doc.startDate,
+                doc.endDate,
+                doc.type,
+                doc.status,
+                doc.reason,
+                doc.createdAt,
+                doc.updatedAt
+            )
+    );
 }
+
+
+
 
 }

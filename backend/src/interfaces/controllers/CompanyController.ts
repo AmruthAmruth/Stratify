@@ -43,6 +43,7 @@ import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/proje
 import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
 import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
 import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
+import { IGetEmployeeLeaveUseCase } from "../../application/interfaces/leave/IGetEmployeeLeaveUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -83,7 +84,8 @@ export class CompanyController {
     private _getProjectsByCompany:IGetProjectsByCompanyUseCase,
     private _getProjectsByDepartment:IGetProjectsByDepartmentUseCase,
     private _getProjectDetails:IGetProjectDetailsUseCase,
-    private _assignUserStoryToSprint:IAssignUserStoryToSprintUseCase
+    private _assignUserStoryToSprint:IAssignUserStoryToSprintUseCase,
+    private _getEmployeeCurrentMounthLeave:IGetEmployeeLeaveUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -453,6 +455,12 @@ assignUserStoryToSprint=async(req:AuthRequest,res:Response)=>{
   return res.status(StatusCodes.CREATED).json({message:"Assign User Story to Sprint is Successfull !",response})
 }
 
+
+getEmployeeCurrentMouthLeave=async(req:AuthRequest,res:Response)=>{
+  const employeeId=req.userId;
+  const response = await this._getEmployeeCurrentMounthLeave.execute(employeeId!)
+  return res.status(StatusCodes.OK).json(response)
+}
 
 
 }

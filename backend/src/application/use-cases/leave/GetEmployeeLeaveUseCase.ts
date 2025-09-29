@@ -2,49 +2,64 @@ import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository"
 import { EmployeeLeaveDTO, LeaveCountsDTO, LeaveDTO } from "../../dto/leave/GetEmployeeLeaveDTO";
 import { IGetEmployeeLeaveUseCase } from "../../interfaces/leave/IGetEmployeeLeaveUseCase";
 
-
-
-
-export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase{
-    constructor(
-            private _leaveRepo:ILeaveRepository
-    ){}
+export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase {
+    constructor(private _leaveRepo: ILeaveRepository) {}
 
     async execute(employeeId: string): Promise<EmployeeLeaveDTO> {
-        const now = new Date();
-        const currentMonth = now.getMonth() + 1;
-        const currentYear = now.getFullYear();
+        console.log("Employee ID",employeeId);
+        
+         const now = new Date();
+const startOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth(), 1, 0, 0, 0));
+const endOfMonth = new Date(Date.UTC(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59));
 
 
-          const monthlyLeaves: LeaveDTO[] = await this._leaveRepo.getCurrentMonthLeavesByEmployeeId(
+ const leaves = await this._leaveRepo.getLeavesByEmployeeAndDateRange(
             employeeId,
-            currentMonth,
-            currentYear
+            startOfMonth,
+            endOfMonth
         );
 
 
+console.log("Leaves ",leaves);
+
          const leaveCounts: LeaveCountsDTO = {
-            Casual: 0,
-            Sick: 0,
-            Earned: 0,
+            Casual: 2,
+            Sick: 2,
+            Earned: 1,
         };
 
 
-                monthlyLeaves.forEach((leave) => {
-            if (leave.type === "Casual") leaveCounts.Casual += 1;
-            else if (leave.type === "Sick") leaveCounts.Sick += 1;
-            else if (leave.type === "Earned") leaveCounts.Earned += 1;
-        });
+
+        const leaveDTOs: LeaveDTO[] = leaves.map((leave) => ({
+            employeeId: leave.employeeId.toString(),
+            startDate: leave.startDate,
+            endDate: leave.endDate,
+            type: leave.type,
+            status: leave.status,
+            reason: leave.reason,
+        }));
+
+         for (const leave of leaveDTOs) {
+            if (leave.status === "Approved") {
+                if (leave.type in leaveCounts) {
+                    // Calculate number of days in this leave
+                    const days =
+                        Math.ceil(
+                            (leave.endDate.getTime() - leave.startDate.getTime()) /
+                                (1000 * 60 * 60 * 24)
+                        ) + 1;
+
+                    leaveCounts[leave.type as keyof LeaveCountsDTO] =
+                        Math.max(0, leaveCounts[leave.type as keyof LeaveCountsDTO] - days);
+                }
+            }
+        }
 
 
-          return {
+         return {
             leaveCounts,
-            leaves: monthlyLeaves,
+            leaves: leaveDTOs,
         };
-
-        
-
-
 
     }
 }
