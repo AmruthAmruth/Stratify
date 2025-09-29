@@ -418,8 +418,10 @@ createTask=async(req:Request,res:Response)=>{
 
 
 
-createLeave=async(req:Request,res:Response)=>{
-  const response = await this._createLeave.execute(req.body);
+createLeave=async(req:AuthRequest,res:Response)=>{
+  const employeeId=req.userId
+  const leaveDTO={...req.body,employeeId}
+  const response = await this._createLeave.execute(leaveDTO);
    return res.status(StatusCodes.CREATED).json({message:"Leave Created Successfully",response})
 }
 

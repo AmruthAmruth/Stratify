@@ -62,7 +62,7 @@ companyRouter.post('/create-sprint',authMiddleware(["company","manager"]),asyncH
 companyRouter.post('/create-task',asyncHandler(controller.createTask))
 companyRouter.post('/assigned-to-sprint',authMiddleware(["company","manager"]),asyncHandler(controller.assignUserStoryToSprint))
 
-companyRouter.post('/create-leave',asyncHandler(controller.createLeave))
+companyRouter.post('/create-leave',authMiddleware(["employee"]),asyncHandler(controller.createLeave))
 
 
 
