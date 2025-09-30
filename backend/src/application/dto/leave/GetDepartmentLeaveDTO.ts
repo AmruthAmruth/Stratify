@@ -12,7 +12,8 @@ export interface LeaveDTO {
   endDate: Date;                          
   type: "Casual" | "Sick" | "Earned" | "Other"; 
   status?: "Pending" | "Approved" | "Rejected"; 
-  reason?: string;                        
+  reason?: string; 
+  rejectedReason?:string;                       
 }
 
 

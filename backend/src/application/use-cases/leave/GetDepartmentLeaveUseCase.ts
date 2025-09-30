@@ -14,7 +14,6 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
   ) {}
 
   async execute(managerId: string): Promise<DepartmentLeaveDTO> {
-  
     const manager = await this._managerRepo.findById(managerId);
     if (!manager) {
       throw new AppError("Manager not found", StatusCodes.NOT_FOUND);
@@ -31,16 +30,14 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
     const endOfToday = new Date(today);
-    endOfToday.setHours(23, 59, 59, 999); 
+    endOfToday.setHours(23, 59, 59, 999);
 
-    
     const leaves = await this._leaveRepo.findLeavesByDepartmentAndDateRange(
       departmentId,
       today,
       endOfToday
     );
 
-  
     const employeesInDept = await this._employeeRepo.findByDepartmentId(departmentId);
     const totalEmployees = employeesInDept.length;
 
@@ -51,17 +48,18 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
       activeMembers: totalEmployees - new Set(leaves.map((l) => l.employeeId)).size,
     };
 
-   
     const leavesDTO: LeaveDTO[] = leaves.map((l) => {
       const employee = employeesInDept.find((e) => e.id === l.employeeId);
       const employeeName = employee ? employee.name : "Unknown";
+
       return {
         employeeName,
         startDate: l.startDate,
         endDate: l.endDate,
         type: l.type,
         status: l.status,
-        reason: l.reason,
+        reason: l.reason,               
+        rejectedReason: l.rejectedReason 
       };
     });
 
