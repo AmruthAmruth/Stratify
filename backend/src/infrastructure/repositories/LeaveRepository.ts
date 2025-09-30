@@ -114,7 +114,7 @@ export class LeaveRepository implements ILeaveRepository {
     const leaves = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
       type: leaveType,
-      status: { $in: ["Approved"] },
+      status: { $in: ["Approved","Pending"] },
       $or: [
         { startDate: { $lte: end }, endDate: { $gte: start } },
       ],

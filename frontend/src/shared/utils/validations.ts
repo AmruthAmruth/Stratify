@@ -137,19 +137,17 @@ export const createTaskSchema = z.object({
 });
 
 
-
 export const createLeaveSchema = z.object({
-   startDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Start date is required",
   }),
-  endDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "End date is required",
   }),
-
-status: z.enum(["Casual", "Sick", "Earned"], {
-    errorMap: () => ({ message: "Status must be To Do, In Progress, or Done" }),
+  type: z.enum(["Casual", "Sick", "Earned"], {
+    errorMap: () => ({
+      message: "Leave type must be Casual, Sick, or Earned",
+    }),
   }),
-
- reason: z.string().min(1, "Reason is required"),
-
+  reason: z.string().min(1, "Reason is required"),
 });

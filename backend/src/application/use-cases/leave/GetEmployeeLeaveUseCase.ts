@@ -12,7 +12,7 @@ export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase {
 
   async execute(employeeId: string): Promise<EmployeeLeaveDTO> {
     const now = new Date();
-    const currentMonth = now.getMonth() + 1; // JS months are 0-based
+    const currentMonth = now.getMonth(); // JS months are 0-based
     const currentYear = now.getFullYear();
 
     // Fetch leaves for this employee in the current month

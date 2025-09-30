@@ -20,7 +20,7 @@ export const getLeaveCurrentMonth = async () => {
 
 export const createLeave = async (data:Record<string, unknown>) => {
   try {
-    const response = await api.post(LEAVE_ROUTES.CREATE_LEAVE, { data });
+    const response = await api.post(LEAVE_ROUTES.CREATE_LEAVE,data );
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");

@@ -11,7 +11,7 @@ import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import cookieParser from "cookie-parser";
 dotenv.config();
 
-const app = express();
+const app = express(); 
 
 
 app.use(cors({
