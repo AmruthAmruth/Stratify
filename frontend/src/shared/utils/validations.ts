@@ -137,17 +137,42 @@ export const createTaskSchema = z.object({
 });
 
 
-export const createLeaveSchema = z.object({
-  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "Start date is required",
-  }),
-  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-    message: "End date is required",
-  }),
-  type: z.enum(["Casual", "Sick", "Earned"], {
-    errorMap: () => ({
-      message: "Leave type must be Casual, Sick, or Earned",
+
+
+
+import { z } from "zod";
+
+export const createLeaveSchema = z
+  .object({
+    startDate: z
+      .string()
+      .refine((val) => !isNaN(Date.parse(val)), {
+        message: "Start date is required and must be a valid date",
+      })
+      .refine((val) => {
+        const today = new Date();
+        const start = new Date(val);
+        return start.setHours(0, 0, 0, 0) >= today.setHours(0, 0, 0, 0);
+      }, {
+        message: "Start date cannot be in the past",
+      }),
+
+    endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "End date is required and must be a valid date",
     }),
-  }),
-  reason: z.string().min(1, "Reason is required"),
-});
+
+    type: z.enum(["Casual", "Sick", "Earned"], {
+      errorMap: () => ({
+        message: "Leave type must be Casual, Sick, or Earned",
+      }),
+    }),
+    reason: z.string().min(1, "Reason is required"),
+  })
+  .refine((data) => {
+    const start = new Date(data.startDate);
+    const end = new Date(data.endDate);
+    return end.setHours(0, 0, 0, 0) >= start.setHours(0, 0, 0, 0);
+  }, {
+    message: "End date cannot be before start date",
+    path: ["endDate"], // shows error under endDate field
+  });
