@@ -7,6 +7,7 @@ export interface LeaveDocument extends Document {
   type: "Casual" | "Sick" | "Earned" | "Other";
   status: "Pending" | "Approved" | "Rejected";
   reason?: string;
+  rejectedReason?: string;
   month: number;
   departmentId: Types.ObjectId;
   companyId: Types.ObjectId;
@@ -30,6 +31,7 @@ const LeaveSchema = new Schema<LeaveDocument>(
       default: "Pending",
     },
     reason: { type: String },
+    rejectedReason: { type: String }, // <-- Added this field
     month: { type: Number, required: true, min: 0, max: 11 },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },

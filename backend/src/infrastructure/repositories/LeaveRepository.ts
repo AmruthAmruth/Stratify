@@ -12,6 +12,7 @@ export class LeaveRepository implements ILeaveRepository {
       type: leave.type ?? "Casual",
       status: leave.status ?? "Pending",
       reason: leave.reason,
+      rejectedReason: leave.rejectedReason,
       month: leave.startDate.getMonth(),
       departmentId: new Types.ObjectId(leave.departmentId),
       companyId: new Types.ObjectId(leave.companyId),
@@ -29,7 +30,8 @@ export class LeaveRepository implements ILeaveRepository {
       created.updatedAt,
       created.month,
       created.departmentId.toString(),
-      created.companyId.toString()
+      created.companyId.toString(),
+      created.rejectedReason
     );
   }
 
@@ -42,6 +44,7 @@ export class LeaveRepository implements ILeaveRepository {
         type: leave.type,
         status: leave.status,
         reason: leave.reason,
+        rejectedReason: leave.rejectedReason,
         month: leave.startDate.getMonth(),
         departmentId: new Types.ObjectId(leave.departmentId),
         companyId: new Types.ObjectId(leave.companyId),
@@ -63,7 +66,8 @@ export class LeaveRepository implements ILeaveRepository {
       updated.updatedAt,
       updated.month,
       updated.departmentId.toString(),
-      updated.companyId.toString()
+      updated.companyId.toString(),
+      updated.rejectedReason
     );
   }
 
@@ -83,7 +87,8 @@ export class LeaveRepository implements ILeaveRepository {
       doc.updatedAt,
       doc.month,
       doc.departmentId.toString(),
-      doc.companyId.toString()
+      doc.companyId.toString(),
+      doc.rejectedReason
     );
   }
 
@@ -111,7 +116,8 @@ export class LeaveRepository implements ILeaveRepository {
       overlapping.updatedAt,
       overlapping.month,
       overlapping.departmentId.toString(),
-      overlapping.companyId.toString()
+      overlapping.companyId.toString(),
+      overlapping.rejectedReason
     );
   }
 
@@ -183,7 +189,8 @@ export class LeaveRepository implements ILeaveRepository {
           doc.updatedAt,
           doc.month,
           doc.departmentId.toString(),
-          doc.companyId.toString()
+          doc.companyId.toString(),
+          doc.rejectedReason
         )
     );
   }
@@ -210,82 +217,73 @@ export class LeaveRepository implements ILeaveRepository {
           doc.updatedAt,
           doc.month,
           doc.departmentId.toString(),
-          doc.companyId.toString()
+          doc.companyId.toString(),
+          doc.rejectedReason
         )
     );
   }
 
+  async findLeavesByDepartment(departmentId: string, currentMonth: number): Promise<Leave[]> {
+    const docs = await LeaveModel.find({
+      departmentId: new Types.ObjectId(departmentId),
+      month: currentMonth,
+    })
+      .sort({ startDate: 1 })
+      .exec();
 
+    return docs.map(
+      (doc) =>
+        new Leave(
+          doc.id.toString(),
+          doc.employeeId.toString(),
+          doc.startDate,
+          doc.endDate,
+          doc.type,
+          doc.status,
+          doc.reason,
+          doc.createdAt,
+          doc.updatedAt,
+          doc.month,
+          doc.departmentId.toString(),
+          doc.companyId.toString(),
+          doc.rejectedReason
+        )
+    );
+  }
 
- async findLeavesByDepartment(departmentId: string,currentMonth:number): Promise<Leave[]> {
-  const docs = await LeaveModel.find({
-    departmentId: new Types.ObjectId(departmentId),
-    month:currentMonth
-  })
-    .sort({ startDate: 1 })
-    .exec();  
+  async findLeavesByDepartmentAndDateRange(
+    departmentId: string,
+    start: Date,
+    end: Date
+  ): Promise<Leave[]> {
+    const docs = await LeaveModel.find({
+      departmentId: new Types.ObjectId(departmentId),
+      $or: [
+        { startDate: { $lte: end, $gte: start } },
+        { endDate: { $gte: start, $lte: end } },
+        { startDate: { $lte: start }, endDate: { $gte: end } },
+      ],
+    })
+      .sort({ startDate: 1 })
+      .exec();
 
-  return docs.map(
-    (doc) =>
-      new Leave(
-        doc.id.toString(),
-        doc.employeeId.toString(),
-        doc.startDate,
-        doc.endDate,
-        doc.type,
-        doc.status,
-        doc.reason,
-        doc.createdAt,
-        doc.updatedAt,
-        doc.month,
-        doc.departmentId.toString(),
-        doc.companyId.toString()
-      )
-  );
-}
-
-
-
-async findLeavesByDepartmentAndDateRange(
-  departmentId: string,
-  start: Date,
-  end: Date
-): Promise<Leave[]> {
-  const docs = await LeaveModel.find({
-    departmentId: new Types.ObjectId(departmentId),
-    $or: [
-      { startDate: { $lte: end, $gte: start } },
-      { endDate: { $gte: start, $lte: end } },
-      { startDate: { $lte: start }, endDate: { $gte: end } }, 
-    ],
-  })
-    .sort({ startDate: 1 })
-    .exec();
-
-  return docs.map(
-    (doc) =>
-      new Leave(
-        doc.id.toString(),
-        doc.employeeId.toString(),
-        doc.startDate,
-        doc.endDate,
-        doc.type,
-        doc.status,
-        doc.reason,
-        doc.createdAt,
-        doc.updatedAt,
-        doc.month,
-        doc.departmentId.toString(),
-        doc.companyId.toString()
-      )
-  );
-}
-
-
-
-
-
-
-
-
+    return docs.map(
+      (doc) =>
+        new Leave(
+          doc.id.toString(),
+          doc.employeeId.toString(),
+          doc.startDate,
+          doc.endDate,
+          doc.type,
+          doc.status,
+          doc.reason,
+          doc.createdAt,
+          doc.updatedAt,
+          doc.month,
+          doc.departmentId.toString(),
+          doc.companyId.toString(),
+          doc.rejectedReason
+        )
+    );
+  }
 }
