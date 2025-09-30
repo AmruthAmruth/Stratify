@@ -127,3 +127,12 @@ export const createLeaveFields=[
   {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
  { name: "reason", label: "Reason", type: "text" },
 ]
+
+
+
+
+export const createRejectLeaveFields=[
+  { name: "reason", label: "Reason For Rejection", type: "text" },
+ 
+  
+]

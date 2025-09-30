@@ -22,7 +22,7 @@ const Projects = () => {
       setProjects(data);
     });
   }, []); 
-
+  
   if (!projects) {
     return <div className="text-black">Loading...</div>;
   }

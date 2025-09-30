@@ -72,6 +72,6 @@ companyRouter.post('/create-leave',authMiddleware(["employee"]),asyncHandler(con
 companyRouter.post('/leave-status',asyncHandler(controller.approveLeave))
 
 
-
+   
 export default companyRouter;
  

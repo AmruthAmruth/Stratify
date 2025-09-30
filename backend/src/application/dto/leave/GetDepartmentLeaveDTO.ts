@@ -7,6 +7,7 @@ export interface LeaveCountsDTO {
 
 
 export interface LeaveDTO {
+  leaveId:string | undefined;
   employeeName: string;                     
   startDate: Date;                        
   endDate: Date;                          

@@ -57,6 +57,7 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
       const employeeName = employee ? employee.name : "Unknown";
 
       return {
+        leaveId:l.id,
         employeeName,
         startDate: l.startDate,
         endDate: l.endDate,

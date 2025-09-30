@@ -45,6 +45,12 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
 
         // Update leave status
         leave.status = status;
+
+
+if (status === "Rejected") {
+    leave.rejectedReason = reason; 
+}
+
         await this._leaveRepo.update(leave);
 
         // Fetch employee email

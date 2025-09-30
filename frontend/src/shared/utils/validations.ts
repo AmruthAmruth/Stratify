@@ -139,9 +139,6 @@ export const createTaskSchema = z.object({
 
 
 
-
-import { z } from "zod";
-
 export const createLeaveSchema = z
   .object({
     startDate: z
@@ -176,3 +173,15 @@ export const createLeaveSchema = z
     message: "End date cannot be before start date",
     path: ["endDate"], // shows error under endDate field
   });
+
+
+
+  
+
+
+export const createRejectLeaveSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+
+});
+
+

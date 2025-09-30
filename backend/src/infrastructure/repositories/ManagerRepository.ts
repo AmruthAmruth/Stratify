@@ -10,7 +10,7 @@ export class ManagerRepository implements IManagerRepository{
    async create(manager: Manager): Promise<Manager> {
        const doc = await ManagerModel.create({
       name: manager.name,
-      email: manager.email,
+      email: manager.email, 
       phone: manager.phone,
       password: manager.password,
       role: manager.role,
