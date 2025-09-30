@@ -45,6 +45,7 @@ import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/
 import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
 import { IGetEmployeeLeaveUseCase } from "../../application/interfaces/leave/IGetEmployeeLeaveUseCase";
 import { IGetDepartmentLeaveUseCase } from "../../application/interfaces/leave/IGetDepartmentLeavsUseCase";
+import { IApproveLeaveUseCase } from "../../application/interfaces/leave/IApproveLeaveUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -87,7 +88,8 @@ export class CompanyController {
     private _getProjectDetails:IGetProjectDetailsUseCase,
     private _assignUserStoryToSprint:IAssignUserStoryToSprintUseCase,
     private _getEmployeeCurrentMounthLeave:IGetEmployeeLeaveUseCase,
-    private _getDepartmentLeavs:IGetDepartmentLeaveUseCase
+    private _getDepartmentLeavs:IGetDepartmentLeaveUseCase,
+    private _approveLeave:IApproveLeaveUseCase
   ) {}
 
   register = async (req: MulterRequest, res: Response) => {
@@ -471,6 +473,12 @@ getDepartmentLeaves=async(req:AuthRequest,res:Response)=>{
   const managerId=req.userId;
   const response = await this._getDepartmentLeavs.execute(managerId!);
   return res.status(StatusCodes.OK).json(response)
+}
+
+
+approveLeave=async(req:Request,res:Response)=>{
+  const response = await this._approveLeave.execute(req.body);
+  return res.status(StatusCodes.OK).json({message:response})
 }
 
 

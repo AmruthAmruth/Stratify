@@ -70,6 +70,7 @@ import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetPr
 import { AssignUserStoryToSprintUseCase } from "../application/use-cases/project/AssignUserStoryToSprintUseCase";
 import { GetEmployeeLeaveUseCase } from "../application/use-cases/leave/GetEmployeeLeaveUseCase";
 import { GetDepartmentLeaveUseCase } from "../application/use-cases/leave/GetDepartmentLeaveUseCase";
+import { ApproveLeaveUseCase } from "../application/use-cases/leave/ApproveLeaveUseCase";
 
 export const companyDI = () => {
   // Repositories
@@ -144,7 +145,7 @@ export const companyDI = () => {
   const createLeave = new CreateLeaveUseCase(leaveRepo, employeeRepo);
   const getEmployeeCurrentMounthLeave = new GetEmployeeLeaveUseCase(leaveRepo)
   const getDepartmentLeave = new GetDepartmentLeaveUseCase(leaveRepo,managerRepo,employeeRepo)
-
+  const approveLeave = new ApproveLeaveUseCase(leaveRepo,employeeRepo,emailService)
 
 
 
@@ -185,6 +186,7 @@ export const companyDI = () => {
     getProjectDetails,
     AssignUserStoryToSprint,
     getEmployeeCurrentMounthLeave,
-    getDepartmentLeave
+    getDepartmentLeave,
+    approveLeave
   );
 };
