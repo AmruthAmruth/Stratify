@@ -12,7 +12,9 @@ export class LeaveRepository implements ILeaveRepository {
       type: leave.type ?? "Casual",
       status: leave.status ?? "Pending",
       reason: leave.reason,
-      month: leave.startDate.getMonth(), // store month here
+      month: leave.startDate.getMonth(),
+      departmentId: new Types.ObjectId(leave.departmentId),
+      companyId: new Types.ObjectId(leave.companyId),
     }).save();
 
     return new Leave(
@@ -25,7 +27,9 @@ export class LeaveRepository implements ILeaveRepository {
       created.reason,
       created.createdAt,
       created.updatedAt,
-      created.month
+      created.month,
+      created.departmentId.toString(),
+      created.companyId.toString()
     );
   }
 
@@ -38,7 +42,9 @@ export class LeaveRepository implements ILeaveRepository {
         type: leave.type,
         status: leave.status,
         reason: leave.reason,
-        month: leave.startDate.getMonth(), // update month if startDate changed
+        month: leave.startDate.getMonth(),
+        departmentId: new Types.ObjectId(leave.departmentId),
+        companyId: new Types.ObjectId(leave.companyId),
       },
       { new: true }
     ).exec();
@@ -55,7 +61,9 @@ export class LeaveRepository implements ILeaveRepository {
       updated.reason,
       updated.createdAt,
       updated.updatedAt,
-      updated.month
+      updated.month,
+      updated.departmentId.toString(),
+      updated.companyId.toString()
     );
   }
 
@@ -73,7 +81,9 @@ export class LeaveRepository implements ILeaveRepository {
       doc.reason,
       doc.createdAt,
       doc.updatedAt,
-      doc.month
+      doc.month,
+      doc.departmentId.toString(),
+      doc.companyId.toString()
     );
   }
 
@@ -84,9 +94,7 @@ export class LeaveRepository implements ILeaveRepository {
   ): Promise<Leave | null> {
     const overlapping = await LeaveModel.findOne({
       employeeId: new Types.ObjectId(employeeId),
-      $or: [
-        { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
-      ],
+      $or: [{ startDate: { $lte: endDate }, endDate: { $gte: startDate } }],
     }).exec();
 
     if (!overlapping) return null;
@@ -101,7 +109,9 @@ export class LeaveRepository implements ILeaveRepository {
       overlapping.reason,
       overlapping.createdAt,
       overlapping.updatedAt,
-      overlapping.month
+      overlapping.month,
+      overlapping.departmentId.toString(),
+      overlapping.companyId.toString()
     );
   }
 
@@ -114,22 +124,26 @@ export class LeaveRepository implements ILeaveRepository {
     const leaves = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
       type: leaveType,
-      status: { $in: ["Approved","Pending"] },
-      $or: [
-        { startDate: { $lte: end }, endDate: { $gte: start } },
-      ],
+      status: { $in: ["Approved", "Pending"] },
+      $or: [{ startDate: { $lte: end }, endDate: { $gte: start } }],
     }).exec();
 
     let totalDays = 0;
     for (const leave of leaves) {
       const leaveStart = leave.startDate < start ? start : leave.startDate;
       const leaveEnd = leave.endDate > end ? end : leave.endDate;
-      totalDays += Math.ceil((leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      totalDays += Math.ceil(
+        (leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)
+      ) + 1;
     }
     return totalDays;
   }
 
-  async countLeaveDaysByMonth(employeeId: string, month: number, type: string): Promise<number> {
+  async countLeaveDaysByMonth(
+    employeeId: string,
+    month: number,
+    type: string
+  ): Promise<number> {
     const leaves = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
       month,
@@ -167,7 +181,9 @@ export class LeaveRepository implements ILeaveRepository {
           doc.reason,
           doc.createdAt,
           doc.updatedAt,
-          doc.month
+          doc.month,
+          doc.departmentId.toString(),
+          doc.companyId.toString()
         )
     );
   }
@@ -176,7 +192,9 @@ export class LeaveRepository implements ILeaveRepository {
     const docs = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
       month,
-    }).sort({ startDate: 1 }).exec();
+    })
+      .sort({ startDate: 1 })
+      .exec();
 
     return docs.map(
       (doc) =>
@@ -190,11 +208,10 @@ export class LeaveRepository implements ILeaveRepository {
           doc.reason,
           doc.createdAt,
           doc.updatedAt,
-          doc.month
+          doc.month,
+          doc.departmentId.toString(),
+          doc.companyId.toString()
         )
     );
   }
-
-
-
 }

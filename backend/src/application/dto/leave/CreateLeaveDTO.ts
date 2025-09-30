@@ -3,5 +3,7 @@ export interface CreateLeaveDTO {
   startDate: Date;                       
   endDate: Date;                         
   type?: "Casual" | "Sick" | "Earned" | "Other"; 
-  reason?: string;                        
+  reason?: string; 
+  departmentId:string;
+  companyId:string;                      
 }

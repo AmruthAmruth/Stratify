@@ -92,7 +92,8 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       leaveDTO.reason,
       new Date(),
       new Date(),
-      leaveMonth
+      leaveMonth,
+      
     );
 
     // 9. Save leave

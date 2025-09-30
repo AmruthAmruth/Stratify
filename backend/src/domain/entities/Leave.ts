@@ -1,7 +1,7 @@
 export class Leave {
   constructor(
     public id: string | undefined,
-    public employeeId: string,           
+    public employeeId: string,
     public startDate: Date,
     public endDate: Date,
     public type: "Casual" | "Sick" | "Earned" | "Other" = "Casual",
@@ -9,6 +9,8 @@ export class Leave {
     public reason?: string,
     public createdAt?: Date,
     public updatedAt?: Date,
-    public month?: number 
+    public month?: number,
+    public departmentId?: string,
+    public companyId?: string
   ) {}
 }
