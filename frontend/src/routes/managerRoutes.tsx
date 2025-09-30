@@ -1,4 +1,5 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
+import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import ManagerProjects from "@/features/manager/ManagerProjects";
 import type { RouteObject } from "react-router-dom";
@@ -25,6 +26,11 @@ const managerRoutes: RouteObject[] = [
     path: "project/:id",
     element: <ManagerProjectDetailsPage />,
   },
+  {
+    path: "/leave-status",
+    element: <DepartmentLeaves />,
+  },
+
 ];
 
 export default managerRoutes;

@@ -27,6 +27,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "My Team", path: "/team" },
     { label: "Projects", path: "/projects" },
     { label: "Meetings", path: "/meetings" },
+    { label: "Leave Status", path: "/leave-status" },
     { label: "Message", path: "/message" },
     { label: "Department", path: "/department" },
     { label: "Attendance", path: "/attendance" },

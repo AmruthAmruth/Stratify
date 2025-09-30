@@ -26,3 +26,24 @@ export const createLeave = async (data:Record<string, unknown>) => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+
+export const getDepartmentLeave=async () => {
+  try {
+    const response = await api.get(LEAVE_ROUTES.GET_DEPARTMENT_LEAVE);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+export const leaveStatusUpdate=async (data:Record<string, unknown>) => {
+  try {
+    const response = await api.post(LEAVE_ROUTES.LEAVE_STATUS_UPDATE,data );
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};

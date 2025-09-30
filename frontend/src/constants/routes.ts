@@ -65,6 +65,7 @@ export const PROJECT_ROUTES = {
 
 export const LEAVE_ROUTES = {
   CREATE_LEAVE:"/company/create-leave",
-  GET_EMPLOYEE_CURRENT_MONTHLEAVE:"/company/leaves"
- 
+  GET_EMPLOYEE_CURRENT_MONTHLEAVE:"/company/leaves",
+   GET_DEPARTMENT_LEAVE:"/company/department-leaves",
+   LEAVE_STATUS_UPDATE:"/company/leave-status"
 };
