@@ -27,9 +27,10 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
         StatusCodes.NOT_FOUND
       );
     }
-
+     const now = new Date();
+const currentMonth = now.getMonth();
  
-    const leaves = await this._leaveRepo.findLeavesByDepartment(departmentId);
+    const leaves = await this._leaveRepo.findLeavesByDepartment(departmentId,currentMonth);
 
     
     const leaveCounts: LeaveCountsDTO = {

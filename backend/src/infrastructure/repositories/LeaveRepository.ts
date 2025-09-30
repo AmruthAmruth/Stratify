@@ -217,9 +217,10 @@ export class LeaveRepository implements ILeaveRepository {
 
 
 
- async findLeavesByDepartment(departmentId: string): Promise<Leave[]> {
+ async findLeavesByDepartment(departmentId: string,currentMonth:number): Promise<Leave[]> {
   const docs = await LeaveModel.find({
     departmentId: new Types.ObjectId(departmentId),
+    month:currentMonth
   })
     .sort({ startDate: 1 })
     .exec();  

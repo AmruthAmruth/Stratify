@@ -10,5 +10,5 @@ export interface ILeaveRepository {
  getLeavesByEmployeeAndDateRange(startOfMonth:Date,endOfMonth:Date):Promise<Leave[]>
  countLeaveDaysByMonth(employeeId:string, month: number, type: string):Promise<number>
  findLeavesByEmployeeAndMonth(employeeId:string,month:number):Promise<Leave[]>
- findLeavesByDepartment(departmentId:string):Promise<Leave[]>
+ findLeavesByDepartment(departmentId:string,currentMonth:number):Promise<Leave[]>
 }
