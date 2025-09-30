@@ -31,7 +31,7 @@ companyRouter.get('/department-projects',authMiddleware(["manager"]),asyncHandle
 
 
 companyRouter.get('/leaves',authMiddleware(["employee"]),asyncHandler(controller.getEmployeeCurrentMouthLeave))
-
+companyRouter.get('/department-leaves',authMiddleware(["manager"]),asyncHandler(controller.getDepartmentLeaves))
 
 
 companyRouter.get('/project/:id',asyncHandler(controller.getProjectDetails))

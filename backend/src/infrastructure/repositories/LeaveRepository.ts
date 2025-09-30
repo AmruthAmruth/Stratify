@@ -214,4 +214,32 @@ export class LeaveRepository implements ILeaveRepository {
         )
     );
   }
+
+
+
+ async findLeavesByDepartment(departmentId: string): Promise<Leave[]> {
+  const docs = await LeaveModel.find({
+    departmentId: new Types.ObjectId(departmentId),
+  })
+    .sort({ startDate: 1 })
+    .exec();  
+
+  return docs.map(
+    (doc) =>
+      new Leave(
+        doc.id.toString(),
+        doc.employeeId.toString(),
+        doc.startDate,
+        doc.endDate,
+        doc.type,
+        doc.status,
+        doc.reason,
+        doc.createdAt,
+        doc.updatedAt,
+        doc.month,
+        doc.departmentId.toString(),
+        doc.companyId.toString()
+      )
+  );
+}
 }

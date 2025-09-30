@@ -69,6 +69,7 @@ import { CreateLeaveUseCase } from "../application/use-cases/leave/CreateLeaveUs
 import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
 import { AssignUserStoryToSprintUseCase } from "../application/use-cases/project/AssignUserStoryToSprintUseCase";
 import { GetEmployeeLeaveUseCase } from "../application/use-cases/leave/GetEmployeeLeaveUseCase";
+import { GetDepartmentLeaveUseCase } from "../application/use-cases/leave/GetDepartmentLeaveUseCase";
 
 export const companyDI = () => {
   // Repositories
@@ -142,6 +143,12 @@ export const companyDI = () => {
   // Leave Use Case
   const createLeave = new CreateLeaveUseCase(leaveRepo, employeeRepo);
   const getEmployeeCurrentMounthLeave = new GetEmployeeLeaveUseCase(leaveRepo)
+  const getDepartmentLeave = new GetDepartmentLeaveUseCase(leaveRepo,managerRepo,employeeRepo)
+
+
+
+
+
   return new CompanyController(
     registerUseCase,
     verifyUseCase,
@@ -177,6 +184,7 @@ export const companyDI = () => {
     getProjectsByDepartment,
     getProjectDetails,
     AssignUserStoryToSprint,
-    getEmployeeCurrentMounthLeave
+    getEmployeeCurrentMounthLeave,
+    getDepartmentLeave
   );
 };
