@@ -43,7 +43,6 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
             );
         }
 
-        // Update leave status
         leave.status = status;
 
 
@@ -53,29 +52,28 @@ if (status === "Rejected") {
 
         await this._leaveRepo.update(leave);
 
-        // Fetch employee email
+        
         const employee = await this._employeeRepo.findById(leave.employeeId);
         if (!employee) {
             throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
         }
 
-        // Generate email HTML
         const html = leaveStatusTemplate(
             employee.name,
             leave.startDate,
             leave.endDate,
             status,
-            reason // only for email
+            reason 
         );
 
-        // Send email
+    
         await this._emailService.sendEmail(
             employee.email,
             `Your leave has been ${status}`,
             html
         );
 
-        // Return success message
+      
         return `Leave has been ${status.toLowerCase()} successfully${status === "Rejected" ? ` with reason: ${reason}` : ""}.`;
     }
 }

@@ -4,7 +4,13 @@ import { ISprintRepository } from "../../../domain/repositories/ISprintRepositor
 import { ITaskRepository } from "../../../domain/repositories/ITaskRepository";
 import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
-import { BacklogDTO, ProjectDetailsDTO, TaskDTO, UserStoryDTO, SprintDTO } from "../../dto/project/GetProjectDetailsDTO";
+import {
+  BacklogDTO,
+  ProjectDetailsDTO,
+  TaskDTO,
+  UserStoryDTO,
+  SprintDTO,
+} from "../../dto/project/GetProjectDetailsDTO";
 import { IGetProjectDetailsUseCase } from "../../interfaces/project/IGetProjectDetailsUseCase";
 
 export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
@@ -17,19 +23,19 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   ) {}
 
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
-    
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
       throw new AppError(`Project with ID ${projectId} not found`);
     }
 
-   
     const backlogs = await this._backlogsRepo.findByProjectId(projectId);
 
     const backlogDTOs: BacklogDTO[] = [];
 
     for (const backlog of backlogs) {
-      const userStories = await this._userStoryRepo.findByBacklogId(backlog.id!);
+      const userStories = await this._userStoryRepo.findByBacklogId(
+        backlog.id!
+      );
 
       const employeeIds = new Set<string>();
       const userStoryDTOs: UserStoryDTO[] = [];
@@ -38,7 +44,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         const tasks = await this._taskRepo.findByUserStoryId(story.id!);
 
         const taskDTOs: TaskDTO[] = tasks.map((task) => ({
-          taskId:task.id,
+          taskId: task.id,
           name: task.title,
           description: task.description || "",
           status:
@@ -52,7 +58,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         story.assignedToIds?.forEach((id) => employeeIds.add(id));
 
         userStoryDTOs.push({
-          userStoryId:story.id,
+          userStoryId: story.id,
           name: story.title,
           description: story.description,
           priority: story.priority,
@@ -71,7 +77,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
 
       backlogDTOs.push({
-        backlogId:backlog.id,
+        backlogId: backlog.id,
         name: backlog.name,
         description: backlog.description,
         numberOfEmployees: employeeIds.size,
@@ -79,23 +85,20 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       });
     }
 
- 
     const sprints = await this._sprintRepo.findByProject(projectId);
 
     const sprintDTOs: SprintDTO[] = [];
     for (const sprint of sprints) {
-    
+      const sprintUserStories = await this._userStoryRepo.findByIds(
+        sprint.userStoryIds!
+      );
 
-      const sprintUserStories = await this._userStoryRepo.findByIds(sprint.userStoryIds!);
-
-      
       const sprintUserStoryDTOs: UserStoryDTO[] = [];
       for (const story of sprintUserStories) {
         const tasks = await this._taskRepo.findByUserStoryId(story.id!);
 
-
         const taskDTOs: TaskDTO[] = tasks.map((task) => ({
-          taskId:task.id,
+          taskId: task.id,
           name: task.title,
           description: task.description || "",
           status:
@@ -107,7 +110,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
         }));
 
         sprintUserStoryDTOs.push({
-          userStoryId:story.id,
+          userStoryId: story.id,
           name: story.title,
           description: story.description,
           priority: story.priority,
@@ -126,19 +129,18 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
 
       sprintDTOs.push({
-        sprintId:sprint.id,
+        sprintId: sprint.id,
         name: sprint.name,
         description: sprint.description,
         startDate: sprint.startDate,
         endDate: sprint.endDate,
-        teamCapacity: sprint.teamCapacity, 
-        totalStoryPoints:sprint.totalStoryPoints,
+        teamCapacity: sprint.teamCapacity,
+        totalStoryPoints: sprint.totalStoryPoints,
         status: sprint.status,
         userStories: sprintUserStoryDTOs,
       });
     }
 
-   
     const endDate = new Date(project.endDate);
     const now = new Date();
     const remainingDays = Math.max(
@@ -146,7 +148,6 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
     );
 
-  
     const dto: ProjectDetailsDTO = {
       name: project.name,
       key: project.key,
@@ -154,8 +155,10 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       startDate: project.startDate,
       endDate: project.endDate,
       status: project.status,
-      projectLead: project.projectLeadId, 
-      totalTeamMembers: project.teamMemberIds ? project.teamMemberIds.length : 0,
+      projectLead: project.projectLeadId,
+      totalTeamMembers: project.teamMemberIds
+        ? project.teamMemberIds.length
+        : 0,
       remainingDays,
       backlogs: backlogDTOs,
       sprints: sprintDTOs,

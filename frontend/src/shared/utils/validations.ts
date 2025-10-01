@@ -171,7 +171,7 @@ export const createLeaveSchema = z
     return end.setHours(0, 0, 0, 0) >= start.setHours(0, 0, 0, 0);
   }, {
     message: "End date cannot be before start date",
-    path: ["endDate"], // shows error under endDate field
+    path: ["endDate"], 
   });
 
 

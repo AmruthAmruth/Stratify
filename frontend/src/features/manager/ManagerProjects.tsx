@@ -42,8 +42,6 @@ const ManagerProjects: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-
-
   const itemsPerPage = 6;
   const navigate = useNavigate();
 
@@ -52,46 +50,49 @@ const ManagerProjects: React.FC = () => {
     const fetchProjects = async () => {
       try {
         const data = await getDepartmentProjects();
-        setProjects(data);
+
+        if (data?.status === "error") {
+          setProjects({
+            departmentId: "",
+            projects: [],
+            counts: { total: 0, planned: 0, active: 0, completed: 0 },
+          });
+        } else {
+          setProjects(data);
+        }
       } catch (err) {
         console.error("Error fetching projects:", err);
+
+        // fallback
+        setProjects({
+          departmentId: "",
+          projects: [],
+          counts: { total: 0, planned: 0, active: 0, completed: 0 },
+        });
       }
     };
+
     fetchProjects();
   }, []);
-
-  if (!projects) {
-    return (
-      <div className="flex justify-center items-center h-full text-black">
-        Loading...
-      </div>
-    );
-  }
 
   // ---------------- Create Project Handler ----------------
   const handleCreateProject = async (values: any) => {
     setSubmitLoading(true);
     try {
-      // Merge departmentId
-      const payload = { ...values, departmentId: projects.departmentId };
-
-      // API call
-      const res = await createProject(payload);
-      console.log("Project created successfully:", res);
+      const payload = { ...values, departmentId: projects?.departmentId || "" };
+      await createProject(payload);
 
       enqueueSnackbar("Project Created Successfully!", {
         variant: "success",
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
 
-      // Refresh projects
       const updatedProjects = await getDepartmentProjects();
       setProjects(updatedProjects);
 
       setIsProjectModalOpen(false);
     } catch (err: unknown) {
       console.error("Error creating project:", err);
-
       const errorMessage =
         (err as any)?.message || "Failed to create project. Try again.";
 
@@ -105,14 +106,16 @@ const ManagerProjects: React.FC = () => {
   };
 
   // ---------------- Filtering ----------------
-  const filteredProjects = projects.projects
-    .filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
-    .filter((p) => (filterStatus ? p.status === filterStatus : true));
+  const filteredProjects =
+    projects?.projects
+      ?.filter((p) =>
+        p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+      )
+      ?.filter((p) => (filterStatus ? p.status === filterStatus : true)) || [];
 
   // ---------------- Sorting ----------------
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortBy) return 0;
-
     const aValue = a[sortBy as keyof Project] || "";
     const bValue = b[sortBy as keyof Project] || "";
 
@@ -138,7 +141,9 @@ const ManagerProjects: React.FC = () => {
   );
 
   // ---------------- Unique status options ----------------
-  const uniqueStatus = Array.from(new Set(projects.projects.map((p) => p.status)));
+  const uniqueStatus = projects?.projects
+    ? Array.from(new Set(projects.projects.map((p) => p.status)))
+    : [];
 
   // ---------------- Clear filters ----------------
   const clearFilters = () => {
@@ -153,9 +158,18 @@ const ManagerProjects: React.FC = () => {
     navigate(`/project/${projectId}`);
   };
 
+  // ---------------- Loading ----------------
+  if (!projects) {
+    return (
+      <div className="flex items-center justify-center py-20 text-gray-600">
+        Loading projects...
+      </div>
+    );
+  }
+
   return (
     <div className="text-black space-y-6">
-      {/* ---------------- Create Project Button ---------------- */}
+      {/* ---------------- Create Project Button (always visible) ---------------- */}
       <div className="flex justify-end mb-4">
         <button
           onClick={() => setIsProjectModalOpen(true)}
@@ -165,72 +179,93 @@ const ManagerProjects: React.FC = () => {
         </button>
       </div>
 
-      {/* ---------------- Dashboard cards ---------------- */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <DashboardCard
-          title="Total Projects"
-          value={projects.counts.total}
-          subtitle="All department projects"
-          trend={projects.counts.total > 0 ? "up" : "down"}
-        />
-        <DashboardCard
-          title="Planned Projects"
-          value={projects.counts.planned}
-          subtitle="Not started yet"
-          trend={projects.counts.planned > 0 ? "up" : "down"}
-        />
-        <DashboardCard
-          title="Active Projects"
-          value={projects.counts.active}
-          subtitle="Currently running"
-          trend={projects.counts.active > 0 ? "up" : "down"}
-        />
-        <DashboardCard
-          title="Completed Projects"
-          value={projects.counts.completed}
-          subtitle="Finished successfully"
-          trend={projects.counts.completed > 0 ? "up" : "down"}
-        />
-      </div>
+      {/* ---------------- Empty State ---------------- */}
+      {projects.projects.length === 0 ? (
+        <div className="flex flex-col items-center justify-center py-20 text-gray-600">
+          <p className="text-lg mb-4">No projects found in this department.</p>
+        </div>
+      ) : (
+        <>
+          {/* ---------------- Dashboard cards ---------------- */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <DashboardCard
+              title="Total Projects"
+              value={projects.counts.total}
+              subtitle="All department projects"
+              trend={projects.counts.total > 0 ? "up" : "down"}
+            />
+            <DashboardCard
+              title="Planned Projects"
+              value={projects.counts.planned}
+              subtitle="Not started yet"
+              trend={projects.counts.planned > 0 ? "up" : "down"}
+            />
+            <DashboardCard
+              title="Active Projects"
+              value={projects.counts.active}
+              subtitle="Currently running"
+              trend={projects.counts.active > 0 ? "up" : "down"}
+            />
+            <DashboardCard
+              title="Completed Projects"
+              value={projects.counts.completed}
+              subtitle="Finished successfully"
+              trend={projects.counts.completed > 0 ? "up" : "down"}
+            />
+          </div>
 
-      {/* ---------------- Filter bar ---------------- */}
-      <TableFilterBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        filterOptions={uniqueStatus}
-        filterValue={filterStatus}
-        setFilterValue={setFilterStatus}
-        sortOptions={[
-          { key: "projectName", label: "Project Name" },
-          { key: "projectLead", label: "Project Lead" },
-          { key: "departmentName", label: "Department" },
-          { key: "remainingTimeInDays", label: "Remaining Days" },
-        ]}
-        sortBy={sortBy}
-        setSortBy={setSortBy}
-        sortOrder={sortOrder}
-        setSortOrder={setSortOrder}
-        onClearFilters={clearFilters}
-      />
+          {/* ---------------- Filter bar ---------------- */}
+          <TableFilterBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            filterOptions={uniqueStatus}
+            filterValue={filterStatus}
+            setFilterValue={setFilterStatus}
+            sortOptions={[
+              { key: "projectName", label: "Project Name" },
+              { key: "projectLead", label: "Project Lead" },
+              { key: "departmentName", label: "Department" },
+              { key: "remainingTimeInDays", label: "Remaining Days" },
+            ]}
+            sortBy={sortBy}
+            setSortBy={setSortBy}
+            sortOrder={sortOrder}
+            setSortOrder={setSortOrder}
+            onClearFilters={clearFilters}
+          />
 
-      {/* ---------------- Projects table ---------------- */}
-      <Table
-        columns={[
-          { key: "projectName", label: "Project Name" },
-          { key: "projectDescription", label: "Project Description" },
-          { key: "status", label: "Status" },
-          { key: "remainingTimeInDays", label: "Remaining Days" },
-        ]}
-        data={paginatedData}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
-        actions={[
-          { label: "View More", type: "custom", onClick: (row) => handleViewProject(row.id) },
-          { label: "Edit", type: "edit", onClick: (row) => alert(`Editing ${row.projectName}`) },
-          { label: "Archive", type: "delete", onClick: (row) => alert(`Archiving ${row.projectName}`) },
-        ]}
-      />
+          {/* ---------------- Projects table ---------------- */}
+          <Table
+            columns={[
+              { key: "projectName", label: "Project Name" },
+              { key: "projectDescription", label: "Project Description" },
+              { key: "status", label: "Status" },
+              { key: "remainingTimeInDays", label: "Remaining Days" },
+            ]}
+            data={paginatedData}
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={(page) => setCurrentPage(page)}
+            actions={[
+              {
+                label: "View More",
+                type: "custom",
+                onClick: (row) => handleViewProject(row.id),
+              },
+              {
+                label: "Edit",
+                type: "edit",
+                onClick: (row) => alert(`Editing ${row.projectName}`),
+              },
+              {
+                label: "Archive",
+                type: "delete",
+                onClick: (row) => alert(`Archiving ${row.projectName}`),
+              },
+            ]}
+          />
+        </>
+      )}
 
       {/* ---------------- Create Project Modal ---------------- */}
       <Modal

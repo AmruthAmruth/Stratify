@@ -3,10 +3,15 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { GetProjectsByCompanyDTO, GetProjectsByCompanyResponse } from "../../dto/project/GetProjectsByCompanyDTO";
+import {
+  GetProjectsByCompanyDTO,
+  GetProjectsByCompanyResponse,
+} from "../../dto/project/GetProjectsByCompanyDTO";
 import { IGetProjectsByCompanyUseCase } from "../../interfaces/project/IGetProjectsByCompanyUseCase";
 
-export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase {
+export class GetProjectsByCompanyUseCase
+  implements IGetProjectsByCompanyUseCase
+{
   constructor(
     private _projectRepo: IProjectRepository,
     private _managerRepo: IManagerRepository,
@@ -15,9 +20,9 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
 
   async execute(companyId: string): Promise<GetProjectsByCompanyResponse> {
     const projects = await this._projectRepo.findByCompanyId(companyId);
-  console.log(projects);
-  
-    if (!projects || projects.length === 0) { 
+    console.log(projects);
+
+    if (!projects || projects.length === 0) {
       throw new AppError("Projects not found", StatusCodes.NOT_FOUND);
     }
 
@@ -25,12 +30,11 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
       projects.map(async (project) => {
         const lead = project.projectLeadId
           ? await this._managerRepo.findById(project.projectLeadId)
-          : null; 
- 
+          : null;
+
         const department = project.departmentId
           ? await this._departmentRepo.findById(project.departmentId)
           : null;
-
 
         let remainingTimeInDays = 0;
         if (project.endDate) {
@@ -41,7 +45,7 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
         }
 
         return {
-          id:project.id,
+          id: project.id,
           projectName: project.name ?? "Unnamed Project",
           projectDescription: project.description ?? "No description",
           departmentName: department?.name ?? "N/A",
@@ -52,7 +56,6 @@ export class GetProjectsByCompanyUseCase implements IGetProjectsByCompanyUseCase
       })
     );
 
-    
     const counts = {
       total: result.length,
       planned: result.filter((p) => p.status === "Planned").length,

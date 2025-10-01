@@ -18,36 +18,36 @@ api.interceptors.request.use(
 );
 
 
-api.interceptors.response.use(
-  (response) => response,
-  async (error) => {
-    const originalRequest = error.config;
+// api.interceptors.response.use(
+//   (response) => response,
+//   async (error) => {
+//     const originalRequest = error.config;
 
-    if (error.response?.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      try {
-        const refreshRes = await api.post("/super-admin/refresh-token");
-        const newToken = refreshRes.data.accessToken;
+//     if (error.response?.status === 401 && !originalRequest._retry) {
+//       originalRequest._retry = true;
+//       try {
+//         const refreshRes = await api.post("/super-admin/refresh-token");
+//         const newToken = refreshRes.data.accessToken;
 
-        const currentAuth = store.getState().auth;
-        store.dispatch(setCredentials({
-          accessToken: newToken,
-          role: currentAuth.role,
-          userId: currentAuth.userId,
-        }));
+//         const currentAuth = store.getState().auth;
+//         store.dispatch(setCredentials({
+//           accessToken: newToken,
+//           role: currentAuth.role,
+//           userId: currentAuth.userId,
+//         }));
 
-        originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        return api.request(originalRequest);
+//         originalRequest.headers.Authorization = `Bearer ${newToken}`;
+//         return api.request(originalRequest);
 
-      } catch (refreshError) {
-        console.log("Refresh token failed:", refreshError);
-        store.dispatch(clearCredentials());
-        window.location.href = "/login";
-      }
-    }
+//       } catch (refreshError) {
+//         console.log("Refresh token failed:", refreshError);
+//         store.dispatch(clearCredentials());
+//         window.location.href = "/login";
+//       }
+//     }
 
-    return Promise.reject(error);
-  }
-);
+//     return Promise.reject(error);
+//   }
+// );
 
 export default api;

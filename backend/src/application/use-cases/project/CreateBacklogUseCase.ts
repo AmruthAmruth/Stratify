@@ -11,26 +11,24 @@ import { ICreateBacklogUseCase } from "../../interfaces/project/ICreateBacklogUs
 export class CreateBacklogUseCase implements ICreateBacklogUseCase {
   constructor(
     private _backlogRepo: IBacklogRepository,
-    private _companyRepo:ICompanyRepository,
-    private _managerRepo:IManagerRepository,
-    private _projectRepo:IProjectRepository
+    private _companyRepo: ICompanyRepository,
+    private _managerRepo: IManagerRepository,
+    private _projectRepo: IProjectRepository
   ) {}
 
   async execute(backlogDTO: CreateBacklogDTO): Promise<Backlog> {
-   
-     let creatorExists = false;
+    let creatorExists = false;
     let createdByModel: "Company" | "Manager" | undefined;
     let companyId: string | undefined;
 
-const company = await this._companyRepo.findById(backlogDTO.createdBy);
+    const company = await this._companyRepo.findById(backlogDTO.createdBy);
     if (company) {
       creatorExists = true;
       createdByModel = "Company";
       companyId = company.id;
     }
 
-
-     if (!creatorExists) {
+    if (!creatorExists) {
       const manager = await this._managerRepo.findById(backlogDTO.createdBy);
       if (manager) {
         creatorExists = true;
@@ -39,17 +37,20 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
       }
     }
 
-     if (!creatorExists || !createdByModel || !companyId) {
+    if (!creatorExists || !createdByModel || !companyId) {
       throw new AppError("Creator not found", StatusCodes.BAD_REQUEST);
     }
 
- const project = await this._projectRepo.findById(backlogDTO.projectId);
+    const project = await this._projectRepo.findById(backlogDTO.projectId);
     if (!project) {
       throw new AppError("Project not found", StatusCodes.BAD_REQUEST);
     }
 
     if (project.companyId !== companyId) {
-      throw new AppError("Project does not belong to the creator's company", StatusCodes.BAD_REQUEST);
+      throw new AppError(
+        "Project does not belong to the creator's company",
+        StatusCodes.BAD_REQUEST
+      );
     }
 
     const existingBacklog = await this._backlogRepo.findByNameAndProject(
@@ -57,11 +58,14 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
       backlogDTO.projectId
     );
     if (existingBacklog) {
-      throw new AppError("Backlog name already exists in this project", StatusCodes.BAD_REQUEST);
+      throw new AppError(
+        "Backlog name already exists in this project",
+        StatusCodes.BAD_REQUEST
+      );
     }
 
     const backlog = new Backlog(
-      undefined, 
+      undefined,
       backlogDTO.projectId,
       backlogDTO.name,
       backlogDTO.description,
@@ -70,7 +74,6 @@ const company = await this._companyRepo.findById(backlogDTO.createdBy);
       new Date()
     );
 
-  
     return await this._backlogRepo.create(backlog);
   }
 }

@@ -6,23 +6,16 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateSprintDTO } from "../../dto/project/CreateSprintDTO";
 import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseCase";
 
+export class CreateSprintUseCase implements ICreateSprintUseCase {
+  constructor(
+    private _sprintRepo: ISprintRepository,
+    private _projectRepo: IProjectRepository
+  ) {}
 
-
-
-
-export class CreateSprintUseCase implements ICreateSprintUseCase{
-    constructor(
-            private _sprintRepo:ISprintRepository,
-            private _projectRepo: IProjectRepository
-    ){}
-
-    async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
-
-
- const project = await this._projectRepo.findById(sprintDTO.projectId);
-    if (!project) throw new AppError("Project not found", StatusCodes.NOT_FOUND);
-
-
+  async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
+    const project = await this._projectRepo.findById(sprintDTO.projectId);
+    if (!project)
+      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
 
     const overlappingSprint = await this._sprintRepo.findOverlappingSprint(
       sprintDTO.projectId,
@@ -37,27 +30,24 @@ export class CreateSprintUseCase implements ICreateSprintUseCase{
       );
     }
 
+    const now = new Date();
 
-  const now = new Date();
-
-
-         const sprint = new Sprint(
+    const sprint = new Sprint(
       undefined,
       sprintDTO.name,
       sprintDTO.description,
       sprintDTO.projectId,
       sprintDTO.startDate,
       sprintDTO.endDate,
-      sprintDTO.status ?? "Planned", 
+      sprintDTO.status ?? "Planned",
       sprintDTO.teamCapacity,
       0,
       sprintDTO.createdBy,
       [],
-      now, 
+      now,
       now
-         );
+    );
 
     return await this._sprintRepo.create(sprint);
-    }
-
+  }
 }
