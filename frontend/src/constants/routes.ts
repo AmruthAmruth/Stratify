@@ -1,71 +1,66 @@
-
-
+// Auth routes
 export const AUTH_ROUTES = {
-  SUPER_ADMIN_LOGIN: "/super-admin/login",
-  COMPANY_REGISTER: "/company/register",
-  COMPANY_VERIFY_OTP: "/company/verify-otp",
-  COMPANY_LOGIN: "/company/login",
-  COMPANY_LOGOUT: "/company/logout",
-  RESEND_OTP: "/company/resend-otp",
-  FORGOT_PASSWORD: "/company/forgotpassword",
-  FORGOT_PASSWORD_VERIFY_OTP: "/company/forgotpassword-verifyotp",
-  RESET_PASSWORD: "/company/resetpassword",
+  SUPER_ADMIN_LOGIN: "/super-admin/login", 
+  COMPANY_REGISTER: "/api/auth/register",
+  COMPANY_VERIFY_OTP: "/api/auth/verify-otp",
+  COMPANY_LOGIN: "/api/auth/login",
+  COMPANY_LOGOUT: "/api/auth/logout",
+  RESEND_OTP: "/api/auth/resend-otp",
+  FORGOT_PASSWORD: "/api/auth/forgotpassword",
+  FORGOT_PASSWORD_VERIFY_OTP: "/api/auth/forgotpassword-verifyotp",
+  RESET_PASSWORD: "/api/auth/resetpassword",
 };
 
-
+// Company routes
 export const COMPANY_ROUTES = {
-  ALL_COMPANIES: "/company/companies",
-  COMPANY_DEPARTMENTS: "/company/company-departments",
-  CREATE_DEPARTMENT: "/company/create-department",
-  CREATE_EMPLOYEE: "/company/create-employee",
-  CREATE_MANAGER: "/company/create-manager",
-  TEAM_MEMBERS: "/company/team-members",
-  UNASSIGNED_MANAGERS: "/company/unassigned-managers",
-  UNASSIGNED_DEPARTMENTS: "/company/unassigned-department",
-  DEPARTMENT_DETAILS: (id: string) => `/company/department-details/${id}`,
-  TEAM_MEMBER_PROFILE: (id: string) => `/company/team-member-profile/${id}`,
-  COMPANY_PROFILE: (id: string) => `/company/company/${id}`,
-  SUBSCRIPTION_PLANS: "/company/subscription-plans",
-  PURCHASE: "/company/purchase",
-  PURCHASE_UNAUTH: "/company/purchase-unauthenticated",
-  VERIFY_PAYMENT: "/company/verify-payment",
-  VERIFY_PAYMENT_UNAUTH: "/company/verify-payment-unauthorized",
-  APPROVE_COMPANY: "/company/approve-company",
-  UNAPPROVE_COMPANY: "/company/unapprove-company",
-  MANAGER_DEPARTMENTS: (id: string) => `/company/manager-departments/${id}`,
-  LIST_PURCHASED_COMPANY: "/company/list-purchased-company",
+  ALL_COMPANIES: "/api/company/companies",
+  COMPANY_DEPARTMENTS: "/api/department/company-departments",
+  CREATE_DEPARTMENT: "/api/department/create-department",
+  CREATE_EMPLOYEE: "/api/employee/create-employee",
+  CREATE_MANAGER: "/api/employee/create-manager",
+  TEAM_MEMBERS: "/api/company/company-employees",
+  UNASSIGNED_MANAGERS: "/api/employee/unassigned-managers",
+  UNASSIGNED_DEPARTMENTS: "/api/department/unassigned-department",
+  DEPARTMENT_DETAILS: (id: string) => `/api/department/department-details/${id}`,
+  TEAM_MEMBER_PROFILE: (id: string) => `/api/company/team-member-profile/${id}`,
+  COMPANY_PROFILE: (id: string) => `/api/company/company/${id}`,
+  SUBSCRIPTION_PLANS: "/api/subscription/subscription-plans",
+  PURCHASE: "/api/subscription/purchase",
+  PURCHASE_UNAUTH: "/api/subscription/purchase-unauthenticated",
+  VERIFY_PAYMENT: "/api/subscription/verify-payment",
+  VERIFY_PAYMENT_UNAUTH: "/api/subscription/verify-payment-unauthorized",
+  APPROVE_COMPANY: "/api/company/approve-company",
+  UNAPPROVE_COMPANY: "/api/company/unapprove-company",
+  MANAGER_DEPARTMENTS: (id: string) => `/api/department/manager-departments/${id}`,
+  LIST_PURCHASED_COMPANY: "/super-admin/list-purchased-company",
 };
 
-
-
-
+// Super Admin routes
 export const SUPER_ADMIN_ROUTES = {
   CREATE_PLAN: "/super-admin/create-plan",
   UPDATE_PLAN: "/super-admin/update-plan",
   DELETE_PLAN: "/super-admin/delete-plan",
+  REFRESH_TOKEN: "/super-admin/refresh-token",
+  LOGOUT: "/super-admin/logout",
 };
 
-
-
-
-
+// Project routes
 export const PROJECT_ROUTES = {
-  COMPANY_PROJECTS:"/company/company-projects",
-  DEPARTMENT_PROJECTS:"/company/department-projects",
-  PROJECT_DETAILS:(id: string) =>`company/project/${id}`,
-  CREATE_PROJECT:"/company/create-project",
-  CREATE_BACKLOG:"company/create-backlog",
-  CREATE_STORY:"/company/create-user-story",
-  CREATE_TASK:"/company/create-task"
- 
+  COMPANY_PROJECTS: "/api/project/company-projects",
+  DEPARTMENT_PROJECTS: "/api/project/department-projects",
+  PROJECT_DETAILS: (id: string) => `/api/project/project/${id}`,
+  CREATE_PROJECT: "/api/project/create-project",
+  CREATE_BACKLOG: "/api/project/create-backlog",
+  CREATE_STORY: "/api/project/create-user-story",
+  CREATE_TASK: "/api/project/create-task",
+  CREATE_SPRINT: "/api/project/create-sprint",
+  ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
 };
 
-
-
-
+// Leave routes
 export const LEAVE_ROUTES = {
-  CREATE_LEAVE:"/company/create-leave",
-  GET_EMPLOYEE_CURRENT_MONTHLEAVE:"/company/leaves",
-   GET_DEPARTMENT_LEAVE:"/company/department-leaves",
-   LEAVE_STATUS_UPDATE:"/company/leave-status"
+  CREATE_LEAVE: "/api/leave/create-leave",
+  GET_EMPLOYEE_CURRENT_MONTHLEAVE: "/api/leave/leaves",
+  GET_DEPARTMENT_LEAVE: "/api/leave/department-leaves",
+  LEAVE_STATUS_UPDATE: "/api/leave/leave-status",
 };

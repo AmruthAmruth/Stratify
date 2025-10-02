@@ -1,0 +1,83 @@
+import { Request, Response } from "express";
+import { ICreateProjectUseCase } from "../../application/interfaces/project/ICreateProjectUseCase";
+import { ICreateUserStoryUseCase } from "../../application/interfaces/project/ICreateUserStoryUseCase";
+import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICreateBacklogUseCase";
+import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
+import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
+import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/project/IGetProjectsByCompanyUseCase";
+import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
+import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
+import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
+import { AuthRequest } from "../middleware/AuthMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+
+export class ProjectController {
+  constructor(
+    private _createProjectUseCase: ICreateProjectUseCase,
+    private _createUserStoryUseCase: ICreateUserStoryUseCase,
+    private _createBacklogUseCase: ICreateBacklogUseCase,
+    private _createSprintUseCase: ICreateSprintUseCase,
+    private _createTaskUseCase: ICreateTaskUseCase,
+    private _getProjectsByCompanyUseCase: IGetProjectsByCompanyUseCase,
+    private _getProjectsByDepartmentUseCase: IGetProjectsByDepartmentUseCase,
+    private _getProjectDetailsUseCase: IGetProjectDetailsUseCase,
+    private _assignUserStoryToSprintUseCase: IAssignUserStoryToSprintUseCase
+  ) {}
+
+  createProject = async (req: AuthRequest, res: Response): Promise<void> => {
+    const createdBy = req.userId;
+    const projectDTO = { ...req.body, createdBy };
+    const response = await this._createProjectUseCase.execute(projectDTO);
+    res.status(StatusCodes.CREATED).json({ message: "Project created successfully", response });
+  };
+
+  createUserStory = async (req: AuthRequest, res: Response): Promise<void> => {
+    const createdBy = req.userId;
+    const userStoryDTO = { ...req.body, createdBy };
+    const response = await this._createUserStoryUseCase.execute(userStoryDTO);
+    res.status(StatusCodes.CREATED).json({ message: "User story created successfully", response });
+  };
+
+  createBacklog = async (req: AuthRequest, res: Response): Promise<void> => {
+    const createdBy = req.userId;
+    const backlogDTO = { ...req.body, createdBy };
+    const response = await this._createBacklogUseCase.execute(backlogDTO);
+    res.status(StatusCodes.CREATED).json({ message: "Backlog created successfully", response });
+  };
+
+  createSprint = async (req: AuthRequest, res: Response): Promise<void> => {
+    const createdBy = req.userId;
+    const sprintDTO = { ...req.body, createdBy };
+    const response = await this._createSprintUseCase.execute(sprintDTO);
+    res.status(StatusCodes.CREATED).json({ message: "Sprint created successfully", response });
+  };
+
+  createTask = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._createTaskUseCase.execute(req.body);
+    res.status(StatusCodes.CREATED).json({ message: "Task created successfully", response });
+  };
+
+  getProjectsByCompany = async (req: AuthRequest, res: Response): Promise<void> => {
+    const companyId = req.userId;
+    const response = await this._getProjectsByCompanyUseCase.execute(companyId!);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  getProjectsByDepartment = async (req: AuthRequest, res: Response): Promise<void> => {
+    const managerId = req.userId;
+    const response = await this._getProjectsByDepartmentUseCase.execute(managerId!);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  getProjectDetails = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const response = await this._getProjectDetailsUseCase.execute(id);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  assignUserStoryToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
+    const assignedBy = req.userId;
+    const response = await this._assignUserStoryToSprintUseCase.execute({ ...req.body, assignedBy });
+    res.status(StatusCodes.CREATED).json({ message: "User story assigned to sprint successfully", response });
+  };
+}
