@@ -2,15 +2,13 @@ import { Types } from "mongoose";
 import { Manager } from "../../domain/entities/Manager";
 import { IManagerRepository } from "../../domain/repositories/IManagerRepository";
 import { ManagerModel } from "../models/ManagerModel";
+import { ManagerMapper } from "../mappers/ManagerMapper";
 
-
-
-
-export class ManagerRepository implements IManagerRepository{
-   async create(manager: Manager): Promise<Manager> {
-       const doc = await ManagerModel.create({
+export class ManagerRepository implements IManagerRepository {
+  async create(manager: Manager): Promise<Manager> {
+    const doc = await ManagerModel.create({
       name: manager.name,
-      email: manager.email, 
+      email: manager.email,
       phone: manager.phone,
       password: manager.password,
       role: manager.role,
@@ -25,108 +23,40 @@ export class ManagerRepository implements IManagerRepository{
       profileImage: manager.profileImage,
     });
 
-    return new Manager(
-      doc.id.toString(), 
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.password,
-      doc.role,
-      doc.position,
-      doc.joiningDate,
-      doc.gender,
-      doc.dob,
-      doc.companyId.toString(),
-      doc.departmentId?.toString(),
-      doc.profileImage
-    );
+    return ManagerMapper.toEntity(doc);
+  }
 
-   }
-
-
-   async findById(id: string): Promise<Manager|null> {
-        const doc = await ManagerModel.findById(id).exec();
+  async findById(id: string): Promise<Manager | null> {
+    const doc = await ManagerModel.findById(id).exec();
     if (!doc) return null;
-
-    return new Manager(
-      doc.id.toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.password,
-      doc.role,
-      doc.position,
-      doc.joiningDate,
-      doc.gender,
-      doc.dob,
-      doc.companyId.toString(),
-      doc.departmentId?.toString(),
-      doc.profileImage
-    );
-   }
+    return ManagerMapper.toEntity(doc);
+  }
 
   async findByEmail(email: string): Promise<Manager | null> {
-       const doc = await ManagerModel.findOne({email})
-       if(!doc) return null
-       return new Manager(
-      doc.id.toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.password,
-      doc.role,
-      doc.position,
-      doc.joiningDate,
-      doc.gender,
-      doc.dob,
-      doc.companyId.toString(),
-      doc.departmentId?.toString(),
-      doc.profileImage
-    ); 
-   }
+    const doc = await ManagerModel.findOne({ email }).exec();
+    if (!doc) return null;
+    return ManagerMapper.toEntity(doc);
+  }
 
+  async updatePassword(email: string, password: string): Promise<void> {
+    await ManagerModel.updateOne({ email }, { $set: { password } });
+  }
 
-   async updatePassword(email: string, password: string): Promise<void> {
-       await ManagerModel.updateOne({ email }, { $set: { password } });
-   }
+  async getUnassignedManagers(companyId: string): Promise<{ id: string; name: string }[]> {
+    const docs = await ManagerModel.find({
+      companyId,
+      $or: [{ departmentId: { $exists: false } }, { departmentId: null }],
+    }).select("_id name");
 
+    return docs.map((doc) => ({ id: doc.id.toString(), name: doc.name }));
+  }
 
-   async getUnassignedManagers(companyId: string): Promise<{ id: string; name: string }[]> {
-  const docs = await ManagerModel.find({
-    companyId: companyId, 
-    $or: [
-      { departmentId: { $exists: false } },
-      { departmentId: null }
-    ]
-  }).select("_id name");
+  async totalManagerInACompany(companyId: string): Promise<number> {
+    return await ManagerModel.countDocuments({ companyId });
+  }
 
-  return docs.map(doc => ({
-    id: doc.id.toString(), 
-    name: doc.name
-  }));
-}
- 
-async totalManagerInACompany(companyId: string): Promise<number> {
-   return await ManagerModel.countDocuments({companyId})
-}
-
-
-async findByCompanyId(companyId: string): Promise<Manager[]> {
-  const docs = await ManagerModel.find({ companyId });
-  return docs.map(doc => new Manager(
-    doc.id.toString(), 
-    doc.name,
-    doc.email,
-    doc.phone,
-    doc.password,
-    doc.role,
-    doc.position,
-    doc.joiningDate,
-    doc.gender,
-    doc.dob,
-    doc.companyId.toString(),
-    doc.departmentId?.toString(),
-    doc.profileImage
-  ));
-}
+  async findByCompanyId(companyId: string): Promise<Manager[]> {
+    const docs = await ManagerModel.find({ companyId }).exec();
+    return ManagerMapper.toEntities(docs);
+  }
 }

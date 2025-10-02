@@ -1,58 +1,38 @@
-import { Types, HydratedDocument } from "mongoose";
+import { Types } from "mongoose";
 import { Sprint } from "../../domain/entities/Sprint";
 import { ISprintRepository } from "../../domain/repositories/ISprintRepository";
-import { SprintModel, SprintDocument } from "../models/SprintModel";
+import { SprintModel } from "../models/SprintModel";
+import { SprintMapper } from "../mappers/SprintMapper";
 
 export class SprintRepository implements ISprintRepository {
   async create(sprint: Sprint): Promise<Sprint> {
-    const created = await new SprintModel({
-      name: sprint.name,
-      description: sprint.description,
-      projectId: new Types.ObjectId(sprint.projectId),
-      startDate: sprint.startDate,
-      endDate: sprint.endDate,
-      status: sprint.status ?? "Planned",
-      teamCapacity: sprint.teamCapacity,
-      totalStoryPoints: sprint.totalStoryPoints ?? 0,
-      createdBy: new Types.ObjectId(sprint.createdBy),
-      userStoryIds: sprint.userStoryIds?.map((id) => new Types.ObjectId(id)) || [],
-    }).save();
-
-    return this.mapToEntity(created);
+    const doc = new SprintModel(SprintMapper.toDocument(sprint));
+    const created = await doc.save();
+    return SprintMapper.toEntity(created);
   }
 
   async update(sprint: Sprint): Promise<Sprint> {
     const updated = await SprintModel.findByIdAndUpdate(
       new Types.ObjectId(sprint.id),
-      {
-        name: sprint.name,
-        description: sprint.description,
-        startDate: sprint.startDate,
-        endDate: sprint.endDate,
-        status: sprint.status,
-        teamCapacity: sprint.teamCapacity,
-        totalStoryPoints: sprint.totalStoryPoints,
-        userStoryIds: sprint.userStoryIds?.map((id) => new Types.ObjectId(id)) || [],
-      },
+      SprintMapper.toDocument(sprint),
       { new: true }
     ).exec();
 
     if (!updated) throw new Error("Sprint not found");
 
-    return this.mapToEntity(updated);
+    return SprintMapper.toEntity(updated);
   }
 
   async findById(id: string): Promise<Sprint | null> {
     const doc = await SprintModel.findById(new Types.ObjectId(id)).exec();
-    return doc ? this.mapToEntity(doc) : null;
+    return doc ? SprintMapper.toEntity(doc) : null;
   }
 
   async findByProject(projectId: string): Promise<Sprint[]> {
     const docs = await SprintModel.find({
       projectId: new Types.ObjectId(projectId),
     }).exec();
-
-    return docs.map((doc) => this.mapToEntity(doc));
+    return docs.map(SprintMapper.toEntity);
   }
 
   async delete(id: string): Promise<void> {
@@ -69,25 +49,6 @@ export class SprintRepository implements ISprintRepository {
       $or: [{ startDate: { $lte: endDate }, endDate: { $gte: startDate } }],
     }).exec();
 
-    return overlapping ? this.mapToEntity(overlapping) : null;
-  }
-
-  
-  private mapToEntity(doc: HydratedDocument<SprintDocument>): Sprint {
-    return new Sprint(
-      doc.id.toString(),
-      doc.name,
-      doc.description,
-      doc.projectId.toString(),
-      doc.startDate,
-      doc.endDate,
-      doc.status,
-      doc.teamCapacity,
-      doc.totalStoryPoints,
-      doc.createdBy.toString(),
-      doc.userStoryIds?.map((id) => id.toString()) || [],
-      doc.createdAt,
-      doc.updatedAt
-    );
+    return overlapping ? SprintMapper.toEntity(overlapping) : null;
   }
 }

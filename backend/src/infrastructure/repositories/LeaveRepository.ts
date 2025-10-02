@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { Leave } from "../../domain/entities/Leave";
 import { ILeaveRepository } from "../../domain/repositories/ILeaveRepository";
 import { LeaveModel } from "../models/LeaveModel";
+import { LeaveMapper } from "../mappers/LeaveMapper";
 
 export class LeaveRepository implements ILeaveRepository {
   async create(leave: Leave): Promise<Leave> {
@@ -18,21 +19,7 @@ export class LeaveRepository implements ILeaveRepository {
       companyId: new Types.ObjectId(leave.companyId),
     }).save();
 
-    return new Leave(
-      created.id.toString(),
-      created.employeeId.toString(),
-      created.startDate,
-      created.endDate,
-      created.type,
-      created.status,
-      created.reason,
-      created.createdAt,
-      created.updatedAt,
-      created.month,
-      created.departmentId.toString(),
-      created.companyId.toString(),
-      created.rejectedReason
-    );
+    return LeaveMapper.toEntity(created);
   }
 
   async update(leave: Leave): Promise<Leave> {
@@ -54,42 +41,14 @@ export class LeaveRepository implements ILeaveRepository {
 
     if (!updated) throw new Error("Leave not found");
 
-    return new Leave(
-      updated.id.toString(),
-      updated.employeeId.toString(),
-      updated.startDate,
-      updated.endDate,
-      updated.type,
-      updated.status,
-      updated.reason,
-      updated.createdAt,
-      updated.updatedAt,
-      updated.month,
-      updated.departmentId.toString(),
-      updated.companyId.toString(),
-      updated.rejectedReason
-    );
+    return LeaveMapper.toEntity(updated);
   }
 
   async findById(id: string): Promise<Leave | null> {
     const doc = await LeaveModel.findById(new Types.ObjectId(id)).exec();
     if (!doc) return null;
 
-    return new Leave(
-      doc.id.toString(),
-      doc.employeeId.toString(),
-      doc.startDate,
-      doc.endDate,
-      doc.type,
-      doc.status,
-      doc.reason,
-      doc.createdAt,
-      doc.updatedAt,
-      doc.month,
-      doc.departmentId.toString(),
-      doc.companyId.toString(),
-      doc.rejectedReason
-    );
+    return LeaveMapper.toEntity(doc);
   }
 
   async findOverlappingLeave(
@@ -104,21 +63,7 @@ export class LeaveRepository implements ILeaveRepository {
 
     if (!overlapping) return null;
 
-    return new Leave(
-      overlapping.id.toString(),
-      overlapping.employeeId.toString(),
-      overlapping.startDate,
-      overlapping.endDate,
-      overlapping.type,
-      overlapping.status,
-      overlapping.reason,
-      overlapping.createdAt,
-      overlapping.updatedAt,
-      overlapping.month,
-      overlapping.departmentId.toString(),
-      overlapping.companyId.toString(),
-      overlapping.rejectedReason
-    );
+    return LeaveMapper.toEntity(overlapping);
   }
 
   async countLeaveDays(
@@ -175,24 +120,7 @@ export class LeaveRepository implements ILeaveRepository {
       .sort({ startDate: 1 })
       .exec();
 
-    return docs.map(
-      (doc) =>
-        new Leave(
-          doc.id.toString(),
-          doc.employeeId.toString(),
-          doc.startDate,
-          doc.endDate,
-          doc.type,
-          doc.status,
-          doc.reason,
-          doc.createdAt,
-          doc.updatedAt,
-          doc.month,
-          doc.departmentId.toString(),
-          doc.companyId.toString(),
-          doc.rejectedReason
-        )
-    );
+    return LeaveMapper.toEntities(docs);
   }
 
   async findLeavesByEmployeeAndMonth(employeeId: string, month: number): Promise<Leave[]> {
@@ -203,24 +131,7 @@ export class LeaveRepository implements ILeaveRepository {
       .sort({ startDate: 1 })
       .exec();
 
-    return docs.map(
-      (doc) =>
-        new Leave(
-          doc.id.toString(),
-          doc.employeeId.toString(),
-          doc.startDate,
-          doc.endDate,
-          doc.type,
-          doc.status,
-          doc.reason,
-          doc.createdAt,
-          doc.updatedAt,
-          doc.month,
-          doc.departmentId.toString(),
-          doc.companyId.toString(),
-          doc.rejectedReason
-        )
-    );
+    return LeaveMapper.toEntities(docs);
   }
 
   async findLeavesByDepartment(departmentId: string, currentMonth: number): Promise<Leave[]> {
@@ -231,24 +142,7 @@ export class LeaveRepository implements ILeaveRepository {
       .sort({ startDate: 1 })
       .exec();
 
-    return docs.map(
-      (doc) =>
-        new Leave(
-          doc.id.toString(),
-          doc.employeeId.toString(),
-          doc.startDate,
-          doc.endDate,
-          doc.type,
-          doc.status,
-          doc.reason,
-          doc.createdAt,
-          doc.updatedAt,
-          doc.month,
-          doc.departmentId.toString(),
-          doc.companyId.toString(),
-          doc.rejectedReason
-        )
-    );
+    return LeaveMapper.toEntities(docs);
   }
 
   async findLeavesByDepartmentAndDateRange(
@@ -267,23 +161,6 @@ export class LeaveRepository implements ILeaveRepository {
       .sort({ startDate: 1 })
       .exec();
 
-    return docs.map(
-      (doc) =>
-        new Leave(
-          doc.id.toString(),
-          doc.employeeId.toString(),
-          doc.startDate,
-          doc.endDate,
-          doc.type,
-          doc.status,
-          doc.reason,
-          doc.createdAt,
-          doc.updatedAt,
-          doc.month,
-          doc.departmentId.toString(),
-          doc.companyId.toString(),
-          doc.rejectedReason
-        )
-    );
+    return LeaveMapper.toEntities(docs);
   }
 }

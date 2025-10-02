@@ -2,6 +2,7 @@ import { Types } from "mongoose";
 import { Backlog } from "../../domain/entities/Backlog";
 import { IBacklogRepository } from "../../domain/repositories/IBacklogRepository";
 import { BacklogModel } from "../models/BacklogModel";
+import { BacklogMapper } from "../mappers/BacklogMapper";
 
 export class BacklogRepository implements IBacklogRepository {
   async create(backlog: Backlog): Promise<Backlog> {
@@ -12,15 +13,7 @@ export class BacklogRepository implements IBacklogRepository {
       createdBy: new Types.ObjectId(backlog.createdBy),
     }).save();
 
-    return new Backlog(
-      created.id.toString(),
-      created.projectId.toString(),
-      created.name,
-      created.description,
-      created.createdBy.toString(),
-      created.createdAt,
-      created.updatedAt
-    );
+    return BacklogMapper.toEntity(created);
   }
 
   async update(backlog: Backlog): Promise<Backlog> {
@@ -35,30 +28,14 @@ export class BacklogRepository implements IBacklogRepository {
 
     if (!updated) throw new Error("Backlog not found");
 
-    return new Backlog(
-      updated.id.toString(),
-      updated.projectId.toString(),
-      updated.name,
-      updated.description,
-      updated.createdBy.toString(),
-      updated.createdAt,
-      updated.updatedAt
-    );
+    return BacklogMapper.toEntity(updated);
   }
 
   async findById(id: string): Promise<Backlog | null> {
     const doc = await BacklogModel.findById(new Types.ObjectId(id)).exec();
     if (!doc) return null;
 
-    return new Backlog(
-      doc.id.toString(),
-      doc.projectId.toString(),
-      doc.name,
-      doc.description,
-      doc.createdBy.toString(),
-      doc.createdAt,
-      doc.updatedAt
-    );
+    return BacklogMapper.toEntity(doc);
   }
 
   async findByProjectId(projectId: string): Promise<Backlog[]> {
@@ -66,40 +43,20 @@ export class BacklogRepository implements IBacklogRepository {
       projectId: new Types.ObjectId(projectId),
     }).exec();
 
-    return docs.map(
-      (doc) =>
-        new Backlog(
-          doc.id.toString(),
-          doc.projectId.toString(),
-          doc.name,
-          doc.description,
-          doc.createdBy.toString(),
-          doc.createdAt,
-          doc.updatedAt
-        )
-    );
+    return BacklogMapper.toEntities(docs);
   }
 
   async delete(id: string): Promise<void> {
     await BacklogModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-
   async findByNameAndProject(name: string, projectId: string): Promise<Backlog | null> {
-     const doc = await BacklogModel.findOne({
+    const doc = await BacklogModel.findOne({
       name,
-      projectId
-     })
+      projectId: new Types.ObjectId(projectId),
+    }).exec();
 
-     if(!doc) return null;
-       return new Backlog(
-      doc.id.toString(),
-      doc.projectId.toString(),
-      doc.name,
-      doc.description,
-      doc.createdBy.toString(),
-      doc.createdAt,
-      doc.updatedAt
-    );
+    if (!doc) return null;
+    return BacklogMapper.toEntity(doc);
   }
 }
