@@ -14,5 +14,6 @@ authRouter.post("/resend-otp", asyncHandler(controller.resendOtp));
 authRouter.post("/forgotpassword", asyncHandler(controller.forgotPassword));
 authRouter.post("/forgotpassword-verifyotp", asyncHandler(controller.verifyForgotPasswordOtp));
 authRouter.post("/resetpassword", asyncHandler(controller.resetPassword));
-
+authRouter.post("/super-admin-login",asyncHandler(controller.superAdminLogin))
+authRouter.post("/refresh-token",asyncHandler(controller.refresh))
 export default authRouter;

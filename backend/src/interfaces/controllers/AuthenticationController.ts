@@ -10,6 +10,8 @@ import { LoginDTO, LoginSchema } from "../../application/validators/LoginValidat
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/CookieConfig";
+import { ILoginUseCase } from "../../application/interfaces/authentication/ILoginUseCase";
+import { IRefreashTokenUseCase } from "../../application/interfaces/authentication/IRefreashTokenUseCase";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -23,8 +25,55 @@ export class AuthenticationController {
     private _resendOtpUseCase: IResendOtpUseCase,
     private _forgotPasswordUseCase: IForgotPasswordUseCase,
     private _verifyForgotPasswordOtpUseCase: IVerifyForgotPasswordOTPUseCase,
-    private _resetPasswordUseCase: IResetPasswordUseCase
+    private _resetPasswordUseCase: IResetPasswordUseCase,
+    private _superAdminLoginUseCase:ILoginUseCase,
+    private _refreshTokenUseCase:IRefreashTokenUseCase
   ) {}
+
+  
+ refresh = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        message: Messages.NO_REFREASHTOKEN,
+      });
+      return;
+    }
+
+    const { accessToken, refreshToken: newRefreshToken } =
+      await this._refreshTokenUseCase.execute(refreshToken);
+
+    res.cookie("refreshToken", newRefreshToken, CookieConfig);
+
+    res.json({ accessToken });
+  };
+
+
+  superAdminLogin=async(req:Request,res:Response):Promise<void>=>{
+       const result = LoginSchema.safeParse(req.body);
+           if (!result.success) {
+             res.status(StatusCodes.BAD_REQUEST).json({
+               status: Messages.LOGIN_FAILED,
+               errors: result.error.issues.map((issue) => ({
+                 field: issue.path.join("."),
+                 message: issue.message,
+               })),
+             });
+             return;
+           }
+       
+           const dto: LoginDTO = {
+             email: req.body.email,
+             password: req.body.password,
+           };
+       
+           const { accessToken, refreshToken } = await this._superAdminLoginUseCase.execute(dto);
+           res.cookie("refreshToken", refreshToken, CookieConfig);
+           res.status(StatusCodes.OK).json({
+             status: Messages.LOGIN_SUCCESS,
+             accessToken,
+           });
+  }
 
   register = async (req: MulterRequest, res: Response): Promise<void> => {
     if (req.file) req.body.profileImage = req.file.path;

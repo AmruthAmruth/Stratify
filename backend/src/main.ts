@@ -7,7 +7,6 @@ import path from "path";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
-import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
 import router from "./router";
 
 dotenv.config();
@@ -41,7 +40,6 @@ app.use(morgan("dev"));
 connectDB();
 
 // Routes
-app.use("/super-admin", superAdminRouter);
 app.use("/api", router);
 
 // Error handling middleware

@@ -16,6 +16,9 @@ import { ResetPasswordUseCase } from "../application/use-cases/authentication/Re
 import { CompanyLoginUseCase } from "../application/use-cases/authentication/CompanyLoginUseCase";
 import { CreateTrialSubscriptionUseCase } from "../application/use-cases/subscriptions/CreateTrialSubscriptionUseCase";
 import { AuthenticationController } from "../interfaces/controllers/AuthenticationController";
+import { LoginUseCase } from "../application/use-cases/authentication/LoginUseCase";
+import { SuperAdminRepository } from "../infrastructure/repositories/SuperAdminRepository";
+import { RefreshTokenUseCase } from "../application/use-cases/authentication/RefreashTokenUseCase";
 
 export const authenticationDI = () => {
   const companyRepo = new companyRepository();
@@ -24,6 +27,7 @@ export const authenticationDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const subscriptionRepo = new SubscriptionRepository();
+    const superAdminRepo = new SuperAdminRepository();
   const emailService = new EmailService();
 
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
@@ -35,6 +39,11 @@ export const authenticationDI = () => {
   const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo, managerRepo, employeeRepo, sendOtpUseCase);
   const verifyForgotPasswordOtpUseCase = new VerifyForgotPasswordOTPUseCase(otpRepo, companyRepo, managerRepo, employeeRepo);
   const resetPasswordUseCase = new ResetPasswordUseCase(companyRepo, managerRepo, employeeRepo);
+const superAdminLoginUseCase = new LoginUseCase(superAdminRepo)
+
+  const refreshTokenUseCase = new RefreshTokenUseCase();
+
+
 
   return new AuthenticationController(
     registerUseCase,
@@ -43,6 +52,8 @@ export const authenticationDI = () => {
     resendOtpUseCase,
     forgotPasswordUseCase,
     verifyForgotPasswordOtpUseCase,
-    resetPasswordUseCase
+    resetPasswordUseCase,
+    superAdminLoginUseCase,
+    refreshTokenUseCase
   );
 };

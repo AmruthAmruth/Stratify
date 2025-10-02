@@ -4,11 +4,19 @@ import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subs
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { CreatePlanSchema } from "../../application/validators/CreatePlan";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { ICreatePlanUseCase } from "../../application/interfaces/subscriptions/ICreatePlanUseCase";
+import { IUpdatePlanUseCase } from "../../application/interfaces/subscriptions/IUpdatePlanUseCase";
+import { IDeletePlanUseCase } from "../../application/interfaces/subscriptions/IDeletePlanUseCase";
+import { ListCompanyPurchasedPlanUseCase } from "../../application/use-cases/subscriptions/ListCompanyPurchasedPlanUseCase";
 
 export class SubscriptionController {
   constructor(
     private _purchaseSubscriptionUseCase: IPurchaseSubscriptionUseCase,
-    private _listSubscriptionPlansUseCase: IListSubscriptionPlansUseCase
+    private _listSubscriptionPlansUseCase: IListSubscriptionPlansUseCase,
+    private _createPlanUseCase:ICreatePlanUseCase,
+    private _updatePlanUseCase:IUpdatePlanUseCase,
+    private _deletePlanUseCase:IDeletePlanUseCase,
+    private _listCompanisPlanUseCase:ListCompanyPurchasedPlanUseCase
   ) {}
 
   listPlans = async (_req: Request, res: Response): Promise<void> => {
@@ -77,4 +85,34 @@ export class SubscriptionController {
       subscription,
     });
   };
+
+
+   createPlan = async (req: Request, res: Response) => {
+    const { plan, description, amount, durationInMonths } = req.body;
+    const createdPlan = await this._createPlanUseCase.execute({
+      plan,
+      description,
+      amount,
+      durationInMonths,
+    });
+    res.json({ message: "Plan created successfully", plan: createdPlan });
+  };
+
+  deletePlan = async (req: Request, res: Response) => {
+    const { plan } = req.body;
+    await this._deletePlanUseCase.execute(plan);
+    res.status(StatusCodes.OK).json({ message: "Deleted Plan Successfully" });
+  };
+
+  updatePlan = async (req: Request, res: Response) => {
+    const { plan, description, amount, durationInMonths } = req.body;
+    await this._updatePlanUseCase.execute(plan, description, amount, durationInMonths);
+    res.status(StatusCodes.OK).json({ message: "Updated Plan Successfully" });
+  };
+
+  listPurchasedPlan = async (_req: Request, res: Response) => {
+    const response = await this._listCompanisPlanUseCase.execute();
+    res.status(StatusCodes.OK).json(response);
+  };
+  
 }

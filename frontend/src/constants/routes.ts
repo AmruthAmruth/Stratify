@@ -1,6 +1,6 @@
 // Auth routes
 export const AUTH_ROUTES = {
-  SUPER_ADMIN_LOGIN: "/super-admin/login", 
+  SUPER_ADMIN_LOGIN: "api/auth/super-admin-login", 
   COMPANY_REGISTER: "/api/auth/register",
   COMPANY_VERIFY_OTP: "/api/auth/verify-otp",
   COMPANY_LOGIN: "/api/auth/login",
@@ -9,6 +9,8 @@ export const AUTH_ROUTES = {
   FORGOT_PASSWORD: "/api/auth/forgotpassword",
   FORGOT_PASSWORD_VERIFY_OTP: "/api/auth/forgotpassword-verifyotp",
   RESET_PASSWORD: "/api/auth/resetpassword",
+  REFRESH_TOKEN: "/api/auth/refresh-token",
+  LOGOUT: "/api/auth/logout",
 };
 
 // Company routes
@@ -35,13 +37,12 @@ export const COMPANY_ROUTES = {
   LIST_PURCHASED_COMPANY: "/super-admin/list-purchased-company",
 };
 
-// Super Admin routes
+// Subscription Admin Routes
 export const SUPER_ADMIN_ROUTES = {
-  CREATE_PLAN: "/super-admin/create-plan",
-  UPDATE_PLAN: "/super-admin/update-plan",
-  DELETE_PLAN: "/super-admin/delete-plan",
-  REFRESH_TOKEN: "/super-admin/refresh-token",
-  LOGOUT: "/super-admin/logout",
+  CREATE_PLAN: "/api/subscription/create-plan",
+  UPDATE_PLAN: "/api/subscription/update-plan",
+  DELETE_PLAN: "/api/subscription/delete-plan",
+
 };
 
 // Project routes
