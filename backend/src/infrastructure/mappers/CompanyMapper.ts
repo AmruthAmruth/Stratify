@@ -1,10 +1,11 @@
+import { Types } from "mongoose";
 import { Company } from "../../domain/entities/Company";
 import { ICompanyDoc } from "../models/CompanyModel";
 
 export class CompanyMapper {
   static toEntity(doc: ICompanyDoc): Company {
     return new Company(
-      (doc._id as any).toString(),
+      (doc._id as Types.ObjectId).toString(),
       doc.name,
       doc.email,
       doc.phone,
@@ -24,6 +25,6 @@ export class CompanyMapper {
   }
 
   static toEntities(docs: ICompanyDoc[]): Company[] {
-    return docs.map(this.toEntity);
+    return docs.map((d) => this.toEntity(d));
   }
 }
