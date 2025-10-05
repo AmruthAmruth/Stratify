@@ -14,6 +14,7 @@ projectRouter.post("/create-task", asyncHandler(controller.createTask));
 projectRouter.post("/assigned-to-sprint", authMiddleware(["company", "manager"]), asyncHandler(controller.assignUserStoryToSprint));
 projectRouter.post("/create-issue",asyncHandler(controller.createIssue))
 projectRouter.post("/create-subtask",asyncHandler(controller.createSubTask))
+projectRouter.post("/assing-to-sprint",asyncHandler(controller.assignIssueToSprint))
 projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler(controller.getProjectsByCompany));
 projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
 projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
