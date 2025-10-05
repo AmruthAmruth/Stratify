@@ -18,6 +18,10 @@ import { GetProjectsByDepartmentUseCase } from "../application/use-cases/project
 import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
 import { AssignUserStoryToSprintUseCase } from "../application/use-cases/project/AssignUserStoryToSprintUseCase";
 import { ProjectController } from "../interfaces/controllers/ProjectController";
+import { IssueRepository } from "../infrastructure/repositories/IssueRepository";
+import { CreateIssueUseCase } from "../application/use-cases/project/CreateIssuesUseCase";
+import { CreateSubTaskUseCase } from "../application/use-cases/project/CreateSubTaskUseCase";
+import { SubTaskRepository } from "../infrastructure/repositories/SubTaskRepository";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -29,6 +33,9 @@ export const projectDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const departmentRepo = new DepartmentRepository();
+  const issueRepo=new IssueRepository()
+  const subTaskRepo=new SubTaskRepository()
+
 
   const createProjectUseCase = new CreateProjectUseCase(projectRepo, companyRepo, managerRepo, departmentRepo, employeeRepo);
   const createUserStoryUseCase = new CreateUserStoryUseCase(userStoryRepo, backlogRepo, projectRepo, employeeRepo);
@@ -39,6 +46,9 @@ export const projectDI = () => {
   const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(projectRepo, managerRepo);
   const getProjectDetailsUseCase = new GetProjectDetailsUseCase(projectRepo, backlogRepo, userStoryRepo, taskRepo, sprintRepo);
   const assignUserStoryToSprintUseCase = new AssignUserStoryToSprintUseCase(sprintRepo, userStoryRepo);
+  const createIssueRepo=new CreateIssueUseCase(projectRepo,issueRepo)
+  const createSubTaskUseCase=new CreateSubTaskUseCase(issueRepo,subTaskRepo)
+
 
   return new ProjectController(
     createProjectUseCase,
@@ -49,6 +59,8 @@ export const projectDI = () => {
     getProjectsByCompanyUseCase,
     getProjectsByDepartmentUseCase,
     getProjectDetailsUseCase,
-    assignUserStoryToSprintUseCase
+    assignUserStoryToSprintUseCase,
+    createIssueRepo,
+    createSubTaskUseCase
   );
 };

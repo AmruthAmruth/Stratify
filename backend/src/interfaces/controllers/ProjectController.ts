@@ -10,6 +10,8 @@ import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/
 import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { ICreateIssueUseCase } from "../../application/interfaces/project/ICreateIssueUseCase";
+import { ICreateSubTaskUseCase } from "../../application/interfaces/project/ICreateSubTaskUseCase";
 
 export class ProjectController {
   constructor(
@@ -21,7 +23,9 @@ export class ProjectController {
     private _getProjectsByCompanyUseCase: IGetProjectsByCompanyUseCase,
     private _getProjectsByDepartmentUseCase: IGetProjectsByDepartmentUseCase,
     private _getProjectDetailsUseCase: IGetProjectDetailsUseCase,
-    private _assignUserStoryToSprintUseCase: IAssignUserStoryToSprintUseCase
+    private _assignUserStoryToSprintUseCase: IAssignUserStoryToSprintUseCase,
+    private _createIssueUseCase:ICreateIssueUseCase,
+    private _createSubTaskUseCase:ICreateSubTaskUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -80,4 +84,16 @@ export class ProjectController {
     const response = await this._assignUserStoryToSprintUseCase.execute({ ...req.body, assignedBy });
     res.status(StatusCodes.CREATED).json({ message: "User story assigned to sprint successfully", response });
   };
+
+  createIssue=async (req:Request,res:Response):Promise<void>=>{
+      const response = await this._createIssueUseCase.execute(req.body);
+      res.status(StatusCodes.CREATED).json({message:"Issue Created Successfully",response})
+  }
+
+createSubTask=async(req:Request,res:Response):Promise<void>=>{
+  const response = await this._createSubTaskUseCase.execute(req.body);
+  res.status(StatusCodes.CREATED).json({message:"Task Created Successfully",response})
+}
+
+
 }
