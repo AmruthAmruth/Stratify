@@ -1,11 +1,11 @@
 
-import { Issues } from "../../domain/entities/Issues";
+import { Issue } from "../../domain/entities/Issue";
 import { IssueDocument } from "../models/IssueModel";
 
 
 export class IssueMapper {
-  static toEntity(doc: IssueDocument): Issues {
-    return new Issues(
+  static toEntity(doc: IssueDocument): Issue {
+    return new Issue(
       doc.id.toString(),
       doc.heading,
       doc.description,
@@ -23,7 +23,7 @@ export class IssueMapper {
     );
   }
 
-  static toEntities(docs: IssueDocument[]): Issues[] {
+  static toEntities(docs: IssueDocument[]): Issue[] {
     return docs.map(this.toEntity);
   }
 }

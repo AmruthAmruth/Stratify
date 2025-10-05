@@ -1,7 +1,7 @@
 
 
 
-export class Issues{
+export class Issue{
     constructor(
     public readonly id: string | undefined,
     public heading: string,

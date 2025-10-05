@@ -1,8 +1,8 @@
-import { Issues } from "../entities/Issues";
+import { Issue } from "../entities/Issue";
 export interface IIssueRepository {
-  create(issue: Issues): Promise<Issues>;
-  findById(id: string): Promise<Issues | null>;
-  findAllByProject(projectId: string): Promise<Issues[]>;
-  update(issue: Issues): Promise<Issues>;
+  create(issue: Issue): Promise<Issue>;
+  findById(id: string): Promise<Issue | null>;
+  findAllByProject(projectId: string): Promise<Issue[]>;
+  update(issue: Issue): Promise<Issue>;
   delete(id: string): Promise<void>;
 }
