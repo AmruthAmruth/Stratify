@@ -49,7 +49,7 @@ export class CompanyLoginUseCase {
       }
     }
 
-    const payload = { id: user.id!, role: user.role };
+    const payload = { id: user.id!, role: user.role ,name:user.name};
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 

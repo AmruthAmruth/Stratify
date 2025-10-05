@@ -16,7 +16,7 @@ import { IGetProjectDetailsUseCase } from "../../interfaces/project/IGetProjectD
 export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
-    private _backlogsRepo: IBacklogRepository,
+      private _backlogsRepo: IBacklogRepository,
     private _userStoryRepo: IUserStoryRepository,
     private _taskRepo: ITaskRepository,
     private _sprintRepo: ISprintRepository

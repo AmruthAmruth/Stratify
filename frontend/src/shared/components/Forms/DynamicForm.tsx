@@ -20,7 +20,7 @@ interface AuthFormProps {
   validationSchema: ZodSchema;
   onSubmit: (values: Record<string, unknown>) => void;
   buttonText: string;
-  initialValues?: Record<string, unknown>; // ✅ Added
+  initialValues?: Record<string, unknown>;
 }
 
 const AuthForm: React.FC<AuthFormProps> = ({
@@ -34,16 +34,14 @@ const AuthForm: React.FC<AuthFormProps> = ({
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [preview, setPreview] = useState<Record<string, string | ArrayBuffer | null>>({});
 
-  // 🔹 Initialize formData from fields or initialValues
   useEffect(() => {
     const initialData: Record<string, unknown> = {};
     fields.forEach((field) => {
-      // prioritize initialValues if provided
       initialData[field.name] =
         initialValues?.[field.name] ?? (field.type === "file" ? null : "");
     });
     setFormData(initialData);
-  }, [fields, initialValues]); // ✅ watch initialValues changes
+  }, [fields, initialValues]);
 
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -96,7 +94,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
   return (
     <form
       onSubmit={handleSubmit}
-      className="bg-white shadow-lg rounded-xl p-8 space-y-6 max-w-4xl mx-auto"
+      className="shadow-lg rounded-xl p-8 space-y-6 max-w-4xl mx-auto"
+      style={{ backgroundColor: "#fbfbfb" }}
     >
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {fields.map((field) => {
@@ -104,16 +103,22 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
           return (
             <div key={field.name} className={`flex flex-col ${colSpan}`}>
-              <label className="block font-medium text-gray-600 mb-2">{field.label}</label>
+              <label className="block font-medium mb-2" style={{ color: "#3b3b3b" }}>
+                {field.label}
+              </label>
 
               {field.type === "file" ? (
                 <div className="flex flex-col gap-3">
                   <label
                     htmlFor={field.name}
-                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer bg-gradient-to-br from-gray-50 to-gray-100 hover:from-blue-50 hover:to-blue-100 hover:border-blue-500 transition group"
+                    className="flex flex-col items-center justify-center w-full h-40 border-2 border-dashed rounded-xl cursor-pointer transition group"
+                    style={{
+                      background: "linear-gradient(to bottom, #fbfbfb, #dfdcef)",
+                      borderColor: "#dfdcef",
+                    }}
                   >
                     <svg
-                      className="w-10 h-10 text-gray-400 group-hover:text-blue-500 transition"
+                      className="w-10 h-10 text-gray-400 group-hover:text-[#009063] transition"
                       fill="none"
                       stroke="currentColor"
                       strokeWidth={2}
@@ -125,8 +130,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
                         d="M7 16a4 4 0 01-.88-7.903A5.001 5.001 0 0115.9 6H16a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"
                       />
                     </svg>
-                    <span className="mt-2 text-sm text-gray-500 group-hover:text-blue-600 transition">
-                      Drag & drop or <span className="font-medium">browse</span>
+                    <span className="mt-2 text-sm transition" style={{ color: "#3b3b3b" }}>
+                      Drag & drop or <span className="font-medium text-[#009063]">browse</span>
                     </span>
                     <input
                       type="file"
@@ -139,7 +144,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   </label>
 
                   {preview[field.name] && (
-                    <div className="relative w-44 h-44 rounded-xl overflow-hidden shadow-lg border border-gray-200">
+                    <div className="relative w-44 h-44 rounded-xl overflow-hidden shadow-lg" style={{ borderColor: "#dfdcef", borderWidth: 1 }}>
                       <img
                         src={preview[field.name] as string}
                         alt="Preview"
@@ -151,7 +156,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
                           setPreview((prev) => ({ ...prev, [field.name]: null }));
                           setFormData((prev) => ({ ...prev, [field.name]: null }));
                         }}
-                        className="absolute top-2 right-2 bg-red-500/90 text-white rounded-full w-7 h-7 flex items-center justify-center text-sm hover:bg-red-600 transition"
+                        className="absolute top-2 right-2 rounded-full w-7 h-7 flex items-center justify-center text-sm transition"
+                        style={{ backgroundColor: "#009063", color: "#fbfbfb" }}
                       >
                         ✕
                       </button>
@@ -164,9 +170,12 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   value={formData[field.name] as string}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
-                  className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
-                    errors[field.name] ? "border-red-500" : "border-gray-300"
-                  }`}
+                  className={`border rounded-lg px-4 py-2 focus:outline-none transition`}
+                  style={{
+                    backgroundColor: "#fbfbfb",
+                    color: "#3b3b3b",
+                    borderColor: errors[field.name] ? "#f87171" : "#dfdcef",
+                  }}
                 >
                   <option value="">Select {field.label}</option>
                   {field.options?.map((option, idx) => {
@@ -199,27 +208,35 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   }
                   onBlur={() => validateField(field.name)}
                   dateFormat="yyyy-MM-dd"
-                  className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
-                    errors[field.name] ? "border-red-500" : "border-gray-300"
-                  }`}
                   placeholderText={`Select ${field.label}`}
+                  className="border rounded-lg px-4 py-2 focus:outline-none transition"
+                  style={{
+                    backgroundColor: "#fbfbfb",
+                    color: "#3b3b3b",
+                    borderColor: errors[field.name] ? "#f87171" : "#dfdcef",
+                  }}
                 />
               ) : (
                 <input
                   type={field.type}
                   name={field.name}
-                  value={formData[field.name] as string} // ✅ set value
+                  value={formData[field.name] as string}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
-                  className={`border rounded-lg px-4 py-2 bg-gray-50 text-gray-700 placeholder-gray-400 focus:bg-white focus:ring-2 focus:ring-blue-500 focus:outline-none transition ${
-                    errors[field.name] ? "border-red-500" : "border-gray-300"
-                  }`}
                   placeholder={`Enter ${field.label.toLowerCase()}`}
+                  className="border rounded-lg px-4 py-2 focus:outline-none transition"
+                  style={{
+                    backgroundColor: "#fbfbfb",
+                    color: "#3b3b3b",
+                    borderColor: errors[field.name] ? "#f87171" : "#dfdcef",
+                  }}
                 />
               )}
 
               {errors[field.name] && (
-                <p className="text-red-500 text-xs mt-1">{errors[field.name]}</p>
+                <p className="text-xs mt-1" style={{ color: "#f87171" }}>
+                  {errors[field.name]}
+                </p>
               )}
             </div>
           );
@@ -228,7 +245,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
       <button
         type="submit"
-        className="w-full bg-blue-600 hover:bg-blue-700 text-white font-semibold py-3 rounded-lg shadow-md transition"
+        className="w-full font-semibold py-3 rounded-lg shadow-md transition"
+        style={{ backgroundColor: "#009063", color: "#fbfbfb" }}
       >
         {buttonText}
       </button>

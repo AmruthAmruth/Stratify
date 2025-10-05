@@ -16,6 +16,6 @@ router.use("/department", departmentRouter);
 router.use("/employee", employeeRouter);
 router.use("/subscription", subscriptionRouter);
 router.use("/project", projectRouter);
-router.use("/leave", leaveRouter);
+router.use("/leave", leaveRouter); 
 
 export default router;

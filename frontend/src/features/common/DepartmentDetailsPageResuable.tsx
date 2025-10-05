@@ -3,8 +3,6 @@ import {
   Mail, 
   Phone, 
   Award, 
-  MessageCircle, 
-  Eye, 
   ArrowLeft,
   Users,
   Building2
@@ -13,15 +11,15 @@ import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import Table from "@/shared/components/Table/Table";
-import { createEmployee, getDepartmentDetails, getManagerDepartments } from "@/services/company";
-import { useNavigate, useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
+import { createEmployee, getDepartmentDetails, getManagerDepartments } from "@/services/company";
 import { addMember } from "@/shared/components/Forms/formFields";
 import { addMemberSchema } from "@/shared/utils/validations";
 import { useSnackbar } from "notistack";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useNavigate, useParams } from "react-router-dom";
 
 // TypeScript Interfaces
 interface TeamMember {
@@ -30,7 +28,7 @@ interface TeamMember {
   position: string;
   email: string;
   phone: string;
-  status?: "Active" | "Inactive"; 
+  status?: "Active" | "Inactive";
 }
 
 interface DepartmentResponse {
@@ -51,7 +49,7 @@ interface Department {
 }
 
 interface DepartmentDetailsPageProps {
-  role: 'company' | 'manager';
+  role: "company" | "manager";
 }
 
 const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) => {
@@ -63,23 +61,22 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage] = useState(5);
 
-  const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [isDepartmentSelectorOpen, setIsDepartmentSelectorOpen] = useState<boolean>(false);
-  const [loading, setLoading] = useState<boolean>(true);
+  const [submitLoading, setSubmitLoading] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDepartmentSelectorOpen, setIsDepartmentSelectorOpen] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const { enqueueSnackbar } = useSnackbar();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
+
   const [department, setDepartment] = useState<DepartmentResponse | null>(null);
   const [departments, setDepartments] = useState<Department[]>([]);
   const [selectedDepartmentId, setSelectedDepartmentId] = useState<string>(id || "");
 
-  // Get manager ID from Redux store
   const managerId = useSelector((state: RootState) => state.auth.userId);
 
-  // Fetch manager departments when role is manager
+  /** Fetch manager departments */
   useEffect(() => {
     if (role === "manager" && managerId) {
       setLoading(true);
@@ -87,85 +84,51 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         .then((data) => {
           setDepartments(data || []);
           if (data && data.length > 0 && !selectedDepartmentId) {
-            setSelectedDepartmentId(data[0].id); // default to first department
+            setSelectedDepartmentId(data[0].id);
           }
         })
-        .catch((err) => {
-          console.error("Error fetching manager departments:", err);
-          enqueueSnackbar("Failed to fetch manager departments", { variant: "error" });
-        })
-        .finally(() => {
-          setLoading(false);
-        });
+        .catch(() => enqueueSnackbar("Failed to fetch manager departments", { variant: "error" }))
+        .finally(() => setLoading(false));
     } else if (role === "company") {
       setLoading(false);
     }
-  }, [role, managerId, selectedDepartmentId]);
+  }, [role, managerId, selectedDepartmentId, enqueueSnackbar]);
 
-  // Fetch department details
+  /** Fetch department details */
   useEffect(() => {
-    const departmentId = role === 'company' ? id : selectedDepartmentId;
-    
+    const departmentId = role === "company" ? id : selectedDepartmentId;
     if (departmentId && !loading) {
       getDepartmentDetails(departmentId)
-        .then((data) => {
-          setDepartment(data.response);
-        })
-        .catch((err) => {
-          console.error("Error while fetching department:", err);
-          enqueueSnackbar("Failed to fetch department details", { variant: "error" });
-        });
+        .then((data) => setDepartment(data.response))
+        .catch(() => enqueueSnackbar("Failed to fetch department details", { variant: "error" }));
     }
-  }, [id, selectedDepartmentId, role, loading]);
+  }, [id, selectedDepartmentId, role, loading, enqueueSnackbar]);
 
+  /** Add member handler */
   const handleAddMember = (values: any) => {
-    const departmentId = role === 'company' ? id : selectedDepartmentId;
-    if (!departmentId) {
-      enqueueSnackbar("No department selected", { variant: "error" });
-      return;
-    }
+    const departmentId = role === "company" ? id : selectedDepartmentId;
+    if (!departmentId) return enqueueSnackbar("No department selected", { variant: "error" });
 
     setSubmitLoading(true);
-
-    const payload = {
-      ...values,
-      departmentId: departmentId,
-    };
-
-    createEmployee(payload)
-      .then((data) => {
-        console.log("Member added successfully:", data);
+    createEmployee({ ...values, departmentId })
+      .then(() => {
         enqueueSnackbar("Member added successfully!", { variant: "success" });
         setIsModalOpen(false);
-        
-        // Refresh department details
-        getDepartmentDetails(departmentId)
-          .then((refreshedData) => {
-            setDepartment(refreshedData.response);
-          })
-          .catch((err) => {
-            console.error("Error refreshing department:", err);
-          });
+        return getDepartmentDetails(departmentId);
       })
-      .catch((err) => {
-        console.error("Error creating employee:", err.message);
-        enqueueSnackbar("Failed to add member. Please try again.", { variant: "error" });
-      })
-      .finally(() => {
-        setSubmitLoading(false);
-      });
+      .then((refreshed) => setDepartment(refreshed.response))
+      .catch(() => enqueueSnackbar("Failed to add member. Please try again.", { variant: "error" }))
+      .finally(() => setSubmitLoading(false));
   };
 
+  /** Department selection for manager */
   const handleDepartmentChange = (departmentId: string) => {
     setSelectedDepartmentId(departmentId);
     setIsDepartmentSelectorOpen(false);
-    // Update URL for manager
-    if (role === 'manager') {
-      navigate(`/manager/department/${departmentId}`, { replace: true });
-    }
+    if (role === "manager") navigate(`/manager/department/${departmentId}`, { replace: true });
   };
 
-  // Dynamic department data
+  /** Dynamic data */
   const departmentData = department
     ? {
         name: department.departmentName,
@@ -175,30 +138,26 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           email: department.headEmail,
           phone: department.headPhone,
           position: department.headPosition,
-          avatar:
-            "https://ui-avatars.com/api/?name=" +
-            encodeURIComponent(department.headOfDepartment),
-          experience: 5, // This might need to come from API if available
+          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(department.headOfDepartment)}`,
+          experience: 5,
         },
       }
     : null;
 
-  // Dynamic employee data
   const employeeData = useMemo(() => {
     if (!department?.teamMembers) return [];
-    return department.teamMembers.map((member) => ({
-      id: member.id,
-      name: member.name,
-      position: member.position,
-      email: member.email,
-      phone: member.phone,
-      status: member.status || "Active",
+    return department.teamMembers.map((m) => ({
+      id: m.id,
+      name: m.name,
+      position: m.position,
+      email: m.email,
+      phone: m.phone,
+      status: m.status || "Active",
     }));
   }, [department]);
 
-  // Overview data based on real data
   const overviewData = useMemo(() => ({
-    totalProjects: 24, // This might need to come from API
+    totalProjects: 24,
     totalTeamMembers: employeeData.length,
     activeMembers: employeeData.filter((e) => e.status === "Active").length,
     inactiveMembers: employeeData.filter((e) => e.status === "Inactive").length,
@@ -206,11 +165,11 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
 
   const performanceChartData = useMemo(() => ({
     labels: ["Active Projects", "Completed Projects", "Team Members", "Efficiency %"],
-    data: [12, 45, employeeData.length, 85], // Some values might need to come from API
+    data: [12, 45, employeeData.length, 85],
     backgroundColors: ["#3b82f6", "#10b981", "#f59e0b", "#8b5cf6"]
   }), [employeeData.length]);
 
-  // Filter and sort logic
+  /** Table Filtering, Sorting, Pagination */
   const filteredEmployees = useMemo(() => {
     let filtered = [...employeeData];
     if (searchTerm) {
@@ -223,10 +182,10 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     if (filterValue) filtered = filtered.filter(emp => emp.status === filterValue);
     if (sortBy) {
       filtered.sort((a, b) => {
-        const aValue = a[sortBy as keyof typeof a];
-        const bValue = b[sortBy as keyof typeof b];
-        if (sortOrder === "asc") return aValue > bValue ? 1 : -1;
-        return aValue < bValue ? 1 : -1;
+        const aVal = a[sortBy as keyof typeof a];
+        const bVal = b[sortBy as keyof typeof b];
+        if (sortOrder === "asc") return aVal > bVal ? 1 : -1;
+        return aVal < bVal ? 1 : -1;
       });
     }
     return filtered;
@@ -254,25 +213,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     { key: "position", label: "Position" },
     { key: "email", label: "Email" },
     { key: "phone", label: "Phone" },
-    { key: "status", label: "Status" }
-  ];
-
-  const handleViewProfile = (profileId: string) => {
-    const basePath = role === 'company' ? '' : '/manager';
-    navigate(`${basePath}/team-member-profile/${profileId}`);
-  };
-
-  const tableActions = [
-    {
-      type: "edit",
-      label: "View More",
-      onClick: (row: any) => handleViewProfile(row.id)
-    },
-    {
-      type: "approve",
-      label: "Message",
-      onClick: (row: any) => console.log("Message employee:", row)
-    }
+    { key: "status", label: "Status" },
   ];
 
   const renderCell = (row: any, key: string) => {
@@ -288,42 +229,37 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     return row[key];
   };
 
-  const handleMessage = () => console.log("Message department head");
-  const handleViewMore = () => console.log("View more department head details");
-  
   const handleBackToDepartments = () => {
-    const backPath = role === 'company' ? '/departments' : '/manager/departments';
-    navigate(backPath);
+    navigate(role === "company" ? "/departments" : "/manager/departments");
   };
 
-  // Get current department name for manager view
-  const currentDepartmentName = role === 'manager' 
-    ? departments.find(dept => dept.id === selectedDepartmentId)?.name || departmentData?.name || 'Department'
-    : departmentData?.name || 'Department';
+  const currentDepartmentName =
+    role === "manager"
+      ? departments.find((d) => d.id === selectedDepartmentId)?.name || departmentData?.name || "Department"
+      : departmentData?.name || "Department";
 
-  // Show loading state
+  /** Loading states */
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfb]">
         <div className="text-center">
-          <div className="w-12 h-12 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-          <p className="text-gray-600">Loading department details...</p>
+          <div className="w-12 h-12 border-4 border-[#009063] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+          <p className="text-gray-700">Loading department details...</p>
         </div>
       </div>
     );
   }
 
-  // Show message if manager has no departments
-  if (role === 'manager' && departments.length === 0) {
+  if (role === "manager" && departments.length === 0) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfb]">
         <div className="text-center">
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">No Departments Assigned</h2>
           <p className="text-gray-600">You are not assigned to manage any departments yet.</p>
           <button 
             onClick={handleBackToDepartments}
-            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="mt-4 bg-[#009063] text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             Back to Dashboard
           </button>
@@ -332,17 +268,16 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     );
   }
 
-  // Show message if no department data available
   if (!department) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center bg-[#fbfbfb]">
         <div className="text-center">
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Department Not Found</h2>
           <p className="text-gray-600">The requested department details could not be loaded.</p>
           <button 
             onClick={handleBackToDepartments}
-            className="mt-4 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="mt-4 bg-[#009063] text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
             Back to Departments
           </button>
@@ -351,12 +286,14 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     );
   }
 
+  /** Main content */
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-[#fbfbfb]">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <div className="bg-white border-b border-[#dfdcef] sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-6">
+            {/* Back Button */}
             <div className="flex items-center space-x-4">
               <button 
                 onClick={handleBackToDepartments}
@@ -365,30 +302,23 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                 Back to Departments
               </button>
-              <div className="h-6 w-px bg-gray-300"></div>
+
+              <div className="h-6 w-px bg-[#dfdcef]"></div>
+
               <div className="flex items-center space-x-3">
-                <h1 className="text-3xl font-bold text-gray-900">
-                  {role === 'company' ? 'Department Details' : 'My Department'}
-                </h1>
-                {role === 'company' && (
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                    Company View
-                  </span>
-                )}
-                {role === 'manager' && (
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                    Manager View
-                  </span>
-                )}
+                <h1 className="text-3xl font-bold text-gray-900">Department Details</h1>
+                <span className={`px-3 py-1 text-sm font-medium rounded-full ${role === "company" ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"}`}>
+                  {role === "company" ? "Company View" : "Manager View"}
+                </span>
               </div>
             </div>
 
             {/* Department Selector for Manager */}
-            {role === 'manager' && departments.length > 1 && (
+            {role === "manager" && departments.length > 1 && (
               <div className="relative">
                 <button
                   onClick={() => setIsDepartmentSelectorOpen(!isDepartmentSelectorOpen)}
-                  className="flex items-center space-x-2 bg-white border border-gray-300 rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50 transition-colors"
+                  className="flex items-center space-x-2 bg-white border border-[#dfdcef] rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-[#f5f5f5] transition-colors"
                 >
                   <Building2 className="w-4 h-4" />
                   <span>{currentDepartmentName}</span>
@@ -398,7 +328,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 </button>
 
                 {isDepartmentSelectorOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-[#dfdcef] py-2 z-50">
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                       Select Department
                     </div>
@@ -406,8 +336,8 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                       <button
                         key={dept.id}
                         onClick={() => handleDepartmentChange(dept.id)}
-                        className={`w-full text-left px-4 py-3 hover:bg-gray-50 transition-colors ${
-                          selectedDepartmentId === dept.id ? 'bg-blue-50 text-blue-700' : 'text-gray-700'
+                        className={`w-full text-left px-4 py-3 hover:bg-[#f5f5f5] transition-colors ${
+                          selectedDepartmentId === dept.id ? "bg-blue-50 text-blue-700" : "text-gray-700"
                         }`}
                       >
                         <div className="font-medium">{dept.name}</div>
@@ -425,47 +355,37 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         </div>
       </div>
 
+      {/* Page Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Department Info */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8 hover:shadow-md transition-shadow duration-300">
-          <div className="flex flex-col gap-8">
-            <div className="mb-6">
-              <div className="flex items-center mb-4">
-                <div className="w-2 h-8 bg-gradient-to-b from-blue-500 to-purple-600 rounded-full mr-4"></div>
-                <h2 className="text-3xl font-bold text-gray-900">{departmentData.name}</h2>
-                {role === 'manager' && (
-                  <span className="ml-4 px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                    You manage this department
-                  </span>
-                )}
-              </div>
-              <p className="text-gray-600 leading-relaxed text-lg">{departmentData.description}</p>
+        <div className="bg-white rounded-2xl shadow-sm border border-[#dfdcef] p-8 mb-8 hover:shadow-md transition-shadow duration-300">
+          <div className="flex flex-col gap-6">
+            <div className="flex items-center mb-4">
+              <div className="w-2 h-8 bg-gradient-to-b from-[#009063] to-purple-500 rounded-full mr-4"></div>
+              <h2 className="text-3xl font-bold text-gray-900">{departmentData.name}</h2>
             </div>
+            <p className="text-gray-700 leading-relaxed">{departmentData.description}</p>
           </div>
         </div>
 
-        {/* Tabs */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
-          <div className="border-b border-gray-200">
+        {/* Tabs & Content */}
+        <div className="bg-white rounded-2xl shadow-sm border border-[#dfdcef] mb-8 overflow-hidden">
+          <div className="border-b border-[#dfdcef]">
             <nav className="flex space-x-0">
-              <button
-                onClick={() => setActiveTab("overview")}
-                className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${
-                  activeTab === "overview" ? "text-blue-600 bg-blue-50" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                Overview
-                {activeTab === "overview" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>}
-              </button>
-              <button
-                onClick={() => setActiveTab("team")}
-                className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${
-                  activeTab === "team" ? "text-blue-600 bg-blue-50" : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                }`}
-              >
-                Team Members
-                {activeTab === "team" && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-blue-600"></div>}
-              </button>
+              {["overview", "team"].map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${
+                    activeTab === tab
+                      ? "text-[#009063] bg-[#e6f6f0]"
+                      : "text-gray-500 hover:text-gray-700 hover:bg-[#f5f5f5]"
+                  }`}
+                >
+                  {tab === "overview" ? "Overview" : "Team Members"}
+                  {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009063]"></div>}
+                </button>
+              ))}
             </nav>
           </div>
 
@@ -482,12 +402,18 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
 
                 {/* Performance Chart */}
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <ReusableChart type="bar" labels={performanceChartData.labels} data={performanceChartData.data} title="Performance Metrics" backgroundColors={performanceChartData.backgroundColors} />
+                  <ReusableChart 
+                    type="bar" 
+                    labels={performanceChartData.labels} 
+                    data={performanceChartData.data} 
+                    title="Performance Metrics" 
+                    backgroundColors={performanceChartData.backgroundColors} 
+                  />
                 </div>
               </div>
             )}
 
-            {activeTab === "team" && departmentData && (
+            {activeTab === "team" && (
               <div className="space-y-12">
                 {/* Department Head */}
                 <div className="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 rounded-2xl p-8 border border-green-100 shadow-sm">
@@ -502,21 +428,13 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                       <h4 className="text-2xl font-bold text-gray-900 mb-2">{departmentData.head.name}</h4>
                       <p className="text-green-600 font-semibold mb-4">
                         {departmentData.head.position}
-                        {role === 'manager' && (
-                          <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">
-                            Department Head
-                          </span>
-                        )}
+                        <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Department Head</span>
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                         <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Mail className="w-4 h-4 mr-3 text-blue-500" />{departmentData.head.email}</div>
                         <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Phone className="w-4 h-4 mr-3 text-green-500" />{departmentData.head.phone}</div>
                         <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Award className="w-4 h-4 mr-3 text-yellow-500" />{departmentData.head.experience} years</div>
                       </div>
-                    </div>
-                    <div className="flex flex-col sm:flex-row gap-3">
-                      <button onClick={handleMessage} className="bg-blue-600 text-white px-6 py-3 rounded-xl text-sm font-semibold hover:bg-blue-700 transition-colors duration-200 shadow-sm">Message</button>
-                      <button onClick={handleViewMore} className="bg-white border-2 border-gray-300 text-gray-700 px-6 py-3 rounded-xl text-sm font-semibold hover:bg-gray-50 transition-all duration-200">View Profile</button>
                     </div>
                   </div>
                 </div>
@@ -526,12 +444,10 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                   <div className="flex items-center justify-between mb-8">
                     <h3 className="text-2xl font-bold text-gray-900">Team Members</h3>
                     <div className="flex items-center gap-4">
-                      <div className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                        {filteredEmployees.length} Members
-                      </div>
+                      <div className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">{filteredEmployees.length} Members</div>
                       <button
                         onClick={() => setIsModalOpen(true)}
-                        className="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-blue-700 transition"
+                        className="bg-[#009063] text-white px-4 py-2 rounded-lg text-sm font-semibold hover:bg-green-700 transition"
                       >
                         + Add Member
                       </button>
@@ -564,11 +480,11 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                     currentPage={currentPage}
                     totalPages={totalPages}
                     onPageChange={handlePageChange}
-                    actions={tableActions}
                     renderCell={renderCell}
                   />
                 </div>
 
+                {/* Add Member Modal */}
                 <Modal
                   isOpen={isModalOpen}
                   onClose={() => setIsModalOpen(false)}
@@ -582,7 +498,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                   />
                   {submitLoading && (
                     <div className="flex justify-center mt-4">
-                      <div className="w-6 h-6 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
+                      <div className="w-6 h-6 border-2 border-[#009063] border-t-transparent rounded-full animate-spin"></div>
                     </div>
                   )}
                 </Modal>

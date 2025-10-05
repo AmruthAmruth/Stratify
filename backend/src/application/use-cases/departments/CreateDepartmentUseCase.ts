@@ -81,7 +81,7 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
         html
       );
     }
-
+ 
     return createdDepartment;
   }
 }

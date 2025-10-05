@@ -7,9 +7,8 @@ interface PaginationProps {
 }
 
 const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPageChange }) => {
-  // Generate page numbers to display
   const getVisiblePages = () => {
-    const delta = 2; // Number of pages to show on each side of current page
+    const delta = 2;
     const range = [];
     const rangeWithDots = [];
 
@@ -41,10 +40,10 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   return (
     <div className="flex items-center justify-between">
       {/* Page Info */}
-      <div className="flex items-center text-sm text-gray-700">
+      <div className="flex items-center text-sm text-[#3b3b3b]">
         <span>
-          Page <span className="font-medium">{currentPage}</span> of{' '}
-          <span className="font-medium">{totalPages}</span>
+          Page <span className="font-semibold">{currentPage}</span> of{' '}
+          <span className="font-semibold">{totalPages}</span>
         </span>
       </div>
 
@@ -54,7 +53,8 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-colors duration-150"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-[#3b3b3b] bg-[#fbfbfb] border border-[#dfdcef] rounded-md 
+                     hover:bg-[#f2f2f2] hover:text-[#009063] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           aria-label="Previous page"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,16 +68,14 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
           {visiblePages.map((page, index) => (
             <React.Fragment key={index}>
               {page === '...' ? (
-                <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500">
-                  ...
-                </span>
+                <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-[#3b3b3b]">...</span>
               ) : (
                 <button
                   onClick={() => onPageChange(page as number)}
-                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md transition-colors duration-150 ${
+                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border transition-colors duration-150 ${
                     currentPage === page
-                      ? 'bg-indigo-600 text-white border border-indigo-600 hover:bg-indigo-700'
-                      : 'text-gray-700 bg-white border border-gray-300 hover:bg-gray-50 hover:text-gray-900'
+                      ? 'bg-[#009063] text-white border-[#009063] shadow-md'
+                      : 'text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef] hover:bg-[#f2f2f2] hover:text-[#009063]'
                   }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
@@ -90,7 +88,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         </div>
 
         {/* Mobile Page Display */}
-        <div className="sm:hidden flex items-center px-3 py-2 text-sm font-medium text-gray-700 bg-gray-50 border border-gray-300 rounded-md">
+        <div className="sm:hidden flex items-center px-3 py-2 text-sm font-medium text-[#3b3b3b] bg-[#fbfbfb] border border-[#dfdcef] rounded-md">
           {currentPage} / {totalPages}
         </div>
 
@@ -98,7 +96,8 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-gray-500 bg-white border border-gray-300 rounded-md hover:bg-gray-50 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-white disabled:hover:text-gray-500 transition-colors duration-150"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-[#3b3b3b] bg-[#fbfbfb] border border-[#dfdcef] rounded-md 
+                     hover:bg-[#f2f2f2] hover:text-[#009063] disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
           aria-label="Next page"
         >
           Next

@@ -40,7 +40,7 @@ app.use(morgan("dev"));
 connectDB();
 
 // Routes
-app.use("/api", router);
+app.use("/api", router); 
 
 // Error handling middleware
 app.use(errorMiddleware);

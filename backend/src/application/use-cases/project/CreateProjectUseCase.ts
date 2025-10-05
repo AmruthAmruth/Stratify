@@ -16,7 +16,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
-    private _employeeRepo: IEmployeeRepository 
+    private _employeeRepo: IEmployeeRepository
   ) {}
 
   async execute(projectDTO: CreateProjectDTO): Promise<Project> {
@@ -44,34 +44,45 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
     }
 
-    const department = await this._departmentRepo.findById(projectDTO.departmentId);
+    const department = await this._departmentRepo.findById(
+      projectDTO.departmentId
+    );
     if (!department) {
       throw new AppError("Department not found", StatusCodes.NOT_FOUND);
     }
 
-    if (department.companyId !== companyId) throw new AppError('Department does not belong to creator company', 400);
+    if (department.companyId !== companyId)
+      throw new AppError("Department does not belong to creator company", 400);
 
     const existingProjectName = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
       companyId
     );
     if (existingProjectName) {
-      throw new AppError("Project name already exists for this company", StatusCodes.BAD_REQUEST);
+      throw new AppError(
+        "Project name already exists for this company",
+        StatusCodes.BAD_REQUEST
+      );
     }
 
-    const existingProjectKey= await this._projectRepo.findByKeyAndCompany(projectDTO.key,companyId)
+    const existingProjectKey = await this._projectRepo.findByKeyAndCompany(
+      projectDTO.key,
+      companyId
+    );
 
-if (existingProjectKey) {
-      throw new AppError("Project Key name already exists for this company", StatusCodes.BAD_REQUEST);
+    if (existingProjectKey) {
+      throw new AppError(
+        "Project Key name already exists for this company",
+        StatusCodes.BAD_REQUEST
+      );
     }
 
-
-
-    
-
-   await validateEmployees(this._employeeRepo, projectDTO.teamMemberIds, companyId, "Team member");
-
-
+    await validateEmployees(
+      this._employeeRepo,
+      projectDTO.teamMemberIds,
+      companyId,
+      "Team member"
+    );
 
     const now = new Date();
 
@@ -89,8 +100,8 @@ if (existingProjectKey) {
       createdByModel,
       companyId,
       projectDTO.teamMemberIds ?? [],
-      now,  
-      now   
+      now,
+      now
     );
 
     return await this._projectRepo.create(project);

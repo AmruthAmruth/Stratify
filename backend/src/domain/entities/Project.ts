@@ -10,9 +10,9 @@ export class Project {
     public departmentId: string,
     public projectLeadId: string,
     public createdBy: string,
-    public createdByModel: "Company" | "Manager",   
-    public companyId: string,         
-    public teamMemberIds?: string[],              
+    public createdByModel: "Company" | "Manager",
+    public companyId: string,
+    public teamMemberIds?: string[],
     public createdAt?: Date,
     public updatedAt?: Date
   ) {}

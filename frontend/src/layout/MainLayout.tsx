@@ -6,7 +6,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../store/index";
 
 const MainLayout: React.FC = () => {
-  const role = useSelector((state: RootState) => state.auth.role);
+  const role = useSelector((state: RootState) => state.auth.name);
 
   if (!role) {
     return <Navigate to="/login" replace />;

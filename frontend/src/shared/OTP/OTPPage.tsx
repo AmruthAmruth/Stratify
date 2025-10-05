@@ -46,39 +46,22 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
   const handleVerify = async () => {
     try {
       if (context === "register") {
-        const email = localStorage.getItem("email"); 
+        const email = localStorage.getItem("email");
         if (!email) throw new Error("Email not found, please register again.");
 
-        await verifyOTP({ email, otp }).then((data)=>{
-          console.log("Verification data ",data);
+        await verifyOTP({ email, otp }).then((data) => {
           enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
-          navigate('/company-pending-approval')
-          // if (data.accessToken) {
-          //       const decoded: DecodedToken = jwtDecode(data.accessToken);
-          //       console.log("decoded", decoded);
-          
-          //       dispatch(
-          //         setCredentials({
-          //           accessToken: data.accessToken,
-          //           role: decoded.role,
-          //           userId: decoded.id,
-          //         })
-          //       );
-          
-          //       navigate("/dashboard");
-          //     }
-        }).catch((err)=>console.log(err)
-        )
-        
+          navigate("/company-pending-approval");
+        });
       }
 
       if (context === "forgotPassword") {
-        const email = localStorage.getItem("email"); 
+        const email = localStorage.getItem("email");
         if (!email) throw new Error("Email not found, please try again.");
 
         await forgotPasswordVerifyOTP({ email, otp });
         enqueueSnackbar("OTP verified! You can now reset your password.", { variant: "success" });
-        navigate("/reset-password"); 
+        navigate("/reset-password");
       }
     } catch (err: any) {
       enqueueSnackbar(err?.message || "OTP verification failed", { variant: "error" });
@@ -111,29 +94,30 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
-  
-
+    <div className="min-h-screen flex flex-col bg-[#fbfbfb]">
       <div className="flex flex-1 flex-col lg:flex-row pt-20">
-        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-indigo-600 to-blue-800 text-white flex-col justify-center items-center p-16 text-left">
+        {/* Left Side */}
+        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#009063] to-[#3b3b3b] text-white flex-col justify-center items-center p-16 text-left">
           <Users className="w-20 h-20 mb-6 text-white" />
           <h1 className="text-5xl font-bold mb-4 leading-snug">
             {context === "register" ? "Verify Your Account" : "Reset Your Password"}
           </h1>
-          <p className="text-lg text-gray-200 max-w-md">
-            Enter the 6-digit code sent to your email to {context === "register" ? "activate your account" : "reset your password"}.
+          <p className="text-lg text-[#dfdcef] max-w-md">
+            Enter the 6-digit code sent to your email to{" "}
+            {context === "register" ? "activate your account" : "reset your password"}.
           </p>
         </div>
 
+        {/* Right Side */}
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
-          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300">
+          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-[#dfdcef]">
             <div className="flex justify-center mb-6">
-              <span className="bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
+              <span className="bg-[#dfdcef] text-[#3b3b3b] px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
                 {context === "register" ? "Account Verification" : "Password Reset Verification"}
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-800 text-center mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-[#3b3b3b] text-center mb-3">
               Enter OTP
             </h2>
             <p className="text-center text-gray-500 mb-8 md:mb-10 text-base">
@@ -142,29 +126,20 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
                 : "Please type the 6-digit code sent to your email to reset your password."}
             </p>
 
+            {/* OTP Component */}
             <div className="flex justify-center gap-4 mb-8">
-              <ReusableOTP
-                value={otp}
-                onChange={setOtp}
-                numInputs={6}
-                inputSize="3.5rem"
-                gap="1rem"
-              />
+              <ReusableOTP value={otp} onChange={setOtp} numInputs={6} inputSize="3.5rem" gap="1rem" />
             </div>
 
             {/* Timer */}
             <div className="text-center mb-4">
               {timeLeft > 0 ? (
-                <p className="text-gray-600 text-sm">
+                <p className="text-[#3b3b3b] text-sm">
                   OTP will expire in{" "}
-                  <span className="font-semibold text-blue-600">
-                    {formatTime(timeLeft)}
-                  </span>
+                  <span className="font-semibold text-[#009063]">{formatTime(timeLeft)}</span>
                 </p>
               ) : (
-                <p className="text-red-500 text-sm font-medium">
-                  OTP expired. Please resend.
-                </p>
+                <p className="text-red-500 text-sm font-medium">OTP expired. Please resend.</p>
               )}
             </div>
 
@@ -173,22 +148,21 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
               onClick={handleVerify}
               disabled={timeLeft <= 0}
               className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${
-                timeLeft <= 0
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-blue-600 hover:bg-blue-700"
+                timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-[#009063] hover:bg-green-700"
               }`}
             >
               Verify OTP
             </button>
 
-            <div className="mt-6 text-center text-gray-500 text-sm md:text-base">
-              <p>
+            {/* Resend */}
+            <div className="mt-6 text-center text-sm md:text-base">
+              <p className="text-[#3b3b3b]">
                 Didn't receive the code?{" "}
                 <span
                   className={`font-medium cursor-pointer ${
                     timeLeft > 0
                       ? "text-gray-400 cursor-not-allowed"
-                      : "text-blue-600 hover:underline"
+                      : "text-[#009063] hover:underline"
                   }`}
                   onClick={() => {
                     if (timeLeft <= 0) handleResendOTP();
