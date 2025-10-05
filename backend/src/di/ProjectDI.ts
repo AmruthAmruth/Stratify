@@ -46,7 +46,7 @@ export const projectDI = () => {
   const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(projectRepo, managerRepo);
   const getProjectDetailsUseCase = new GetProjectDetailsUseCase(projectRepo, backlogRepo, userStoryRepo, taskRepo, sprintRepo);
   const assignUserStoryToSprintUseCase = new AssignUserStoryToSprintUseCase(sprintRepo, userStoryRepo);
-  const createIssueRepo=new CreateIssueUseCase(projectRepo,issueRepo)
+  const createIssueUseCase=new CreateIssueUseCase(projectRepo,issueRepo)
   const createSubTaskUseCase=new CreateSubTaskUseCase(issueRepo,subTaskRepo)
 
 
@@ -60,7 +60,7 @@ export const projectDI = () => {
     getProjectsByDepartmentUseCase,
     getProjectDetailsUseCase,
     assignUserStoryToSprintUseCase,
-    createIssueRepo,
+    createIssueUseCase,
     createSubTaskUseCase
   );
 };
