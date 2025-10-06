@@ -1,17 +1,23 @@
 export class Sprint {
   constructor(
-    public id: string | undefined,
+    public readonly id: string | undefined,
     public name: string,
-    public description: string,  
-    public projectId: string,
+    public goal: string,
     public startDate: Date,
     public endDate: Date,
+    public projectId: string,
     public status: "Planned" | "Active" | "Completed" = "Planned",
-    public teamCapacity: number,           
-    public totalStoryPoints: number = 0,     
-    public createdBy: string,
-    public userStoryIds: string[] = [],
-    public createdAt?: Date,
-    public updatedAt?: Date
+    public createdAt: Date = new Date(),
+    public updatedAt: Date = new Date()
   ) {}
+
+  activate() {
+    this.status = "Active";
+    this.updatedAt = new Date();
+  }
+
+  complete() {
+    this.status = "Completed";
+    this.updatedAt = new Date();
+  }
 }

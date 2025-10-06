@@ -1,3 +1,4 @@
+
 import { Sprint } from "../../../domain/entities/Sprint";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
@@ -6,18 +7,20 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateSprintDTO } from "../../dto/project/CreateSprintDTO";
 import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseCase";
 
-export class CreateSprintUseCase implements ICreateSprintUseCase {
+export class CreateSprentUseCase implements ICreateSprintUseCase {
   constructor(
-    private _sprintRepo: ISprintRepository,
-    private _projectRepo: IProjectRepository
+    private _projectRepo: IProjectRepository,
+    private _sprintRepo: ISprintRepository
   ) {}
-
   async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
     const project = await this._projectRepo.findById(sprintDTO.projectId);
-    if (!project)
+    if (!project) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+    }
 
-    const overlappingSprint = await this._sprintRepo.findOverlappingSprint(
+
+
+ const overlappingSprint = await this._sprintRepo.findOverlappingSprint(
       sprintDTO.projectId,
       sprintDTO.startDate,
       sprintDTO.endDate
@@ -30,24 +33,20 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
       );
     }
 
-    const now = new Date();
 
-    const sprint = new Sprint(
-      undefined,
+     const newSprint = new Sprint(
+      undefined, 
       sprintDTO.name,
-      sprintDTO.description,
+      sprintDTO.goal,
+      new Date(sprintDTO.startDate),
+      new Date(sprintDTO.endDate),
       sprintDTO.projectId,
-      sprintDTO.startDate,
-      sprintDTO.endDate,
-      sprintDTO.status ?? "Planned",
-      sprintDTO.teamCapacity,
-      0,
-      sprintDTO.createdBy,
-      [],
-      now,
-      now
+      sprintDTO.status ?? "Planned" 
     );
 
-    return await this._sprintRepo.create(sprint);
+     const createdSprint = await this._sprintRepo.create(newSprint);
+
+    return createdSprint;
+
   }
 }

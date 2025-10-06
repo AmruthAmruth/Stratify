@@ -2,34 +2,26 @@ import { Request, Response } from "express";
 import { ICreateProjectUseCase } from "../../application/interfaces/project/ICreateProjectUseCase";
 import { ICreateUserStoryUseCase } from "../../application/interfaces/project/ICreateUserStoryUseCase";
 import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICreateBacklogUseCase";
-import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
 import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
 import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/project/IGetProjectsByCompanyUseCase";
 import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
-import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
-import { IAssignUserStoryToSprintUseCase } from "../../application/interfaces/project/IAssignUserStoryToSprintUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { ICreateIssueUseCase } from "../../application/interfaces/project/ICreateIssueUseCase";
 import { ICreateSubTaskUseCase } from "../../application/interfaces/project/ICreateSubTaskUseCase";
-import { IAssignIssueToSprintUseCase } from "../../application/interfaces/project/IAssignIssueToSprintUseCase";
-import { ICreateSprentUseCase } from "../../application/interfaces/project/ICreateSprentUseCase";
+import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
 
 export class ProjectController {
   constructor(
     private _createProjectUseCase: ICreateProjectUseCase,
     private _createUserStoryUseCase: ICreateUserStoryUseCase,
     private _createBacklogUseCase: ICreateBacklogUseCase,
-    private _createSprintUseCase: ICreateSprintUseCase,
     private _createTaskUseCase: ICreateTaskUseCase,
     private _getProjectsByCompanyUseCase: IGetProjectsByCompanyUseCase,
     private _getProjectsByDepartmentUseCase: IGetProjectsByDepartmentUseCase,
-    private _getProjectDetailsUseCase: IGetProjectDetailsUseCase,
-    private _assignUserStoryToSprintUseCase: IAssignUserStoryToSprintUseCase,
     private _createIssueUseCase:ICreateIssueUseCase,
     private _createSubTaskUseCase:ICreateSubTaskUseCase,
-    private _assignIssueToSprintUseCase:IAssignIssueToSprintUseCase,
-    private _createSprentUseCase:ICreateSprentUseCase
+    private _createSprentUseCase:ICreateSprintUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -53,12 +45,12 @@ export class ProjectController {
     res.status(StatusCodes.CREATED).json({ message: "Backlog created successfully", response });
   };
 
-  createSprint = async (req: AuthRequest, res: Response): Promise<void> => {
-    const createdBy = req.userId;
-    const sprintDTO = { ...req.body, createdBy };
-    const response = await this._createSprintUseCase.execute(sprintDTO);
-    res.status(StatusCodes.CREATED).json({ message: "Sprint created successfully", response });
-  };
+  // createSprint = async (req: AuthRequest, res: Response): Promise<void> => {
+  //   const createdBy = req.userId;
+  //   const sprintDTO = { ...req.body, createdBy };
+  //   const response = await this._createSprintUseCase.execute(sprintDTO);
+  //   res.status(StatusCodes.CREATED).json({ message: "Sprint created successfully", response });
+  // };
 
   createTask = async (req: Request, res: Response): Promise<void> => {
     const response = await this._createTaskUseCase.execute(req.body);
@@ -77,17 +69,17 @@ export class ProjectController {
     res.status(StatusCodes.OK).json(response);
   };
 
-  getProjectDetails = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
-    const response = await this._getProjectDetailsUseCase.execute(id);
-    res.status(StatusCodes.OK).json(response);
-  };
+  // getProjectDetails = async (req: Request, res: Response): Promise<void> => {
+  //   const { id } = req.params;
+  //   const response = await this._getProjectDetailsUseCase.execute(id);
+  //   res.status(StatusCodes.OK).json(response);
+  // };
 
-  assignUserStoryToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
-    const assignedBy = req.userId;
-    const response = await this._assignUserStoryToSprintUseCase.execute({ ...req.body, assignedBy });
-    res.status(StatusCodes.CREATED).json({ message: "User story assigned to sprint successfully", response });
-  };
+  // assignUserStoryToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
+  //   const assignedBy = req.userId;
+  //   const response = await this._assignUserStoryToSprintUseCase.execute({ ...req.body, assignedBy });
+  //   res.status(StatusCodes.CREATED).json({ message: "User story assigned to sprint successfully", response });
+  // };
 
   createIssue=async (req:Request,res:Response):Promise<void>=>{
       const response = await this._createIssueUseCase.execute(req.body);
@@ -100,15 +92,15 @@ createSubTask=async(req:Request,res:Response):Promise<void>=>{
 }
 
 
-assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
-  const {issueId,sprintId}=req.body
-  const response = await this._assignIssueToSprintUseCase.execute(issueId,sprintId)
-  res.status(StatusCodes.OK).json({message:"Added issue to Sprint",response})
-}
+// assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
+//   const {issueId,sprintId}=req.body
+//   const response = await this._assignIssueToSprintUseCase.execute(issueId,sprintId)
+//   res.status(StatusCodes.OK).json({message:"Added issue to Sprint",response})
+// }
 
 
 
-createSprent=async(req:Request,res:Response):Promise<void>=>{
+createSprint=async(req:Request,res:Response):Promise<void>=>{
   const response = await this._createSprentUseCase.execute(req.body);
   res.status(StatusCodes.OK).json({message:"Sprint Created Successfully!",response})
 }

@@ -1,11 +1,8 @@
-
 export interface CreateSprintDTO {
   name: string;
-  description:string;
-  projectId: string;
+  goal: string;
   startDate: Date;
-  endDate: Date;
-  teamCapacity: number;
-  createdBy: string;
+  endDate: Date 
+  projectId: string;
   status?: "Planned" | "Active" | "Completed"; 
 }

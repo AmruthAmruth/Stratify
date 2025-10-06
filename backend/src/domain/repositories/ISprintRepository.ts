@@ -1,5 +1,6 @@
 import { Sprint } from "../entities/Sprint";
 
+
 export interface ISprintRepository {
   create(sprint: Sprint): Promise<Sprint>;
   update(sprint: Sprint): Promise<Sprint>;
@@ -7,4 +8,4 @@ export interface ISprintRepository {
   findByProject(projectId: string): Promise<Sprint[]>;
   delete(id: string): Promise<void>;
   findOverlappingSprint(projectId:string,startDate:Date,endDate:Date):Promise<Sprint|null>
-}
+} 
