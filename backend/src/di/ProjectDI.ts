@@ -20,6 +20,7 @@ import { CreateSubTaskUseCase } from "../application/use-cases/project/CreateSub
 import { SubTaskRepository } from "../infrastructure/repositories/SubTaskRepository";
 import { SprintRepository } from "../infrastructure/repositories/SprintRepository";
 import { CreateSprentUseCase } from "../application/use-cases/project/CreateSprintUseCase";
+import { AssignIssueToSprintUseCase } from "../application/use-cases/project/AssignIssueToSprintUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -43,7 +44,7 @@ export const projectDI = () => {
   const createIssueUseCase=new CreateIssueUseCase(projectRepo,issueRepo)
   const createSubTaskUseCase=new CreateSubTaskUseCase(issueRepo,subTaskRepo)
   const createSprentUseCase = new CreateSprentUseCase(projectRepo,sprintRepo)
-
+  const assineIssueToSprintUseCase=new AssignIssueToSprintUseCase(issueRepo,sprintRepo)
 
 
 
@@ -57,6 +58,7 @@ export const projectDI = () => {
     getProjectsByDepartmentUseCase,
     createIssueUseCase,
     createSubTaskUseCase,
-    createSprentUseCase
+    createSprentUseCase,
+    assineIssueToSprintUseCase
   );
 };

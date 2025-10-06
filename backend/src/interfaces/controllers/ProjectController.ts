@@ -10,6 +10,7 @@ import { StatusCodes } from "../../shared/constants/statusCodes";
 import { ICreateIssueUseCase } from "../../application/interfaces/project/ICreateIssueUseCase";
 import { ICreateSubTaskUseCase } from "../../application/interfaces/project/ICreateSubTaskUseCase";
 import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
+import { IAssignIssueToSprintUseCase } from "../../application/interfaces/project/IAssignIssueToSprintUseCase";
 
 export class ProjectController {
   constructor(
@@ -21,7 +22,8 @@ export class ProjectController {
     private _getProjectsByDepartmentUseCase: IGetProjectsByDepartmentUseCase,
     private _createIssueUseCase:ICreateIssueUseCase,
     private _createSubTaskUseCase:ICreateSubTaskUseCase,
-    private _createSprentUseCase:ICreateSprintUseCase
+    private _createSprentUseCase:ICreateSprintUseCase,
+    private _assignIssueToSprintUseCase:IAssignIssueToSprintUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -75,11 +77,7 @@ export class ProjectController {
   //   res.status(StatusCodes.OK).json(response);
   // };
 
-  // assignUserStoryToSprint = async (req: AuthRequest, res: Response): Promise<void> => {
-  //   const assignedBy = req.userId;
-  //   const response = await this._assignUserStoryToSprintUseCase.execute({ ...req.body, assignedBy });
-  //   res.status(StatusCodes.CREATED).json({ message: "User story assigned to sprint successfully", response });
-  // };
+  
 
   createIssue=async (req:Request,res:Response):Promise<void>=>{
       const response = await this._createIssueUseCase.execute(req.body);
@@ -92,19 +90,20 @@ createSubTask=async(req:Request,res:Response):Promise<void>=>{
 }
 
 
-// assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
-//   const {issueId,sprintId}=req.body
-//   const response = await this._assignIssueToSprintUseCase.execute(issueId,sprintId)
-//   res.status(StatusCodes.OK).json({message:"Added issue to Sprint",response})
-// }
-
-
 
 createSprint=async(req:Request,res:Response):Promise<void>=>{
   const response = await this._createSprentUseCase.execute(req.body);
   res.status(StatusCodes.OK).json({message:"Sprint Created Successfully!",response})
 }
+
+
+assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
+  const {issueId,sprintId}=req.body
+  const response = await this._assignIssueToSprintUseCase.execute(issueId,sprintId);
+  res.status(StatusCodes.OK).json({message:"Assine Issue to Sprint",response})
+}
  
 
 
 }
+    
