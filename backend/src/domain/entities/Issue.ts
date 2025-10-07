@@ -30,7 +30,6 @@ export class Issue{
     this.updatedAt = new Date();
   }
 
-
    moveToSprint(sprintId: string) {
     this.sprintId = sprintId;
     this.updatedAt = new Date();

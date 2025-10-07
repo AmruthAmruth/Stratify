@@ -1,4 +1,4 @@
-import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
+
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
@@ -10,7 +10,6 @@ export class ProjectLevelEmployeeAllocationUseCase
 {
   constructor(
     private _managerRepo: IManagerRepository,
-    private _departmentRepo: IDepartmentRepository,
     private _employeeRepo: IEmployeeRepository
   ) {}
 

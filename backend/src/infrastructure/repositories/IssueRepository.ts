@@ -59,4 +59,9 @@ export class IssueRepository implements IIssueRepository {
     const doc = await IssueModel.findById(id);
     return doc ? IssueMapper.toEntity(doc) : null;
   }
+
+  async findBySprintId(sprintId: string): Promise<Issue[]> {
+    const docs = await IssueModel.find({ sprintId });
+    return IssueMapper.toEntities(docs);
+  }
 }

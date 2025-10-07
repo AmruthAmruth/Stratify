@@ -54,7 +54,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       );
 
       if (usedThisMonth + days > policy.monthlyQuota) {
-        throw new AppError(
+        throw new AppError( 
           `${leaveType} leave monthly quota exceeded`,
           StatusCodes.BAD_REQUEST
         );
