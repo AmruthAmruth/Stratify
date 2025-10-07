@@ -43,7 +43,7 @@ export const projectDI = () => {
   const createTaskUseCase = new CreateTaskUseCase(taskRepo, userStoryRepo, employeeRepo, projectRepo);
   const getProjectsByCompanyUseCase = new GetProjectsByCompanyUseCase(projectRepo, managerRepo, departmentRepo);
   const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(projectRepo, managerRepo);
-  const createIssueUseCase=new CreateIssueUseCase(projectRepo,issueRepo)
+  const createIssueUseCase=new CreateIssueUseCase(projectRepo,issueRepo,employeeRepo)
   const createSubTaskUseCase=new CreateSubTaskUseCase(issueRepo,subTaskRepo)
   const createSprentUseCase = new CreateSprentUseCase(projectRepo,sprintRepo)
   const assineIssueToSprintUseCase=new AssignIssueToSprintUseCase(issueRepo,sprintRepo)

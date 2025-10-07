@@ -7,5 +7,5 @@ export interface CreateIssuesDTO {
   type: "User Story" | "Bug";
   priority: "Low" | "Medium" | "High";
   projectId: string;
-  assignedTo?: string | null;
+  assignedTo: string | null;
 }
