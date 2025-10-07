@@ -83,7 +83,7 @@ export const createProjectFields = [
   { name: "key", label: "Project Key", type: "text" },
   { name: "description", label: "Description", type: "textarea" },
   { name: "startDate", label: "Start Date", type: "date" },
-    { name: "endDate", label: "End Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
   {  name: "status",  label: "Status",  type: "select", options: ["Planned", "Active", "Completed", "Archived"] },
   // { 
   //   name: "teamMemberIds", label: "Team Members", type: "multiselect",  options: []  // 🔹 fill with user list dynamically

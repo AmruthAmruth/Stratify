@@ -56,6 +56,7 @@ export const PROJECT_ROUTES = {
   CREATE_TASK: "/api/project/create-task",
   CREATE_SPRINT: "/api/project/create-sprint",
   ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
+  PROJECT_LEVEL_ALLOCATION:"/api/project/projectlevel-allocated-employee"
 };
 
 // Leave routes

@@ -86,3 +86,14 @@ export const createTask=async(data:Record<string, unknown>)=>{
 
 
 
+
+export const projectLevelTeamAllocation=async () => {
+  try {
+    const response = await api.get(PROJECT_ROUTES.PROJECT_LEVEL_ALLOCATION);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
