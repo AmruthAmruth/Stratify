@@ -22,6 +22,7 @@ import { SprintRepository } from "../infrastructure/repositories/SprintRepositor
 import { CreateSprentUseCase } from "../application/use-cases/project/CreateSprintUseCase";
 import { AssignIssueToSprintUseCase } from "../application/use-cases/project/AssignIssueToSprintUseCase";
 import { ProjectLevelEmployeeAllocationUseCase } from "../application/use-cases/project/ProjectLevelEmployeeAllocationUseCase";
+import { IssueLevelEmployeeAllocationUseCase } from "../application/use-cases/project/IssueLevelEmployeeAllocationUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -47,7 +48,7 @@ export const projectDI = () => {
   const createSprentUseCase = new CreateSprentUseCase(projectRepo,sprintRepo)
   const assineIssueToSprintUseCase=new AssignIssueToSprintUseCase(issueRepo,sprintRepo)
   const projectLevelEmployeeAllocationUseCase = new ProjectLevelEmployeeAllocationUseCase(managerRepo,employeeRepo)
-
+const issueLevelEmployeeAllocationUseCase=new IssueLevelEmployeeAllocationUseCase(projectRepo,employeeRepo)
 
 
   return new ProjectController(
@@ -61,6 +62,7 @@ export const projectDI = () => {
     createSubTaskUseCase,
     createSprentUseCase,
     assineIssueToSprintUseCase,
-    projectLevelEmployeeAllocationUseCase
+    projectLevelEmployeeAllocationUseCase,
+    issueLevelEmployeeAllocationUseCase
   );
 };

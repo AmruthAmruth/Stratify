@@ -12,6 +12,7 @@ import { ICreateSubTaskUseCase } from "../../application/interfaces/project/ICre
 import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
 import { IAssignIssueToSprintUseCase } from "../../application/interfaces/project/IAssignIssueToSprintUseCase";
 import { IProjectLevelEmployeeAllocationUseCase } from "../../application/interfaces/project/IProjectLeavelEmployeeAllocationUseCase";
+import { IIssueLevelEmployeeAllocation } from "../../application/interfaces/project/IIssueLevelEmployeeAllocationUseCase";
 
 export class ProjectController {
   constructor(
@@ -25,7 +26,8 @@ export class ProjectController {
     private _createSubTaskUseCase:ICreateSubTaskUseCase,
     private _createSprentUseCase:ICreateSprintUseCase,
     private _assignIssueToSprintUseCase:IAssignIssueToSprintUseCase,
-    private _projectLevelEmployeeAllocationUseCase:IProjectLevelEmployeeAllocationUseCase
+    private _projectLevelEmployeeAllocationUseCase:IProjectLevelEmployeeAllocationUseCase,
+    private _issueLevelEmployeeAllocationUseCase:IIssueLevelEmployeeAllocation
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -109,6 +111,12 @@ assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
 projectLevelEmployeeAllocation=async(req:AuthRequest,res:Response):Promise<void>=>{
   const managerId=req.userId;
   const response = await this._projectLevelEmployeeAllocationUseCase.execute(managerId!);
+  res.status(StatusCodes.OK).json(response)
+}
+
+
+issueLevelEmployeeAllocation = async(req:Request,res:Response):Promise<void>=>{
+  const response = await this._issueLevelEmployeeAllocationUseCase.execute(req.body);
   res.status(StatusCodes.OK).json(response)
 }
 
