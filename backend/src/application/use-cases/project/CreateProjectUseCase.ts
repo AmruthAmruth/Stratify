@@ -40,7 +40,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       }
     }
 
-    if (!creatorExists || !companyId || !createdByModel) {
+    if (!creatorExists || !companyId || !createdByModel) { 
       throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
     }
 

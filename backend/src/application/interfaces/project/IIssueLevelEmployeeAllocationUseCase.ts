@@ -2,5 +2,5 @@ import { ProjectLevelEmployeeAllocationDTO } from "../../dto/project/ProjectLave
 
 
 export interface IIssueLevelEmployeeAllocation{
-    execute(projectId:string):Promise<ProjectLevelEmployeeAllocationDTO[]>
+    execute(projectId:string):Promise<ProjectLevelEmployeeAllocationDTO>
 }

@@ -11,35 +11,45 @@ export class IssueLevelEmployeeAllocationUseCase implements IIssueLevelEmployeeA
     private readonly _employeeRepo: IEmployeeRepository
   ) {}
 
-  async execute(projectId: string): Promise<ProjectLevelEmployeeAllocationDTO[]> {
-  
+  async execute(projectId: string): Promise<ProjectLevelEmployeeAllocationDTO> {
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-  
     if (!project.teamMemberIds || project.teamMemberIds.length === 0) {
-      throw new AppError("No team members assigned to this project", StatusCodes.BAD_REQUEST);
+      throw new AppError(
+        "No team members assigned to this project",
+        StatusCodes.BAD_REQUEST
+      );
     }
 
    
-    const employees = await Promise.all(
+    
+    const employeeList = await Promise.all(
       project.teamMemberIds.map(async (employeeId) => {
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
-          throw new AppError(`Employee not found: ${employeeId}`, StatusCodes.NOT_FOUND);
+          throw new AppError(
+            `Employee not found: ${employeeId}`,
+            StatusCodes.NOT_FOUND
+          );
         }
 
-       
         return {
-          employeeId: employee.id!,
           name: employee.name,
           position: employee.position,
-        } as ProjectLevelEmployeeAllocationDTO;
+          employeeId: employee.id!,
+        };
       })
     );
 
-    return employees;
+    
+    const allocation: ProjectLevelEmployeeAllocationDTO = {
+      departmentId: project.departmentId ?? "N/A", 
+      employee: employeeList,
+    };
+
+    return allocation;
   }
 }
