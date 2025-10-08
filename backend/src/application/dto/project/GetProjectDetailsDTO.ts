@@ -1,59 +1,56 @@
-export interface TaskDTO {
-  taskId:string|undefined;
-  name: string;
-  description: string;
-  status: "Planned" | "InProgress" | "Completed";
-}
-
-
-
-
-export interface UserStoryDTO {
-  userStoryId:string|undefined;
-  name: string;
-  description: string;
-  priority: "Low" | "Medium" | "High";
-  status: "Planned" | "InProgress" | "Completed";
-  storyPoints: number;
-  assignedTo: string; 
-  tasks: TaskDTO[];
-}
-
-
-
-export interface BacklogDTO {
-  backlogId:string|undefined;
-  name: string;
-  description: string;
-  numberOfEmployees: number;
-  userStories: UserStoryDTO[];
-}
-
-
-
-export interface SprintDTO {
-  sprintId:string|undefined;
-  name: string;
-  description:string,
-  startDate: Date;
-  endDate: Date;
-  teamCapacity: number;
-  totalStoryPoints:number;
-  status: "Planned" | "Active" | "Completed";
-  userStories: UserStoryDTO[];
-}
-
-
 export interface ProjectDetailsDTO {
+  id: string;
   name: string;
   key: string;
   description: string;
   startDate: Date;
   endDate: Date;
   status: "Planned" | "Active" | "Completed" | "Archived";
-  projectLead: string;
-  totalTeamMembers: number;
-  remainingDays: number;
-  backlogs: BacklogDTO[];
-  sprints: SprintDTO[];
+  departmentId: string;
+  projectLeadId: string;
+  companyId: string;
+
+  backlog: IssueDTO[];
+  activeSprints: SprintWithIssuesDTO[];
+  plannedSprints: SprintWithIssuesDTO[];
+  completedSprints: SprintWithIssuesDTO[];
+
+  // ✅ Counts for frontend
+  activeSprintCount: number;
+  plannedSprintCount: number;
+  completedSprintCount: number;
+}
+
+export interface SprintWithIssuesDTO {
+  id: string;
+  name: string;
+  goal: string;
+  startDate: Date;
+  endDate: Date;
+  status: "Planned" | "Active" | "Completed";
+  issues: IssueDTO[];
+}
+
+export interface IssueDTO {
+  id: string;
+  heading: string;
+  description: string;
+  acceptanceCriteria: string;
+  size: number;
+  estimatedHours: number;
+  type: "User Story" | "Bug";
+  status: "Planned" | "In Progress" | "Done" | "Blocked";
+  priority: "Low" | "Medium" | "High";
+  assignedTo?: string | null;
+  sprintId?: string | null;
+  subTasks?: SubTaskDTO[];
+}
+
+export interface SubTaskDTO {
+  id: string;
+  heading: string;
+  description: string;
+  hours: number;
+  status: "To Do" | "In Progress" | "Done" | "Blocked";
+  assignedToId?: string | null;
 }

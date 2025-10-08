@@ -14,12 +14,17 @@ projectRouter.post("/create-user-story", authMiddleware(["company", "manager"]),
 //projectRouter.post("/assigned-to-sprint", authMiddleware(["company", "manager"]), asyncHandler(controller.assignUserStoryToSprint));
 projectRouter.post("/create-issue",asyncHandler(controller.createIssue))
 projectRouter.post("/create-sprint",asyncHandler(controller.createSprint))
-// projectRouter.post("/create-subtask",asyncHandler(controller.createSubTask))
+projectRouter.post("/add-employee-project",asyncHandler(controller.addEmployeeProject))
+projectRouter.post("/create-subtask",asyncHandler(controller.createSubTask))
 projectRouter.post("/assing-to-sprint",asyncHandler(controller.assignIssueToSprint))
+
+projectRouter.delete('/project',asyncHandler(controller.deleteProject))
+
+
 projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler(controller.getProjectsByCompany));
 projectRouter.get('/projectlevel-allocated-employee',authMiddleware(["manager"]),asyncHandler(controller.projectLevelEmployeeAllocation))
 projectRouter.get("/issuelevel-allcated-employee",asyncHandler(controller.issueLevelEmployeeAllocation))
-// projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
-// projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
+ projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
+ projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 
 export default projectRouter;

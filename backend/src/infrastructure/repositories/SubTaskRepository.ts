@@ -49,4 +49,24 @@ export class SubTaskRepository implements ISubtaskRepository {
   async delete(id: string): Promise<void> {
     await SubTaskModel.findByIdAndDelete(id);
   }
+
+
+ async findByProjectId(projectId: string): Promise<SubTask[]> {
+  const docs = await SubTaskModel.find()
+    .populate({
+      path: "issueId",
+      match: { projectId },
+      select: "_id projectId"
+    })
+    .exec();
+
+  const filteredDocs = docs.filter(doc => doc.issueId !== null);
+
+  return SubTaskMapper.toEntities(filteredDocs);
+}
+
+  async deleteByIssueId(issueId: string): Promise<void> {
+    await SubTaskModel.deleteMany({ issueId });
+  }
+
 }

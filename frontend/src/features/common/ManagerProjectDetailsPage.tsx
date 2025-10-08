@@ -10,6 +10,7 @@ import AuthForm from "@/shared/components/Forms/DynamicForm";
 import { createBacklogsFields, createUserStoryFields, createTaskFields } from "@/shared/components/Forms/formFields";
 import { createBacklogsSchema, createUserStorySchema, createTaskSchema } from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
+
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const ManagerProjectDetailsPage = () => {
@@ -24,7 +25,7 @@ const ManagerProjectDetailsPage = () => {
   const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
-  // Context states for creation - Store IDs instead of names
+  // Context states for creation
   const [selectedBacklogId, setSelectedBacklogId] = useState(null);
   const [selectedSprintId, setSelectedSprintId] = useState(null);
   const [selectedUserStoryId, setSelectedUserStoryId] = useState(null);
@@ -63,7 +64,6 @@ const ManagerProjectDetailsPage = () => {
       
       enqueueSnackbar("Backlog created successfully!", { variant: "success" });
 
-      // Refresh project data to update backlogs list
       const updatedProject = await getProjectDetails(id!);
       setProject(updatedProject);
 
@@ -91,7 +91,6 @@ const ManagerProjectDetailsPage = () => {
       
       enqueueSnackbar("User story created successfully!", { variant: "success" });
 
-      // Refresh project data to update user stories list
       const updatedProject = await getProjectDetails(id!);
       setProject(updatedProject);
 
@@ -122,7 +121,6 @@ const ManagerProjectDetailsPage = () => {
       
       enqueueSnackbar("Task created successfully!", { variant: "success" });
 
-      // Refresh project data to update tasks list
       const updatedProject = await getProjectDetails(id!);
       setProject(updatedProject);
 
@@ -141,37 +139,52 @@ const ManagerProjectDetailsPage = () => {
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
-        return "text-emerald-700 bg-emerald-100 border-emerald-300";
+      case "Done":
+        return "text-[#009063] bg-[#e6f7f0] border-[#009063]";
       case "InProgress":
+      case "In Progress":
       case "Active":
-        return "text-amber-700 bg-amber-100 border-amber-300";
+        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
       case "Planned":
-        return "text-red-700 bg-red-100 border-red-300";
+        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
       default:
-        return "text-gray-700 bg-gray-100 border-gray-300";
+        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
     }
   };
 
   const getPriorityColor = (priority) => {
     switch (priority) {
       case "High":
-        return "text-orange-700 bg-orange-100 border-orange-300";
+        return "text-red-700 bg-red-50 border-red-300";
       case "Medium":
-        return "text-blue-700 bg-blue-100 border-blue-300";
+        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
       case "Low":
-        return "text-gray-700 bg-gray-100 border-gray-300";
+        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
       default:
-        return "text-gray-700 bg-gray-100 border-gray-300";
+        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+    }
+  };
+
+  const getTypeColor = (type) => {
+    switch (type) {
+      case "Bug":
+        return "text-red-700 bg-red-50 border-red-300";
+      case "User Story":
+        return "text-[#009063] bg-[#e6f7f0] border-[#009063]";
+      case "Task":
+        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
+      default:
+        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
     }
   };
 
   // Loading state
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-indigo-600 mx-auto"></div>
-          <p className="mt-4 text-lg text-gray-600">Loading project details...</p>
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#009063] mx-auto"></div>
+          <p className="mt-4 text-lg text-[#3b3b3b]">Loading project details...</p>
         </div>
       </div>
     );
@@ -180,15 +193,15 @@ const ManagerProjectDetailsPage = () => {
   // Error state
   if (error) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
         <div className="text-center">
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
+          <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
           <button 
             onClick={() => window.location.reload()} 
-            className="mt-4 bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded"
+            className="mt-4 bg-[#009063] hover:bg-[#007a52] text-white font-bold py-2 px-4 rounded"
           >
             Try Again
           </button>
@@ -200,73 +213,78 @@ const ManagerProjectDetailsPage = () => {
   // No data state
   if (!project) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 flex items-center justify-center">
+      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg text-gray-600">No project data available</p>
+          <p className="text-lg text-[#3b3b3b]">No project data available</p>
         </div>
       </div>
     );
   }
 
   // Calculate Statistics
-  const allUserStories = project.backlogs?.flatMap((b) => b.userStories || []) || [];
-  const allTasks = allUserStories.flatMap((us) => us.tasks || []);
+  const allActiveSprints = project.activeSprints || [];
+  const allPlannedSprints = project.plannedSprints || [];
+  const allCompletedSprints = project.completedSprints || [];
+  const allSprints = [...allActiveSprints, ...allPlannedSprints, ...allCompletedSprints];
+  
+  const allBacklogIssues = project.backlog || [];
+  const allSprintIssues = allSprints.flatMap(sprint => sprint.issues || []);
+  const allIssues = [...allBacklogIssues, ...allSprintIssues];
+  
+  const allSubTasks = allIssues.flatMap(issue => issue.subTasks || []);
 
-  const taskCounts = {
-    Planned: allTasks.filter((t) => t.status === "Planned").length,
-    InProgress: allTasks.filter((t) => t.status === "InProgress" || t.status === "In Progress").length,
-    Completed: allTasks.filter((t) => t.status === "Completed").length,
+  const issueCounts = {
+    Planned: allIssues.filter((i) => i.status === "Planned").length,
+    InProgress: allIssues.filter((i) => i.status === "InProgress" || i.status === "In Progress").length,
+    Done: allIssues.filter((i) => i.status === "Done" || i.status === "Completed").length,
   };
 
-  const userStoryCounts = {
-    Planned: allUserStories.filter((us) => us.status === "Planned").length,
-    InProgress: allUserStories.filter((us) => us.status === "InProgress" || us.status === "In Progress").length,
-    Completed: allUserStories.filter((us) => us.status === "Completed").length,
+  const subTaskCounts = {
+    Planned: allSubTasks.filter((t) => t.status === "Planned").length,
+    InProgress: allSubTasks.filter((t) => t.status === "In Progress").length,
+    Done: allSubTasks.filter((t) => t.status === "Done").length,
   };
 
   const sprintCounts = {
-    Planned: (project.sprints || []).filter((s) => s.status === "Planned").length,
-    Active: (project.sprints || []).filter((s) => s.status === "Active").length,
-    Completed: (project.sprints || []).filter((s) => s.status === "Completed").length,
+    Planned: allPlannedSprints.length,
+    Active: allActiveSprints.length,
+    Completed: allCompletedSprints.length,
   };
 
-  const totalStoryPoints = allUserStories.reduce(
-    (sum, us) => sum + (us.storyPoints || 0),
-    0
-  );
-  const completedStoryPoints = allUserStories
-    .filter((us) => us.status === "Completed")
-    .reduce((sum, us) => sum + (us.storyPoints || 0), 0);
+  const totalEstimatedHours = allIssues.reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
+  const completedEstimatedHours = allIssues
+    .filter((i) => i.status === "Done" || i.status === "Completed")
+    .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
+    <div className="min-h-screen bg-[#fbfbfb]">
       {/* Header Section */}
       <div className="flex items-center justify-center p-4 pt-10">
-        <div className="max-w-6xl w-full mx-auto bg-white rounded-xl shadow-lg overflow-hidden">
+        <div className="max-w-7xl w-full mx-auto bg-white rounded-lg shadow-md border border-[#dfdcef] overflow-hidden">
           <div className="p-8 lg:p-10">
             <div className="grid lg:grid-cols-3 gap-6">
               {/* Project Info */}
               <div className="lg:col-span-2 space-y-5">
                 <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 tracking-tight">
+                  <h1 className="text-2xl sm:text-3xl font-bold text-[#3b3b3b] tracking-tight">
                     {project.name}
                   </h1>
-                  <span className="inline-flex items-center px-3 py-1 bg-indigo-50 text-sm font-medium text-indigo-700 rounded-full border border-indigo-200">
+                  <span className="inline-flex items-center px-3 py-1 bg-[#dfdcef] text-sm font-semibold text-[#3b3b3b] rounded border border-[#9b8dc9]">
                     {project.key}
                   </span>
                 </div>
-                <p className="text-gray-600 text-base leading-relaxed max-w-2xl">
+                <p className="text-[#3b3b3b] text-base leading-relaxed max-w-2xl opacity-90">
                   {project.description}
                 </p>
               </div>
 
               {/* Status Card */}
               <div className="flex justify-center lg:justify-end">
-                <div className="bg-indigo-50 rounded-lg p-5 w-full max-w-xs text-center border border-indigo-100 hover:bg-indigo-100 transition-colors duration-200">
-                  <div className="text-2xl font-semibold text-indigo-700">
+                <div className="bg-[#dfdcef] rounded-lg p-5 w-full max-w-xs text-center border border-[#9b8dc9] hover:bg-[#d0cce3] transition-colors duration-200">
+                  <div className="text-2xl font-semibold text-[#3b3b3b]">
                     {project.status}
                   </div>
-                  <div className="text-gray-500 text-sm mt-1 font-medium tracking-wide">
+                  <div className="text-[#3b3b3b] text-sm mt-1 font-medium tracking-wide opacity-80">
                     Project Status
                   </div>
                 </div>
@@ -283,78 +301,78 @@ const ManagerProjectDetailsPage = () => {
           {/* Metrics Grid Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <DashboardCard
-              title="Team Size"
-              value={project.totalTeamMembers || 0}
-              subtitle="Members"
-              trend={(project.totalTeamMembers || 0) > 0 ? "up" : "down"}
+              title="Total Sprints"
+              value={allSprints.length}
+              subtitle="Sprints"
+              trend={allSprints.length > 0 ? "up" : "down"}
             />
             <DashboardCard
-              title="Backlogs"
-              value={(project.backlogs || []).length}
-              subtitle="Pending"
-              trend={(project.backlogs || []).length > 0 ? "up" : "down"}
+              title="Backlog Items"
+              value={allBacklogIssues.length}
+              subtitle="Issues"
+              trend={allBacklogIssues.length > 0 ? "up" : "down"}
             />
             <DashboardCard
-              title="Story Points"
-              value={`${completedStoryPoints}/${totalStoryPoints}`}
+              title="Estimated Hours"
+              value={`${completedEstimatedHours}/${totalEstimatedHours}`}
               subtitle="Completed/Total"
-              trend={completedStoryPoints > 0 ? "up" : "down"}
+              trend={completedEstimatedHours > 0 ? "up" : "down"}
             />
             <DashboardCard
-              title="Total Tasks"
-              value={allTasks.length}
-              subtitle="Tasks"
-              trend={allTasks.length > 0 ? "up" : "down"}
+              title="Total Issues"
+              value={allIssues.length}
+              subtitle="Issues"
+              trend={allIssues.length > 0 ? "up" : "down"}
             />
           </div>
 
           {/* Charts Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">
-                Task Distribution
+            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
+              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+                Issue Distribution
               </h3>
               <div className="w-full flex items-center justify-center">
                 <div className="w-[100%] h-100">
                   <ReusableChart
                     type="doughnut"
-                    title="Tasks"
-                    labels={["Planned", "In Progress", "Completed"]}
+                    title="Issues"
+                    labels={["Planned", "In Progress", "Done"]}
                     data={[
-                      taskCounts.Planned,
-                      taskCounts.InProgress,
-                      taskCounts.Completed,
+                      issueCounts.Planned,
+                      issueCounts.InProgress,
+                      issueCounts.Done,
                     ]}
-                    backgroundColors={["#EF4444", "#F59E0B", "#10B981"]}
+                    backgroundColors={["#dfdcef", "#9b8dc9", "#009063"]}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">
-                User Story Progress
+            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
+              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+                SubTask Progress
               </h3>
               <div className="w-full flex items-center justify-center">
                 <div className="w-[100%] h-100">
                   <ReusableChart
                     type="doughnut"
-                    title="User Stories"
-                    labels={["Planned", "In Progress", "Completed"]}
+                    title="SubTasks"
+                    labels={["Planned", "In Progress", "Done"]}
                     data={[
-                      userStoryCounts.Planned,
-                      userStoryCounts.InProgress,
-                      userStoryCounts.Completed,
+                      subTaskCounts.Planned,
+                      subTaskCounts.InProgress,
+                      subTaskCounts.Done,
                     ]}
-                    backgroundColors={["#8B5CF6", "#06B6D4", "#84CC16"]}
+                    backgroundColors={["#fbfbfb", "#dfdcef", "#009063"]}
                   />
                 </div>
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-6">
-              <h3 className="text-xl font-bold text-gray-800 mb-4">
-                Sprint Progress
+            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
+              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+                Sprint Overview
               </h3>
               <div className="w-full flex items-center justify-center">
                 <div className="w-[100%] h-100">
@@ -367,7 +385,7 @@ const ManagerProjectDetailsPage = () => {
                       sprintCounts.Active,
                       sprintCounts.Completed,
                     ]}
-                    backgroundColors={["#6B7280", "#3B82F6", "#22C55E"]}
+                    backgroundColors={["#dfdcef", "#9b8dc9", "#009063"]}
                   />
                 </div>
               </div>
@@ -375,66 +393,53 @@ const ManagerProjectDetailsPage = () => {
           </div>
 
           {/* Progress Summary */}
-          <div className="bg-white rounded-xl p-6 lg:p-8 shadow-md border border-gray-100 hover:shadow-lg transition-shadow duration-200">
-            <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-gray-900 tracking-tight">
+          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-[#dfdcef]">
+            <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-[#3b3b3b] tracking-tight">
               Project Progress Summary
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <DashboardCard
-                title="Tasks Complete"
+                title="Issues Complete"
                 value={
-                  allTasks.length > 0
-                    ? `${Math.round(
-                        (taskCounts.Completed / allTasks.length) * 100
-                      )}%`
+                  allIssues.length > 0
+                    ? `${Math.round((issueCounts.Done / allIssues.length) * 100)}%`
                     : "0%"
                 }
-                subtitle="Tasks"
-                trend={taskCounts.Completed > 0 ? "up" : "down"}
+                subtitle="Issues"
+                trend={issueCounts.Done > 0 ? "up" : "down"}
               />
               <DashboardCard
-                title="Story Points Done"
+                title="Hours Completed"
                 value={
-                  totalStoryPoints > 0
-                    ? `${Math.round(
-                        (completedStoryPoints / totalStoryPoints) * 100
-                      )}%`
+                  totalEstimatedHours > 0
+                    ? `${Math.round((completedEstimatedHours / totalEstimatedHours) * 100)}%`
                     : "0%"
                 }
-                subtitle="Story Points"
-                trend={completedStoryPoints > 0 ? "up" : "down"}
+                subtitle="Hours"
+                trend={completedEstimatedHours > 0 ? "up" : "down"}
               />
               <DashboardCard
-                title="Total User Stories"
-                value={allUserStories.length}
-                subtitle="Stories"
-                trend={allUserStories.length > 0 ? "up" : "down"}
+                title="Active Sprints"
+                value={allActiveSprints.length}
+                subtitle="Sprints"
+                trend={allActiveSprints.length > 0 ? "up" : "down"}
               />
               <DashboardCard
-                title="Days Remaining"
-                value={project.remainingDays || 0}
-                subtitle="Days"
-                trend={(project.remainingDays || 0) > 0 ? "up" : "down"}
+                title="Backlog Issues"
+                value={allBacklogIssues.length}
+                subtitle="Issues"
+                trend={allBacklogIssues.length > 0 ? "up" : "down"}
               />
             </div>
           </div>
         </div>
 
-        <div className="flex justify-end max-w-7xl mx-auto px-6 py-4">
-          <button
-            onClick={() => setIsBacklogModalOpen(true)}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-          >
-            + Create Backlog
-          </button>
-        </div>
-
         {/* Project Information */}
-        <div className="bg-white rounded-xl shadow-md border border-gray-100 p-6 lg:p-8">
-          <h3 className="text-xl lg:text-2xl font-bold text-gray-900 mb-6 flex items-center">
-            <div className="w-7 h-7 bg-indigo-100 rounded-md flex items-center justify-center mr-2">
+        <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6 lg:p-8">
+          <h3 className="text-xl lg:text-2xl font-bold text-[#3b3b3b] mb-6 flex items-center">
+            <div className="w-7 h-7 bg-[#dfdcef] rounded flex items-center justify-center mr-2">
               <svg
-                className="w-4 h-4 text-indigo-600"
+                className="w-4 h-4 text-[#009063]"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -448,18 +453,10 @@ const ManagerProjectDetailsPage = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Project Lead
-              </p>
-              <p className="text-base font-semibold text-gray-900">
-                {project.projectLead || "Not assigned"}
-              </p>
-            </div>
-            <div className="space-y-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
                 Start Date
               </p>
-              <p className="text-base font-semibold text-gray-900">
+              <p className="text-base font-semibold text-[#3b3b3b]">
                 {project.startDate 
                   ? new Date(project.startDate).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -471,10 +468,10 @@ const ManagerProjectDetailsPage = () => {
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
                 End Date
               </p>
-              <p className="text-base font-semibold text-gray-900">
+              <p className="text-base font-semibold text-[#3b3b3b]">
                 {project.endDate 
                   ? new Date(project.endDate).toLocaleDateString("en-US", {
                       year: "numeric",
@@ -486,96 +483,111 @@ const ManagerProjectDetailsPage = () => {
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-gray-500 uppercase tracking-wider">
-                Remaining Days
+              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+                Active Sprints
               </p>
-              <p className="text-base font-semibold text-gray-900">
-                {project.remainingDays || 0}
+              <p className="text-base font-semibold text-[#3b3b3b]">
+                {project.activeSprintCount || 0}
+              </p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+                Total Sprints
+              </p>
+              <p className="text-base font-semibold text-[#3b3b3b]">
+                {allSprints.length}
               </p>
             </div>
           </div>
         </div>
 
-        {/* Sprints Section - Using Reusable Component */}
-        {project.sprints && project.sprints.length > 0 && (
+        {/* Backlog Section */}
+        {project.backlog && project.backlog.length > 0 && (
           <CollapsibleSection
-            title="Sprints"
+            title="Backlog"
             icon={
-              <svg
-                className="w-5 h-5 text-teal-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
-                />
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+                <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z" />
               </svg>
             }
-            iconBgColor="bg-teal-100"
-            iconColor="text-teal-600"
-            data={project.sprints}
-            type="sprint"
-            expandedItem={expandedSprint}
-            setExpandedItem={setExpandedSprint}
-            expandedStory={expandedStory}
-            setExpandedStory={setExpandedStory}
-            getStatusColor={getStatusColor}
-            getPriorityColor={getPriorityColor}
-            onCreateUserStory={(sprintId) => {
-              setSelectedSprintId(sprintId);
-              setSelectedBacklogId(null);
-              setIsStoryModalOpen(true);
-            }}
-            onCreateTask={(userStoryId, sprintId) => {
-              setSelectedUserStoryId(userStoryId);
-              setSelectedParentId(sprintId);
-              setIsTaskModalOpen(true);
-            }}
-          />
-        )}
-
-        {/* Backlogs Section - Using Reusable Component */}
-        {project.backlogs && project.backlogs.length > 0 && (
-          <CollapsibleSection
-            title="Project Backlogs"
-            icon={
-              <svg
-                className="w-5 h-5 text-teal-600"
-                fill="currentColor"
-                viewBox="0 0 20 20"
-              >
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
-                />
-              </svg>
-            }
-            iconBgColor="bg-purple-100"
-            iconColor="text-purple-600"
-            data={project.backlogs}
+            iconBgColor="bg-[#dfdcef]"
+            iconColor="text-[#009063]"
+            data={project.backlog}
             type="backlog"
             expandedItem={expandedBacklog}
             setExpandedItem={setExpandedBacklog}
-            expandedStory={expandedStory}
-            setExpandedStory={setExpandedStory}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
-            onCreateUserStory={(backlogId) => {
-              setSelectedBacklogId(backlogId);
-              setSelectedSprintId(null);
-              setIsStoryModalOpen(true);
-            }}
-            onCreateTask={(userStoryId, backlogId) => {
-              setSelectedUserStoryId(userStoryId);
-              setSelectedParentId(backlogId);
-              setIsTaskModalOpen(true);
-            }}
+            getTypeColor={getTypeColor}
+          />
+        )}
+
+        {/* Active Sprints Section */}
+        {project.activeSprints && project.activeSprints.length > 0 && (
+          <CollapsibleSection
+            title="Active Sprints"
+            icon={
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
+              </svg>
+            }
+            iconBgColor="bg-[#e6f7f0]"
+            iconColor="text-[#009063]"
+            data={project.activeSprints}
+            type="sprint"
+            expandedItem={expandedSprint}
+            setExpandedItem={setExpandedSprint}
+            getStatusColor={getStatusColor}
+            getPriorityColor={getPriorityColor}
+            getTypeColor={getTypeColor}
+          />
+        )}
+
+        {/* Planned Sprints Section */}
+        {project.plannedSprints && project.plannedSprints.length > 0 && (
+          <CollapsibleSection
+            title="Planned Sprints"
+            icon={
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" />
+              </svg>
+            }
+            iconBgColor="bg-[#dfdcef]"
+            iconColor="text-[#3b3b3b]"
+            data={project.plannedSprints}
+            type="sprint"
+            expandedItem={expandedSprint}
+            setExpandedItem={setExpandedSprint}
+            getStatusColor={getStatusColor}
+            getPriorityColor={getPriorityColor}
+            getTypeColor={getTypeColor}
+          />
+        )}
+
+        {/* Completed Sprints Section */}
+        {project.completedSprints && project.completedSprints.length > 0 && (
+          <CollapsibleSection
+            title="Completed Sprints"
+            icon={
+              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+              </svg>
+            }
+            iconBgColor="bg-[#e6f7f0]"
+            iconColor="text-[#009063]"
+            data={project.completedSprints}
+            type="sprint"
+            expandedItem={expandedSprint}
+            setExpandedItem={setExpandedSprint}
+            getStatusColor={getStatusColor}
+            getPriorityColor={getPriorityColor}
+            getTypeColor={getTypeColor}
           />
         )}
       </div>
 
-      {/* Create Backlog Modal */}
+      {/* Modals */}
       <Modal
         isOpen={isBacklogModalOpen}
         onClose={() => setIsBacklogModalOpen(false)}
@@ -589,7 +601,6 @@ const ManagerProjectDetailsPage = () => {
         />
       </Modal>
 
-      {/* Create User Story Modal */}
       <Modal
         isOpen={isStoryModalOpen}
         onClose={() => {
@@ -607,7 +618,6 @@ const ManagerProjectDetailsPage = () => {
         />
       </Modal>
 
-      {/* Create Task Modal */}
       <Modal
         isOpen={isTaskModalOpen}
         onClose={() => {

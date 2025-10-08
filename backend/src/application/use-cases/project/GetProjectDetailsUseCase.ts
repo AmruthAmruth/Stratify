@@ -1,169 +1,107 @@
-import { IBacklogRepository } from "../../../domain/repositories/IBacklogRepository";
+import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
-import { ITaskRepository } from "../../../domain/repositories/ITaskRepository";
-import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
+import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
-import {
-  BacklogDTO,
-  ProjectDetailsDTO,
-  TaskDTO,
-  UserStoryDTO,
-  SprintDTO,
-} from "../../dto/project/GetProjectDetailsDTO";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { ProjectDetailsDTO, SprintWithIssuesDTO } from "../../dto/project/GetProjectDetailsDTO";
 import { IGetProjectDetailsUseCase } from "../../interfaces/project/IGetProjectDetailsUseCase";
+
+
+
 
 export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
-      private _backlogsRepo: IBacklogRepository,
-    private _userStoryRepo: IUserStoryRepository,
-    private _taskRepo: ITaskRepository,
+    private _issueRepo: IIssueRepository,
+    private _subTaskRepo: ISubtaskRepository,
     private _sprintRepo: ISprintRepository
   ) {}
 
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
+    // 1️⃣ Fetch project
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
-      throw new AppError(`Project with ID ${projectId} not found`);
+      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-    const backlogs = await this._backlogsRepo.findByProjectId(projectId);
+    // 2️⃣ Fetch issues and sprints
+    const issues = await this._issueRepo.findByProjectId(projectId);
+    const sprints = await this._sprintRepo.findByProjectId(projectId);
 
-    const backlogDTOs: BacklogDTO[] = [];
-
-    for (const backlog of backlogs) {
-      const userStories = await this._userStoryRepo.findByBacklogId(
-        backlog.id!
-      );
-
-      const employeeIds = new Set<string>();
-      const userStoryDTOs: UserStoryDTO[] = [];
-
-      for (const story of userStories) {
-        const tasks = await this._taskRepo.findByUserStoryId(story.id!);
-
-        const taskDTOs: TaskDTO[] = tasks.map((task) => ({
-          taskId: task.id,
-          name: task.title,
-          description: task.description || "",
-          status:
-            task.status === "To Do"
-              ? "Planned"
-              : task.status === "In Progress"
-              ? "InProgress"
-              : "Completed",
-        }));
-
-        story.assignedToIds?.forEach((id) => employeeIds.add(id));
-
-        userStoryDTOs.push({
-          userStoryId: story.id,
-          name: story.title,
-          description: story.description,
-          priority: story.priority,
-          status:
-            story.status === "Backlog"
-              ? "Planned"
-              : story.status === "To Do"
-              ? "Planned"
-              : story.status === "In Progress"
-              ? "InProgress"
-              : "Completed",
-          storyPoints: story.storyPoints,
-          assignedTo: story.assignedToIds ? story.assignedToIds.join(", ") : "",
-          tasks: taskDTOs,
-        });
-      }
-
-      backlogDTOs.push({
-        backlogId: backlog.id,
-        name: backlog.name,
-        description: backlog.description,
-        numberOfEmployees: employeeIds.size,
-        userStories: userStoryDTOs,
-      });
-    }
-
-    const sprints = await this._sprintRepo.findByProject(projectId);
-
-    const sprintDTOs: SprintDTO[] = [];
-    for (const sprint of sprints) {
-      const sprintUserStories = await this._userStoryRepo.findByIds(
-        sprint.userStoryIds!
-      );
-
-      const sprintUserStoryDTOs: UserStoryDTO[] = [];
-      for (const story of sprintUserStories) {
-        const tasks = await this._taskRepo.findByUserStoryId(story.id!);
-
-        const taskDTOs: TaskDTO[] = tasks.map((task) => ({
-          taskId: task.id,
-          name: task.title,
-          description: task.description || "",
-          status:
-            task.status === "To Do"
-              ? "Planned"
-              : task.status === "In Progress"
-              ? "InProgress"
-              : "Completed",
-        }));
-
-        sprintUserStoryDTOs.push({
-          userStoryId: story.id,
-          name: story.title,
-          description: story.description,
-          priority: story.priority,
-          status:
-            story.status === "Backlog"
-              ? "Planned"
-              : story.status === "To Do"
-              ? "Planned"
-              : story.status === "In Progress"
-              ? "InProgress"
-              : "Completed",
-          storyPoints: story.storyPoints,
-          assignedTo: story.assignedToIds ? story.assignedToIds.join(", ") : "",
-          tasks: taskDTOs,
-        });
-      }
-
-      sprintDTOs.push({
-        sprintId: sprint.id,
-        name: sprint.name,
-        description: sprint.description,
-        startDate: sprint.startDate,
-        endDate: sprint.endDate,
-        teamCapacity: sprint.teamCapacity,
-        totalStoryPoints: sprint.totalStoryPoints,
-        status: sprint.status,
-        userStories: sprintUserStoryDTOs,
-      });
-    }
-
-    const endDate = new Date(project.endDate);
-    const now = new Date();
-    const remainingDays = Math.max(
-      0,
-      Math.ceil((endDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24))
+    // 3️⃣ Map issues with subtasks (fetch per issue)
+    const issuesWithSubtasks = await Promise.all(
+      issues.map(async (issue) => {
+        const issueSubtasks = await this._subTaskRepo.findAllByIssue(issue.id!);
+        return {
+          id: issue.id!,
+          heading: issue.heading,
+          description: issue.description,
+          acceptanceCriteria: issue.acceptanceCriteria,
+          size: issue.size,
+          estimatedHours: issue.estimatedHours,
+          type: issue.type,
+          status: issue.status,
+          priority: issue.priority,
+          assignedTo: issue.assignedTo ?? null,
+          sprintId: issue.sprintId ?? null,
+          subTasks: issueSubtasks.map((st) => ({
+            id: st.id!,
+            heading: st.heading,
+            description: st.description,
+            hours: st.hours,
+            status: st.status,
+            assignedToId: st.assignedToId ?? null,
+          })),
+        };
+      })
     );
 
-    const dto: ProjectDetailsDTO = {
+    // 4️⃣ Categorize issues into sprints
+    const backlogIssues = issuesWithSubtasks.filter((i) => !i.sprintId);
+
+    const activeSprints: SprintWithIssuesDTO[] = [];
+    const plannedSprints: SprintWithIssuesDTO[] = [];
+    const completedSprints: SprintWithIssuesDTO[] = [];
+
+    sprints.forEach((sprint) => {
+      const sprintIssues = issuesWithSubtasks.filter((i) => i.sprintId === sprint.id);
+      const sprintDTO: SprintWithIssuesDTO = {
+        id: sprint.id!,
+        name: sprint.name,
+        goal: sprint.goal,
+        startDate: sprint.startDate,
+        endDate: sprint.endDate,
+        status: sprint.status,
+        issues: sprintIssues,
+      };
+
+      if (sprint.status === "Active") activeSprints.push(sprintDTO);
+      else if (sprint.status === "Planned") plannedSprints.push(sprintDTO);
+      else if (sprint.status === "Completed") completedSprints.push(sprintDTO);
+    });
+
+    // 5️⃣ Build ProjectDetailsDTO including counts
+    const projectDetails: ProjectDetailsDTO = {
+      id: project.id!,
       name: project.name,
       key: project.key,
       description: project.description,
       startDate: project.startDate,
       endDate: project.endDate,
       status: project.status,
-      projectLead: project.projectLeadId,
-      totalTeamMembers: project.teamMemberIds
-        ? project.teamMemberIds.length
-        : 0,
-      remainingDays,
-      backlogs: backlogDTOs,
-      sprints: sprintDTOs,
+      departmentId: project.departmentId,
+      projectLeadId: project.projectLeadId,
+      companyId: project.companyId,
+      backlog: backlogIssues,
+      activeSprints,
+      plannedSprints,
+      completedSprints,
+      activeSprintCount: activeSprints.length,
+      plannedSprintCount: plannedSprints.length,
+      completedSprintCount: completedSprints.length,
     };
 
-    return dto;
+    return projectDetails;
   }
 }

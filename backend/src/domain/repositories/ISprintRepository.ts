@@ -8,4 +8,6 @@ export interface ISprintRepository {
   findByProject(projectId: string): Promise<Sprint[]>;
   delete(id: string): Promise<void>;
   findOverlappingSprint(projectId:string,startDate:Date,endDate:Date):Promise<Sprint|null>
+  findByProjectId(projectId:string):Promise<Sprint[]>
+  deleteByProjectId(projectId:string):Promise<void>
 } 

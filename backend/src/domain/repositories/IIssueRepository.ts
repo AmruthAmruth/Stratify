@@ -6,4 +6,6 @@ export interface IIssueRepository {
   update(issue: Issue): Promise<Issue>;
   delete(id: string): Promise<void>;
   findBySprintId(sprintId:string):Promise<Issue[]>
+  findByProjectId(projectId:string):Promise<Issue[]>
+  deleteByProjectId(projectId:string):Promise<void>
 }

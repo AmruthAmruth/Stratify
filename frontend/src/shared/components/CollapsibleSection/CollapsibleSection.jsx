@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 
 const CollapsibleSection = ({ 
   title, 
@@ -9,108 +9,161 @@ const CollapsibleSection = ({
   type, 
   expandedItem, 
   setExpandedItem, 
-  expandedStory, 
-  setExpandedStory, 
   getStatusColor, 
   getPriorityColor,
-  onCreateUserStory,
-  onCreateTask
+  getTypeColor
 }) => {
+  const [expandedIssue, setExpandedIssue] = useState(null);
+
   return (
-     <div className="bg-white rounded-2xl shadow-xl border border-gray-100 overflow-hidden">
-      <div className="bg-gradient-to-r from-gray-50 to-gray-100 p-8 border-b border-gray-200">
-        <h3 className="text-2xl font-bold text-gray-900 flex items-center">
-          <div className={`w-8 h-8 ${iconBgColor} rounded-lg flex items-center justify-center mr-3`}>
+    <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] overflow-hidden">
+      <div className="bg-[#fbfbfb] p-6 border-b border-[#dfdcef]">
+        <h3 className="text-2xl font-bold text-[#3b3b3b] flex items-center">
+          <div className={`w-8 h-8 ${iconBgColor} rounded flex items-center justify-center mr-3`}>
             {icon}
           </div>
           {title}
         </h3>
       </div>
-      <div className="p-8 space-y-6">
+      <div className="p-6 space-y-4">
         {data.map((item, index) => {
-          // Extract the correct ID based on type
-          const itemId = type === 'sprint' ? item.sprintId : item.backlogId;
-          const itemName = item.name;
+          const itemId = type === 'sprint' ? item.id : item.id;
+          const itemName = type === 'sprint' ? item.name : item.heading;
+          const isExpanded = expandedItem === itemId;
 
+          // For backlog items, render differently
+          if (type === 'backlog') {
+            return (
+              <div
+                key={itemId}
+                className="border border-[#dfdcef] rounded-lg overflow-hidden hover:shadow-md transition-all duration-200"
+              >
+                <div
+                  className="bg-[#fbfbfb] p-5 cursor-pointer hover:bg-[#f5f5f5] transition-all duration-200"
+                  onClick={() => setExpandedItem(isExpanded ? null : itemId)}
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-3">
+                        <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(item.type)}`}>
+                          {item.type}
+                        </span>
+                        <h4 className="text-lg font-bold text-[#3b3b3b]">{item.heading}</h4>
+                      </div>
+                      
+                      <p className="text-[#3b3b3b] text-sm leading-relaxed mb-3 opacity-80">
+                        {item.description}
+                      </p>
+                      
+                      <div className="flex flex-wrap items-center gap-4">
+                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(item.status)}`}>
+                          {item.status}
+                        </span>
+                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getPriorityColor(item.priority)}`}>
+                          {item.priority}
+                        </span>
+                        <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
+                          </svg>
+                          <span className="font-medium">{item.estimatedHours}h</span>
+                        </div>
+                        <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                          </svg>
+                          <span className="font-medium">Size: {item.size}</span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="ml-4">
+                      <div
+                        className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${
+                          isExpanded
+                            ? "bg-[#009063] text-white transform rotate-180"
+                            : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
+                        }`}
+                      >
+                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                          <path
+                            fillRule="evenodd"
+                            d="M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                {isExpanded && (
+                  <div className="p-6 bg-white border-t border-[#dfdcef]">
+                    <div className="space-y-4">
+                      <div>
+                        <h5 className="text-sm font-semibold text-[#3b3b3b] mb-2">Acceptance Criteria</h5>
+                        <p className="text-sm text-[#3b3b3b] opacity-80 leading-relaxed">{item.acceptanceCriteria}</p>
+                      </div>
+                      {item.assignedTo && (
+                        <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
+                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                          </svg>
+                          <span className="font-medium">Assigned to: {item.assignedTo}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
+              </div>
+            );
+          }
+
+          // For sprint items
           return (
             <div
               key={itemId}
-              className="border-2 border-gray-200 rounded-2xl overflow-hidden shadow-lg hover:shadow-xl transition-all duration-300"
+              className="border-2 border-[#dfdcef] rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
             >
               <div
-                className={`bg-gradient-to-r ${
-                  type === 'sprint' 
-                    ? 'from-teal-50 to-cyan-50 hover:from-teal-100 hover:to-cyan-100' 
-                    : 'from-indigo-50 to-purple-50 hover:from-indigo-100 hover:to-purple-100'
-                } p-6 cursor-pointer transition-all duration-300`}
-                onClick={() =>
-                  setExpandedItem(expandedItem === itemName ? null : itemName)
-                }
+                className={`bg-[#fbfbfb] p-6 cursor-pointer hover:bg-[#f5f5f5] transition-all duration-300`}
+                onClick={() => setExpandedItem(isExpanded ? null : itemId)}
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-3">
-                      <span className={`px-3 py-1 ${
-                        type === 'sprint' ? 'bg-teal-600' : 'bg-indigo-600'
-                      } text-white text-sm font-bold rounded-lg`}>
-                        {itemName}
+                      <span className="px-3 py-1 bg-[#009063] text-white text-sm font-bold rounded">
+                        {item.name}
                       </span>
-                      <h4 className="text-xl font-bold text-gray-900">{item.description}</h4>
-                    </div>
-                    
-                    {type === 'sprint' && (
-                      <>
-                        <p className="text-gray-600 text-base leading-relaxed mb-4">
-                          {new Date(item.startDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                          })}{" "}
-                          -{" "}
-                          {new Date(item.endDate).toLocaleDateString("en-US", {
-                            month: "short",
-                            day: "numeric",
-                            year: "numeric",
-                          })}
-                        </p>
-                        <p className="text-gray-600 text-sm leading-relaxed mb-2">
-                          <span className="font-semibold">Description:</span> {item.description}
-                        </p>
-                        {item.teamCapacity && (
-                          <p className="text-gray-600 text-sm leading-relaxed mb-2">
-                            <span className="font-semibold">Team Capacity:</span> {item.teamCapacity}
-                          </p>
-                        )}
-                        {item.totalStoryPoints !== undefined && (
-                          <p className="text-gray-600 text-sm leading-relaxed mb-4">
-                            <span className="font-semibold">Total Story Points:</span> {item.totalStoryPoints}
-                          </p>
-                        )}
-                      </>
-                    )}
-                    
-                    <div className="flex items-center space-x-6">
-                      <span className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(item.status)}`}>
+                      <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(item.status)}`}>
                         {item.status}
                       </span>
-                      <span className={`text-sm font-semibold ${
-                        type === 'sprint' ? 'text-teal-600' : 'text-indigo-600'
-                      }`}>
-                        {item.userStories.length} User{" "}
-                        {item.userStories.length === 1 ? "Story" : "Stories"}
+                    </div>
+                    
+                    <h4 className="text-xl font-bold text-[#3b3b3b] mb-3">{item.goal}</h4>
+                    
+                    <p className="text-[#3b3b3b] text-sm leading-relaxed mb-3 opacity-80">
+                      {new Date(item.startDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                      })}{" "}
+                      -{" "}
+                      {new Date(item.endDate).toLocaleDateString("en-US", {
+                        month: "short",
+                        day: "numeric",
+                        year: "numeric",
+                      })}
+                    </p>
+                    
+                    <div className="flex items-center space-x-6">
+                      <span className="text-sm font-semibold text-[#009063]">
+                        {item.issues.length} {item.issues.length === 1 ? "Issue" : "Issues"}
                       </span>
-                      {type === 'backlog' && (
-                        <span className="text-sm font-semibold text-purple-600">
-                          {item.numberOfEmployees} Employees
-                        </span>
-                      )}
                     </div>
                   </div>
                   <div className="ml-4">
                     <div
-                      className={`w-12 h-12 rounded-xl flex items-center justify-center transition-all duration-300 ${
-                        expandedItem === itemName
-                          ? `${type === 'sprint' ? 'bg-teal-600' : 'bg-indigo-600'} text-white transform rotate-180`
-                          : `bg-white text-gray-400 hover:${type === 'sprint' ? 'bg-teal-100 hover:text-teal-600' : 'bg-indigo-100 hover:text-indigo-600'}`
+                      className={`w-12 h-12 rounded flex items-center justify-center transition-all duration-300 ${
+                        isExpanded
+                          ? "bg-[#009063] text-white transform rotate-180"
+                          : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
                       }`}
                     >
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
@@ -123,102 +176,66 @@ const CollapsibleSection = ({
                   </div>
                 </div>
               </div>
-              {expandedItem === itemName && (
-                <div className="p-6 space-y-6 bg-white border-t border-gray-200">
-                  {/* Create User Story Button - Only show for backlogs */}
-                  {type === 'backlog' && onCreateUserStory && (
-                    <div className="flex justify-end mb-4">
-                      <button
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          onCreateUserStory(itemId);
-                        }}
-                        className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white font-semibold rounded-lg hover:from-indigo-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
-                      >
-                        <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                          <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                        </svg>
-                        <span>Create New Story</span>
-                      </button>
-                    </div>
-                  )}
-
-                  {item.userStories.length > 0 ? (
-                    item.userStories.map((us) => {
-                      const userStoryId = us.userStoryId;
-                      const isStoryExpanded = expandedStory === userStoryId;
+              {isExpanded && (
+                <div className="p-6 space-y-6 bg-white border-t border-[#dfdcef]">
+                  {item.issues.length > 0 ? (
+                    item.issues.map((issue) => {
+                      const issueId = issue.id;
+                      const isIssueExpanded = expandedIssue === issueId;
 
                       return (
                         <div
-                          key={userStoryId}
-                          className="border border-gray-300 rounded-xl overflow-hidden shadow-md"
+                          key={issueId}
+                          className="border border-[#dfdcef] rounded-lg overflow-hidden"
                         >
                           <div
-                            className="bg-gray-50 p-5 cursor-pointer hover:bg-gray-100 transition-all duration-200"
-                            onClick={() =>
-                              setExpandedStory(isStoryExpanded ? null : userStoryId)
-                            }
+                            className="bg-[#fbfbfb] p-5 cursor-pointer hover:bg-[#f5f5f5] transition-all duration-200"
+                            onClick={() => setExpandedIssue(isIssueExpanded ? null : issueId)}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-3 mb-3">
-                                  <span className="px-2 py-1 bg-purple-600 text-white text-xs font-bold rounded">
-                                    {us.name}
+                                  <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(issue.type)}`}>
+                                    {issue.type}
                                   </span>
-                                  <h5 className="text-lg font-bold text-gray-900">{us.description}</h5>
-                                  <span
-                                    className={`px-3 py-1 text-xs font-semibold rounded-full border ${getPriorityColor(
-                                      us.priority
-                                    )}`}
-                                  >
-                                    {us.priority}
+                                  <h5 className="text-lg font-bold text-[#3b3b3b]">{issue.heading}</h5>
+                                  <span className={`px-3 py-1 text-xs font-semibold rounded border ${getPriorityColor(issue.priority)}`}>
+                                    {issue.priority}
                                   </span>
                                 </div>
+                                <p className="text-[#3b3b3b] text-sm leading-relaxed mb-3 opacity-80">
+                                  {issue.description}
+                                </p>
                                 <div className="flex flex-wrap items-center gap-4">
-                                  <span
-                                    className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(
-                                      us.status
-                                    )}`}
-                                  >
-                                    {us.status}
+                                  <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(issue.status)}`}>
+                                    {issue.status}
                                   </span>
-                                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                  <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                                      />
+                                      <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
                                     </svg>
-                                    <span className="font-semibold">{us.storyPoints} Points</span>
+                                    <span className="font-medium">{issue.estimatedHours}h</span>
                                   </div>
-                                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                  <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-                                      />
+                                      <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
                                     </svg>
-                                    <span className="font-semibold">
-                                      {us.assignedTo || "Unassigned"}
-                                    </span>
+                                    <span className="font-medium">{issue.assignedTo || "Unassigned"}</span>
                                   </div>
-                                  <div className="flex items-center space-x-2 text-sm text-gray-600">
+                                  <div className="flex items-center space-x-2 text-sm text-[#3b3b3b]">
                                     <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path
-                                        fillRule="evenodd"
-                                        d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                      />
+                                      <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                                     </svg>
-                                    <span className="font-semibold">{us.tasks.length} Tasks</span>
+                                    <span className="font-medium">{issue.subTasks?.length || 0} SubTasks</span>
                                   </div>
                                 </div>
                               </div>
                               <div className="ml-4">
                                 <div
-                                  className={`w-10 h-10 rounded-lg flex items-center justify-center transition-all duration-300 ${
-                                    isStoryExpanded
-                                      ? "bg-purple-600 text-white transform rotate-180"
-                                      : "bg-white text-gray-400 hover:bg-purple-100 hover:text-purple-600"
+                                  className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${
+                                    isIssueExpanded
+                                      ? "bg-[#009063] text-white transform rotate-180"
+                                      : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
                                   }`}
                                 >
                                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
@@ -231,102 +248,71 @@ const CollapsibleSection = ({
                               </div>
                             </div>
                           </div>
-                          {isStoryExpanded && (
-                            <div className="p-6 bg-gradient-to-br from-gray-50 to-white border-t border-gray-200">
-                              <div className="flex items-center justify-between mb-4">
-                                <h6 className="text-lg font-bold text-gray-900 flex items-center">
-                                  <svg
-                                    className="w-5 h-5 text-indigo-600 mr-2"
-                                    fill="currentColor"
-                                    viewBox="0 0 20 20"
-                                  >
-                                    <path
-                                      fillRule="evenodd"
-                                      d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"
-                                    />
-                                  </svg>
-                                  Tasks
-                                </h6>
-                                
-                                {/* Create Task Button - Only show for backlogs */}
-                                {type === 'backlog' && onCreateTask && (
-                                  <button
-                                    onClick={(e) => {
-                                      e.stopPropagation();
-                                      onCreateTask(userStoryId, itemId);
-                                    }}
-                                    className="flex items-center space-x-2 px-3 py-2 bg-gradient-to-r from-green-600 to-teal-600 text-white font-semibold rounded-lg hover:from-green-700 hover:to-teal-700 transition-all duration-200 shadow-md hover:shadow-lg text-sm"
-                                  >
-                                    <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
-                                    </svg>
-                                    <span>Create Task</span>
-                                  </button>
-                                )}
+                          {isIssueExpanded && (
+                            <div className="p-6 bg-white border-t border-[#dfdcef]">
+                              <div className="mb-4">
+                                <h6 className="text-sm font-semibold text-[#3b3b3b] mb-2">Acceptance Criteria</h6>
+                                <p className="text-sm text-[#3b3b3b] opacity-80 leading-relaxed">{issue.acceptanceCriteria}</p>
                               </div>
                               
+                              <h6 className="text-lg font-bold text-[#3b3b3b] flex items-center mb-4">
+                                <svg className="w-5 h-5 text-[#009063] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
+                                </svg>
+                                SubTasks
+                              </h6>
+                              
                               <div className="grid gap-4">
-                                {us.tasks.length > 0 ? (
-                                  us.tasks.map((task) => (
+                                {issue.subTasks && issue.subTasks.length > 0 ? (
+                                  issue.subTasks.map((task) => (
                                     <div
-                                      key={task.taskId}
-                                      className="bg-white border-2 border-gray-200 rounded-xl p-5 shadow-sm hover:shadow-md transition-all duration-200"
+                                      key={task.id}
+                                      className="bg-[#fbfbfb] border border-[#dfdcef] rounded-lg p-4 hover:shadow-md transition-all duration-200"
                                     >
                                       <div className="flex items-start justify-between mb-3">
-                                        <div className="flex items-center space-x-3">
-                                          <span className="px-2 py-1 bg-gray-800 text-white text-xs font-bold rounded">
-                                            {task.name}
-                                          </span>
-                                          <h6 className="text-lg font-bold text-gray-900">
-                                            {task.description}
+                                        <div className="flex-1">
+                                          <h6 className="text-base font-bold text-[#3b3b3b] mb-2">
+                                            {task.heading}
                                           </h6>
+                                          <p className="text-sm text-[#3b3b3b] opacity-80 leading-relaxed mb-3">
+                                            {task.description}
+                                          </p>
                                         </div>
-                                        <span
-                                          className={`px-3 py-1 text-sm font-semibold rounded-full border ${getStatusColor(
-                                            task.status
-                                          )}`}
-                                        >
+                                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(task.status)}`}>
                                           {task.status}
                                         </span>
                                       </div>
                                       
-                                      {/* Additional task details */}
-                                      {task.assignedTo && (
-                                        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
-                                          </svg>
-                                          <span className="font-semibold">Assigned to: {task.assignedTo}</span>
-                                        </div>
-                                      )}
-                                      
-                                      {task.estimatedHours && (
-                                        <div className="flex items-center space-x-2 text-sm text-gray-600 mb-2">
-                                          <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
-                                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
-                                          </svg>
-                                          <span className="font-semibold">Estimated: {task.estimatedHours}h</span>
-                                        </div>
-                                      )}
-                                      
-                                      {task.priority && (
-                                        <div className="flex items-center space-x-2 text-sm">
-                                          <span className={`px-2 py-1 text-xs font-semibold rounded-full border ${getPriorityColor(task.priority)}`}>
-                                            {task.priority}
-                                          </span>
-                                        </div>
-                                      )}
+                                      <div className="flex flex-wrap items-center gap-4 text-sm text-[#3b3b3b]">
+                                        {task.assignedToId && (
+                                          <div className="flex items-center space-x-2">
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                              <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
+                                            </svg>
+                                            <span className="font-medium">Assigned to: {task.assignedToId}</span>
+                                          </div>
+                                        )}
+                                        
+                                        {task.hours && (
+                                          <div className="flex items-center space-x-2">
+                                            <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
+                                              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
+                                            </svg>
+                                            <span className="font-medium">{task.hours}h</span>
+                                          </div>
+                                        )}
+                                      </div>
                                     </div>
                                   ))
                                 ) : (
-                                  <div className="text-center py-8 text-gray-500">
-                                    <div className="w-12 h-12 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                                      <svg className="w-6 h-6 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                                  <div className="text-center py-8 text-[#3b3b3b] opacity-60">
+                                    <div className="w-12 h-12 mx-auto mb-4 bg-[#fbfbfb] rounded-full flex items-center justify-center border border-[#dfdcef]">
+                                      <svg className="w-6 h-6 text-[#3b3b3b]" fill="currentColor" viewBox="0 0 20 20">
                                         <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                                       </svg>
                                     </div>
-                                    <p className="text-lg font-semibold mb-2">No tasks available</p>
-                                    <p className="text-sm">Tasks will appear here when they are added to this user story.</p>
+                                    <p className="text-base font-semibold mb-2">No subtasks available</p>
+                                    <p className="text-sm">Subtasks will appear here when they are added.</p>
                                   </div>
                                 )}
                               </div>
@@ -336,22 +322,15 @@ const CollapsibleSection = ({
                       );
                     })
                   ) : (
-                    <div className="text-center py-12 text-gray-500">
-                      <div className="w-16 h-16 mx-auto mb-4 bg-gray-100 rounded-full flex items-center justify-center">
-                        <svg className="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                    <div className="text-center py-12 text-[#3b3b3b] opacity-60">
+                      <div className="w-16 h-16 mx-auto mb-4 bg-[#fbfbfb] rounded-full flex items-center justify-center border border-[#dfdcef]">
+                        <svg className="w-8 h-8 text-[#3b3b3b]" fill="currentColor" viewBox="0 0 20 20">
                           <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                          <path
-                            fillRule="evenodd"
-                            d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z"
-                          />
+                          <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z" />
                         </svg>
                       </div>
-                      <p className="text-xl font-semibold mb-2">
-                        No user stories in this {type === 'sprint' ? 'sprint' : 'backlog'}
-                      </p>
-                      <p className="text-sm">
-                        User stories will appear here when they are added to this {type === 'sprint' ? 'sprint' : 'backlog'}.
-                      </p>
+                      <p className="text-xl font-semibold mb-2">No issues in this sprint</p>
+                      <p className="text-sm">Issues will appear here when they are added to this sprint.</p>
                     </div>
                   )}
                 </div>

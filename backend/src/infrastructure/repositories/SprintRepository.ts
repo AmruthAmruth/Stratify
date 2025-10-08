@@ -48,4 +48,16 @@ export class SprintRepository implements ISprintRepository {
 
     return doc ? SprintMapper.toEntity(doc) : null;
   }
+
+
+ async findByProjectId(projectId: string): Promise<Sprint[]> {
+  const docs = await SprentModel.find({ projectId });
+  return docs.map(SprintMapper.toEntity);
+}
+
+
+
+  async deleteByProjectId(projectId: string): Promise<void> {
+    await SprentModel.deleteMany({ projectId });
+  }
 }

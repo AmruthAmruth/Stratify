@@ -64,4 +64,19 @@ export class IssueRepository implements IIssueRepository {
     const docs = await IssueModel.find({ sprintId: new mongoose.Types.ObjectId(sprintId) });
     return IssueMapper.toEntities(docs);
   }
+
+async findByProjectId(projectId: string): Promise<Issue[]> {
+  const docs = await IssueModel.find({
+    projectId: new mongoose.Types.ObjectId(projectId),
+  });
+
+  return IssueMapper.toEntities(docs);
+}
+
+  async deleteByProjectId(projectId: string): Promise<void> {
+    await IssueModel.deleteMany({ projectId: new mongoose.Types.ObjectId(projectId) });
+  }
+
+
+
 }

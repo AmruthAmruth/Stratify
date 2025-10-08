@@ -185,3 +185,23 @@ export const createRejectLeaveSchema = z.object({
 });
 
 
+
+
+export const updateIssueSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+
+});
+
+
+
+
+export const updateSprintSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+
+});
+
+
+export const updateTaskSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+
+});

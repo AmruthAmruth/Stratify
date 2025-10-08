@@ -136,3 +136,39 @@ export const createRejectLeaveFields=[
  
   
 ]
+
+
+
+export const updateIssueFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
+]
+
+
+
+
+export const updateTaskFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
+]
+
+
+
+export const updateSprintFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
+]
+
+
+export const createSprintFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
+]

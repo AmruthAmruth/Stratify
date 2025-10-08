@@ -1,4 +1,3 @@
-
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
 import { UserStoryRepository } from "../infrastructure/repositories/UserStoryRepository";
@@ -23,6 +22,9 @@ import { CreateSprentUseCase } from "../application/use-cases/project/CreateSpri
 import { AssignIssueToSprintUseCase } from "../application/use-cases/project/AssignIssueToSprintUseCase";
 import { ProjectLevelEmployeeAllocationUseCase } from "../application/use-cases/project/ProjectLevelEmployeeAllocationUseCase";
 import { IssueLevelEmployeeAllocationUseCase } from "../application/use-cases/project/IssueLevelEmployeeAllocationUseCase";
+import { AddEmployeeProjectUseCase } from "../application/use-cases/project/AddEmployeeProjectUseCase";
+import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
+import { DeleteProjectUseCase } from "../application/use-cases/project/DeleteProjectUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -33,23 +35,67 @@ export const projectDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const departmentRepo = new DepartmentRepository();
-  const issueRepo=new IssueRepository()
-  const subTaskRepo=new SubTaskRepository()
-  const sprintRepo = new SprintRepository()
+  const issueRepo = new IssueRepository();
+  const subTaskRepo = new SubTaskRepository();
+  const sprintRepo = new SprintRepository();
 
-  const createProjectUseCase = new CreateProjectUseCase(projectRepo, companyRepo, managerRepo, departmentRepo, employeeRepo);
-  const createUserStoryUseCase = new CreateUserStoryUseCase(userStoryRepo, backlogRepo, projectRepo, employeeRepo);
-  const createBacklogUseCase = new CreateBacklogUseCase(backlogRepo, companyRepo, managerRepo, projectRepo);
-  const createTaskUseCase = new CreateTaskUseCase(taskRepo, userStoryRepo, employeeRepo, projectRepo);
-  const getProjectsByCompanyUseCase = new GetProjectsByCompanyUseCase(projectRepo, managerRepo, departmentRepo);
-  const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(projectRepo, managerRepo);
-  const createIssueUseCase=new CreateIssueUseCase(projectRepo,issueRepo,employeeRepo)
-  const createSubTaskUseCase=new CreateSubTaskUseCase(issueRepo,subTaskRepo)
-  const createSprentUseCase = new CreateSprentUseCase(projectRepo,sprintRepo)
-  const assineIssueToSprintUseCase=new AssignIssueToSprintUseCase(issueRepo,sprintRepo)
-  const projectLevelEmployeeAllocationUseCase = new ProjectLevelEmployeeAllocationUseCase(managerRepo,employeeRepo)
-const issueLevelEmployeeAllocationUseCase=new IssueLevelEmployeeAllocationUseCase(projectRepo,employeeRepo)
+  const createProjectUseCase = new CreateProjectUseCase(
+    projectRepo,
+    companyRepo,
+    managerRepo,
+    departmentRepo,
+    employeeRepo
+  );
+  const createUserStoryUseCase = new CreateUserStoryUseCase(
+    userStoryRepo,
+    backlogRepo,
+    projectRepo,
+    employeeRepo
+  );
+  const createBacklogUseCase = new CreateBacklogUseCase(
+    backlogRepo,
+    companyRepo,
+    managerRepo,
+    projectRepo
+  );
+  const createTaskUseCase = new CreateTaskUseCase(
+    taskRepo,
+    userStoryRepo,
+    employeeRepo,
+    projectRepo
+  );
+  const getProjectsByCompanyUseCase = new GetProjectsByCompanyUseCase(
+    projectRepo,
+    managerRepo,
+    departmentRepo
+  );
+  const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(
+    projectRepo,
+    managerRepo
+  );
+  const createIssueUseCase = new CreateIssueUseCase(
+    projectRepo,
+    issueRepo,
+    employeeRepo
+  );
+  const createSubTaskUseCase = new CreateSubTaskUseCase(issueRepo, subTaskRepo);
+  const createSprentUseCase = new CreateSprentUseCase(projectRepo, sprintRepo);
+  const assineIssueToSprintUseCase = new AssignIssueToSprintUseCase(
+    issueRepo,
+    sprintRepo
+  );
+  const projectLevelEmployeeAllocationUseCase =
+    new ProjectLevelEmployeeAllocationUseCase(managerRepo, employeeRepo);
+  const issueLevelEmployeeAllocationUseCase =
+    new IssueLevelEmployeeAllocationUseCase(projectRepo, employeeRepo);
 
+    const addEmployeeProjectUseCase =new AddEmployeeProjectUseCase(projectRepo,employeeRepo)
+
+
+    const getProjectDetailsUseCase= new GetProjectDetailsUseCase(projectRepo,issueRepo,subTaskRepo,sprintRepo)
+
+
+    const deleteProjectUseCase = new DeleteProjectUseCase(projectRepo,issueRepo,subTaskRepo,sprintRepo)
 
   return new ProjectController(
     createProjectUseCase,
@@ -63,6 +109,9 @@ const issueLevelEmployeeAllocationUseCase=new IssueLevelEmployeeAllocationUseCas
     createSprentUseCase,
     assineIssueToSprintUseCase,
     projectLevelEmployeeAllocationUseCase,
-    issueLevelEmployeeAllocationUseCase
+    issueLevelEmployeeAllocationUseCase,
+    addEmployeeProjectUseCase,
+    getProjectDetailsUseCase,
+    deleteProjectUseCase
   );
 };

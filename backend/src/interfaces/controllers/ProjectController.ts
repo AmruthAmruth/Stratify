@@ -13,6 +13,9 @@ import { ICreateSprintUseCase } from "../../application/interfaces/project/ICrea
 import { IAssignIssueToSprintUseCase } from "../../application/interfaces/project/IAssignIssueToSprintUseCase";
 import { IProjectLevelEmployeeAllocationUseCase } from "../../application/interfaces/project/IProjectLeavelEmployeeAllocationUseCase";
 import { IIssueLevelEmployeeAllocation } from "../../application/interfaces/project/IIssueLevelEmployeeAllocationUseCase";
+import { IAddEmployeeProjectUseCase } from "../../application/interfaces/project/IAddEmployeeProjectUseCase";
+import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
+import { IDeleteProjectUseCase } from "../../application/interfaces/project/IDeleteProjectUseCase";
 
 export class ProjectController {
   constructor(
@@ -27,7 +30,10 @@ export class ProjectController {
     private _createSprentUseCase:ICreateSprintUseCase,
     private _assignIssueToSprintUseCase:IAssignIssueToSprintUseCase,
     private _projectLevelEmployeeAllocationUseCase:IProjectLevelEmployeeAllocationUseCase,
-    private _issueLevelEmployeeAllocationUseCase:IIssueLevelEmployeeAllocation
+    private _issueLevelEmployeeAllocationUseCase:IIssueLevelEmployeeAllocation,
+    private _addEmployeeProjectUseCase:IAddEmployeeProjectUseCase,
+    private _getProjectDetailsUseCase:IGetProjectDetailsUseCase,
+    private _deleteProjectUseCase:IDeleteProjectUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -75,11 +81,11 @@ export class ProjectController {
     res.status(StatusCodes.OK).json(response);
   };
 
-  // getProjectDetails = async (req: Request, res: Response): Promise<void> => {
-  //   const { id } = req.params;
-  //   const response = await this._getProjectDetailsUseCase.execute(id);
-  //   res.status(StatusCodes.OK).json(response);
-  // };
+  getProjectDetails = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    const response = await this._getProjectDetailsUseCase.execute(id);
+    res.status(StatusCodes.OK).json(response);
+  };
 
   
 
@@ -119,6 +125,20 @@ issueLevelEmployeeAllocation = async(req:Request,res:Response):Promise<void>=>{
   const response = await this._issueLevelEmployeeAllocationUseCase.execute(req.body);
   res.status(StatusCodes.OK).json(response)
 }
+
+
+addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
+  await this._addEmployeeProjectUseCase.execute(req.body.projectId,req.body.employeeId);
+  res.status(StatusCodes.OK).json({message:"Added Employee to the Project"})
+}
+
+
+deleteProject=async(req:Request,res:Response):Promise<void>=>{
+  await this._deleteProjectUseCase.execute(req.body);
+  res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
+}
+
+
 
 }
     
