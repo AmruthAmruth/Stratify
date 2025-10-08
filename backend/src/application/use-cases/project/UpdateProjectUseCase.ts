@@ -13,7 +13,7 @@ import { IUpdateProjectUseCase } from "../../interfaces/project/IUpdateProjectUs
 
 export class UpdateProjectUseCase implements IUpdateProjectUseCase{
     constructor(
-                private _projectRepo: IProjectRepository,
+    private _projectRepo: IProjectRepository,
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,

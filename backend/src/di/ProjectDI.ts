@@ -25,6 +25,7 @@ import { IssueLevelEmployeeAllocationUseCase } from "../application/use-cases/pr
 import { AddEmployeeProjectUseCase } from "../application/use-cases/project/AddEmployeeProjectUseCase";
 import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
 import { DeleteProjectUseCase } from "../application/use-cases/project/DeleteProjectUseCase";
+import { UpdateProjectUseCase } from "../application/use-cases/project/UpdateProjectUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -97,6 +98,12 @@ export const projectDI = () => {
 
     const deleteProjectUseCase = new DeleteProjectUseCase(projectRepo,issueRepo,subTaskRepo,sprintRepo)
 
+    const updateProjectUseCase = new UpdateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo,employeeRepo)
+
+
+
+
+
   return new ProjectController(
     createProjectUseCase,
     createUserStoryUseCase,
@@ -112,6 +119,7 @@ export const projectDI = () => {
     issueLevelEmployeeAllocationUseCase,
     addEmployeeProjectUseCase,
     getProjectDetailsUseCase,
-    deleteProjectUseCase
+    deleteProjectUseCase,
+    updateProjectUseCase
   );
 };

@@ -16,6 +16,7 @@ import { IIssueLevelEmployeeAllocation } from "../../application/interfaces/proj
 import { IAddEmployeeProjectUseCase } from "../../application/interfaces/project/IAddEmployeeProjectUseCase";
 import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
 import { IDeleteProjectUseCase } from "../../application/interfaces/project/IDeleteProjectUseCase";
+import { IUpdateProjectUseCase } from "../../application/interfaces/project/IUpdateProjectUseCase";
 
 export class ProjectController {
   constructor(
@@ -33,7 +34,8 @@ export class ProjectController {
     private _issueLevelEmployeeAllocationUseCase:IIssueLevelEmployeeAllocation,
     private _addEmployeeProjectUseCase:IAddEmployeeProjectUseCase,
     private _getProjectDetailsUseCase:IGetProjectDetailsUseCase,
-    private _deleteProjectUseCase:IDeleteProjectUseCase
+    private _deleteProjectUseCase:IDeleteProjectUseCase,
+    private _updateProjectUseCase:IUpdateProjectUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -138,6 +140,13 @@ deleteProject=async(req:Request,res:Response):Promise<void>=>{
   await this._deleteProjectUseCase.execute(projectId);
   res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
 }
+
+
+updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
+  const createdBy = req.userId;
+ const response= await this._updateProjectUseCase.execute({ ...req.body, createdBy });
+  res.status(StatusCodes.OK).json({message:"Updated the project successfully!",response},)
+};
 
 
 
