@@ -19,12 +19,17 @@ projectRouter.post("/create-subtask",asyncHandler(controller.createSubTask))
 projectRouter.post("/assing-to-sprint",asyncHandler(controller.assignIssueToSprint))
 
 projectRouter.delete('/project',asyncHandler(controller.deleteProject))
-
+projectRouter.put("/project",authMiddleware(["company","manager"]),asyncHandler(controller.updateProject))
 
 projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler(controller.getProjectsByCompany));
 projectRouter.get('/projectlevel-allocated-employee',authMiddleware(["manager"]),asyncHandler(controller.projectLevelEmployeeAllocation))
 projectRouter.get("/issuelevel-allcated-employee",asyncHandler(controller.issueLevelEmployeeAllocation))
- projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
- projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
+projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
+projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 
 export default projectRouter;
+
+
+
+
+
