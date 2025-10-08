@@ -4,6 +4,7 @@ import { enqueueSnackbar } from "notistack";
 
 import {
   createProject,
+  deleteProject,
   getDepartmentProjects,
   projectLevelTeamAllocation,
 } from "@/services/projects";
@@ -14,6 +15,7 @@ import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import { createProjectFields } from "@/shared/components/Forms/formFields";
 import { createProjectSchema } from "@/shared/utils/validations";
+import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
 
 // ============================================================================
 // TYPES & INTERFACES
@@ -81,7 +83,10 @@ const ITEMS_PER_PAGE = 6;
 const ManagerProjects: React.FC = () => {
   const navigate = useNavigate();
 
-  // State
+  // ============================================================================
+  // STATE
+  // ============================================================================
+
   const [projects, setProjects] = useState<ProjectsData | null>(null);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departmentId, setDepartmentId] = useState<string>("");
@@ -94,6 +99,11 @@ const ManagerProjects: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [teamSelectionError, setTeamSelectionError] = useState("");
+  const [isDeleting, setIsDeleting] = useState(false); // Added to track delete loading state
+
+  // Delete confirmation dialog
+  const [isConfirmOpen, setIsConfirmOpen] = useState(false);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
 
   // ============================================================================
   // DATA FETCHING
@@ -110,19 +120,15 @@ const ManagerProjects: React.FC = () => {
         projectLevelTeamAllocation(),
       ]);
 
-      // Handle projects data
       if (projectsData.status === "fulfilled") {
         const data = projectsData.value;
         setProjects(data?.status === "error" ? INITIAL_PROJECTS_STATE : data);
       } else {
         setProjects(INITIAL_PROJECTS_STATE);
-        console.error("Error fetching projects:", projectsData.reason);
       }
 
-      // Handle employees & department data
       if (employeesData.status === "fulfilled" && Array.isArray(employeesData.value)) {
         const departmentData: DepartmentEmployeeData[] = employeesData.value;
-
         if (departmentData.length > 0) {
           setEmployees(departmentData[0].employee || []);
           setDepartmentId(departmentData[0].departmentId || "");
@@ -131,18 +137,54 @@ const ManagerProjects: React.FC = () => {
           setDepartmentId("");
         }
       } else {
-        console.error(
-          "Error fetching employees:",
-          employeesData.status === "rejected"
-            ? employeesData.reason
-            : "Invalid data format"
-        );
+        setEmployees([]);
+        setDepartmentId("");
       }
     } catch (err) {
-      console.error("Unexpected error:", err);
+      console.error("Error fetching data:", err);
       setProjects(INITIAL_PROJECTS_STATE);
       setEmployees([]);
       setDepartmentId("");
+    }
+  };
+
+  // ============================================================================
+  // DELETE PROJECT HANDLERS
+  // ============================================================================
+
+  const handleOpenDeleteConfirm = (id: string) => {
+    setSelectedProjectId(id);
+    setIsConfirmOpen(true);
+  };
+
+  const handleCloseConfirm = () => {
+    setIsConfirmOpen(false);
+    setSelectedProjectId(null);
+  };
+
+  const handleConfirmDelete = async () => {
+    if (!selectedProjectId) return;
+
+    setIsDeleting(true);
+    try {
+      const data = await deleteProject(selectedProjectId);
+
+      enqueueSnackbar(data?.message || "Project deleted successfully", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+
+      // Refresh list after deletion
+      const updatedProjects = await getDepartmentProjects();
+      setProjects(updatedProjects);
+    } catch (err: any) {
+      enqueueSnackbar(err?.response?.data?.message || err?.message || "Internal Server Error", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+    } finally {
+      setIsDeleting(false);
+      handleCloseConfirm();
     }
   };
 
@@ -157,7 +199,6 @@ const ManagerProjects: React.FC = () => {
           ? prev.filter((id) => id !== employeeId)
           : [...prev, employeeId]
       );
-
       if (teamSelectionError) setTeamSelectionError("");
     },
     [teamSelectionError]
@@ -167,7 +208,6 @@ const ManagerProjects: React.FC = () => {
     setSelectedEmployeeIds((prev) =>
       prev.length === employees.length ? [] : employees.map((emp) => emp.employeeId)
     );
-
     if (teamSelectionError) setTeamSelectionError("");
   }, [employees, teamSelectionError]);
 
@@ -186,7 +226,6 @@ const ManagerProjects: React.FC = () => {
     }
 
     setSubmitLoading(true);
-
     try {
       const payload: CreateProjectPayload = {
         name: formValues.projectName || formValues.name,
@@ -199,34 +238,20 @@ const ManagerProjects: React.FC = () => {
         teamMemberIds: selectedEmployeeIds,
       };
 
-      // Call createProject and get backend response
       const data = await createProject(payload);
 
-      // Show success message
       enqueueSnackbar(data?.message || "Project created successfully!", {
         variant: "success",
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
 
-      // Refresh project list
-      try {
-        const updatedProjects = await getDepartmentProjects();
-        setProjects(updatedProjects);
-      } catch (refreshErr) {
-        console.error("Failed to refresh projects:", refreshErr);
-        enqueueSnackbar("Project created, but failed to refresh the project list. Please reload the page.", {
-          variant: "warning",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
-        });
-      }
-
-      // Close modal after success
+      const updatedProjects = await getDepartmentProjects();
+      setProjects(updatedProjects);
       setIsProjectModalOpen(false);
       setSelectedEmployeeIds([]);
       setTeamSelectionError("");
     } catch (err: any) {
-      // Show backend error message or fallback
-      enqueueSnackbar(err?.message || "Failed to create project. Please try again.", {
+      enqueueSnackbar(err?.message || "Failed to create project.", {
         variant: "error",
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
@@ -236,26 +261,21 @@ const ManagerProjects: React.FC = () => {
   };
 
   // ============================================================================
-  // MODAL HANDLERS
+  // NAVIGATION
   // ============================================================================
 
-  const openModal = () => setIsProjectModalOpen(true);
-
-  const closeModal = useCallback(() => {
-    setIsProjectModalOpen(false);
-    setSelectedEmployeeIds([]);
-    setTeamSelectionError("");
-  }, []);
+  const handleViewProject = useCallback(
+    (projectId: string) => navigate(`/project/${projectId}`),
+    [navigate]
+  );
 
   // ============================================================================
-  // DATA FILTERING, SORTING & PAGINATION
+  // FILTERS, SORT, PAGINATION
   // ============================================================================
 
   const filteredProjects =
     projects?.projects
-      ?.filter((p) =>
-        p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
-      )
+      ?.filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
       ?.filter((p) => !filterStatus || p.status === filterStatus) || [];
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
@@ -278,32 +298,27 @@ const ManagerProjects: React.FC = () => {
 
   const totalPages = Math.ceil(sortedProjects.length / ITEMS_PER_PAGE);
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-  const paginatedData = sortedProjects.slice(
-    startIndex,
-    startIndex + ITEMS_PER_PAGE
-  );
+  const paginatedData = sortedProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
   const uniqueStatus = projects?.projects
     ? Array.from(new Set(projects.projects.map((p) => p.status)))
     : [];
 
-  const clearFilters = useCallback(() => {
+  // ============================================================================
+  // MODAL AND FILTER HANDLERS
+  // ============================================================================
+
+  const openModal = () => {
+    setIsProjectModalOpen(true);
+  };
+
+  const clearFilters = () => {
     setSearchTerm("");
     setFilterStatus("");
     setSortBy("");
     setSortOrder("asc");
-  }, []);
-
-  // ============================================================================
-  // NAVIGATION HANDLER
-  // ============================================================================
-
-  const handleViewProject = useCallback(
-    (projectId: string) => {
-      navigate(`/project/${projectId}`);
-    },
-    [navigate]
-  );
+    setCurrentPage(1);
+  };
 
   // ============================================================================
   // RENDER
@@ -324,6 +339,7 @@ const ManagerProjects: React.FC = () => {
         <button
           onClick={openModal}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+          disabled={submitLoading}
         >
           + Create Project
         </button>
@@ -408,9 +424,10 @@ const ManagerProjects: React.FC = () => {
                 onClick: (row) => alert(`Editing ${row.projectName}`),
               },
               {
-                label: "Archive",
+                label: "Delete",
                 type: "delete",
-                onClick: (row) => alert(`Archiving ${row.projectName}`),
+                onClick: (row) => handleOpenDeleteConfirm(row.id),
+                disabled: isDeleting, // Disable delete action during deletion
               },
             ]}
           />
@@ -420,7 +437,7 @@ const ManagerProjects: React.FC = () => {
       {/* Create Project Modal */}
       <CreateProjectModal
         isOpen={isProjectModalOpen}
-        onClose={closeModal}
+        onClose={() => setIsProjectModalOpen(false)}
         onSubmit={handleCreateProject}
         employees={employees}
         selectedEmployeeIds={selectedEmployeeIds}
@@ -428,6 +445,18 @@ const ManagerProjects: React.FC = () => {
         onSelectAll={handleSelectAll}
         submitLoading={submitLoading}
         teamSelectionError={teamSelectionError}
+      />
+
+      {/* Confirm Delete Dialog */}
+      <ConfirmDialog
+        isOpen={isConfirmOpen}
+        title="Delete Project"
+        message="Are you sure you want to delete this project? This action cannot be undone."
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCloseConfirm}
+        confirmText="Delete"
+        cancelText="Cancel"
+        confirmButtonDisabled={isDeleting}
       />
     </div>
   );
@@ -500,41 +529,40 @@ interface ProjectFormWithTeamSelectionProps {
   teamSelectionError: string;
 }
 
-const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> =
-  ({
-    onSubmit,
-    employees,
-    selectedEmployeeIds,
-    onEmployeeToggle,
-    onSelectAll,
-    submitLoading,
-    teamSelectionError,
-  }) => {
-    return (
-      <div className="relative">
-        <div
-          className="shadow-lg rounded-xl rounded-b-none p-8 max-w-4xl mx-auto"
-          style={{ backgroundColor: "#fbfbfb" }}
-        >
-          <AuthForm
-            fields={createProjectFields}
-            validationSchema={createProjectSchema}
-            onSubmit={onSubmit}
-            buttonText="Create Project"
-            disabled={submitLoading}
-          />
-        </div>
-
-        <TeamMemberSelection
-          employees={employees}
-          selectedEmployeeIds={selectedEmployeeIds}
-          onEmployeeToggle={onEmployeeToggle}
-          onSelectAll={onSelectAll}
-          teamSelectionError={teamSelectionError}
+const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> = ({
+  onSubmit,
+  employees,
+  selectedEmployeeIds,
+  onEmployeeToggle,
+  onSelectAll,
+  submitLoading,
+  teamSelectionError,
+}) => {
+  return (
+    <div className="relative">
+      <div
+        className="shadow-lg rounded-xl rounded-b-none p-8 max-w-4xl mx-auto"
+        style={{ backgroundColor: "#fbfbfb" }}
+      >
+        <AuthForm
+          fields={createProjectFields}
+          validationSchema={createProjectSchema}
+          onSubmit={onSubmit}
+          buttonText="Create Project"
+          disabled={submitLoading}
         />
       </div>
-    );
-  };
+
+      <TeamMemberSelection
+        employees={employees}
+        selectedEmployeeIds={selectedEmployeeIds}
+        onEmployeeToggle={onEmployeeToggle}
+        onSelectAll={onSelectAll}
+        teamSelectionError={teamSelectionError}
+      />
+    </div>
+  );
+};
 
 // ============================================================================
 // TEAM MEMBER SELECTION COMPONENT

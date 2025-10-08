@@ -97,6 +97,21 @@ export const projectLevelTeamAllocation=async () => {
 };
 
 
+
+export const deleteProject = async (id: string) => {
+  try {
+    const response = await api.delete(`${PROJECT_ROUTES.DELETE_PROJECT}/${id}`);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+
+
+// ///////////////////////////////////////////////////////////////////////////////////////////////////
+
 export const updateIssue=async () => {
   try {
     const response = await api.get(PROJECT_ROUTES.PROJECT_LEVEL_ALLOCATION);
@@ -125,3 +140,6 @@ export const updateTask=async () => {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+

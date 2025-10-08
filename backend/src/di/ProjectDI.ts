@@ -18,7 +18,7 @@ import { CreateIssueUseCase } from "../application/use-cases/project/CreateIssue
 import { CreateSubTaskUseCase } from "../application/use-cases/project/CreateSubTaskUseCase";
 import { SubTaskRepository } from "../infrastructure/repositories/SubTaskRepository";
 import { SprintRepository } from "../infrastructure/repositories/SprintRepository";
-import { CreateSprentUseCase } from "../application/use-cases/project/CreateSprintUseCase";
+import { CreateSprintUseCase } from "../application/use-cases/project/CreateSprintUseCase";
 import { AssignIssueToSprintUseCase } from "../application/use-cases/project/AssignIssueToSprintUseCase";
 import { ProjectLevelEmployeeAllocationUseCase } from "../application/use-cases/project/ProjectLevelEmployeeAllocationUseCase";
 import { IssueLevelEmployeeAllocationUseCase } from "../application/use-cases/project/IssueLevelEmployeeAllocationUseCase";
@@ -80,7 +80,7 @@ export const projectDI = () => {
     employeeRepo
   );
   const createSubTaskUseCase = new CreateSubTaskUseCase(issueRepo, subTaskRepo);
-  const createSprentUseCase = new CreateSprentUseCase(projectRepo, sprintRepo);
+  const createSprentUseCase = new CreateSprintUseCase(projectRepo, sprintRepo);
   const assineIssueToSprintUseCase = new AssignIssueToSprintUseCase(
     issueRepo,
     sprintRepo
