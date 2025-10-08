@@ -124,7 +124,7 @@ projectLevelEmployeeAllocation=async(req:AuthRequest,res:Response):Promise<void>
 issueLevelEmployeeAllocation = async(req:Request,res:Response):Promise<void>=>{
   const response = await this._issueLevelEmployeeAllocationUseCase.execute(req.body);
   res.status(StatusCodes.OK).json(response)
-}
+} 
 
 
 addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
@@ -134,7 +134,8 @@ addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
 
 
 deleteProject=async(req:Request,res:Response):Promise<void>=>{
-  await this._deleteProjectUseCase.execute(req.body);
+  const {projectId}=req.body
+  await this._deleteProjectUseCase.execute(projectId);
   res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
 }
 
