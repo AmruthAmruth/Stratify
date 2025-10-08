@@ -9,3 +9,9 @@ export interface CreateProjectDTO {
   status?: "Planned" | "Active" | "Completed" | "Archived";
   teamMemberIds?: string[];  
 }
+
+
+
+export interface UpdateProjectDTO extends CreateProjectDTO {
+ id:string;
+}
