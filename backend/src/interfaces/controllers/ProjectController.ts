@@ -136,7 +136,7 @@ addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
 
 
 deleteProject=async(req:Request,res:Response):Promise<void>=>{
-  const {projectId}=req.body
+  const {projectId}=req.params
   await this._deleteProjectUseCase.execute(projectId);
   res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
 }

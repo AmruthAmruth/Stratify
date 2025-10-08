@@ -18,7 +18,7 @@ projectRouter.post("/add-employee-project",asyncHandler(controller.addEmployeePr
 projectRouter.post("/create-subtask",asyncHandler(controller.createSubTask))
 projectRouter.post("/assing-to-sprint",asyncHandler(controller.assignIssueToSprint))
 
-projectRouter.delete('/project',asyncHandler(controller.deleteProject))
+projectRouter.delete('/project/:id',asyncHandler(controller.deleteProject))
 projectRouter.put("/project",authMiddleware(["company","manager"]),asyncHandler(controller.updateProject))
 
 projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler(controller.getProjectsByCompany));
