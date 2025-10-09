@@ -100,7 +100,9 @@ export const projectLevelTeamAllocation=async () => {
 
 export const deleteProject = async (id: string) => {
   try {
-    const response = await api.delete(`${PROJECT_ROUTES.DELETE_PROJECT}/${id}`);
+    console.log("Delte id",id);
+    
+  const response = await api.delete(PROJECT_ROUTES.DELETE_PROJECT(id));  
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
@@ -110,11 +112,11 @@ export const deleteProject = async (id: string) => {
 
 
 
-// ///////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-export const updateIssue=async () => {
+export const updateIssue = async (id: string, data: Record<string, unknown>) => {
   try {
-    const response = await api.get(PROJECT_ROUTES.PROJECT_LEVEL_ALLOCATION);
+    const response = await api.put(`/issues/${id}`, data);
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");

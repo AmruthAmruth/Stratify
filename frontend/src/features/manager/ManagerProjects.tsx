@@ -4,7 +4,7 @@ import { enqueueSnackbar } from "notistack";
 
 import {
   createProject,
-  deleteProject,
+ deleteProject,
   getDepartmentProjects,
   projectLevelTeamAllocation,
 } from "@/services/projects";
@@ -53,6 +53,15 @@ interface ProjectsData {
   };
 }
 
+interface CreateProjectFormValues {
+  projectName: string;
+  projectKey: string;
+  description?: string;
+  startDate: string;
+  endDate: string;
+  status: "Planned" | "Active" | "Completed" | "Archived";
+}
+
 interface CreateProjectPayload {
   name: string;
   key: string;
@@ -60,7 +69,7 @@ interface CreateProjectPayload {
   startDate: string;
   endDate: string;
   departmentId: string;
-  status?: "Planned" | "Active" | "Completed" | "Archived";
+  status: "Planned" | "Active" | "Completed" | "Archived";
   teamMemberIds: string[];
 }
 
@@ -87,7 +96,7 @@ const ManagerProjects: React.FC = () => {
   // STATE
   // ============================================================================
 
-  const [projects, setProjects] = useState<ProjectsData | null>(null);
+  const [projects, setProjects] = useState<ProjectsData>(INITIAL_PROJECTS_STATE);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departmentId, setDepartmentId] = useState<string>("");
   const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
@@ -98,12 +107,14 @@ const ManagerProjects: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
+  const [fetchLoading, setFetchLoading] = useState(true);
   const [teamSelectionError, setTeamSelectionError] = useState("");
-  const [isDeleting, setIsDeleting] = useState(false); // Added to track delete loading state
-
-  // Delete confirmation dialog
+  const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+
+  // Form reset ref
+  const formRef = React.useRef<{ resetForm: () => void }>(null);
 
   // ============================================================================
   // DATA FETCHING
@@ -114,37 +125,54 @@ const ManagerProjects: React.FC = () => {
   }, []);
 
   const fetchProjectsAndEmployees = async () => {
+    setFetchLoading(true);
     try {
       const [projectsData, employeesData] = await Promise.allSettled([
         getDepartmentProjects(),
         projectLevelTeamAllocation(),
       ]);
 
-      if (projectsData.status === "fulfilled") {
-        const data = projectsData.value;
-        setProjects(data?.status === "error" ? INITIAL_PROJECTS_STATE : data);
+      if (projectsData.status === "fulfilled" && projectsData.value) {
+        setProjects(
+          projectsData.value?.status === "error" || !projectsData.value
+            ? INITIAL_PROJECTS_STATE
+            : projectsData.value
+        );
       } else {
         setProjects(INITIAL_PROJECTS_STATE);
+        enqueueSnackbar("Failed to fetch projects.", {
+          variant: "error",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+        });
       }
 
-      if (employeesData.status === "fulfilled" && Array.isArray(employeesData.value)) {
+      if (
+        employeesData.status === "fulfilled" &&
+        Array.isArray(employeesData.value) &&
+        employeesData.value.length > 0
+      ) {
         const departmentData: DepartmentEmployeeData[] = employeesData.value;
-        if (departmentData.length > 0) {
-          setEmployees(departmentData[0].employee || []);
-          setDepartmentId(departmentData[0].departmentId || "");
-        } else {
-          setEmployees([]);
-          setDepartmentId("");
-        }
+        setEmployees(departmentData[0]?.employee || []);
+        setDepartmentId(departmentData[0]?.departmentId || "");
       } else {
         setEmployees([]);
         setDepartmentId("");
+        enqueueSnackbar("No employees found for this department.", {
+          variant: "warning",
+          anchorOrigin: { vertical: "top", horizontal: "right" },
+        });
       }
     } catch (err) {
       console.error("Error fetching data:", err);
       setProjects(INITIAL_PROJECTS_STATE);
       setEmployees([]);
       setDepartmentId("");
+      enqueueSnackbar("Failed to load projects and employees.", {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+    } finally {
+      setFetchLoading(false);
     }
   };
 
@@ -167,18 +195,18 @@ const ManagerProjects: React.FC = () => {
 
     setIsDeleting(true);
     try {
-      const data = await deleteProject(selectedProjectId);
+      console.log("selectedProjectId",selectedProjectId);
+      
+     const data = await deleteProject(selectedProjectId);
 
       enqueueSnackbar(data?.message || "Project deleted successfully", {
         variant: "success",
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
 
-      // Refresh list after deletion
-      const updatedProjects = await getDepartmentProjects();
-      setProjects(updatedProjects);
+      await fetchProjectsAndEmployees();
     } catch (err: any) {
-      enqueueSnackbar(err?.response?.data?.message || err?.message || "Internal Server Error", {
+      enqueueSnackbar(err?.response?.data?.message || err?.message || "Failed to delete project.", {
         variant: "error",
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
@@ -199,23 +227,23 @@ const ManagerProjects: React.FC = () => {
           ? prev.filter((id) => id !== employeeId)
           : [...prev, employeeId]
       );
-      if (teamSelectionError) setTeamSelectionError("");
+      setTeamSelectionError("");
     },
-    [teamSelectionError]
+    []
   );
 
   const handleSelectAll = useCallback(() => {
     setSelectedEmployeeIds((prev) =>
       prev.length === employees.length ? [] : employees.map((emp) => emp.employeeId)
     );
-    if (teamSelectionError) setTeamSelectionError("");
-  }, [employees, teamSelectionError]);
+    setTeamSelectionError("");
+  }, [employees]);
 
   // ============================================================================
   // FORM SUBMISSION HANDLER
   // ============================================================================
 
-  const handleCreateProject = async (formValues: Record<string, any>) => {
+  const handleCreateProject = async (formValues: CreateProjectFormValues) => {
     if (selectedEmployeeIds.length === 0) {
       setTeamSelectionError("Please select at least one team member");
       enqueueSnackbar("Please select at least one team member", {
@@ -227,13 +255,20 @@ const ManagerProjects: React.FC = () => {
 
     setSubmitLoading(true);
     try {
+      // Validate dates
+      const startDate = new Date(formValues.startDate);
+      const endDate = new Date(formValues.endDate);
+      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
+        throw new Error("Invalid start or end date.");
+      }
+
       const payload: CreateProjectPayload = {
-        name: formValues.projectName || formValues.name,
-        key: formValues.projectKey || formValues.key,
-        description: formValues.projectDescription || formValues.description,
-        startDate: new Date(formValues.startDate).toISOString(),
-        endDate: new Date(formValues.endDate).toISOString(),
-        departmentId: departmentId || projects?.departmentId || "",
+        name: formValues.projectName,
+        key: formValues.projectKey,
+        description: formValues.description,
+        startDate: startDate.toISOString(),
+        endDate: endDate.toISOString(),
+        departmentId: departmentId || projects.departmentId || "",
         status: formValues.status || "Planned",
         teamMemberIds: selectedEmployeeIds,
       };
@@ -245,11 +280,11 @@ const ManagerProjects: React.FC = () => {
         anchorOrigin: { vertical: "top", horizontal: "right" },
       });
 
-      const updatedProjects = await getDepartmentProjects();
-      setProjects(updatedProjects);
+      await fetchProjectsAndEmployees();
       setIsProjectModalOpen(false);
       setSelectedEmployeeIds([]);
       setTeamSelectionError("");
+      formRef.current?.resetForm();
     } catch (err: any) {
       enqueueSnackbar(err?.message || "Failed to create project.", {
         variant: "error",
@@ -273,10 +308,9 @@ const ManagerProjects: React.FC = () => {
   // FILTERS, SORT, PAGINATION
   // ============================================================================
 
-  const filteredProjects =
-    projects?.projects
-      ?.filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
-      ?.filter((p) => !filterStatus || p.status === filterStatus) || [];
+  const filteredProjects = projects.projects
+    .filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((p) => !filterStatus || p.status === filterStatus);
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortBy) return 0;
@@ -300,9 +334,7 @@ const ManagerProjects: React.FC = () => {
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
   const paginatedData = sortedProjects.slice(startIndex, startIndex + ITEMS_PER_PAGE);
 
-  const uniqueStatus = projects?.projects
-    ? Array.from(new Set(projects.projects.map((p) => p.status)))
-    : [];
+  const uniqueStatus = Array.from(new Set(projects.projects.map((p) => p.status)));
 
   // ============================================================================
   // MODAL AND FILTER HANDLERS
@@ -324,7 +356,7 @@ const ManagerProjects: React.FC = () => {
   // RENDER
   // ============================================================================
 
-  if (!projects) {
+  if (fetchLoading) {
     return (
       <div className="flex items-center justify-center py-20 text-gray-600">
         Loading projects...
@@ -427,7 +459,7 @@ const ManagerProjects: React.FC = () => {
                 label: "Delete",
                 type: "delete",
                 onClick: (row) => handleOpenDeleteConfirm(row.id),
-                disabled: isDeleting, // Disable delete action during deletion
+                disabled: isDeleting,
               },
             ]}
           />
@@ -437,7 +469,12 @@ const ManagerProjects: React.FC = () => {
       {/* Create Project Modal */}
       <CreateProjectModal
         isOpen={isProjectModalOpen}
-        onClose={() => setIsProjectModalOpen(false)}
+        onClose={() => {
+          setIsProjectModalOpen(false);
+          setSelectedEmployeeIds([]);
+          setTeamSelectionError("");
+          formRef.current?.resetForm();
+        }}
         onSubmit={handleCreateProject}
         employees={employees}
         selectedEmployeeIds={selectedEmployeeIds}
@@ -445,6 +482,7 @@ const ManagerProjects: React.FC = () => {
         onSelectAll={handleSelectAll}
         submitLoading={submitLoading}
         teamSelectionError={teamSelectionError}
+        formRef={formRef}
       />
 
       {/* Confirm Delete Dialog */}
@@ -469,13 +507,14 @@ const ManagerProjects: React.FC = () => {
 interface CreateProjectModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit: (values: CreateProjectFormValues) => void;
   employees: Employee[];
   selectedEmployeeIds: string[];
   onEmployeeToggle: (id: string) => void;
   onSelectAll: () => void;
   submitLoading: boolean;
   teamSelectionError: string;
+  formRef: React.RefObject<{ resetForm: () => void }>;
 }
 
 const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
@@ -488,6 +527,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
   onSelectAll,
   submitLoading,
   teamSelectionError,
+  formRef,
 }) => {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Create Project">
@@ -500,6 +540,7 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
           onSelectAll={onSelectAll}
           submitLoading={submitLoading}
           teamSelectionError={teamSelectionError}
+          formRef={formRef}
         />
 
         {submitLoading && (
@@ -520,13 +561,14 @@ const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
 // ============================================================================
 
 interface ProjectFormWithTeamSelectionProps {
-  onSubmit: (values: Record<string, any>) => void;
+  onSubmit: (values: CreateProjectFormValues) => void;
   employees: Employee[];
   selectedEmployeeIds: string[];
   onEmployeeToggle: (id: string) => void;
   onSelectAll: () => void;
   submitLoading: boolean;
   teamSelectionError: string;
+  formRef: React.RefObject<{ resetForm: () => void }>;
 }
 
 const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> = ({
@@ -537,12 +579,12 @@ const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> 
   onSelectAll,
   submitLoading,
   teamSelectionError,
+  formRef,
 }) => {
   return (
     <div className="relative">
       <div
-        className="shadow-lg rounded-xl rounded-b-none p-8 max-w-4xl mx-auto"
-        style={{ backgroundColor: "#fbfbfb" }}
+        className="shadow-lg rounded-xl rounded-b-none p-8 max-w-4xl mx-auto bg-gray-50"
       >
         <AuthForm
           fields={createProjectFields}
@@ -550,6 +592,7 @@ const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> 
           onSubmit={onSubmit}
           buttonText="Create Project"
           disabled={submitLoading}
+          formRef={formRef}
         />
       </div>
 
@@ -588,19 +631,17 @@ const TeamMemberSelection: React.FC<TeamMemberSelectionProps> = ({
 
   return (
     <div
-      className="shadow-lg rounded-b-xl p-8 pt-4 max-w-4xl mx-auto -mt-8"
-      style={{ backgroundColor: "#fbfbfb" }}
+      className="shadow-lg rounded-b-xl p-8 pt-4 max-w-4xl mx-auto bg-gray-50"
     >
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold" style={{ color: "#3b3b3b" }}>
+        <h3 className="text-lg font-semibold text-gray-800">
           Select Team Members ({selectedEmployeeIds.length} selected)
         </h3>
         {employees.length > 0 && (
           <button
             type="button"
             onClick={onSelectAll}
-            className="text-sm font-medium transition hover:opacity-80"
-            style={{ color: "#009063" }}
+            className="text-sm font-medium transition hover:opacity-80 text-green-600"
           >
             {isAllSelected ? "Deselect All" : "Select All"}
           </button>
@@ -608,17 +649,16 @@ const TeamMemberSelection: React.FC<TeamMemberSelectionProps> = ({
       </div>
 
       {employees.length === 0 ? (
-        <div className="text-center py-8" style={{ color: "#3b3b3b" }}>
+        <div className="text-center py-8 text-gray-800">
           No employees available
         </div>
       ) : (
         <div
-          className="max-h-64 overflow-y-auto rounded-lg"
-          style={{ border: "1px solid #dfdcef" }}
+          className="max-h-64 overflow-y-auto rounded-lg border border-gray-200"
         >
           {employees.map((employee, index) => (
             <EmployeeCheckboxItem
-              key={employee.employeeId}
+              key={`${employee.employeeId}-${index}`}
               employee={employee}
               isChecked={selectedEmployeeIds.includes(employee.employeeId)}
               onToggle={() => onEmployeeToggle(employee.employeeId)}
@@ -629,7 +669,7 @@ const TeamMemberSelection: React.FC<TeamMemberSelectionProps> = ({
       )}
 
       {teamSelectionError && (
-        <p className="text-xs mt-2" style={{ color: "#f87171" }}>
+        <p className="text-xs mt-2 text-red-500">
           {teamSelectionError}
         </p>
       )}
@@ -656,7 +696,7 @@ const EmployeeCheckboxItem: React.FC<EmployeeCheckboxItemProps> = ({
 }) => {
   return (
     <label
-      className="flex items-center p-4 cursor-pointer transition hover:bg-gray-50"
+      className="flex items-center p-4 cursor-pointer transition hover:bg-gray-100"
       style={{
         borderBottom: showBorder ? "1px solid #dfdcef" : "none",
       }}
@@ -665,14 +705,15 @@ const EmployeeCheckboxItem: React.FC<EmployeeCheckboxItemProps> = ({
         type="checkbox"
         checked={isChecked}
         onChange={onToggle}
-        className="w-4 h-4 rounded focus:ring-2"
-        style={{ accentColor: "#009063" }}
+        className="w-4 h-4 rounded focus:ring-2 focus:ring-green-600"
+        aria-label={`Select ${employee.name} as team member`}
+        aria-checked={isChecked}
       />
       <div className="ml-3 flex-1">
-        <div className="text-sm font-medium" style={{ color: "#3b3b3b" }}>
+        <div className="text-sm font-medium text-gray-800">
           {employee.name}
         </div>
-        <div className="text-sm" style={{ color: "#6b7280" }}>
+        <div className="text-sm text-gray-500">
           {employee.position}
         </div>
       </div>

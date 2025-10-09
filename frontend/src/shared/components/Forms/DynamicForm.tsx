@@ -1,7 +1,6 @@
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useState, useEffect } from "react";
-import { ZodSchema } from "zod";
 
 interface SelectOption {
   value: string;
@@ -37,8 +36,10 @@ const AuthForm: React.FC<AuthFormProps> = ({
   useEffect(() => {
     const initialData: Record<string, unknown> = {};
     fields.forEach((field) => {
-      initialData[field.name] =
-        initialValues?.[field.name] ?? (field.type === "file" ? null : "");
+      // Ensure controlled inputs
+      if (field.type === "file") initialData[field.name] = null;
+      else if (field.type === "date") initialData[field.name] = initialValues?.[field.name] || null;
+      else initialData[field.name] = initialValues?.[field.name] ?? "";
     });
     setFormData(initialData);
   }, [fields, initialValues]);
@@ -75,6 +76,8 @@ const AuthForm: React.FC<AuthFormProps> = ({
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    console.log("Submitting formData:", formData);
+
     const result = validationSchema.safeParse(formData);
 
     if (!result.success) {
@@ -167,7 +170,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
               ) : field.type === "select" ? (
                 <select
                   name={field.name}
-                  value={formData[field.name] as string}
+                  value={(formData[field.name] as string) || ""}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
                   className={`border rounded-lg px-4 py-2 focus:outline-none transition`}
@@ -203,7 +206,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                   onChange={(date: Date | null) =>
                     setFormData((prev) => ({
                       ...prev,
-                      [field.name]: date?.toISOString() || "",
+                      [field.name]: date?.toISOString() || null,
                     }))
                   }
                   onBlur={() => validateField(field.name)}
@@ -220,7 +223,7 @@ const AuthForm: React.FC<AuthFormProps> = ({
                 <input
                   type={field.type}
                   name={field.name}
-                  value={formData[field.name] as string}
+                  value={(formData[field.name] as string) || ""}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
                   placeholder={`Enter ${field.label.toLowerCase()}`}

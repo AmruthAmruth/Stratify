@@ -57,7 +57,7 @@ export const PROJECT_ROUTES = {
   CREATE_SPRINT: "/api/project/create-sprint",
   ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
   PROJECT_LEVEL_ALLOCATION:"/api/project/projectlevel-allocated-employee",
-  DELETE_PROJECT: (id: string) =>`/api/project/${id}`
+  DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`
 }
 
 // Leave routes 

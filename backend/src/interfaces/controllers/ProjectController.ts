@@ -61,7 +61,7 @@ export class ProjectController {
 
   // createSprint = async (req: AuthRequest, res: Response): Promise<void> => {
   //   const createdBy = req.userId;
-  //   const sprintDTO = { ...req.body, createdBy };
+  //   const sprintDTO = { ...req.body, createdBy }; 
   //   const response = await this._createSprintUseCase.execute(sprintDTO);
   //   res.status(StatusCodes.CREATED).json({ message: "Sprint created successfully", response });
   // };
@@ -134,10 +134,12 @@ addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
   res.status(StatusCodes.OK).json({message:"Added Employee to the Project"})
 }
 
-
+ 
 deleteProject=async(req:Request,res:Response):Promise<void>=>{
-  const {projectId}=req.params
-  await this._deleteProjectUseCase.execute(projectId);
+  const {id}=req.params
+  console.log("projectId++++",id);
+  
+  await this._deleteProjectUseCase.execute(id);
   res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
 }
 
@@ -150,5 +152,5 @@ updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
 
 
 
-}
-    
+} 
+       
