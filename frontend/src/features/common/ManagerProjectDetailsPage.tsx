@@ -3,12 +3,12 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
-import { createBacklog, createStory, createTask, getProjectDetails } from "@/services/projects";
+import {createIssue, createSprint, createTask, getProjectDetails} from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
-import { createBacklogsFields, createUserStoryFields, createTaskFields } from "@/shared/components/Forms/formFields";
-import { createBacklogsSchema, createUserStorySchema, createTaskSchema } from "@/shared/utils/validations";
+import {createIssueFields, createSprintFields, createSubTaskFields} from "@/shared/components/Forms/formFields";
+import {createIssueSchema, createSprintSchema, createSubTaskSchema} from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
@@ -18,7 +18,7 @@ const ManagerProjectDetailsPage = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  
+
   // Modal states
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
@@ -56,13 +56,13 @@ const ManagerProjectDetailsPage = () => {
     fetchProjectData(id!);
   }, [id]);
 
-  const handleCreateBacklog = async (values: any) => {
+  const handleCreateIssue = async (values: any) => {
     setSubmitLoading(true);
     try {
       const payload = { ...values, projectId: id };
-      await createBacklog(payload);
-      
-      enqueueSnackbar("Backlog created successfully!", { variant: "success" });
+      await createIssue(payload);
+
+      enqueueSnackbar("Issue created successfully!", { variant: "success" });
 
       const updatedProject = await getProjectDetails(id!);
       setProject(updatedProject);
@@ -70,13 +70,15 @@ const ManagerProjectDetailsPage = () => {
       setIsBacklogModalOpen(false);
     } catch (err: any) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to create backlog.", { variant: "error" });
+      enqueueSnackbar(err.message || "Failed to create issue.", {
+        variant: "error",
+      });
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  const handleCreateStory = async (values: any) => {
+  const handleCreateSprint = async (values: any) => {
     setSubmitLoading(true);
     try {
       const payload = {
@@ -85,11 +87,13 @@ const ManagerProjectDetailsPage = () => {
         backlogId: selectedBacklogId,
         sprintId: selectedSprintId,
       };
-      console.log("Creating user story with payload:", payload);
-      
-      await createStory(payload);
-      
-      enqueueSnackbar("User story created successfully!", { variant: "success" });
+      console.log("Creating Sprint with payload:", payload);
+
+      await createSprint(payload);
+
+      enqueueSnackbar("Sprint created successfully!", {
+        variant: "success",
+      });
 
       const updatedProject = await getProjectDetails(id!);
       setProject(updatedProject);
@@ -99,40 +103,22 @@ const ManagerProjectDetailsPage = () => {
       setSelectedSprintId(null);
     } catch (err: any) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to create user story.", { variant: "error" });
+      enqueueSnackbar(err.message || "Failed to create sprint.", {
+        variant: "error",
+      });
     } finally {
       setSubmitLoading(false);
     }
   };
 
-  const handleCreateTask = async (values: any) => {
-    setSubmitLoading(true);
-    try {
-      const payload = {
-        ...values,
-        projectId: id,
-        userStoryId: selectedUserStoryId,
-        parentId: selectedParentId,
-      };
-      
-      console.log("Creating task with payload:", payload);
-      
-      await createTask(payload);
-      
-      enqueueSnackbar("Task created successfully!", { variant: "success" });
+  // Handler to open Issue modal
+  const handleOpenIssueModal = () => {
+    setIsBacklogModalOpen(true);
+  };
 
-      const updatedProject = await getProjectDetails(id!);
-      setProject(updatedProject);
-
-      setIsTaskModalOpen(false);
-      setSelectedUserStoryId(null);
-      setSelectedParentId(null);
-    } catch (err: any) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to create task.", { variant: "error" });
-    } finally {
-      setSubmitLoading(false);
-    }
+  // Handler to open Sprint modal
+  const handleOpenSprintModal = () => {
+    setIsStoryModalOpen(true);
   };
 
   // Utility Functions for Colors
@@ -184,7 +170,9 @@ const ManagerProjectDetailsPage = () => {
       <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#009063] mx-auto"></div>
-          <p className="mt-4 text-lg text-[#3b3b3b]">Loading project details...</p>
+          <p className="mt-4 text-lg text-[#3b3b3b]">
+            Loading project details...
+          </p>
         </div>
       </div>
     );
@@ -199,8 +187,8 @@ const ManagerProjectDetailsPage = () => {
             <strong className="font-bold">Error!</strong>
             <span className="block sm:inline"> {error}</span>
           </div>
-          <button 
-            onClick={() => window.location.reload()} 
+          <button
+            onClick={() => window.location.reload()}
             className="mt-4 bg-[#009063] hover:bg-[#007a52] text-white font-bold py-2 px-4 rounded"
           >
             Try Again
@@ -225,18 +213,26 @@ const ManagerProjectDetailsPage = () => {
   const allActiveSprints = project.activeSprints || [];
   const allPlannedSprints = project.plannedSprints || [];
   const allCompletedSprints = project.completedSprints || [];
-  const allSprints = [...allActiveSprints, ...allPlannedSprints, ...allCompletedSprints];
-  
+  const allSprints = [
+    ...allActiveSprints,
+    ...allPlannedSprints,
+    ...allCompletedSprints,
+  ];
+
   const allBacklogIssues = project.backlog || [];
-  const allSprintIssues = allSprints.flatMap(sprint => sprint.issues || []);
+  const allSprintIssues = allSprints.flatMap((sprint) => sprint.issues || []);
   const allIssues = [...allBacklogIssues, ...allSprintIssues];
-  
-  const allSubTasks = allIssues.flatMap(issue => issue.subTasks || []);
+
+  const allSubTasks = allIssues.flatMap((issue) => issue.subTasks || []);
 
   const issueCounts = {
     Planned: allIssues.filter((i) => i.status === "Planned").length,
-    InProgress: allIssues.filter((i) => i.status === "InProgress" || i.status === "In Progress").length,
-    Done: allIssues.filter((i) => i.status === "Done" || i.status === "Completed").length,
+    InProgress: allIssues.filter(
+      (i) => i.status === "InProgress" || i.status === "In Progress"
+    ).length,
+    Done: allIssues.filter(
+      (i) => i.status === "Done" || i.status === "Completed"
+    ).length,
   };
 
   const subTaskCounts = {
@@ -251,7 +247,10 @@ const ManagerProjectDetailsPage = () => {
     Completed: allCompletedSprints.length,
   };
 
-  const totalEstimatedHours = allIssues.reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
+  const totalEstimatedHours = allIssues.reduce(
+    (sum, i) => sum + (i.estimatedHours || 0),
+    0
+  );
   const completedEstimatedHours = allIssues
     .filter((i) => i.status === "Done" || i.status === "Completed")
     .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
@@ -402,7 +401,9 @@ const ManagerProjectDetailsPage = () => {
                 title="Issues Complete"
                 value={
                   allIssues.length > 0
-                    ? `${Math.round((issueCounts.Done / allIssues.length) * 100)}%`
+                    ? `${Math.round(
+                        (issueCounts.Done / allIssues.length) * 100
+                      )}%`
                     : "0%"
                 }
                 subtitle="Issues"
@@ -412,7 +413,9 @@ const ManagerProjectDetailsPage = () => {
                 title="Hours Completed"
                 value={
                   totalEstimatedHours > 0
-                    ? `${Math.round((completedEstimatedHours / totalEstimatedHours) * 100)}%`
+                    ? `${Math.round(
+                        (completedEstimatedHours / totalEstimatedHours) * 100
+                      )}%`
                     : "0%"
                 }
                 subtitle="Hours"
@@ -457,14 +460,13 @@ const ManagerProjectDetailsPage = () => {
                 Start Date
               </p>
               <p className="text-base font-semibold text-[#3b3b3b]">
-                {project.startDate 
+                {project.startDate
                   ? new Date(project.startDate).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })
-                  : "Not set"
-                }
+                  : "Not set"}
               </p>
             </div>
             <div className="space-y-1">
@@ -472,14 +474,13 @@ const ManagerProjectDetailsPage = () => {
                 End Date
               </p>
               <p className="text-base font-semibold text-[#3b3b3b]">
-                {project.endDate 
+                {project.endDate
                   ? new Date(project.endDate).toLocaleDateString("en-US", {
                       year: "numeric",
                       month: "long",
                       day: "numeric",
                     })
-                  : "Not set"
-                }
+                  : "Not set"}
               </p>
             </div>
             <div className="space-y-1">
@@ -501,6 +502,23 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
+        {/* Action Buttons */}
+        <div className="flex flex-wrap gap-4">
+          <button 
+            onClick={handleOpenIssueModal}
+            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+          >
+            Create Issue
+          </button>
+
+          <button 
+            onClick={handleOpenSprintModal}
+            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+          >
+            Create Sprint
+          </button>
+        </div>
+
         {/* Backlog Section */}
         {project.backlog && project.backlog.length > 0 && (
           <CollapsibleSection
@@ -508,7 +526,10 @@ const ManagerProjectDetailsPage = () => {
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                <path fillRule="evenodd" d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z" />
+                <path
+                  fillRule="evenodd"
+                  d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z"
+                />
               </svg>
             }
             iconBgColor="bg-[#dfdcef]"
@@ -529,7 +550,10 @@ const ManagerProjectDetailsPage = () => {
             title="Active Sprints"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
+                />
               </svg>
             }
             iconBgColor="bg-[#e6f7f0]"
@@ -550,7 +574,10 @@ const ManagerProjectDetailsPage = () => {
             title="Planned Sprints"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z" />
+                <path
+                  fillRule="evenodd"
+                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+                />
               </svg>
             }
             iconBgColor="bg-[#dfdcef]"
@@ -571,7 +598,10 @@ const ManagerProjectDetailsPage = () => {
             title="Completed Sprints"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" />
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                />
               </svg>
             }
             iconBgColor="bg-[#e6f7f0]"
@@ -591,13 +621,13 @@ const ManagerProjectDetailsPage = () => {
       <Modal
         isOpen={isBacklogModalOpen}
         onClose={() => setIsBacklogModalOpen(false)}
-        title="Create Backlog"
+        title="Create Issue"
       >
         <AuthForm
-          fields={createBacklogsFields}
-          validationSchema={createBacklogsSchema}
-          onSubmit={handleCreateBacklog}
-          buttonText={submitLoading ? "Creating..." : "Create Backlog"}
+          fields={createIssueFields}
+          validationSchema={createIssueSchema}
+          onSubmit={handleCreateIssue}
+          buttonText={submitLoading ? "Creating..." : "Create New Issue"}
         />
       </Modal>
 
@@ -608,30 +638,13 @@ const ManagerProjectDetailsPage = () => {
           setSelectedBacklogId(null);
           setSelectedSprintId(null);
         }}
-        title="Create User Story"
+        title="Create Sprint"
       >
         <AuthForm
-          fields={createUserStoryFields}
-          validationSchema={createUserStorySchema}
-          onSubmit={handleCreateStory}
-          buttonText={submitLoading ? "Creating..." : "Create Story"}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={isTaskModalOpen}
-        onClose={() => {
-          setIsTaskModalOpen(false);
-          setSelectedUserStoryId(null);
-          setSelectedParentId(null);
-        }}
-        title="Create Task"
-      >
-        <AuthForm
-          fields={createTaskFields}
-          validationSchema={createTaskSchema}
-          onSubmit={handleCreateTask}
-          buttonText={submitLoading ? "Creating..." : "Create Task"}
+          fields={createSprintFields}
+          validationSchema={createSprintSchema}
+          onSubmit={handleCreateSprint}
+          buttonText={submitLoading ? "Creating..." : "Create Sprint"}
         />
       </Modal>
     </div>

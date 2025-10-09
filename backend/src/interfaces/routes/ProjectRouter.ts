@@ -23,7 +23,7 @@ projectRouter.put("/project",authMiddleware(["company","manager"]),asyncHandler(
 
 projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler(controller.getProjectsByCompany));
 projectRouter.get('/projectlevel-allocated-employee',authMiddleware(["manager"]),asyncHandler(controller.projectLevelEmployeeAllocation))
-projectRouter.get("/issuelevel-allcated-employee",asyncHandler(controller.issueLevelEmployeeAllocation))
+projectRouter.get("/issuelevel-allcated-employee/id",asyncHandler(controller.issueLevelEmployeeAllocation))
 projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
 projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 

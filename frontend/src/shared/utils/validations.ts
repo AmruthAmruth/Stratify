@@ -97,44 +97,9 @@ export const createProjectSchema = z.object({
 
 
 
-export const createBacklogsSchema = z.object({
-  name: z.string().min(1, "Title is required"),
-  description: z.string().min(1, "Description is required"),
-});
 
 
 
-
-export const createUserStorySchema = z.object({
-  title:  z.string().min(1, "Title is required"),
-
-  description:  z.string().min(1, "Description is required"),
-
-  priority: z.enum(["Low", "Medium", "High"], {
-    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
-  }),
-
-   storyPoints:  z.string().min(1, "Story Points is required"),
-
-   status: z.enum(["To Do", "In Progress", "In Progress"], {
-    required_error: "Status is required",
-  }),
-
-  acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required")
-});
-
-
-
-
-export const createTaskSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-
-  description:  z.string().min(1, "Description is required"),
-
-  status: z.enum(["To Do", "In Progress", "Done"], {
-    errorMap: () => ({ message: "Status must be To Do, In Progress, or Done" }),
-  }),
-});
 
 
 
@@ -204,4 +169,48 @@ export const updateSprintSchema = z.object({
 export const updateTaskSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
 
+});
+
+
+
+
+
+
+export const createIssueSchema = z.object({
+  heading: z.string().min(1, "Heading is required"),
+  description: z.string().min(1, "Description is required"),
+  acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
+  size: z.number().min(1, "Size must be at least 1"),
+  estimatedHours: z.number().min(1, "Estimated hours must be at least 1"),
+  type: z.enum(["User Story", "Bug"], {
+    errorMap: () => ({ message: "Type must be either User Story or Bug" }),
+  }),
+  priority: z.enum(["Low", "Medium", "High"], {
+    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
+  }),
+  projectId: z.string().min(1, "Project ID is required"),
+  assignedTo: z.string().nullable(),
+});
+
+
+
+
+export const createSprintSchema = z.object({
+  name: z.string().min(1, "Sprint Name is required"),
+  goal: z.string().min(1, "Goal is required"),
+  startDate: z.date({ required_error: "Start Date is required" }),
+  endDate: z.date({ required_error: "End Date is required" }),
+  projectId: z.string().min(1, "Project ID is required"),
+  status: z.enum(["Planned", "Active", "Completed"]).optional(),
+});
+
+
+
+export const createSubTaskSchema = z.object({
+  issueId: z.string().min(1, "Issue ID is required"),
+  heading: z.string().min(1, "Subtask Heading is required"),
+  description: z.string().min(1, "Description is required"),
+  hours: z.number().min(1, "Estimated hours must be at least 1"),
+  status: z.enum(["To Do", "In Progress", "Done", "Blocked"]).optional(),
+  assignedToId: z.string().nullable().optional(),
 });

@@ -74,6 +74,22 @@ export const rejectionFormFields = [
   ];
 
 
+export const createLeaveFields=[
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+ { name: "reason", label: "Reason", type: "text" },
+]
+
+
+
+
+export const createRejectLeaveFields=[
+  { name: "reason", label: "Reason For Rejection", type: "text" },
+ 
+  
+]
+
 
 
 
@@ -93,49 +109,68 @@ export const createProjectFields = [
 
 
 
-export const createBacklogsFields=[
-  { name: "name", label: "Backlog Title", type: "text" },
+
+
+export const createIssueFields = [
+  { name: "heading", label: "Issue Heading", type: "text" },
   { name: "description", label: "Description", type: "text" },
-]
-
-
-
-
-
-
-export const createUserStoryFields=[
-  { name: "title", label: "Story Title", type: "text" },
-  { name: "description", label: "Description", type: "text" },
-  {  name: "priority",  label: "Priority",  type: "select", options: ["Low", "Medium", "High"] },
-  { name: "storyPoints", label: "Story Points", type: "number" },
-  {  name: "status",  label: "Status",  type: "select", options: ["To Do", "In Progress", "Done"] },
   { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "text" },
+  { name: "size", label: "Size", type: "number" },
+  { name: "estimatedHours", label: "Estimated Hours", type: "number" },
+  { 
+    name: "type", 
+    label: "Issue Type", 
+    type: "select", 
+    options: ["User Story", "Bug"] 
+  },
+  { 
+    name: "priority", 
+    label: "Priority", 
+    type: "select", 
+    options: ["Low", "Medium", "High"] 
+  },
+  { name: "projectId", label: "Project ID", type: "text" },
+  { name: "assignedTo", label: "Assigned To", type: "text" },
+];
 
-]
 
 
-export const createTaskFields=[
-  { name: "title", label: "Story Title", type: "text" },
-  { name: "description", label: "Description", type: "text" },
-  {  name: "status",  label: "Status",  type: "select", options: ["To Do", "In Progress", "Done"] },
 
-]
 
-export const createLeaveFields=[
+
+export const createSprintFields = [
+  { name: "name", label: "Sprint Name", type: "text" },
+  { name: "goal", label: "Goal", type: "text" },
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
-]
+  { name: "projectId", label: "Project ID", type: "text" },
+  { 
+    name: "status", 
+    label: "Status", 
+    type: "select", 
+    options: ["Planned", "Active", "Completed"] 
+  },
+];
 
 
 
 
-export const createRejectLeaveFields=[
-  { name: "reason", label: "Reason For Rejection", type: "text" },
- 
-  
-]
+export const createSubTaskFields = [
+  { name: "issueId", label: "Issue ID", type: "text" },
+  { name: "heading", label: "Subtask Heading", type: "text" },
+  { name: "description", label: "Description", type: "text" },
+  { name: "hours", label: "Estimated Hours", type: "number" },
+  { 
+    name: "status", 
+    label: "Status", 
+    type: "select", 
+    options: ["To Do", "In Progress", "Done", "Blocked"] 
+  },
+  { name: "assignedToId", label: "Assigned To (User ID)", type: "text" },
+];
+
+
+
 
 
 
@@ -165,10 +200,3 @@ export const updateSprintFields=[
  { name: "reason", label: "Reason", type: "text" },
 ]
 
-
-export const createSprintFields=[
-  { name: "startDate", label: "Start Date", type: "date" },
-  { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
-]

@@ -51,39 +51,6 @@ export const createProject = async(data:Record<string, unknown>)=>{
 }
 
 
-export const createBacklog=async(data:Record<string, unknown>)=>{
-  try{
-    const response = await api.post(PROJECT_ROUTES.CREATE_BACKLOG,data);
-    return response.data
-  }catch(err:any){
-    throw err.response?.data || new Error("Network error")
-  }
-}
-
-
-
-export const createStory=async(data:Record<string, unknown>)=>{
-  try{
-    const response = await api.post(PROJECT_ROUTES.CREATE_STORY,data);
-    return response.data
-  }catch(err:any){
-    throw err.response?.data || new Error("Network error")
-  }
-}
-
-
-
-
-
-export const createTask=async(data:Record<string, unknown>)=>{
-  try{
-    const response = await api.post(PROJECT_ROUTES.CREATE_TASK,data);
-    return response.data
-  }catch(err:any){
-    throw err.response?.data || new Error("Network error")
-  }
-}
-
 
 
 
@@ -112,6 +79,48 @@ export const deleteProject = async (id: string) => {
 
 
 
+
+export const createIssue=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_ISSUE,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+
+export const createSprint=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_SPRINT,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+export const createSubTask=async(data:Record<string, unknown>)=>{
+  try{
+    const response = await api.post(PROJECT_ROUTES.CREATE_SUB_TASK,data);
+    return response.data
+  }catch(err:any){
+    throw err.response?.data || new Error("Network error")
+  }
+}
+
+
+
+export const employeeUnderTheProject=async () => {
+  try {
+    const response = await api.get(PROJECT_ROUTES.GET_EMPLOYEE_UNDER_PROJECT);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const updateIssue = async (id: string, data: Record<string, unknown>) => {
@@ -126,12 +135,15 @@ export const updateIssue = async (id: string, data: Record<string, unknown>) => 
 
 export const updateSprint=async () => {
   try {
-    const response = await api.get(PROJECT_ROUTES.PROJECT_LEVEL_ALLOCATION);
+    const response = await api.get(PROJECT_ROUTES.CREATE_SPRINT);
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+
 
 
 export const updateTask=async () => {

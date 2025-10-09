@@ -16,7 +16,7 @@ export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
         if (!project) {
             throw new AppError("Project not found", StatusCodes.NOT_FOUND);
         }
-
+ 
     
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
@@ -25,7 +25,7 @@ export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
 
       
         const isAlreadyInProject = project.teamMemberIds?.includes(employeeId);
-        if (isAlreadyInProject) {
+        if (isAlreadyInProject) {  
             throw new AppError("Employee is already part of the project", StatusCodes.BAD_REQUEST);
         }
 

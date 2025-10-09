@@ -51,13 +51,14 @@ export const PROJECT_ROUTES = {
   DEPARTMENT_PROJECTS: "/api/project/department-projects",
   PROJECT_DETAILS: (id: string) => `/api/project/project/${id}`,
   CREATE_PROJECT: "/api/project/create-project",
-  CREATE_BACKLOG: "/api/project/create-backlog",
-  CREATE_STORY: "/api/project/create-user-story",
-  CREATE_TASK: "/api/project/create-task",
+  CREATE_SUB_TASK: "/api/project/create-sub-task",
   CREATE_SPRINT: "/api/project/create-sprint",
   ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
   PROJECT_LEVEL_ALLOCATION:"/api/project/projectlevel-allocated-employee",
-  DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`
+  DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`,
+  CREATE_ISSUE:"/api/project/create-issue",
+  GET_EMPLOYEE_UNDER_PROJECT:'/api/project/projectlevel-allocated-employee'
+
 }
 
 // Leave routes 

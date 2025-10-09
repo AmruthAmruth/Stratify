@@ -124,7 +124,8 @@ projectLevelEmployeeAllocation=async(req:AuthRequest,res:Response):Promise<void>
 
 
 issueLevelEmployeeAllocation = async(req:Request,res:Response):Promise<void>=>{
-  const response = await this._issueLevelEmployeeAllocationUseCase.execute(req.body);
+  const {id}=req.params;
+  const response = await this._issueLevelEmployeeAllocationUseCase.execute(id);
   res.status(StatusCodes.OK).json(response)
 } 
 

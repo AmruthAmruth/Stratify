@@ -19,17 +19,16 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   ) {}
 
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
-    // 1️⃣ Fetch project
+    
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-    // 2️⃣ Fetch issues and sprints
     const issues = await this._issueRepo.findByProjectId(projectId);
     const sprints = await this._sprintRepo.findByProjectId(projectId);
 
-    // 3️⃣ Map issues with subtasks (fetch per issue)
+    
     const issuesWithSubtasks = await Promise.all(
       issues.map(async (issue) => {
         const issueSubtasks = await this._subTaskRepo.findAllByIssue(issue.id!);
@@ -57,7 +56,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       })
     );
 
-    // 4️⃣ Categorize issues into sprints
+    
     const backlogIssues = issuesWithSubtasks.filter((i) => !i.sprintId);
 
     const activeSprints: SprintWithIssuesDTO[] = [];
@@ -81,7 +80,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       else if (sprint.status === "Completed") completedSprints.push(sprintDTO);
     });
 
-    // 5️⃣ Build ProjectDetailsDTO including counts
+    
     const projectDetails: ProjectDetailsDTO = {
       id: project.id!,
       name: project.name,
