@@ -45,6 +45,7 @@ export class ProjectRepository implements IProjectRepository {
       },
       { new: true }
     );
+    
 
     if (!updated) throw new AppError("Project not found", 404);
     return ProjectMapper.toEntity(updated);
@@ -65,14 +66,19 @@ export class ProjectRepository implements IProjectRepository {
     return ProjectMapper.toEntities(projects);
   }
 
-  async findByNameAndCompany(name: string, companyId: string): Promise<Project | null> {
-    const project = await ProjectModel.findOne({ 
-      companyId: new Types.ObjectId(companyId),
-      normalizedName: name.toLowerCase().trim(),
-    });
-
-    return project ? ProjectMapper.toEntity(project) : null;
+  async findByNameAndCompany(name?: string, companyId?: string): Promise<Project | null> {
+  if (!name || !companyId) {
+    throw new AppError("Project name or companyId is missing", 400);
   }
+
+  const project = await ProjectModel.findOne({ 
+    companyId: new Types.ObjectId(companyId),
+    normalizedName: name.toLowerCase().trim(),
+  });
+
+  return project ? ProjectMapper.toEntity(project) : null;
+}
+
 
   async findByKeyAndCompany(key: string, companyId: string): Promise<Project | null> {
     const project = await ProjectModel.findOne({

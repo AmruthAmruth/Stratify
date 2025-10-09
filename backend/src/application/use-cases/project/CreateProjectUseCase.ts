@@ -31,6 +31,9 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       createdByModel = "Company";
     }
 
+    console.log("Project DTO",projectDTO);
+    
+
     if (!creatorExists) {
       const manager = await this._managerRepo.findById(projectDTO.createdBy);
       if (manager) {
@@ -71,6 +74,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     );
 
     if (existingProjectKey) {
+     
       throw new AppError(
         "Project Key name already exists for this company",
         StatusCodes.BAD_REQUEST

@@ -263,8 +263,8 @@ const ManagerProjects: React.FC = () => {
       }
 
       const payload: CreateProjectPayload = {
-        name: formValues.projectName,
-        key: formValues.projectKey,
+        name: formValues.name,
+        key: formValues.key,
         description: formValues.description,
         startDate: startDate.toISOString(),
         endDate: endDate.toISOString(),
@@ -272,6 +272,9 @@ const ManagerProjects: React.FC = () => {
         status: formValues.status || "Planned",
         teamMemberIds: selectedEmployeeIds,
       };
+
+      console.log("PAYLOAD",payload);
+      
 
       const data = await createProject(payload);
 
