@@ -3,83 +3,77 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
-import {createIssue, createSprint, createTask, employeeUnderTheProject, getProjectDetails} from "@/services/projects";
+import {
+  createIssue,
+  createSprint,
+  employeeInDepartment,
+  employeeUnderTheProject,
+  getProjectDetails,
+} from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
-import {createIssueFields, createSprintFields, createSubTaskFields} from "@/shared/components/Forms/formFields";
-import {createIssueSchema, createSprintSchema, createSubTaskSchema} from "@/shared/utils/validations";
+import {
+  createIssueFields,
+  createSprintFields,
+} from "@/shared/components/Forms/formFields";
+import {
+  createIssueSchema,
+  createSprintSchema,
+} from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 const ManagerProjectDetailsPage = () => {
-  // State for project data
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-
-  // Modal states
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
-  const [isTaskModalOpen, setIsTaskModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-
-  // Context states for creation
-  const [selectedBacklogId, setSelectedBacklogId] = useState(null);
-  const [selectedSprintId, setSelectedSprintId] = useState(null);
-  const [selectedUserStoryId, setSelectedUserStoryId] = useState(null);
-  const [selectedParentId, setSelectedParentId] = useState(null);
   const [employees, setEmployees] = useState([]);
-
-
-  // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
-  const [expandedStory, setExpandedStory] = useState(null);
-  const { id } = useParams<{ id: string }>();
+  const [departmentEmployee, setDepartmentEmployee] = useState([]);
+  const { id } = useParams();
 
   useEffect(() => {
-    const fetchProjectData = async (id: string) => {
+    const fetchProjectData = async (id) => {
       try {
         setLoading(true);
         const data = await getProjectDetails(id);
         const employeeData = await employeeUnderTheProject(id);
-        console.log("Employee ===", employeeData);
-        
-        // Extract the employee array from the response
+        const departmentEmployee = await employeeInDepartment();
+        console.log("Department Employeeee", departmentEmployee);
+
+        setDepartmentEmployee(departmentEmployee);
         if (employeeData && employeeData.employee) {
           setEmployees(employeeData.employee);
         }
-        
-        console.log("DATA ", data);
         setProject(data);
         setError(null);
       } catch (err) {
         console.error("Error fetching project details:", err);
         setError("Failed to load project details");
       } finally {
-        setLoading(false);
+        setLoading(false);                 
       }
     };
 
-    fetchProjectData(id!);
+    fetchProjectData(id);
   }, [id]);
 
-  const handleCreateIssue = async (values: any) => {
+  const handleCreateIssue = async (values) => {
     setSubmitLoading(true);
     try {
       const payload = { ...values, projectId: id };
-      console.log("Payload data in issue",payload)
-    await createIssue(payload);
-
+      await createIssue(payload);
       enqueueSnackbar("Issue created successfully!", { variant: "success" });
-
-      const updatedProject = await getProjectDetails(id!);
+      const updatedProject = await getProjectDetails(id);
       setProject(updatedProject);
-
       setIsBacklogModalOpen(false);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       enqueueSnackbar(err.message || "Failed to create issue.", {
         variant: "error",
@@ -88,7 +82,6 @@ const ManagerProjectDetailsPage = () => {
       setSubmitLoading(false);
     }
   };
-
 
   const createIssueFormFields = [
     ...createIssueFields,
@@ -100,37 +93,22 @@ const ManagerProjectDetailsPage = () => {
         { value: "", label: "Select Team Member" },
         ...employees.map((emp) => ({
           value: emp.employeeId,
-          label: `${emp.name} - ${emp.position}`
-        }))
-      ]
-    }
+          label: `${emp.name} - ${emp.position}`,
+        })),
+      ],
+    },
   ];
 
-
-
-
-  const handleCreateSprint = async (values: any) => {
+  const handleCreateSprint = async (values) => {
     setSubmitLoading(true);
     try {
-      const payload = {
-        ...values,
-        projectId: id
-      };
-      console.log("Creating Sprint with payload:", payload);
-
-     await createSprint(payload);
-
-      enqueueSnackbar("Sprint created successfully!", {
-        variant: "success",
-      });
-
-      const updatedProject = await getProjectDetails(id!);
+      const payload = { ...values, projectId: id };
+      await createSprint(payload);
+      enqueueSnackbar("Sprint created successfully!", { variant: "success" });
+      const updatedProject = await getProjectDetails(id);
       setProject(updatedProject);
-
       setIsStoryModalOpen(false);
-      setSelectedBacklogId(null);
-      setSelectedSprintId(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error(err);
       enqueueSnackbar(err.message || "Failed to create sprint.", {
         variant: "error",
@@ -140,17 +118,14 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  // Handler to open Issue modal
   const handleOpenIssueModal = () => {
     setIsBacklogModalOpen(true);
   };
 
-  // Handler to open Sprint modal
   const handleOpenSprintModal = () => {
     setIsStoryModalOpen(true);
   };
 
-  // Utility Functions for Colors
   const getStatusColor = (status) => {
     switch (status) {
       case "Completed":
@@ -193,7 +168,6 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  // Loading state
   if (loading) {
     return (
       <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
@@ -207,7 +181,6 @@ const ManagerProjectDetailsPage = () => {
     );
   }
 
-  // Error state
   if (error) {
     return (
       <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
@@ -227,7 +200,6 @@ const ManagerProjectDetailsPage = () => {
     );
   }
 
-  // No data state
   if (!project) {
     return (
       <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
@@ -238,7 +210,6 @@ const ManagerProjectDetailsPage = () => {
     );
   }
 
-  // Calculate Statistics
   const allActiveSprints = project.activeSprints || [];
   const allPlannedSprints = project.plannedSprints || [];
   const allCompletedSprints = project.completedSprints || [];
@@ -247,11 +218,9 @@ const ManagerProjectDetailsPage = () => {
     ...allPlannedSprints,
     ...allCompletedSprints,
   ];
-
   const allBacklogIssues = project.backlog || [];
   const allSprintIssues = allSprints.flatMap((sprint) => sprint.issues || []);
   const allIssues = [...allBacklogIssues, ...allSprintIssues];
-
   const allSubTasks = allIssues.flatMap((issue) => issue.subTasks || []);
 
   const issueCounts = {
@@ -286,34 +255,35 @@ const ManagerProjectDetailsPage = () => {
 
   return (
     <div className="min-h-screen bg-[#fbfbfb]">
-      {/* Header Section */}
-      <div className="flex items-center justify-center p-4 pt-10">
-        <div className="max-w-7xl w-full mx-auto bg-white rounded-lg shadow-md border border-[#dfdcef] overflow-hidden">
-          <div className="p-8 lg:p-10">
-            <div className="grid lg:grid-cols-3 gap-6">
-              {/* Project Info */}
-              <div className="lg:col-span-2 space-y-5">
-                <div className="flex flex-col sm:flex-row sm:items-center gap-4">
-                  <h1 className="text-2xl sm:text-3xl font-bold text-[#3b3b3b] tracking-tight">
-                    {project.name}
-                  </h1>
-                  <span className="inline-flex items-center px-3 py-1 bg-[#dfdcef] text-sm font-semibold text-[#3b3b3b] rounded border border-[#9b8dc9]">
-                    {project.key}
-                  </span>
-                </div>
-                <p className="text-[#3b3b3b] text-base leading-relaxed max-w-2xl opacity-90">
-                  {project.description}
-                </p>
-              </div>
-
-              {/* Status Card */}
-              <div className="flex justify-center lg:justify-end">
-                <div className="bg-[#dfdcef] rounded-lg p-5 w-full max-w-xs text-center border border-[#9b8dc9] hover:bg-[#d0cce3] transition-colors duration-200">
-                  <div className="text-2xl font-semibold text-[#3b3b3b]">
-                    {project.status}
+      <div className="bg-[#fbfbfb] py-10 px-4 sm:px-6 lg:px-8">
+        <div className="max-w-7xl mx-auto">
+          <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-[#e9e6f5] shadow-sm hover:shadow-md transition-shadow duration-300">
+            <div className="p-8">
+              <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
+                {/* Project Title and Description */}
+                <div className="space-y-4">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-3">
+                    <h1 className="text-3xl lg:text-4xl font-bold text-[#2f2f2f] tracking-tight">
+                      {project.name}
+                    </h1>
+                    <span className="inline-flex items-center px-3 py-1 bg-[#f1effa] text-sm font-medium text-[#514f63] rounded-full border border-[#e3e0f3]">
+                      {project.key}
+                    </span>
                   </div>
-                  <div className="text-[#3b3b3b] text-sm mt-1 font-medium tracking-wide opacity-80">
-                    Project Status
+                  <p className="text-[#3b3b3b]/90 text-base leading-relaxed max-w-3xl">
+                    {project.description}
+                  </p>
+                </div>
+
+                {/* Project Status Card */}
+                <div className="flex justify-center lg:justify-end">
+                  <div className="rounded-xl bg-gradient-to-br from-[#f7f9fc] to-[#f1effa] border border-[#e3e0f3] px-8 py-6 text-center shadow-sm hover:shadow transition-all duration-300">
+                    <div className="text-2xl font-semibold text-[#2f2f2f] capitalize">
+                      {project.status}
+                    </div>
+                    <div className="text-[#5a5a5a]/80 text-sm mt-1 font-medium">
+                      Project Status
+                    </div>
                   </div>
                 </div>
               </div>
@@ -322,11 +292,8 @@ const ManagerProjectDetailsPage = () => {
         </div>
       </div>
 
-      {/* Main Content */}
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
-        {/* Analytics Dashboard */}
         <div className="space-y-8">
-          {/* Metrics Grid Section */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <DashboardCard
               title="Total Sprints"
@@ -354,7 +321,6 @@ const ManagerProjectDetailsPage = () => {
             />
           </div>
 
-          {/* Charts Section */}
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
               <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
@@ -420,7 +386,6 @@ const ManagerProjectDetailsPage = () => {
             </div>
           </div>
 
-          {/* Progress Summary */}
           <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-[#dfdcef]">
             <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-[#3b3b3b] tracking-tight">
               Project Progress Summary
@@ -466,7 +431,6 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-        {/* Project Information */}
         <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6 lg:p-8">
           <h3 className="text-xl lg:text-2xl font-bold text-[#3b3b3b] mb-6 flex items-center">
             <div className="w-7 h-7 bg-[#dfdcef] rounded flex items-center justify-center mr-2">
@@ -531,24 +495,27 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-        {/* Action Buttons */}
         <div className="flex flex-wrap gap-4">
-          <button 
+          <button
             onClick={handleOpenIssueModal}
             className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
           >
             Create Issue
           </button>
-
-          <button 
+          <button
             onClick={handleOpenSprintModal}
             className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
           >
             Create Sprint
           </button>
+          <button
+            onClick={handleOpenSprintModal}
+            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+          >
+            Add Employee
+          </button>
         </div>
 
-        {/* Backlog Section */}
         {project.backlog && project.backlog.length > 0 && (
           <CollapsibleSection
             title="Backlog"
@@ -573,7 +540,6 @@ const ManagerProjectDetailsPage = () => {
           />
         )}
 
-        {/* Active Sprints Section */}
         {project.activeSprints && project.activeSprints.length > 0 && (
           <CollapsibleSection
             title="Active Sprints"
@@ -597,7 +563,6 @@ const ManagerProjectDetailsPage = () => {
           />
         )}
 
-        {/* Planned Sprints Section */}
         {project.plannedSprints && project.plannedSprints.length > 0 && (
           <CollapsibleSection
             title="Planned Sprints"
@@ -621,7 +586,6 @@ const ManagerProjectDetailsPage = () => {
           />
         )}
 
-        {/* Completed Sprints Section */}
         {project.completedSprints && project.completedSprints.length > 0 && (
           <CollapsibleSection
             title="Completed Sprints"
@@ -646,7 +610,6 @@ const ManagerProjectDetailsPage = () => {
         )}
       </div>
 
-      {/* Modals */}
       <Modal
         isOpen={isBacklogModalOpen}
         onClose={() => setIsBacklogModalOpen(false)}
@@ -662,11 +625,7 @@ const ManagerProjectDetailsPage = () => {
 
       <Modal
         isOpen={isStoryModalOpen}
-        onClose={() => {
-          setIsStoryModalOpen(false);
-          setSelectedBacklogId(null);
-          setSelectedSprintId(null);
-        }}
+        onClose={() => setIsStoryModalOpen(false)}
         title="Create Sprint"
       >
         <AuthForm

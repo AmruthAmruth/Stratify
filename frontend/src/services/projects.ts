@@ -123,6 +123,17 @@ export const employeeUnderTheProject = async (id: string) => {
 
 
 
+export const employeeInDepartment= async () => {
+  try {
+    const response = await api.get(PROJECT_ROUTES.GET_DEPARTMENT_EMPLOYEES);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 export const updateIssue = async (id: string, data: Record<string, unknown>) => {
