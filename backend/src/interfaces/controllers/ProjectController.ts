@@ -17,6 +17,7 @@ import { IAddEmployeeProjectUseCase } from "../../application/interfaces/project
 import { IGetProjectDetailsUseCase } from "../../application/interfaces/project/IGetProjectDetailsUseCase";
 import { IDeleteProjectUseCase } from "../../application/interfaces/project/IDeleteProjectUseCase";
 import { IUpdateProjectUseCase } from "../../application/interfaces/project/IUpdateProjectUseCase";
+import { IGetEmployeeNotInProjectUseCase } from "../../application/interfaces/project/IGetEmployeeNotInProjectUseCase";
 
 export class ProjectController {
   constructor(
@@ -35,7 +36,8 @@ export class ProjectController {
     private _addEmployeeProjectUseCase:IAddEmployeeProjectUseCase,
     private _getProjectDetailsUseCase:IGetProjectDetailsUseCase,
     private _deleteProjectUseCase:IDeleteProjectUseCase,
-    private _updateProjectUseCase:IUpdateProjectUseCase
+    private _updateProjectUseCase:IUpdateProjectUseCase,
+    private _getEmployeeNotInProjectUseCase:IGetEmployeeNotInProjectUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -150,6 +152,13 @@ updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
  const response= await this._updateProjectUseCase.execute({ ...req.body, createdBy });
   res.status(StatusCodes.OK).json({message:"Updated the project successfully!",response},)
 };
+
+
+getEmployeesNotInProject=async(req:Request,res:Response):Promise<void>=>{
+  const {id}=req.params
+  const response = await this._getEmployeeNotInProjectUseCase.execute(id);
+  res.status(StatusCodes.OK).json(response)
+}
 
 
 

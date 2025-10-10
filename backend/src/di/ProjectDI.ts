@@ -26,6 +26,7 @@ import { AddEmployeeProjectUseCase } from "../application/use-cases/project/AddE
 import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetProjectDetailsUseCase";
 import { DeleteProjectUseCase } from "../application/use-cases/project/DeleteProjectUseCase";
 import { UpdateProjectUseCase } from "../application/use-cases/project/UpdateProjectUseCase";
+import { GetEmployeeNotInProjectUseCase } from "../application/use-cases/project/GetEmployeeNotInProjectUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -100,7 +101,7 @@ export const projectDI = () => {
 
     const updateProjectUseCase = new UpdateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo,employeeRepo)
 
-
+const getEmployeeNotInProjectUseCase = new GetEmployeeNotInProjectUseCase(projectRepo,employeeRepo)
 
 
 
@@ -120,6 +121,8 @@ export const projectDI = () => {
     addEmployeeProjectUseCase,
     getProjectDetailsUseCase,
     deleteProjectUseCase,
-    updateProjectUseCase
+    updateProjectUseCase,
+    getEmployeeNotInProjectUseCase
+
   );
 };

@@ -24,6 +24,7 @@ projectRouter.get("/company-projects", authMiddleware(["company"]), asyncHandler
 projectRouter.get('/projectlevel-allocated-employee',authMiddleware(["manager"]),asyncHandler(controller.projectLevelEmployeeAllocation))
 projectRouter.get("/issuelevel-allcated-employee/:id",asyncHandler(controller.issueLevelEmployeeAllocation))
 projectRouter.get("/department-projects", authMiddleware(["manager"]), asyncHandler(controller.getProjectsByDepartment));
+projectRouter.get("/employee-out-project/:id",asyncHandler(controller.getEmployeesNotInProject))
 projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 
 export default projectRouter;
