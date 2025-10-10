@@ -12,10 +12,16 @@ export class GetEmployeeNotInProjectUseCase implements IGetEmployeeNotInProjectU
     private readonly _employeeRepo: IEmployeeRepository
   ) {}
 
-  async execute(projectId: string, departmentId: string): Promise<IssueLevelEmployeeAllocationDTO[]> {
+  async execute(projectId: string): Promise<IssueLevelEmployeeAllocationDTO[]> {
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+    }
+
+
+   const departmentId = project.departmentId;
+    if (!departmentId) {
+      throw new AppError("Project does not have a department assigned", StatusCodes.BAD_REQUEST);
     }
 
     const departmentEmployees = await this._employeeRepo.findByDepartmentId(departmentId);
@@ -23,14 +29,16 @@ export class GetEmployeeNotInProjectUseCase implements IGetEmployeeNotInProjectU
       throw new AppError("No employees found in this department", StatusCodes.NOT_FOUND);
     }
 
-    const projectEmployeeIds: string[] = project.teamMemberIds || [];
+
+
+       const projectEmployeeIds: string[] = project.teamMemberIds || [];
+
 
     const availableEmployees = departmentEmployees
       .filter((emp) => emp.id) 
       .filter((emp) => !projectEmployeeIds.includes(emp.id!));
 
-
-    const result: IssueLevelEmployeeAllocationDTO[] = availableEmployees.map((emp) => ({
+      const result: IssueLevelEmployeeAllocationDTO[] = availableEmployees.map((emp) => ({
       name: emp.name,
       employeeId: emp.id!,
       role: emp.role,
