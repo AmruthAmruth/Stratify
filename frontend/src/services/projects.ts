@@ -125,12 +125,35 @@ export const employeeUnderTheProject = async (id: string) => {
 
 export const employeeInDepartment= async () => {
   try {
-    const response = await api.get(PROJECT_ROUTES.GET_DEPARTMENT_EMPLOYEES);
+    const response = await api.post(PROJECT_ROUTES.GET_DEPARTMENT_EMPLOYEES);
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
+
+export const getEmployeesNotInProject=async (id) => {
+  try {
+    const response = await api.get(PROJECT_ROUTES.GET_EMPLOYEE_NOT_IN_PROJECT(id));
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
+
+
+export const addEmployeetoProject=async (data:Record<string, unknown>) => {
+  try {
+    const response = await api.post(PROJECT_ROUTES.Add_EMPLOYEE_TO_PROJECT,data);
+    return response.data;
+  } catch (err: any) {
+    throw err.response?.data || new Error("Network error");
+  }
+};
+
 
 
 

@@ -4,10 +4,11 @@ import CollapsibleSection from "@/shared/components/CollapsibleSection/Collapsib
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import {
+  addEmployeetoProject,
   createIssue,
   createSprint,
-  employeeInDepartment,
   employeeUnderTheProject,
+  getEmployeesNotInProject,
   getProjectDetails,
 } from "@/services/projects";
 import { useParams } from "react-router-dom";
@@ -22,6 +23,7 @@ import {
   createSprintSchema,
 } from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
+import * as z from "zod";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
@@ -31,11 +33,12 @@ const ManagerProjectDetailsPage = () => {
   const [error, setError] = useState(null);
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
-  const [departmentEmployee, setDepartmentEmployee] = useState([]);
+  const [employeeNotInProject, setEmployeeNotInProject] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -44,10 +47,9 @@ const ManagerProjectDetailsPage = () => {
         setLoading(true);
         const data = await getProjectDetails(id);
         const employeeData = await employeeUnderTheProject(id);
-        const departmentEmployee = await employeeInDepartment();
-        console.log("Department Employeeee", departmentEmployee);
+        const employeesNotInProject = await getEmployeesNotInProject(id);
+        setEmployeeNotInProject(employeesNotInProject);
 
-        setDepartmentEmployee(departmentEmployee);
         if (employeeData && employeeData.employee) {
           setEmployees(employeeData.employee);
         }
@@ -57,7 +59,7 @@ const ManagerProjectDetailsPage = () => {
         console.error("Error fetching project details:", err);
         setError("Failed to load project details");
       } finally {
-        setLoading(false);                 
+        setLoading(false);
       }
     };
 
@@ -99,6 +101,25 @@ const ManagerProjectDetailsPage = () => {
     },
   ];
 
+  const addEmployeeFormFields = [
+    {
+      name: "employeeId",
+      label: "Add Employee to Project",
+      type: "select",
+      options: [
+        { value: "", label: "Select Team Member" },
+        ...employeeNotInProject.map((emp) => ({
+          value: emp.employeeId,
+          label: `${emp.name}`,
+        })),
+      ],
+    },
+  ];
+
+  const addEmployeeSchema = z.object({
+    employeeId: z.string().min(1, "Please select an employee"),
+  });
+
   const handleCreateSprint = async (values) => {
     setSubmitLoading(true);
     try {
@@ -118,12 +139,41 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
+  const handleAddEmployee = async (values) => {
+    setSubmitLoading(true);
+    try {
+      const payload = { employeeId: values.employeeId, projectId: id };
+      await addEmployeetoProject(payload);
+      enqueueSnackbar("Employee added successfully!", { variant: "success" });
+      const updatedProject = await getProjectDetails(id);
+      setProject(updatedProject);
+      const employeeData = await employeeUnderTheProject(id);
+      if (employeeData && employeeData.employee) {
+        setEmployees(employeeData.employee);
+      }
+      const employeesNotInProject = await getEmployeesNotInProject(id);
+      setEmployeeNotInProject(employeesNotInProject);
+      setIsEmployeeModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      enqueueSnackbar(err.message || "Failed to add employee.", {
+        variant: "error",
+      });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
   const handleOpenIssueModal = () => {
     setIsBacklogModalOpen(true);
   };
 
   const handleOpenSprintModal = () => {
     setIsStoryModalOpen(true);
+  };
+
+  const handleOpenEmployeeModal = () => {
+    setIsEmployeeModalOpen(true);
   };
 
   const getStatusColor = (status) => {
@@ -509,7 +559,7 @@ const ManagerProjectDetailsPage = () => {
             Create Sprint
           </button>
           <button
-            onClick={handleOpenSprintModal}
+            onClick={handleOpenEmployeeModal}
             className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
           >
             Add Employee
@@ -633,6 +683,19 @@ const ManagerProjectDetailsPage = () => {
           validationSchema={createSprintSchema}
           onSubmit={handleCreateSprint}
           buttonText={submitLoading ? "Creating..." : "Create Sprint"}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isEmployeeModalOpen}
+        onClose={() => setIsEmployeeModalOpen(false)}
+        title="Add Employee"
+      >
+        <AuthForm
+          fields={addEmployeeFormFields}
+          validationSchema={addEmployeeSchema}
+          onSubmit={handleAddEmployee}
+          buttonText={submitLoading ? "Adding..." : "Add Employee"}
         />
       </Modal>
     </div>

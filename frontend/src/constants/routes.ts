@@ -58,8 +58,9 @@ export const PROJECT_ROUTES = {
   DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`,
   CREATE_ISSUE:"/api/project/create-issue",
   GET_EMPLOYEE_UNDER_PROJECT: (id: string) => `/api/project/issuelevel-allcated-employee/${id}`,
-  GET_DEPARTMENT_EMPLOYEES:"/api/project/projectlevel-allocated-employee"
-
+  GET_DEPARTMENT_EMPLOYEES:"/api/project/projectlevel-allocated-employee",
+  GET_EMPLOYEE_NOT_IN_PROJECT: (id: string) =>`/api/project/employee-out-project/${id}`
+  Add_EMPLOYEE_TO_PROJECT:'/api/project/add-employee-project'
 
 }
 
