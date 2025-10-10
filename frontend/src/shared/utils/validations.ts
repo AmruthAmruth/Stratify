@@ -197,9 +197,13 @@ export const createIssueSchema = z.object({
 export const createSprintSchema = z.object({
   name: z.string().min(1, "Sprint Name is required"),
   goal: z.string().min(1, "Goal is required"),
-  startDate: z.date({ required_error: "Start Date is required" }),
-  endDate: z.date({ required_error: "End Date is required" }),
-  projectId: z.string().min(1, "Project ID is required"),
+  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "Start date is required and must be a valid date",
+    }),
+
+  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
+      message: "End date is required and must be a valid date",
+    }),
   status: z.enum(["Planned", "Active", "Completed"]).optional(),
 });
 

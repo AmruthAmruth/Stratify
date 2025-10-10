@@ -141,7 +141,6 @@ export const createSprintFields = [
   { name: "goal", label: "Goal", type: "text" },
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  { name: "projectId", label: "Project ID", type: "text" },
   { 
     name: "status", 
     label: "Status", 

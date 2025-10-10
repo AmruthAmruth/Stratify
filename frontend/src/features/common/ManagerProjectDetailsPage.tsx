@@ -114,13 +114,11 @@ const ManagerProjectDetailsPage = () => {
     try {
       const payload = {
         ...values,
-        projectId: id,
-        backlogId: selectedBacklogId,
-        sprintId: selectedSprintId,
+        projectId: id
       };
       console.log("Creating Sprint with payload:", payload);
 
-      await createSprint(payload);
+     await createSprint(payload);
 
       enqueueSnackbar("Sprint created successfully!", {
         variant: "success",
