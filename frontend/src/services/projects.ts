@@ -112,14 +112,16 @@ export const createSubTask=async(data:Record<string, unknown>)=>{
 
 
 
-export const employeeUnderTheProject=async () => {
+export const employeeUnderTheProject = async (id: string) => {
   try {
-    const response = await api.get(PROJECT_ROUTES.GET_EMPLOYEE_UNDER_PROJECT);
+    const response = await api.get(PROJECT_ROUTES.GET_EMPLOYEE_UNDER_PROJECT(id));
     return response.data;
   } catch (err: any) {
     throw err.response?.data || new Error("Network error");
   }
 };
+
+
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 

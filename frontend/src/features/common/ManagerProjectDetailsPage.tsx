@@ -3,7 +3,7 @@ import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
-import {createIssue, createSprint, createTask, getProjectDetails} from "@/services/projects";
+import {createIssue, createSprint, createTask, employeeUnderTheProject, getProjectDetails} from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
@@ -30,6 +30,8 @@ const ManagerProjectDetailsPage = () => {
   const [selectedSprintId, setSelectedSprintId] = useState(null);
   const [selectedUserStoryId, setSelectedUserStoryId] = useState(null);
   const [selectedParentId, setSelectedParentId] = useState(null);
+  const [employees, setEmployees] = useState([]);
+
 
   // State for Expandable Sections
   const [expandedBacklog, setExpandedBacklog] = useState(null);
@@ -42,6 +44,9 @@ const ManagerProjectDetailsPage = () => {
       try {
         setLoading(true);
         const data = await getProjectDetails(id);
+       const employee = await employeeUnderTheProject(id);
+         console.log("Employee ===",employee);
+         
         console.log("DATA ", data);
         setProject(data);
         setError(null);

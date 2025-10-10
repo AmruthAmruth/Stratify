@@ -57,7 +57,9 @@ export const PROJECT_ROUTES = {
   PROJECT_LEVEL_ALLOCATION:"/api/project/projectlevel-allocated-employee",
   DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`,
   CREATE_ISSUE:"/api/project/create-issue",
-  GET_EMPLOYEE_UNDER_PROJECT:'/api/project/projectlevel-allocated-employee'
+  GET_EMPLOYEE_UNDER_PROJECT: (id: string) => `/api/project/issuelevel-allcated-employee/${id}`
+
+
 
 }
 
