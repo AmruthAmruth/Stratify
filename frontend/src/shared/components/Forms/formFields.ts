@@ -128,9 +128,7 @@ export const createIssueFields = [
     label: "Priority", 
     type: "select", 
     options: ["Low", "Medium", "High"] 
-  },
-  { name: "projectId", label: "Project ID", type: "text" },
-  { name: "assignedTo", label: "Assigned To", type: "text" },
+  }
 ];
 
 

@@ -44,9 +44,14 @@ const ManagerProjectDetailsPage = () => {
       try {
         setLoading(true);
         const data = await getProjectDetails(id);
-       const employee = await employeeUnderTheProject(id);
-         console.log("Employee ===",employee);
-         
+        const employeeData = await employeeUnderTheProject(id);
+        console.log("Employee ===", employeeData);
+        
+        // Extract the employee array from the response
+        if (employeeData && employeeData.employee) {
+          setEmployees(employeeData.employee);
+        }
+        
         console.log("DATA ", data);
         setProject(data);
         setError(null);
@@ -65,7 +70,8 @@ const ManagerProjectDetailsPage = () => {
     setSubmitLoading(true);
     try {
       const payload = { ...values, projectId: id };
-      await createIssue(payload);
+      console.log("Payload data in issue",payload)
+    await createIssue(payload);
 
       enqueueSnackbar("Issue created successfully!", { variant: "success" });
 
@@ -82,6 +88,26 @@ const ManagerProjectDetailsPage = () => {
       setSubmitLoading(false);
     }
   };
+
+
+  const createIssueFormFields = [
+    ...createIssueFields,
+    {
+      name: "assignedTo",
+      label: "Assign Issue to Team Member",
+      type: "select",
+      options: [
+        { value: "", label: "Select Team Member" },
+        ...employees.map((emp) => ({
+          value: emp.employeeId,
+          label: `${emp.name} - ${emp.position}`
+        }))
+      ]
+    }
+  ];
+
+
+
 
   const handleCreateSprint = async (values: any) => {
     setSubmitLoading(true);
@@ -629,7 +655,7 @@ const ManagerProjectDetailsPage = () => {
         title="Create Issue"
       >
         <AuthForm
-          fields={createIssueFields}
+          fields={createIssueFormFields}
           validationSchema={createIssueSchema}
           onSubmit={handleCreateIssue}
           buttonText={submitLoading ? "Creating..." : "Create New Issue"}

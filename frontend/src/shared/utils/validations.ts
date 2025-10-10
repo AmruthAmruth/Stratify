@@ -180,16 +180,15 @@ export const createIssueSchema = z.object({
   heading: z.string().min(1, "Heading is required"),
   description: z.string().min(1, "Description is required"),
   acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
-  size: z.number().min(1, "Size must be at least 1"),
-  estimatedHours: z.number().min(1, "Estimated hours must be at least 1"),
+  size: z.string().min(1, "Size is required"),
+  estimatedHours: z.string().min(1, "Estimated Hours is required"),
   type: z.enum(["User Story", "Bug"], {
     errorMap: () => ({ message: "Type must be either User Story or Bug" }),
   }),
   priority: z.enum(["Low", "Medium", "High"], {
     errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
   }),
-  projectId: z.string().min(1, "Project ID is required"),
-  assignedTo: z.string().nullable(),
+  
 });
 
 
