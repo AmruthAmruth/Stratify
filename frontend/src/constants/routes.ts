@@ -59,7 +59,7 @@ export const PROJECT_ROUTES = {
   CREATE_ISSUE:"/api/project/create-issue",
   GET_EMPLOYEE_UNDER_PROJECT: (id: string) => `/api/project/issuelevel-allcated-employee/${id}`,
   GET_DEPARTMENT_EMPLOYEES:"/api/project/projectlevel-allocated-employee",
-  GET_EMPLOYEE_NOT_IN_PROJECT: (id: string) =>`/api/project/employee-out-project/${id}`
+  GET_EMPLOYEE_NOT_IN_PROJECT: (id: string) =>`/api/project/employee-out-project/${id}`,
   Add_EMPLOYEE_TO_PROJECT:'/api/project/add-employee-project'
 
 }
