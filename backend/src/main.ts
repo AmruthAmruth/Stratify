@@ -8,6 +8,9 @@ import cors from "cors";
 import cookieParser from "cookie-parser";
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
+import http from "http";
+import { Server } from "socket.io";
+import socketHandlers from "./interfaces/adapters/socketHandlers";
 
 dotenv.config();
 
@@ -45,8 +48,21 @@ app.use("/api", router);
 // Error handling middleware
 app.use(errorMiddleware);
 
+// Create HTTP server and integrate Socket.io
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: {
+    origin: "http://localhost:5173",
+    methods: ["GET", "POST"],
+    credentials: true
+  }
+});
+
+// Initialize socket handlers
+socketHandlers(io);
+
 // Start server
 const PORT = process.env.PORT || 7000;
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
