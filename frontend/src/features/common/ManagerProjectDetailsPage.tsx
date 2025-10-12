@@ -10,6 +10,7 @@ import {
   employeeUnderTheProject,
   getEmployeesNotInProject,
   getProjectDetails,
+  assignStoryToSprint,
 } from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
@@ -34,6 +35,7 @@ const ManagerProjectDetailsPage = () => {
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+  const [isAssignStoryModalOpen, setIsAssignStoryModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [expandedBacklog, setExpandedBacklog] = useState(null);
@@ -116,8 +118,46 @@ const ManagerProjectDetailsPage = () => {
     },
   ];
 
+  const assignStoryFormFields = [
+    {
+      name: "sprintId",
+      label: "Select Sprint",
+      type: "select",
+      required: true,
+      options: [
+        { value: "", label: "Select Sprint" },
+        ...((project?.activeSprints || []).map((sprint) => ({
+          value: sprint.id || sprint._id,
+          label: `${sprint.name} (Active)`,
+        })) || []),
+        ...((project?.plannedSprints || []).map((sprint) => ({
+          value: sprint.id || sprint._id,
+          label: `${sprint.name} (Planned)`,
+        })) || []),
+      ],
+    },
+    {
+      name: "storyId",
+      label: "Select Story or Bug",
+      type: "select",
+      required: true,
+      options: [
+        { value: "", label: "Select Story or Bug" },
+        ...((project?.backlog || []).map((issue) => ({
+          value: issue.id || issue._id,
+          label: `${issue.title} (${issue.type})`,
+        })) || []),
+      ],
+    },
+  ];
+
   const addEmployeeSchema = z.object({
     employeeId: z.string().min(1, "Please select an employee"),
+  });
+
+  const assignStorySchema = z.object({
+    sprintId: z.string().min(1, "Please select a sprint"),
+    storyId: z.string().min(1, "Please select a story or bug"),
   });
 
   const handleCreateSprint = async (values) => {
@@ -164,6 +204,44 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
+  const handleAssignStoryToSprint = async (values) => {
+    setSubmitLoading(true);
+    try {
+      if (!values.sprintId || !values.storyId) {
+        enqueueSnackbar("Please select both sprint and story", {
+          variant: "warning",
+        });
+        setSubmitLoading(false);
+        return;
+      }
+
+      const payload = {
+        projectId: id,
+        sprintId: values.sprintId,
+        storyId: values.storyId,
+      };
+
+      await assignStoryToSprint(payload);
+      enqueueSnackbar("Story assigned to sprint successfully!", {
+        variant: "success",
+      });
+
+      const updatedProject = await getProjectDetails(id);
+      setProject(updatedProject);
+      setIsAssignStoryModalOpen(false);
+    } catch (err) {
+      console.error("Error assigning story to sprint:", err);
+      enqueueSnackbar(
+        err.message || "Failed to assign story to sprint.",
+        {
+          variant: "error",
+        }
+      );
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
   const handleOpenIssueModal = () => {
     setIsBacklogModalOpen(true);
   };
@@ -174,6 +252,30 @@ const ManagerProjectDetailsPage = () => {
 
   const handleOpenEmployeeModal = () => {
     setIsEmployeeModalOpen(true);
+  };
+
+  const handleOpenAssignStoryModal = () => {
+    if (!project?.activeSprints?.length && !project?.plannedSprints?.length) {
+      enqueueSnackbar(
+        "No sprints available. Please create a sprint first.",
+        {
+          variant: "info",
+        }
+      );
+      return;
+    }
+
+    if (!project?.backlog?.length) {
+      enqueueSnackbar(
+        "No backlog items available. Please create an issue first.",
+        {
+          variant: "info",
+        }
+      );
+      return;
+    }
+
+    setIsAssignStoryModalOpen(true);
   };
 
   const getStatusColor = (status) => {
@@ -310,7 +412,6 @@ const ManagerProjectDetailsPage = () => {
           <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-[#e9e6f5] shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="p-8">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-                {/* Project Title and Description */}
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                     <h1 className="text-3xl lg:text-4xl font-bold text-[#2f2f2f] tracking-tight">
@@ -325,7 +426,6 @@ const ManagerProjectDetailsPage = () => {
                   </p>
                 </div>
 
-                {/* Project Status Card */}
                 <div className="flex justify-center lg:justify-end">
                   <div className="rounded-xl bg-gradient-to-br from-[#f7f9fc] to-[#f1effa] border border-[#e3e0f3] px-8 py-6 text-center shadow-sm hover:shadow transition-all duration-300">
                     <div className="text-2xl font-semibold text-[#2f2f2f] capitalize">
@@ -563,6 +663,12 @@ const ManagerProjectDetailsPage = () => {
             className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
           >
             Add Employee
+          </button>
+          <button
+            onClick={handleOpenAssignStoryModal}
+            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+          >
+            Assign Story to Sprint
           </button>
         </div>
 
