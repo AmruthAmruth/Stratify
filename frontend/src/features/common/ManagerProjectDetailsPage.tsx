@@ -5,12 +5,12 @@ import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import {
   addEmployeetoProject,
+  assingedStoryToSprint,
   createIssue,
   createSprint,
   employeeUnderTheProject,
   getEmployeesNotInProject,
   getProjectDetails,
-  assignStoryToSprint,
 } from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
@@ -214,14 +214,14 @@ const ManagerProjectDetailsPage = () => {
         setSubmitLoading(false);
         return;
       }
-
+ 
       const payload = {
         projectId: id,
         sprintId: values.sprintId,
         storyId: values.storyId,
       };
 
-      await assignStoryToSprint(payload);
+      await assingedStoryToSprint(payload);
       enqueueSnackbar("Story assigned to sprint successfully!", {
         variant: "success",
       });

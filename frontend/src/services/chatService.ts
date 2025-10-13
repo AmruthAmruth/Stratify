@@ -1,13 +1,15 @@
-import api from "./axiosInstance";
+import { Conversation } from '@/types/chat';
+import api from './axiosInstance';
+import { Message } from 'react-hook-form';
+
 
 export const chatService = {
-  async getConversations(userId: string) {
-    const res = await api.get(`/api/conversations/${userId}`, { withCredentials: true });
-    return res.data;
-  },
-
-  async getMessages(conversationId: string) {
-    const res = await api.get(`/api/messages/${conversationId}`, { withCredentials: true });
-    return res.data;
-  },
+getConversations: async (userId: string): Promise<Conversation[]> => {
+const res = await api.get(`/conversations/${userId}`);
+return res.data;
+},
+getMessages: async (conversationId: string): Promise<Message[]> => {
+const res = await api.get(`/messages/${conversationId}`);
+return res.data;
+},
 };

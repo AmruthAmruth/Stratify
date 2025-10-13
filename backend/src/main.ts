@@ -12,14 +12,14 @@ import { Server } from "socket.io";
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
 import { createSocketGateway } from "./di/ChatDI";
-
-dotenv.config();
+ 
+dotenv.config(); 
 
 const app = express();
 
 // -------------------------------------
 // CORS Configuration
-// -------------------------------------
+// --------------------------------- ----
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
