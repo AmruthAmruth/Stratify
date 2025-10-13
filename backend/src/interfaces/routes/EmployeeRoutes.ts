@@ -9,5 +9,5 @@ const controller = employeeDI();
 employeeRouter.post("/create-manager", authMiddleware(["company"]), asyncHandler(controller.createManager));
 employeeRouter.post("/create-employee", authMiddleware(["company", "manager"]), asyncHandler(controller.createEmployee));
 employeeRouter.get("/unassigned-managers", authMiddleware(["company"]), asyncHandler(controller.getUnassignedManagers));
-
+employeeRouter.get("/member-for-manager",authMiddleware(["manager"]),asyncHandler(controller.getMembersForManager))
 export default employeeRouter;

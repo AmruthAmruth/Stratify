@@ -6,12 +6,14 @@ import { AuthRequest } from "../middleware/AuthMiddleware";
 import { CreateManagerSchema } from "../../application/validators/CreateManager";
 import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { IGetMemberForMangerUseCase } from "../../application/interfaces/chat/IGetMemberForMangerUseCase";
 
 export class EmployeeController {
   constructor(
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
-    private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase
+    private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
+    private _getMemberForManagerUseCase:IGetMemberForMangerUseCase
   ) {}
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -56,4 +58,14 @@ export class EmployeeController {
     const managers = await this._getUnassignedManagersUseCase.execute(companyId!);
     res.status(StatusCodes.OK).json({ managers });
   };
+
+
+  getMembersForManager=async(req:AuthRequest,res:Response):Promise<void>=>{
+    const managerId=req.userId;
+    const response = await this._getMemberForManagerUseCase.execute(managerId!);
+    res.status(StatusCodes.OK).json(response)
+  }
+
+
+
 }

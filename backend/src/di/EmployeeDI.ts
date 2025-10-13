@@ -8,6 +8,7 @@ import { CreateManagerUseCase } from "../application/use-cases/managers/CreateMa
 import { CreateEmployeeUseCase } from "../application/use-cases/employees/CreateEmployeeUseCase";
 import { GetUnassignedManagersUseCase } from "../application/use-cases/managers/GetUnassignedManagersUseCase";
 import { EmployeeController } from "../interfaces/controllers/EmployeeController";
+import { GetMemberForManagerUseCase } from "../application/use-cases/chat/GetMemberForManagerUseCase";
 
 export const employeeDI = () => {
   const companyRepo = new companyRepository();
@@ -20,9 +21,12 @@ export const employeeDI = () => {
   const createEmployeeUseCase = new CreateEmployeeUseCase(companyRepo, employeeRepo, departmentRepo, managerRepo, emailService);
   const getUnassignedManagersUseCase = new GetUnassignedManagersUseCase(managerRepo);
 
+const getMemberForManagerUseCase= new GetMemberForManagerUseCase(managerRepo,departmentRepo,companyRepo,employeeRepo)
+
   return new EmployeeController(
     createManagerUseCase,
     createEmployeeUseCase,
-    getUnassignedManagersUseCase
+    getUnassignedManagersUseCase,
+    getMemberForManagerUseCase
   );
 };

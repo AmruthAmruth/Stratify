@@ -25,6 +25,8 @@ import { SocketGateway } from "../interfaces/helpers/socketHandlers";
 const messageRepository = new MessageRepository();
 const conversationRepository = new ConversationRepository();
 
+
+
 // ---------------------------
 // Use Case Instances
 // ---------------------------
@@ -32,7 +34,6 @@ const sendMessageUseCase = new SendMessageUseCase(messageRepository, conversatio
 const getMessagesUseCase = new GetMessageUseCase(messageRepository);
 const createConversationUseCase = new CreateConversationUseCase(conversationRepository);
 const getUserConversationsUseCase = new GetUserConversationUseCase(conversationRepository);
-
 // ---------------------------
 // Exported Dependencies
 // ---------------------------

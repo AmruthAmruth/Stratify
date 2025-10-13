@@ -25,7 +25,7 @@ export const companyDI = () => {
   const unapproveCompanyUseCase = new UnapproveCompany(emailService, companyRepo);
   const getCompanyMembers = new GetCompanyMemebersUseCase(managerRepo, employeeRepo, departmentRepo);
   const getTeamMemberProfile = new GetProfileUseCase(managerRepo, employeeRepo, departmentRepo);
-
+   
   return new CompanyController(
     getCompanyById,
     getPaginatedCompaniesUseCase,
