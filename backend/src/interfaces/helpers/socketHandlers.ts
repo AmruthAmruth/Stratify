@@ -27,7 +27,7 @@ export class SocketGateway {
         const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
         (socket as AuthenticatedSocket).userId = decoded.id;
         next();
-      } catch (err) {
+      } catch {
         next(new Error("Invalid token"));
       }
     });
@@ -50,9 +50,14 @@ export class SocketGateway {
           });
 
           this.io.to(data.conversationId).emit("messageReceived", message);
-        } catch (err: any) {
-          console.error(err);
-          socket.emit("error", err.message || "Failed to send message");
+        } catch (err: unknown) {
+          if (err instanceof Error) {
+            console.error(err.message);
+            socket.emit("error", err.message);
+          } else {
+            console.error(err);
+            socket.emit("error", "Failed to send message");
+          }
         }
       });
 
