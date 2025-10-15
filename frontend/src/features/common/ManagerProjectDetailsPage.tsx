@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
@@ -41,6 +41,8 @@ const ManagerProjectDetailsPage = () => {
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
   const [employeeNotInProject, setEmployeeNotInProject] = useState([]);
+  const [assignModalSprintId, setAssignModalSprintId] = useState(null);
+  const [assignModalStoryOptions, setAssignModalStoryOptions] = useState([]);
   const { id } = useParams();
 
   useEffect(() => {
@@ -67,6 +69,26 @@ const ManagerProjectDetailsPage = () => {
 
     fetchProjectData(id);
   }, [id]);
+
+  const freeBacklogOptions = useMemo(() => {
+    return (project?.backlog || [])
+      .filter((issue) => !issue.sprintId)
+      .map((issue) => ({
+        value: issue.id || issue._id,
+        label: `${issue.title} (${issue.type})`,
+      }));
+  }, [project?.backlog]);
+
+  const handleAssignIssue = (sprintId) => {
+    const options = freeBacklogOptions;
+    if (options.length === 0) {
+      enqueueSnackbar("No free backlog items to assign.", { variant: "info" });
+      return;
+    }
+    setAssignModalSprintId(sprintId);
+    setAssignModalStoryOptions(options);
+    setIsAssignStoryModalOpen(true);
+  };
 
   const handleCreateIssue = async (values) => {
     setSubmitLoading(true);
@@ -118,46 +140,8 @@ const ManagerProjectDetailsPage = () => {
     },
   ];
 
-  const assignStoryFormFields = [
-    {
-      name: "sprintId",
-      label: "Select Sprint",
-      type: "select",
-      required: true,
-      options: [
-        { value: "", label: "Select Sprint" },
-        ...((project?.activeSprints || []).map((sprint) => ({
-          value: sprint.id || sprint._id,
-          label: `${sprint.name} (Active)`,
-        })) || []),
-        ...((project?.plannedSprints || []).map((sprint) => ({
-          value: sprint.id || sprint._id,
-          label: `${sprint.name} (Planned)`,
-        })) || []),
-      ],
-    },
-    {
-      name: "storyId",
-      label: "Select Story or Bug",
-      type: "select",
-      required: true,
-      options: [
-        { value: "", label: "Select Story or Bug" },
-        ...((project?.backlog || []).map((issue) => ({
-          value: issue.id || issue._id,
-          label: `${issue.title} (${issue.type})`,
-        })) || []),
-      ],
-    },
-  ];
-
   const addEmployeeSchema = z.object({
     employeeId: z.string().min(1, "Please select an employee"),
-  });
-
-  const assignStorySchema = z.object({
-    sprintId: z.string().min(1, "Please select a sprint"),
-    storyId: z.string().min(1, "Please select a story or bug"),
   });
 
   const handleCreateSprint = async (values) => {
@@ -204,43 +188,7 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const handleAssignStoryToSprint = async (values) => {
-    setSubmitLoading(true);
-    try {
-      if (!values.sprintId || !values.storyId) {
-        enqueueSnackbar("Please select both sprint and story", {
-          variant: "warning",
-        });
-        setSubmitLoading(false);
-        return;
-      }
- 
-      const payload = {
-        projectId: id,
-        sprintId: values.sprintId,
-        storyId: values.storyId,
-      };
-
-      await assingedStoryToSprint(payload);
-      enqueueSnackbar("Story assigned to sprint successfully!", {
-        variant: "success",
-      });
-
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
-      setIsAssignStoryModalOpen(false);
-    } catch (err) {
-      console.error("Error assigning story to sprint:", err);
-      enqueueSnackbar(
-        err.message || "Failed to assign story to sprint.",
-        {
-          variant: "error",
-        }
-      );
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
+  
 
   const handleOpenIssueModal = () => {
     setIsBacklogModalOpen(true);
@@ -254,29 +202,65 @@ const ManagerProjectDetailsPage = () => {
     setIsEmployeeModalOpen(true);
   };
 
-  const handleOpenAssignStoryModal = () => {
-    if (!project?.activeSprints?.length && !project?.plannedSprints?.length) {
-      enqueueSnackbar(
-        "No sprints available. Please create a sprint first.",
-        {
-          variant: "info",
-        }
-      );
-      return;
-    }
 
-    if (!project?.backlog?.length) {
-      enqueueSnackbar(
-        "No backlog items available. Please create an issue first.",
-        {
-          variant: "info",
-        }
-      );
-      return;
-    }
 
-    setIsAssignStoryModalOpen(true);
-  };
+  const assignStoryFormFields = useMemo(() => {
+    const sprintOptions = [
+      { value: "", label: "Select Sprint" },
+      ...(project?.activeSprints || []).map((sprint) => ({
+        value: sprint.id || sprint._id,
+        label: `${sprint.name} (Active)`,
+      })),
+      ...(project?.plannedSprints || []).map((sprint) => ({
+        value: sprint.id || sprint._id,
+        label: `${sprint.name} (Planned)`,
+      })),
+    ];
+
+    const issueOptions = [
+      { value: "", label: "Select Issue" },
+      ...(assignModalSprintId ? assignModalStoryOptions : freeBacklogOptions),
+    ];
+
+    const fields = [
+      ...(assignModalSprintId
+        ? []
+        : [
+            {
+              name: "sprintId",
+              label: "Select Sprint",
+              type: "select",
+              required: true,
+              options: sprintOptions,
+            },
+          ]
+        ),
+      {
+        name: "storyId",
+        label: "Select Backlog Issue",
+        type: "select",
+        required: true,
+        options: issueOptions,
+      },
+    ];
+
+    return fields;
+  }, [
+    project?.activeSprints,
+    project?.plannedSprints,
+    assignModalSprintId,
+    assignModalStoryOptions,
+    freeBacklogOptions,
+  ]);
+
+  const assignStorySchemaDynamic = assignModalSprintId 
+    ? z.object({
+        storyId: z.string().min(1, "Please select an issue"),
+      })
+    : z.object({
+        sprintId: z.string().min(1, "Please select a sprint"),
+        storyId: z.string().min(1, "Please select an issue"),
+      });
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -404,6 +388,12 @@ const ManagerProjectDetailsPage = () => {
   const completedEstimatedHours = allIssues
     .filter((i) => i.status === "Done" || i.status === "Completed")
     .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
+
+  const selectedSprintName = assignModalSprintId
+    ? project.activeSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
+      project.plannedSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
+      "Unknown Sprint"
+    : null;
 
   return (
     <div className="min-h-screen bg-[#fbfbfb]">
@@ -664,106 +654,110 @@ const ManagerProjectDetailsPage = () => {
           >
             Add Employee
           </button>
-          <button
-            onClick={handleOpenAssignStoryModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
-          >
-            Assign Story to Sprint
-          </button>
+          
         </div>
 
         {project.backlog && project.backlog.length > 0 && (
-          <CollapsibleSection
-            title="Backlog"
-            icon={
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
-                <path
-                  fillRule="evenodd"
-                  d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0 102 0V3a2 2 0 012 2v6a2 2 0 01-2 2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000 2h2a1 1 0 100-2H7z"
-                />
-              </svg>
-            }
-            iconBgColor="bg-[#dfdcef]"
-            iconColor="text-[#009063]"
-            data={project.backlog}
-            type="backlog"
-            expandedItem={expandedBacklog}
-            setExpandedItem={setExpandedBacklog}
-            getStatusColor={getStatusColor}
-            getPriorityColor={getPriorityColor}
-            getTypeColor={getTypeColor}
-          />
+         <CollapsibleSection
+        title="Backlog"
+        icon={
+          <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+            <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
+            <path
+              fillRule="evenodd"
+              d="M4 5a2 2 0 012-2v1a1 1 0 102 0V3h4v1a1 1 0
+              102 0V3a2 2 0 012 2v6a2 2 0 01-2
+              2H6a2 2 0 01-2-2V5zm3 4a1 1 0 000
+              2h2a1 1 0 100-2H7z"
+            />
+          </svg>
+        }
+        iconBgColor="bg-[#dfdcef]"
+        iconColor="text-[#009063]"
+        data={project.backlog}
+        type="backlog"
+        expandedItem={expandedBacklog}
+        setExpandedItem={setExpandedBacklog}
+        getStatusColor={getStatusColor}
+        getPriorityColor={getPriorityColor}
+        getTypeColor={getTypeColor}
+      />
         )}
 
-        {project.activeSprints && project.activeSprints.length > 0 && (
-          <CollapsibleSection
-            title="Active Sprints"
-            icon={
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
-                />
-              </svg>
-            }
-            iconBgColor="bg-[#e6f7f0]"
-            iconColor="text-[#009063]"
-            data={project.activeSprints}
-            type="sprint"
-            expandedItem={expandedSprint}
-            setExpandedItem={setExpandedSprint}
-            getStatusColor={getStatusColor}
-            getPriorityColor={getPriorityColor}
-            getTypeColor={getTypeColor}
-          />
-        )}
+       {/* Active Sprints */}
+{project.activeSprints && project.activeSprints.length > 0 && (
+  <CollapsibleSection
+    title="Active Sprints"
+    icon={
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fillRule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z"
+        />
+      </svg>
+    }
+    iconBgColor="bg-[#e6f7f0]"
+    iconColor="text-[#009063]"
+    data={project.activeSprints}
+    type="sprint"
+    expandedItem={expandedSprint}
+    setExpandedItem={setExpandedSprint}
+    getStatusColor={getStatusColor}
+    getPriorityColor={getPriorityColor}
+    getTypeColor={getTypeColor}
+    onAssignIssue={handleAssignIssue}
+  />
+)}
 
-        {project.plannedSprints && project.plannedSprints.length > 0 && (
-          <CollapsibleSection
-            title="Planned Sprints"
-            icon={
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
-                />
-              </svg>
-            }
-            iconBgColor="bg-[#dfdcef]"
-            iconColor="text-[#3b3b3b]"
-            data={project.plannedSprints}
-            type="sprint"
-            expandedItem={expandedSprint}
-            setExpandedItem={setExpandedSprint}
-            getStatusColor={getStatusColor}
-            getPriorityColor={getPriorityColor}
-            getTypeColor={getTypeColor}
-          />
-        )}
+{/* Planned Sprints */}
+{project.plannedSprints && project.plannedSprints.length > 0 && (
+  <CollapsibleSection
+    title="Planned Sprints"
+    icon={
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fillRule="evenodd"
+          d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"
+        />
+      </svg>
+    }
+    iconBgColor="bg-[#dfdcef]"
+    iconColor="text-[#3b3b3b]"
+    data={project.plannedSprints}
+    type="sprint"
+    expandedItem={expandedSprint}
+    setExpandedItem={setExpandedSprint}
+    getStatusColor={getStatusColor}
+    getPriorityColor={getPriorityColor}
+    getTypeColor={getTypeColor}
+    onAssignIssue={handleAssignIssue}
+  />
+)}
 
-        {project.completedSprints && project.completedSprints.length > 0 && (
-          <CollapsibleSection
-            title="Completed Sprints"
-            icon={
-              <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                <path
-                  fillRule="evenodd"
-                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                />
-              </svg>
-            }
-            iconBgColor="bg-[#e6f7f0]"
-            iconColor="text-[#009063]"
-            data={project.completedSprints}
-            type="sprint"
-            expandedItem={expandedSprint}
-            setExpandedItem={setExpandedSprint}
-            getStatusColor={getStatusColor}
-            getPriorityColor={getPriorityColor}
-            getTypeColor={getTypeColor}
-          />
-        )}
+{/* Completed Sprints */}
+{project.completedSprints && project.completedSprints.length > 0 && (
+  <CollapsibleSection
+    title="Completed Sprints"
+    icon={
+      <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+        <path
+          fillRule="evenodd"
+          d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+        />
+      </svg>
+    }
+    iconBgColor="bg-[#e6f7f0]"
+    iconColor="text-[#009063]"
+    data={project.completedSprints}
+    type="sprint"
+    expandedItem={expandedSprint}
+    setExpandedItem={setExpandedSprint}
+    getStatusColor={getStatusColor}
+    getPriorityColor={getPriorityColor}
+    getTypeColor={getTypeColor}
+  />
+)}
+
       </div>
 
       <Modal
@@ -804,6 +798,8 @@ const ManagerProjectDetailsPage = () => {
           buttonText={submitLoading ? "Adding..." : "Add Employee"}
         />
       </Modal>
+
+     
     </div>
   );
 };

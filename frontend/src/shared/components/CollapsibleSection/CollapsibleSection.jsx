@@ -1,3 +1,4 @@
+// Updated CollapsibleSection.tsx
 import React, { useState } from "react";
 
 const CollapsibleSection = ({ 
@@ -10,8 +11,9 @@ const CollapsibleSection = ({
   expandedItem, 
   setExpandedItem, 
   getStatusColor, 
-  getPriorityColor,
-  getTypeColor
+  getPriorityColor, 
+  getTypeColor,
+  onAssignIssue
 }) => {
   const [expandedIssue, setExpandedIssue] = useState(null);
 
@@ -27,7 +29,7 @@ const CollapsibleSection = ({
       </div>
       <div className="p-6 space-y-4">
         {data.map((item, index) => {
-          const itemId = type === 'sprint' ? item.id : item.id;
+          const itemId = type === 'sprint' ? item.id || item._id : item.id || item._id;
           const itemName = type === 'sprint' ? item.name : item.heading;
           const isExpanded = expandedItem === itemId;
 
@@ -178,9 +180,19 @@ const CollapsibleSection = ({
               </div>
               {isExpanded && (
                 <div className="p-6 space-y-6 bg-white border-t border-[#dfdcef]">
+                  <div className="flex justify-end mb-4">
+                    {onAssignIssue && (
+                      <button
+                        onClick={() => onAssignIssue(itemId)}
+                        className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+                      >
+                        Assign Issue to Sprint
+                      </button>
+                    )}
+                  </div>
                   {item.issues.length > 0 ? (
                     item.issues.map((issue) => {
-                      const issueId = issue.id;
+                      const issueId = issue.id || issue._id;
                       const isIssueExpanded = expandedIssue === issueId;
 
                       return (
@@ -266,7 +278,7 @@ const CollapsibleSection = ({
                                 {issue.subTasks && issue.subTasks.length > 0 ? (
                                   issue.subTasks.map((task) => (
                                     <div
-                                      key={task.id}
+                                      key={task.id || task._id}
                                       className="bg-[#fbfbfb] border border-[#dfdcef] rounded-lg p-4 hover:shadow-md transition-all duration-200"
                                     >
                                       <div className="flex items-start justify-between mb-3">

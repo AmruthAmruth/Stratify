@@ -193,7 +193,7 @@ export const updateTask=async () => {
 
 
 
-export const assingedStoryToSprint=async(data: Record<string, unknown>)=>{
+export const assingIssueToSprint=async(data: Record<string, unknown>)=>{
   try {
     const response = await api.post(PROJECT_ROUTES.ASSINGED_STORY_TO_SPRINT,data);
     return response.data;
