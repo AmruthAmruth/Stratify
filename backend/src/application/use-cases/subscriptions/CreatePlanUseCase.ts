@@ -12,6 +12,7 @@ export class CreatePlanUseCase implements ICreatePlanUseCase{
     ){}
 
     async execute(input: CreatePlanDTO): Promise<PlanPrice> {
+        
         const existingPlan = await this._planPriceRepo.getPlan(input.plan);
     if (existingPlan) {
       throw new AppError(`Plan "${input.plan}" already exists`);

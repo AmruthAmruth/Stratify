@@ -4,7 +4,7 @@ import { enqueueSnackbar } from "notistack";
 
 import {
   createProject,
- deleteProject,
+  deleteProject,
   getDepartmentProjects,
   projectLevelTeamAllocation,
 } from "@/services/projects";
@@ -54,12 +54,13 @@ interface ProjectsData {
 }
 
 interface CreateProjectFormValues {
-  projectName: string;
-  projectKey: string;
+  name: string;
+  key: string;
   description?: string;
   startDate: string;
   endDate: string;
   status: "Planned" | "Active" | "Completed" | "Archived";
+  teamMemberIds?: string[];
 }
 
 interface CreateProjectPayload {
@@ -99,7 +100,6 @@ const ManagerProjects: React.FC = () => {
   const [projects, setProjects] = useState<ProjectsData>(INITIAL_PROJECTS_STATE);
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [departmentId, setDepartmentId] = useState<string>("");
-  const [selectedEmployeeIds, setSelectedEmployeeIds] = useState<string[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -108,7 +108,6 @@ const ManagerProjects: React.FC = () => {
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [fetchLoading, setFetchLoading] = useState(true);
-  const [teamSelectionError, setTeamSelectionError] = useState("");
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -195,9 +194,7 @@ const ManagerProjects: React.FC = () => {
 
     setIsDeleting(true);
     try {
-      console.log("selectedProjectId",selectedProjectId);
-      
-     const data = await deleteProject(selectedProjectId);
+      const data = await deleteProject(selectedProjectId);
 
       enqueueSnackbar(data?.message || "Project deleted successfully", {
         variant: "success",
@@ -217,35 +214,13 @@ const ManagerProjects: React.FC = () => {
   };
 
   // ============================================================================
-  // EMPLOYEE SELECTION HANDLERS
-  // ============================================================================
-
-  const handleEmployeeToggle = useCallback(
-    (employeeId: string) => {
-      setSelectedEmployeeIds((prev) =>
-        prev.includes(employeeId)
-          ? prev.filter((id) => id !== employeeId)
-          : [...prev, employeeId]
-      );
-      setTeamSelectionError("");
-    },
-    []
-  );
-
-  const handleSelectAll = useCallback(() => {
-    setSelectedEmployeeIds((prev) =>
-      prev.length === employees.length ? [] : employees.map((emp) => emp.employeeId)
-    );
-    setTeamSelectionError("");
-  }, [employees]);
-
-  // ============================================================================
   // FORM SUBMISSION HANDLER
   // ============================================================================
 
   const handleCreateProject = async (formValues: CreateProjectFormValues) => {
-    if (selectedEmployeeIds.length === 0) {
-      setTeamSelectionError("Please select at least one team member");
+    const teamMemberIds = formValues.teamMemberIds || [];
+    
+    if (teamMemberIds.length === 0) {
       enqueueSnackbar("Please select at least one team member", {
         variant: "error",
         anchorOrigin: { vertical: "top", horizontal: "right" },
@@ -270,11 +245,10 @@ const ManagerProjects: React.FC = () => {
         endDate: endDate.toISOString(),
         departmentId: departmentId || projects.departmentId || "",
         status: formValues.status || "Planned",
-        teamMemberIds: selectedEmployeeIds,
+        teamMemberIds: teamMemberIds,
       };
 
-      console.log("PAYLOAD",payload);
-      
+      console.log("PAYLOAD", payload);
 
       const data = await createProject(payload);
 
@@ -285,8 +259,6 @@ const ManagerProjects: React.FC = () => {
 
       await fetchProjectsAndEmployees();
       setIsProjectModalOpen(false);
-      setSelectedEmployeeIds([]);
-      setTeamSelectionError("");
       formRef.current?.resetForm();
     } catch (err: any) {
       enqueueSnackbar(err?.message || "Failed to create project.", {
@@ -340,11 +312,16 @@ const ManagerProjects: React.FC = () => {
   const uniqueStatus = Array.from(new Set(projects.projects.map((p) => p.status)));
 
   // ============================================================================
-  // MODAL AND FILTER HANDLERS
+  // MODAL HANDLERS
   // ============================================================================
 
   const openModal = () => {
     setIsProjectModalOpen(true);
+  };
+
+  const closeModal = () => {
+    setIsProjectModalOpen(false);
+    formRef.current?.resetForm();
   };
 
   const clearFilters = () => {
@@ -354,6 +331,27 @@ const ManagerProjects: React.FC = () => {
     setSortOrder("asc");
     setCurrentPage(1);
   };
+
+  // ============================================================================
+  // DYNAMIC FORM FIELDS WITH EMPLOYEE OPTIONS
+  // ============================================================================
+
+  const createProjectFormFields = [
+    ...createProjectFields,
+    {
+      name: "teamMemberIds",
+      label: "Add Team Members",
+      type: "select",
+      multiple: true,
+      options: [
+        { value: "", label: "Select team members..." },
+        ...employees.map((emp) => ({
+          value: emp.employeeId,
+          label: `${emp.name} - ${emp.position}`,
+        })),
+      ],
+    },
+  ];
 
   // ============================================================================
   // RENDER
@@ -470,23 +468,29 @@ const ManagerProjects: React.FC = () => {
       )}
 
       {/* Create Project Modal */}
-      <CreateProjectModal
-        isOpen={isProjectModalOpen}
-        onClose={() => {
-          setIsProjectModalOpen(false);
-          setSelectedEmployeeIds([]);
-          setTeamSelectionError("");
-          formRef.current?.resetForm();
-        }}
-        onSubmit={handleCreateProject}
-        employees={employees}
-        selectedEmployeeIds={selectedEmployeeIds}
-        onEmployeeToggle={handleEmployeeToggle}
-        onSelectAll={handleSelectAll}
-        submitLoading={submitLoading}
-        teamSelectionError={teamSelectionError}
-        formRef={formRef}
-      />
+      <Modal isOpen={isProjectModalOpen} onClose={closeModal} title="Create Project">
+        <div className="space-y-4">
+          <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-gray-50">
+            <AuthForm
+              fields={createProjectFormFields}
+              validationSchema={createProjectSchema}
+              onSubmit={handleCreateProject}
+              buttonText="Create Project"
+              disabled={submitLoading}
+              formRef={formRef}
+            />
+          </div>
+
+          {submitLoading && (
+            <div className="flex justify-center mt-4">
+              <div
+                className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin"
+                style={{ borderColor: "#009063" }}
+              />
+            </div>
+          )}
+        </div>
+      </Modal>
 
       {/* Confirm Delete Dialog */}
       <ConfirmDialog
@@ -500,227 +504,6 @@ const ManagerProjects: React.FC = () => {
         confirmButtonDisabled={isDeleting}
       />
     </div>
-  );
-};
-
-// ============================================================================
-// CREATE PROJECT MODAL COMPONENT
-// ============================================================================
-
-interface CreateProjectModalProps {
-  isOpen: boolean;
-  onClose: () => void;
-  onSubmit: (values: CreateProjectFormValues) => void;
-  employees: Employee[];
-  selectedEmployeeIds: string[];
-  onEmployeeToggle: (id: string) => void;
-  onSelectAll: () => void;
-  submitLoading: boolean;
-  teamSelectionError: string;
-  formRef: React.RefObject<{ resetForm: () => void }>;
-}
-
-const CreateProjectModal: React.FC<CreateProjectModalProps> = ({
-  isOpen,
-  onClose,
-  onSubmit,
-  employees,
-  selectedEmployeeIds,
-  onEmployeeToggle,
-  onSelectAll,
-  submitLoading,
-  teamSelectionError,
-  formRef,
-}) => {
-  return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Create Project">
-      <div className="space-y-0">
-        <ProjectFormWithTeamSelection
-          onSubmit={onSubmit}
-          employees={employees}
-          selectedEmployeeIds={selectedEmployeeIds}
-          onEmployeeToggle={onEmployeeToggle}
-          onSelectAll={onSelectAll}
-          submitLoading={submitLoading}
-          teamSelectionError={teamSelectionError}
-          formRef={formRef}
-        />
-
-        {submitLoading && (
-          <div className="flex justify-center mt-4">
-            <div
-              className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin"
-              style={{ borderColor: "#009063" }}
-            />
-          </div>
-        )}
-      </div>
-    </Modal>
-  );
-};
-
-// ============================================================================
-// PROJECT FORM WITH TEAM SELECTION COMPONENT
-// ============================================================================
-
-interface ProjectFormWithTeamSelectionProps {
-  onSubmit: (values: CreateProjectFormValues) => void;
-  employees: Employee[];
-  selectedEmployeeIds: string[];
-  onEmployeeToggle: (id: string) => void;
-  onSelectAll: () => void;
-  submitLoading: boolean;
-  teamSelectionError: string;
-  formRef: React.RefObject<{ resetForm: () => void }>;
-}
-
-const ProjectFormWithTeamSelection: React.FC<ProjectFormWithTeamSelectionProps> = ({
-  onSubmit,
-  employees,
-  selectedEmployeeIds,
-  onEmployeeToggle,
-  onSelectAll,
-  submitLoading,
-  teamSelectionError,
-  formRef,
-}) => {
-  return (
-    <div className="relative">
-      <div
-        className="shadow-lg rounded-xl rounded-b-none p-8 max-w-4xl mx-auto bg-gray-50"
-      >
-        <AuthForm
-          fields={createProjectFields}
-          validationSchema={createProjectSchema}
-          onSubmit={onSubmit}
-          buttonText="Create Project"
-          disabled={submitLoading}
-          formRef={formRef}
-        />
-      </div>
-
-      <TeamMemberSelection
-        employees={employees}
-        selectedEmployeeIds={selectedEmployeeIds}
-        onEmployeeToggle={onEmployeeToggle}
-        onSelectAll={onSelectAll}
-        teamSelectionError={teamSelectionError}
-      />
-    </div>
-  );
-};
-
-// ============================================================================
-// TEAM MEMBER SELECTION COMPONENT
-// ============================================================================
-
-interface TeamMemberSelectionProps {
-  employees: Employee[];
-  selectedEmployeeIds: string[];
-  onEmployeeToggle: (id: string) => void;
-  onSelectAll: () => void;
-  teamSelectionError: string;
-}
-
-const TeamMemberSelection: React.FC<TeamMemberSelectionProps> = ({
-  employees,
-  selectedEmployeeIds,
-  onEmployeeToggle,
-  onSelectAll,
-  teamSelectionError,
-}) => {
-  const isAllSelected =
-    selectedEmployeeIds.length === employees.length && employees.length > 0;
-
-  return (
-    <div
-      className="shadow-lg rounded-b-xl p-8 pt-4 max-w-4xl mx-auto bg-gray-50"
-    >
-      <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-gray-800">
-          Select Team Members ({selectedEmployeeIds.length} selected)
-        </h3>
-        {employees.length > 0 && (
-          <button
-            type="button"
-            onClick={onSelectAll}
-            className="text-sm font-medium transition hover:opacity-80 text-green-600"
-          >
-            {isAllSelected ? "Deselect All" : "Select All"}
-          </button>
-        )}
-      </div>
-
-      {employees.length === 0 ? (
-        <div className="text-center py-8 text-gray-800">
-          No employees available
-        </div>
-      ) : (
-        <div
-          className="max-h-64 overflow-y-auto rounded-lg border border-gray-200"
-        >
-          {employees.map((employee, index) => (
-            <EmployeeCheckboxItem
-              key={`${employee.employeeId}-${index}`}
-              employee={employee}
-              isChecked={selectedEmployeeIds.includes(employee.employeeId)}
-              onToggle={() => onEmployeeToggle(employee.employeeId)}
-              showBorder={index < employees.length - 1}
-            />
-          ))}
-        </div>
-      )}
-
-      {teamSelectionError && (
-        <p className="text-xs mt-2 text-red-500">
-          {teamSelectionError}
-        </p>
-      )}
-    </div>
-  );
-};
-
-// ============================================================================
-// EMPLOYEE CHECKBOX ITEM COMPONENT
-// ============================================================================
-
-interface EmployeeCheckboxItemProps {
-  employee: Employee;
-  isChecked: boolean;
-  onToggle: () => void;
-  showBorder: boolean;
-}
-
-const EmployeeCheckboxItem: React.FC<EmployeeCheckboxItemProps> = ({
-  employee,
-  isChecked,
-  onToggle,
-  showBorder,
-}) => {
-  return (
-    <label
-      className="flex items-center p-4 cursor-pointer transition hover:bg-gray-100"
-      style={{
-        borderBottom: showBorder ? "1px solid #dfdcef" : "none",
-      }}
-    >
-      <input
-        type="checkbox"
-        checked={isChecked}
-        onChange={onToggle}
-        className="w-4 h-4 rounded focus:ring-2 focus:ring-green-600"
-        aria-label={`Select ${employee.name} as team member`}
-        aria-checked={isChecked}
-      />
-      <div className="ml-3 flex-1">
-        <div className="text-sm font-medium text-gray-800">
-          {employee.name}
-        </div>
-        <div className="text-sm text-gray-500">
-          {employee.position}
-        </div>
-      </div>
-    </label>
   );
 };
 
