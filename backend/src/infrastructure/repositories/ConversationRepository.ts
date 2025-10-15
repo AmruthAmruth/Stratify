@@ -5,6 +5,7 @@ import { Types } from "mongoose";
 
 export class ConversationRepository implements IConversationRepository {
 
+  // Create a new conversation
   async create(data: Omit<Conversation, "id">): Promise<Conversation> {
     const convoDoc = await ConversationModel.create(data);
 
@@ -12,14 +13,17 @@ export class ConversationRepository implements IConversationRepository {
       convoDoc.id.toString(),
       convoDoc.isGroup,
       convoDoc.name,
-      convoDoc.members.map(m => m.toString()),
+      convoDoc.members.map((m) => m.toString()),
       convoDoc.lastMessage,
       convoDoc.createdAt,
       convoDoc.updatedAt
     );
   }
 
+  // Find conversation by ID safely
   async findById(id: string): Promise<Conversation | null> {
+    if (!Types.ObjectId.isValid(id)) return null;
+
     const convoDoc = await ConversationModel.findById(id);
     if (!convoDoc) return null;
 
@@ -27,35 +31,68 @@ export class ConversationRepository implements IConversationRepository {
       convoDoc.id.toString(),
       convoDoc.isGroup,
       convoDoc.name,
-      convoDoc.members.map(m => m.toString()),
+      convoDoc.members.map((m) => m.toString()),
       convoDoc.lastMessage,
       convoDoc.createdAt,
       convoDoc.updatedAt
     );
   }
 
+  // Find all conversations for a user
   async findUserConversations(userId: string): Promise<Conversation[]> {
+    if (!Types.ObjectId.isValid(userId)) return [];
+
     const userObjectId = new Types.ObjectId(userId);
+    const convoDocs = await ConversationModel.find({ members: userObjectId }).sort({ updatedAt: -1 });
 
-    const convoDocs = await ConversationModel.find({ members: userObjectId })
-      .sort({ updatedAt: -1 });
-
-    return convoDocs.map(convo => new Conversation(
-      convo.id.toString(),
-      convo.isGroup,
-      convo.name,
-      convo.members.map(m => m.toString()),
-      convo.lastMessage,
-      convo.createdAt,
-      convo.updatedAt
-    ));
+    return convoDocs.map(
+      (convo) =>
+        new Conversation(
+          convo.id.toString(),
+          convo.isGroup,
+          convo.name,
+          convo.members.map((m) => m.toString()),
+          convo.lastMessage,
+          convo.createdAt,
+          convo.updatedAt
+        )
+    );
   }
 
+  // Update the last message of a conversation
   async updateLastMessage(id: string, message: string): Promise<void> {
+    if (!Types.ObjectId.isValid(id)) return;
+
     await ConversationModel.findByIdAndUpdate(
       id,
       { lastMessage: message, updatedAt: new Date() },
       { new: true }
+    );
+  }
+
+  // Find a conversation by exact members safely
+  async findByMembers(members: string[]): Promise<Conversation | null> {
+    const objectIds: Types.ObjectId[] = [];
+
+    for (const m of members) {
+      if (!Types.ObjectId.isValid(m)) return null;
+      objectIds.push(new Types.ObjectId(m));
+    }
+
+    const convoDoc = await ConversationModel.findOne({
+      members: { $all: objectIds, $size: members.length },
+    });
+
+    if (!convoDoc) return null;
+
+    return new Conversation(
+      convoDoc.id.toString(),
+      convoDoc.isGroup,
+      convoDoc.name,
+      convoDoc.members.map((m) => m.toString()),
+      convoDoc.lastMessage,
+      convoDoc.createdAt,
+      convoDoc.updatedAt
     );
   }
 }

@@ -4,6 +4,7 @@ import connectDB from "./config/DataBase";
 import morgan from "morgan";
 import * as rfs from "rotating-file-stream";
 import path from "path";
+import fs from "fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
@@ -12,14 +13,11 @@ import { Server } from "socket.io";
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
 import { createSocketGateway } from "./di/ChatDI";
- 
-dotenv.config(); 
+
+dotenv.config();
 
 const app = express();
 
-// -------------------------------------
-// CORS Configuration
-// --------------------------------- ----
 app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
@@ -27,17 +25,17 @@ app.use(
   })
 );
 
-// -------------------------------------
-// Middleware for parsing requests
-// -------------------------------------
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// -------------------------------------
-// Logging Configuration
-// -------------------------------------
+
 const logDirectory = path.join(__dirname, "logs");
+if (!fs.existsSync(logDirectory)) {
+  fs.mkdirSync(logDirectory);
+}
+
 const accessLogStream = rfs.createStream("access.log", {
   interval: "1d",
   path: logDirectory,
@@ -46,24 +44,17 @@ const accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use(morgan("dev"));
 
-// -------------------------------------
-// Connect to MongoDB
-// -------------------------------------
-connectDB();
 
-// -------------------------------------
-// API Routes
-// -------------------------------------
+connectDB()
+  .then(() => console.log("✅ MongoDB connected successfully"))
+  .catch((err) => console.error("❌ MongoDB connection failed:", err));
+
 app.use("/api", router);
 
-// -------------------------------------
-// Error Handling Middleware
-// -------------------------------------
+
 app.use(errorMiddleware);
 
-// -------------------------------------
-// HTTP & WebSocket Server Initialization
-// -------------------------------------
+
 const server = http.createServer(app);
 
 const io = new Server(server, {
@@ -74,15 +65,9 @@ const io = new Server(server, {
   },
 });
 
-// -------------------------------------
-// Socket.IO Gateway Initialization
-// -------------------------------------
 const socketGateway = createSocketGateway(io);
 socketGateway.init();
 
-// -------------------------------------
-// Start Server
-// -------------------------------------
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);

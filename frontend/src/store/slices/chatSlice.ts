@@ -1,64 +1,65 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Conversation, Message } from '@/types/chat';
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+
+export interface Message {
+  _id: string;
+  conversationId: string;
+  senderId: string;
+  receiverId?: string;
+  content: string;
+  type: "text" | "image" | "file";
+  createdAt?: string;
+}
 
 interface ChatState {
-  conversations: Conversation[];                  // All conversations for the current user
-  messages: Record<string, Message[]>;           // Messages keyed by conversationId
-  activeConversationId: string | null;           // Currently selected conversation
+  conversations: string[];
+  activeConversationId: string | null;
+  activeReceiverId: string | null;
+  messages: Record<string, Message[]>;
 }
 
 const initialState: ChatState = {
   conversations: [],
-  messages: {},
   activeConversationId: null,
+  activeReceiverId: null,
+  messages: {},
 };
 
 const chatSlice = createSlice({
-  name: 'chat',
+  name: "chat",
   initialState,
   reducers: {
-    // Set all conversations for the current user
-    setConversations(state, action: PayloadAction<Conversation[]>) {
-      state.conversations = action.payload;
-    },
-
-    // Set messages for a specific conversation
-    setMessages(
+    setActiveConversation(
       state,
-      action: PayloadAction<{ conversationId: string; messages: Message[] }>
+      action: PayloadAction<string | { conversationId: string; receiverId?: string }>
     ) {
-      state.messages[action.payload.conversationId] = action.payload.messages;
+      if (typeof action.payload === "string") {
+        state.activeConversationId = action.payload;
+        const ids = action.payload.split("_");
+        state.activeReceiverId = ids[0] !== state.activeReceiverId ? ids[0] : ids[1];
+      } else {
+        state.activeConversationId = action.payload.conversationId;
+        state.activeReceiverId = action.payload.receiverId || null;
+      }
+      if (state.activeConversationId && !state.conversations.includes(state.activeConversationId)) {
+        state.conversations.push(state.activeConversationId);
+      }
     },
 
-    // Add a new message to a conversation
     addMessage(state, action: PayloadAction<Message>) {
       const convId = action.payload.conversationId;
+      if (!convId) return;
+
       if (!state.messages[convId]) {
         state.messages[convId] = [];
       }
-      state.messages[convId].push(action.payload);
-    },
 
-    // Set the currently active conversation
-    setActiveConversation(state, action: PayloadAction<string>) {
-      state.activeConversationId = action.payload;
-    },
+      const exists = state.messages[convId].some((msg) => msg._id === action.payload._id);
+      if (!exists) state.messages[convId].push(action.payload);
 
-    // Optional: clear all chat data (logout)
-    clearChat(state) {
-      state.conversations = [];
-      state.messages = {};
-      state.activeConversationId = null;
+      if (!state.conversations.includes(convId)) state.conversations.push(convId);
     },
   },
 });
 
-export const {
-  setConversations,
-  setMessages,
-  addMessage,
-  setActiveConversation,
-  clearChat,
-} = chatSlice.actions;
-
+export const { setActiveConversation, addMessage } = chatSlice.actions;
 export default chatSlice.reducer;

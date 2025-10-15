@@ -38,11 +38,13 @@ const adminRoutes: RouteObject[] = [
   },{
       path: "projects",
       element: <Projects />,
-    },
-    {
-  path: "chat",
-  element: <CompanyChat />
-}
+    },{
+      path: "chat",
+      element: <CompanyChat />,
+    }
+    
+    
 ];
 
 export default adminRoutes;
+  

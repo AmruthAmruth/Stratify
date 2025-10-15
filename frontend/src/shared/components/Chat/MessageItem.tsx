@@ -1,7 +1,12 @@
-import { Message } from '@/types/chat';
-import React from 'react';
+import React from "react";
 
+interface Props {
+  content: string;
+  isMine: boolean;
+}
 
-export const MessageItem: React.FC<{ message: Message; currentUserId: string }> = ({ message, currentUserId }) => (
-<div className={`p-2 my-1 rounded ${message.senderId === currentUserId ? 'bg-blue-500 text-white self-end' : 'bg-gray-200 self-start'}`}>{message.content}</div>
+export const MessageItem: React.FC<Props> = ({ content, isMine }) => (
+  <div className={`message ${isMine ? "mine" : "theirs"}`}>
+    {content}
+  </div>
 );

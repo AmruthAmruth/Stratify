@@ -7,9 +7,10 @@ interface AuthenticatedSocket extends Socket {
 }
 
 interface SendMessageDTO {
-  conversationId: string;
+  conversationId?: string;
   content: string;
   type?: "text" | "image" | "file";
+  receiverId?: string;
 }
 
 export class SocketGateway {
@@ -19,51 +20,129 @@ export class SocketGateway {
   ) {}
 
   init() {
+    // -------------------------------
+    // Socket Authentication Middleware
+    // -------------------------------
     this.io.use((socket: Socket, next) => {
       const token = socket.handshake.auth?.token;
       if (!token) return next(new Error("Authentication required"));
 
       try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET!) as { id: string };
+        const decoded = jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!) as { id: string };
         (socket as AuthenticatedSocket).userId = decoded.id;
         next();
-      } catch {
-        next(new Error("Invalid token"));
+      } catch (err) {
+        console.error("❌ Socket authentication failed:", err);
+        next(new Error("Invalid or expired token"));
       }
     });
 
-    this.io.on("connection", (socket: Socket) => {
+    // -------------------------------
+    // Connection Handler 
+    // -------------------------------
+    this.io.on("connection", async (socket: Socket) => {
       const authSocket = socket as AuthenticatedSocket;
-      console.log(`✅ User connected: ${authSocket.userId}`);
+      console.log(`✅ User connected [ID: ${authSocket.userId}]`);
 
+      // Auto-join all user's conversations
+      try {
+        const conversations = await this.useCases.getUserConversationsUseCase.execute(authSocket.userId);
+        conversations.forEach((conv) => {
+          if (conv.id) socket.join(conv.id);
+          else console.warn("⚠️ Skipped conversation without ID:", conv);
+        });
+      } catch (err) {
+        console.error("⚠️ Failed to auto-join conversations:", err);
+      }
+
+      // -------------------------------
+      // Join a specific conversation
+      // -------------------------------
       socket.on("joinConversation", (conversationId: string) => {
+        if (!conversationId) {
+          socket.emit("joinConversationError", { message: "conversationId is required" });
+          return;
+        }
+
         socket.join(conversationId);
+        socket.emit("joinedConversation", conversationId);
       });
 
+      // -------------------------------
+      // Send message
+      // -------------------------------
       socket.on("sendMessage", async (data: SendMessageDTO) => {
         try {
-          const message = await this.useCases.sendMessageUseCase.execute({
-            conversationId: data.conversationId,
-            senderId: authSocket.userId,
-            content: data.content,
-            type: data.type || "text",
-          });
+          const senderId = authSocket.userId;
+          if (!data.content) throw new Error("Message content is required");
+          if (!data.conversationId && !data.receiverId)
+            throw new Error("Either conversationId or receiverId is required");
 
-          this.io.to(data.conversationId).emit("messageReceived", message);
-        } catch (err: unknown) {
-          if (err instanceof Error) {
-            console.error(err.message);
-            socket.emit("error", err.message);
-          } else {
-            console.error(err);
-            socket.emit("error", "Failed to send message");
+          let conversationId = data.conversationId;
+
+          // ✅ Find or create conversation with real MongoDB ID
+          if (!conversationId && data.receiverId) {
+            const conversation = await this.useCases.createConversationUseCase.execute({
+              isGroup: false,
+              members: [senderId, data.receiverId],
+              lastMessage: "",
+            });
+
+            conversationId = conversation.id;
           }
+
+          if (!conversationId) throw new Error("Failed to determine conversation ID");
+
+          // ✅ Save message
+          const message = await this.useCases.sendMessageUseCase.execute(
+            {
+              conversationId,
+              senderId,
+              content: data.content,
+              type: data.type || "text",
+            },
+            data.receiverId
+          );
+
+          // ✅ Join and emit to all sockets in the room
+          socket.join(conversationId);
+          this.io.to(conversationId).emit("messageReceived", message);
+
+          // ✅ Ensure receiver socket receives message if online
+          if (data.receiverId) {
+            const receiverSocket = Array.from(this.io.sockets.sockets.values()).find(
+              (s) => (s as AuthenticatedSocket).userId === data.receiverId
+            ) as AuthenticatedSocket | undefined;
+
+            if (receiverSocket && !receiverSocket.rooms.has(conversationId)) {
+              receiverSocket.join(conversationId);
+            }
+
+            receiverSocket?.emit("messageReceived", message);
+          }
+
+          console.log(`📤 Message sent from ${senderId} in conversation ${conversationId}`);
+        } catch (err: unknown) {
+          const msg = err instanceof Error ? err.message : "Failed to send message";
+          console.error("❌ sendMessage error:", msg);
+          socket.emit("sendMessageError", { message: msg });
         }
       });
 
+      // -------------------------------
+      // Disconnect
+      // -------------------------------
       socket.on("disconnect", () => {
-        console.log(`❌ User disconnected: ${authSocket.userId}`);
+        console.log(`❌ User disconnected [ID: ${authSocket.userId}]`);
       });
+    });
+
+    // -------------------------------
+    // Global Socket Error Logging
+    // -------------------------------
+    this.io.on("connect_error", (err) => {
+      console.error("⚠️ Socket connection error:", err.message);
     });
   }
 }
+ 

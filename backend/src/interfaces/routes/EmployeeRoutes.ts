@@ -12,3 +12,4 @@ employeeRouter.get("/unassigned-managers", authMiddleware(["company"]), asyncHan
 employeeRouter.get("/member-for-manager",authMiddleware(["manager"]),asyncHandler(controller.getMembersForManager))
 employeeRouter.get("/member-for-employee",authMiddleware(["employee"]),asyncHandler(controller.getMemberForEmployee))
 export default employeeRouter;
+

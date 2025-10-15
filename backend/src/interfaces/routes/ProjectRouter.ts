@@ -28,7 +28,7 @@ projectRouter.get("/employee-out-project/:id",asyncHandler(controller.getEmploye
 projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 
 export default projectRouter;
-
+ 
 
 
 

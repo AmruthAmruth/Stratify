@@ -32,9 +32,9 @@ const managerRoutes: RouteObject[] = [
     element: <DepartmentLeaves />,
   },
   {
-  path: "chat",
-  element: <ManagerChat />
-}
+    path: "/chat",
+    element: <ManagerChat />,
+  }
 
 ];
 

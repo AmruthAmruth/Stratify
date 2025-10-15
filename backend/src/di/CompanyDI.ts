@@ -11,6 +11,7 @@ import { UnapproveCompany } from "../application/use-cases/company/UnApproveComp
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
 import { CompanyController } from "../interfaces/controllers/CompanyController";
+import { GetMemberForCompanyUseCase } from "../application/use-cases/chat/GetMemberForCompanyUseCase";
 
 export const companyDI = () => {
   const companyRepo = new companyRepository();
@@ -25,13 +26,14 @@ export const companyDI = () => {
   const unapproveCompanyUseCase = new UnapproveCompany(emailService, companyRepo);
   const getCompanyMembers = new GetCompanyMemebersUseCase(managerRepo, employeeRepo, departmentRepo);
   const getTeamMemberProfile = new GetProfileUseCase(managerRepo, employeeRepo, departmentRepo);
-   
+   const getMemberForCompanyUseCase = new GetMemberForCompanyUseCase(companyRepo,employeeRepo,managerRepo)
   return new CompanyController(
     getCompanyById,
     getPaginatedCompaniesUseCase,
     approveCompanyUseCase,
     unapproveCompanyUseCase,
     getCompanyMembers,
-    getTeamMemberProfile
+    getTeamMemberProfile,
+    getMemberForCompanyUseCase
   );
 };

@@ -1,7 +1,6 @@
 import { Message } from "../../../domain/entities/Message";
 import { IConversationRepository } from "../../../domain/repositories/IConversationRepository";
 import { IMessageRepository } from "../../../domain/repositories/IMessageRepository";
-import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { ISendMessageUseCase } from "../../interfaces/chat/ISendMessageUseCase";
 
 export class SendMessageUseCase implements ISendMessageUseCase {
@@ -11,17 +10,41 @@ export class SendMessageUseCase implements ISendMessageUseCase {
   ) {}
 
   async execute(
-    data: Omit<Message, "id" | "createdAt" | "updatedAt">
+    data: Omit<Message, "id" | "createdAt" | "updatedAt">,
+    receiverId?: string
   ): Promise<Message> {
-    const conversation = await this._conversationRepository.findById(
-      data.conversationId
-    );
-    if (!conversation) throw new AppError("Conversation not found", 404);
-    const message = await this._messageRepository.create(data);
-    await this._conversationRepository.updateLastMessage(
-      data.conversationId,
-      data.content
-    );
+    let conversation = data.conversationId
+      ? await this._conversationRepository.findById(data.conversationId)
+      : null;
+
+    // If conversation not found, use receiverId to find or create one
+    if (!conversation) {
+      if (!receiverId) throw new Error("receiverId is required to create a new conversation");
+
+      conversation = await this._conversationRepository.findByMembers([data.senderId, receiverId]);
+
+      if (!conversation) {
+        conversation = await this._conversationRepository.create({
+          members: [data.senderId, receiverId],
+          isGroup: false,
+          name: "",
+        });
+      }
+    }
+
+    if (!conversation.id) throw new Error("Conversation ID missing after creation");
+
+    // Create the message and update conversation's lastMessage atomically
+    const [message] = await Promise.all([
+      this._messageRepository.create({
+        conversationId: conversation.id,
+        senderId: data.senderId,
+        content: data.content,
+        type: data.type,
+      }),
+      this._conversationRepository.updateLastMessage(conversation.id, data.content),
+    ]);
+
     return message;
   }
 }
