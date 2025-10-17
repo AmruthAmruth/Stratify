@@ -5,19 +5,21 @@ export interface ISuperAdmin extends Document {
   profileImage?: string;
   email: string;
   password: string;
-  createdAt:Date;
+  createdAt: Date;
 }
 
+const SuperAdminSchema: Schema = new Schema(
+  {
+    email: { type: String, require: true, unique: true, lowercase: true },
+    password: { type: String, require: true },
+    name: { type: String },
+    profileImage: { type: String },
+  },
+  { timestamps: true },
+);
 
-const SuperAdminSchema:Schema=new Schema(
-    {
-        email:{type:String,require:true,unique:true,lowercase:true},
-        password:{type:String,require:true},
-        name:{type:String},
-        profileImage:{type:String}
-    },
-    {timestamps:true}
-)
-
-const SuperAdminModel = mongoose.model<ISuperAdmin>('SuperAdmin',SuperAdminSchema);
+const SuperAdminModel = mongoose.model<ISuperAdmin>(
+  "SuperAdmin",
+  SuperAdminSchema,
+);
 export default SuperAdminModel;

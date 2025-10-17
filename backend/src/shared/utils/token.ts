@@ -1,7 +1,7 @@
 import jwt from "jsonwebtoken";
 
-const ACCESS_TOKEN_EXPIRY = "15m";   
-const REFRESH_TOKEN_EXPIRY = "7d";   
+const ACCESS_TOKEN_EXPIRY = "15m";
+const REFRESH_TOKEN_EXPIRY = "7d";
 
 export interface TokenPayload {
   id: string;
@@ -20,14 +20,10 @@ export const generateRefreshToken = (payload: TokenPayload): string => {
   });
 };
 
-export const verifyAccessToken = (
-  token: string
-): string | jwt.JwtPayload => {
+export const verifyAccessToken = (token: string): string | jwt.JwtPayload => {
   return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET!);
 };
 
-export const verifyRefreshToken = (
-  token: string
-): string | jwt.JwtPayload => {
+export const verifyRefreshToken = (token: string): string | jwt.JwtPayload => {
   return jwt.verify(token, process.env.REFRESH_TOKEN_SECRET!);
 };

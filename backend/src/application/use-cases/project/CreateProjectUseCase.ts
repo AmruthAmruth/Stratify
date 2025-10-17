@@ -16,7 +16,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
-    private _employeeRepo: IEmployeeRepository
+    private _employeeRepo: IEmployeeRepository,
   ) {}
 
   async execute(projectDTO: CreateProjectDTO): Promise<Project> {
@@ -31,8 +31,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       createdByModel = "Company";
     }
 
-    console.log("Project DTO",projectDTO);
-    
+    console.log("Project DTO", projectDTO);
 
     if (!creatorExists) {
       const manager = await this._managerRepo.findById(projectDTO.createdBy);
@@ -43,12 +42,12 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       }
     }
 
-    if (!creatorExists || !companyId || !createdByModel) { 
+    if (!creatorExists || !companyId || !createdByModel) {
       throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
     }
 
     const department = await this._departmentRepo.findById(
-      projectDTO.departmentId
+      projectDTO.departmentId,
     );
     if (!department) {
       throw new AppError("Department not found", StatusCodes.NOT_FOUND);
@@ -59,25 +58,24 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 
     const existingProjectName = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
-      companyId
+      companyId,
     );
     if (existingProjectName) {
       throw new AppError(
         "Project name already exists for this company",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
     const existingProjectKey = await this._projectRepo.findByKeyAndCompany(
       projectDTO.key,
-      companyId
+      companyId,
     );
 
     if (existingProjectKey) {
-     
       throw new AppError(
         "Project Key name already exists for this company",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -85,7 +83,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       this._employeeRepo,
       projectDTO.teamMemberIds,
       companyId,
-      "Team member"
+      "Team member",
     );
 
     const now = new Date();
@@ -105,7 +103,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       companyId,
       projectDTO.teamMemberIds ?? [],
       now,
-      now
+      now,
     );
 
     return await this._projectRepo.create(project);

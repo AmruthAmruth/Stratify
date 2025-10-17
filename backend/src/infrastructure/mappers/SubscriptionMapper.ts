@@ -11,7 +11,7 @@ export class SubscriptionMapper {
       doc.status as "active" | "expired" | "trial" | "cancelled",
       doc.plan,
       doc.amount,
-      doc.paymentId
+      doc.paymentId,
     );
   }
 

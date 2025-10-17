@@ -4,27 +4,29 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { CreatePlanDTO } from "../../dto/subscriptions/CreatePlanDTO";
 import { ICreatePlanUseCase } from "../../interfaces/subscriptions/ICreatePlanUseCase";
 
+export class CreatePlanUseCase implements ICreatePlanUseCase {
+  constructor(private _planPriceRepo: IPlanPriceRepository) {}
 
-
-export class CreatePlanUseCase implements ICreatePlanUseCase{
-    constructor(
-        private _planPriceRepo:IPlanPriceRepository
-    ){}
-
-    async execute(input: CreatePlanDTO): Promise<PlanPrice> {
-        
-        const existingPlan = await this._planPriceRepo.getPlan(input.plan);
+  async execute(input: CreatePlanDTO): Promise<PlanPrice> {
+    const existingPlan = await this._planPriceRepo.getPlan(input.plan);
     if (existingPlan) {
       throw new AppError(`Plan "${input.plan}" already exists`);
     }
 
+    const plan = new PlanPrice(
+      input.plan,
+      input.description,
+      input.amount,
+      input.durationInMonths,
+    );
 
-    const plan = new PlanPrice(input.plan,input.description, input.amount, input.durationInMonths);
-
-
- await this._planPriceRepo.setPlan(plan.plan, plan.description, plan.amount, plan.durationInMonths);
+    await this._planPriceRepo.setPlan(
+      plan.plan,
+      plan.description,
+      plan.amount,
+      plan.durationInMonths,
+    );
 
     return plan;
-
-    }
+  }
 }

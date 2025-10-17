@@ -15,7 +15,6 @@ export interface ProjectDetailsDTO {
   plannedSprints: SprintWithIssuesDTO[];
   completedSprints: SprintWithIssuesDTO[];
 
-
   activeSprintCount: number;
   plannedSprintCount: number;
   completedSprintCount: number;

@@ -13,7 +13,7 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
     private _backlogRepo: IBacklogRepository,
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
-    private _projectRepo: IProjectRepository
+    private _projectRepo: IProjectRepository,
   ) {}
 
   async execute(backlogDTO: CreateBacklogDTO): Promise<Backlog> {
@@ -49,18 +49,18 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
     if (project.companyId !== companyId) {
       throw new AppError(
         "Project does not belong to the creator's company",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
     const existingBacklog = await this._backlogRepo.findByNameAndProject(
       backlogDTO.name,
-      backlogDTO.projectId
+      backlogDTO.projectId,
     );
     if (existingBacklog) {
       throw new AppError(
         "Backlog name already exists in this project",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -71,7 +71,7 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
       backlogDTO.description,
       backlogDTO.createdBy,
       new Date(),
-      new Date()
+      new Date(),
     );
 
     return await this._backlogRepo.create(backlog);

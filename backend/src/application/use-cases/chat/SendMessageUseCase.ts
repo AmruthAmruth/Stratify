@@ -6,22 +6,25 @@ import { ISendMessageUseCase } from "../../interfaces/chat/ISendMessageUseCase";
 export class SendMessageUseCase implements ISendMessageUseCase {
   constructor(
     private _messageRepository: IMessageRepository,
-    private _conversationRepository: IConversationRepository
+    private _conversationRepository: IConversationRepository,
   ) {}
 
   async execute(
     data: Omit<Message, "id" | "createdAt" | "updatedAt">,
-    receiverId?: string
+    receiverId?: string,
   ): Promise<Message> {
     let conversation = data.conversationId
       ? await this._conversationRepository.findById(data.conversationId)
       : null;
 
-    // If conversation not found, use receiverId to find or create one
     if (!conversation) {
-      if (!receiverId) throw new Error("receiverId is required to create a new conversation");
+      if (!receiverId)
+        throw new Error("receiverId is required to create a new conversation");
 
-      conversation = await this._conversationRepository.findByMembers([data.senderId, receiverId]);
+      conversation = await this._conversationRepository.findByMembers([
+        data.senderId,
+        receiverId,
+      ]);
 
       if (!conversation) {
         conversation = await this._conversationRepository.create({
@@ -32,9 +35,9 @@ export class SendMessageUseCase implements ISendMessageUseCase {
       }
     }
 
-    if (!conversation.id) throw new Error("Conversation ID missing after creation");
+    if (!conversation.id)
+      throw new Error("Conversation ID missing after creation");
 
-    // Create the message and update conversation's lastMessage atomically
     const [message] = await Promise.all([
       this._messageRepository.create({
         conversationId: conversation.id,
@@ -42,7 +45,10 @@ export class SendMessageUseCase implements ISendMessageUseCase {
         content: data.content,
         type: data.type,
       }),
-      this._conversationRepository.updateLastMessage(conversation.id, data.content),
+      this._conversationRepository.updateLastMessage(
+        conversation.id,
+        data.content,
+      ),
     ]);
 
     return message;

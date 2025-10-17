@@ -6,6 +6,6 @@ export class Message {
     public content: string,
     public type: "text" | "image" | "file" = "text",
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
   ) {}
 }

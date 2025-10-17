@@ -51,6 +51,7 @@ export const PROJECT_ROUTES = {
   DEPARTMENT_PROJECTS: "/api/project/department-projects",
   PROJECT_DETAILS: (id: string) => `/api/project/project/${id}`,
   CREATE_PROJECT: "/api/project/create-project",
+  UPDATE_PROJECT:"/api/project/project",
   CREATE_SUB_TASK: "/api/project/create-sub-task",
   CREATE_SPRINT: "/api/project/create-sprint",
   ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
@@ -71,3 +72,12 @@ export const LEAVE_ROUTES = {
   GET_DEPARTMENT_LEAVE: "/api/leave/department-leaves",
   LEAVE_STATUS_UPDATE: "/api/leave/leave-status",
 };
+
+
+
+
+export const CHAT_ROUTES={
+  CHAT_FOR_MANAGER:"/api/employee/member-for-manager",
+  CHAT_FOR_EMPLOYEE:"/api/employee/member-for-employee",
+  CHAT_FOR_COMPANY:"/api/company/member-for-company"
+}

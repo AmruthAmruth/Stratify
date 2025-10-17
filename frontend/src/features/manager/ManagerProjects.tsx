@@ -7,6 +7,7 @@ import {
   deleteProject,
   getDepartmentProjects,
   projectLevelTeamAllocation,
+  updateProject
 } from "@/services/projects";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
@@ -40,6 +41,10 @@ interface Project {
   projectLead?: string;
   departmentName?: string;
   remainingTimeInDays?: number;
+  key: string;
+  startDate: string;
+  endDate: string;
+  teamMemberIds: string[];
 }
 
 interface ProjectsData {
@@ -74,6 +79,10 @@ interface CreateProjectPayload {
   teamMemberIds: string[];
 }
 
+interface UpdateProjectPayload extends CreateProjectPayload {
+  id: string;
+}
+
 // ============================================================================
 // CONSTANTS
 // ============================================================================
@@ -85,6 +94,10 @@ const INITIAL_PROJECTS_STATE: ProjectsData = {
 };
 
 const ITEMS_PER_PAGE = 6;
+
+const SNACKBAR_OPTIONS = {
+  anchorOrigin: { vertical: "top" as const, horizontal: "right" as const },
+};
 
 // ============================================================================
 // MAIN COMPONENT
@@ -111,6 +124,7 @@ const ManagerProjects: React.FC = () => {
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [editingProject, setEditingProject] = useState<Project | null>(null);
 
   // Form reset ref
   const formRef = React.useRef<{ resetForm: () => void }>(null);
@@ -119,38 +133,28 @@ const ManagerProjects: React.FC = () => {
   // DATA FETCHING
   // ============================================================================
 
-  useEffect(() => {
-    fetchProjectsAndEmployees();
-  }, []);
-
-  const fetchProjectsAndEmployees = async () => {
+  const fetchProjectsAndEmployees = useCallback(async () => {
     setFetchLoading(true);
     try {
-      const [projectsData, employeesData] = await Promise.allSettled([
+      const [projectsResponse, employeesResponse] = await Promise.all([
         getDepartmentProjects(),
         projectLevelTeamAllocation(),
       ]);
 
-      if (projectsData.status === "fulfilled" && projectsData.value) {
-        setProjects(
-          projectsData.value?.status === "error" || !projectsData.value
-            ? INITIAL_PROJECTS_STATE
-            : projectsData.value
-        );
+      // Handle projects
+      if (projectsResponse && !projectsResponse.status?.includes("error")) {
+        setProjects(projectsResponse);
       } else {
         setProjects(INITIAL_PROJECTS_STATE);
         enqueueSnackbar("Failed to fetch projects.", {
           variant: "error",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
+          ...SNACKBAR_OPTIONS,
         });
       }
 
-      if (
-        employeesData.status === "fulfilled" &&
-        Array.isArray(employeesData.value) &&
-        employeesData.value.length > 0
-      ) {
-        const departmentData: DepartmentEmployeeData[] = employeesData.value;
+      // Handle employees - assume first department or enhance with auth context
+      if (Array.isArray(employeesResponse) && employeesResponse.length > 0) {
+        const departmentData: DepartmentEmployeeData[] = employeesResponse;
         setEmployees(departmentData[0]?.employee || []);
         setDepartmentId(departmentData[0]?.departmentId || "");
       } else {
@@ -158,7 +162,7 @@ const ManagerProjects: React.FC = () => {
         setDepartmentId("");
         enqueueSnackbar("No employees found for this department.", {
           variant: "warning",
-          anchorOrigin: { vertical: "top", horizontal: "right" },
+          ...SNACKBAR_OPTIONS,
         });
       }
     } catch (err) {
@@ -168,12 +172,16 @@ const ManagerProjects: React.FC = () => {
       setDepartmentId("");
       enqueueSnackbar("Failed to load projects and employees.", {
         variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
       });
     } finally {
       setFetchLoading(false);
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchProjectsAndEmployees();
+  }, [fetchProjectsAndEmployees]);
 
   // ============================================================================
   // DELETE PROJECT HANDLERS
@@ -198,14 +206,14 @@ const ManagerProjects: React.FC = () => {
 
       enqueueSnackbar(data?.message || "Project deleted successfully", {
         variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
       });
 
       await fetchProjectsAndEmployees();
     } catch (err: any) {
       enqueueSnackbar(err?.response?.data?.message || err?.message || "Failed to delete project.", {
         variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
       });
     } finally {
       setIsDeleting(false);
@@ -214,38 +222,70 @@ const ManagerProjects: React.FC = () => {
   };
 
   // ============================================================================
-  // FORM SUBMISSION HANDLER
+  // FORM SUBMISSION HANDLERS
   // ============================================================================
 
-  const handleCreateProject = async (formValues: CreateProjectFormValues) => {
-    const teamMemberIds = formValues.teamMemberIds || [];
+  const handleUpdateProject = async (formValues: CreateProjectFormValues) => {
+    console.log("Form values",formValues);
     
-    if (teamMemberIds.length === 0) {
-      enqueueSnackbar("Please select at least one team member", {
+    if (!editingProject || !departmentId) return;
+
+    setSubmitLoading(true);
+    try {
+      // Dates are sent as full ISO strings - backend should handle
+      const payload: UpdateProjectPayload = {
+        id: editingProject.id,
+        name: formValues.name,
+        key: formValues.key,
+        description: formValues.description,
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        departmentId: departmentId,
+        status: formValues.status || editingProject.status as CreateProjectFormValues["status"],
+        teamMemberIds: formValues.teamMemberIds || [],
+      };
+
+      console.log("UPDATE PAYLOAD", payload);
+
+      const data = await updateProject(payload);
+
+      enqueueSnackbar(data?.message || "Project updated successfully!", {
+        variant: "success",
+        ...SNACKBAR_OPTIONS,
+      });
+
+      await fetchProjectsAndEmployees();
+      closeModal();
+    } catch (err: any) {
+      enqueueSnackbar(err?.message || "Failed to update project.", {
         variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
+      });
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
+
+  const handleCreateProject = async (formValues: CreateProjectFormValues) => {
+    if (!departmentId) {
+      enqueueSnackbar("Department not available. Cannot create project.", {
+        variant: "error",
+        ...SNACKBAR_OPTIONS,
       });
       return;
     }
 
     setSubmitLoading(true);
     try {
-      // Validate dates
-      const startDate = new Date(formValues.startDate);
-      const endDate = new Date(formValues.endDate);
-      if (isNaN(startDate.getTime()) || isNaN(endDate.getTime())) {
-        throw new Error("Invalid start or end date.");
-      }
-
       const payload: CreateProjectPayload = {
         name: formValues.name,
         key: formValues.key,
         description: formValues.description,
-        startDate: startDate.toISOString(),
-        endDate: endDate.toISOString(),
-        departmentId: departmentId || projects.departmentId || "",
+        startDate: formValues.startDate,
+        endDate: formValues.endDate,
+        departmentId: departmentId,
         status: formValues.status || "Planned",
-        teamMemberIds: teamMemberIds,
+        teamMemberIds: formValues.teamMemberIds || [],
       };
 
       console.log("PAYLOAD", payload);
@@ -254,16 +294,15 @@ const ManagerProjects: React.FC = () => {
 
       enqueueSnackbar(data?.message || "Project created successfully!", {
         variant: "success",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
       });
 
       await fetchProjectsAndEmployees();
-      setIsProjectModalOpen(false);
-      formRef.current?.resetForm();
+      closeModal();
     } catch (err: any) {
       enqueueSnackbar(err?.message || "Failed to create project.", {
         variant: "error",
-        anchorOrigin: { vertical: "top", horizontal: "right" },
+        ...SNACKBAR_OPTIONS,
       });
     } finally {
       setSubmitLoading(false);
@@ -289,8 +328,14 @@ const ManagerProjects: React.FC = () => {
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortBy) return 0;
-    const aValue = a[sortBy as keyof Project] || "";
-    const bValue = b[sortBy as keyof Project] || "";
+    let aValue = a[sortBy as keyof Project] ?? "";
+    let bValue = b[sortBy as keyof Project] ?? "";
+
+    // Handle dates specifically
+    if (sortBy === "startDate" || sortBy === "endDate") {
+      aValue = new Date(aValue as string).getTime();
+      bValue = new Date(bValue as string).getTime();
+    }
 
     if (typeof aValue === "string" && typeof bValue === "string") {
       return sortOrder === "asc"
@@ -316,12 +361,29 @@ const ManagerProjects: React.FC = () => {
   // ============================================================================
 
   const openModal = () => {
+    setEditingProject(null);
+    setIsProjectModalOpen(true);
+  };
+
+  const openEditModal = (project: Project) => {
+    // Ensure employees are loaded before opening edit modal
+    if (employees.length === 0) {
+      enqueueSnackbar("Loading employee data. Please try again shortly.", {
+        variant: "warning",
+        ...SNACKBAR_OPTIONS,
+      });
+      return;
+    }
+    setEditingProject(project);
     setIsProjectModalOpen(true);
   };
 
   const closeModal = () => {
     setIsProjectModalOpen(false);
     formRef.current?.resetForm();
+    setTimeout(() => {
+      setEditingProject(null);
+    }, 300);
   };
 
   const clearFilters = () => {
@@ -353,6 +415,28 @@ const ManagerProjects: React.FC = () => {
     },
   ];
 
+  // Helper to format date to full ISO for consistency
+  const formatDateForInput = (dateString: string) => {
+    if (!dateString) return "";
+    const date = new Date(dateString);
+    if (isNaN(date.getTime())) return "";
+    return date.toISOString();
+  };
+
+  console.log("Edit project ", editingProject);
+  
+  const initialFormValues = editingProject
+    ? {
+        name: editingProject.projectName,
+        key: editingProject.key,
+        description: editingProject.projectDescription,
+        startDate: formatDateForInput(editingProject.startDate),
+        endDate: formatDateForInput(editingProject.endDate),
+        status: editingProject.status as "Planned" | "Active" | "Completed" | "Archived",
+        teamMemberIds: editingProject.teamMemberIds || [],
+      }
+    : undefined;
+
   // ============================================================================
   // RENDER
   // ============================================================================
@@ -372,7 +456,7 @@ const ManagerProjects: React.FC = () => {
         <button
           onClick={openModal}
           className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
-          disabled={submitLoading}
+          disabled={submitLoading || !departmentId}
         >
           + Create Project
         </button>
@@ -425,6 +509,8 @@ const ManagerProjects: React.FC = () => {
               { key: "projectLead", label: "Project Lead" },
               { key: "departmentName", label: "Department" },
               { key: "remainingTimeInDays", label: "Remaining Days" },
+              { key: "startDate", label: "Start Date" },
+              { key: "endDate", label: "End Date" },
             ]}
             sortBy={sortBy}
             setSortBy={setSortBy}
@@ -454,7 +540,7 @@ const ManagerProjects: React.FC = () => {
               {
                 label: "Edit",
                 type: "edit",
-                onClick: (row) => alert(`Editing ${row.projectName}`),
+                onClick: (row) => openEditModal(row),
               },
               {
                 label: "Delete",
@@ -467,30 +553,38 @@ const ManagerProjects: React.FC = () => {
         </>
       )}
 
-      {/* Create Project Modal */}
-      <Modal isOpen={isProjectModalOpen} onClose={closeModal} title="Create Project">
-        <div className="space-y-4">
-          <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-gray-50">
-            <AuthForm
-              fields={createProjectFormFields}
-              validationSchema={createProjectSchema}
-              onSubmit={handleCreateProject}
-              buttonText="Create Project"
-              disabled={submitLoading}
-              formRef={formRef}
-            />
-          </div>
-
-          {submitLoading && (
-            <div className="flex justify-center mt-4">
-              <div
-                className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin"
-                style={{ borderColor: "#009063" }}
+      {/* Create/Edit Project Modal */}
+      {isProjectModalOpen && (
+        <Modal 
+          isOpen={isProjectModalOpen} 
+          onClose={closeModal} 
+          title={editingProject ? "Edit Project" : "Create Project"}
+        >
+          <div className="space-y-4">
+            <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-gray-50">
+              <AuthForm
+                key={editingProject?.id || 'new'}
+                fields={createProjectFormFields}
+                validationSchema={createProjectSchema}
+                onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
+                buttonText={editingProject ? "Update Project" : "Create Project"}
+                disabled={submitLoading}
+                formRef={formRef} 
+                initialValues={initialFormValues}   
               />
             </div>
-          )}
-        </div>
-      </Modal>
+
+            {submitLoading && (
+              <div className="flex justify-center mt-4">
+                <div
+                  className="w-6 h-6 border-2 border-t-transparent rounded-full animate-spin"
+                  style={{ borderColor: "#009063" }}
+                />
+              </div>
+            )}
+          </div>
+        </Modal>
+      )}
 
       {/* Confirm Delete Dialog */}
       <ConfirmDialog

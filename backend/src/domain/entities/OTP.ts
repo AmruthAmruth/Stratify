@@ -1,42 +1,11 @@
+export class OTP {
+  constructor(
+    public email: string,
+    public code: string,
+    public expiresAt: Date,
+  ) {}
 
-
-export class OTP{
-    constructor(
-        public email:string,
-        public code:string,
-        public expiresAt:Date
-    ){}
-
-    isExpired():boolean{
-        return new Date()>this.expiresAt
-    }
+  isExpired(): boolean {
+    return new Date() > this.expiresAt;
+  }
 }
-
-
-
-
-
-
-
-
-
- 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

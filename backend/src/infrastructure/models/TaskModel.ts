@@ -13,18 +13,25 @@ export interface TaskDocument extends Document {
 
 const TaskSchema = new Schema<TaskDocument>(
   {
-    userStoryId: { type: Schema.Types.ObjectId, ref: "UserStory", required: true },
+    userStoryId: {
+      type: Schema.Types.ObjectId,
+      ref: "UserStory",
+      required: true,
+    },
     title: { type: String, required: true },
     description: { type: String },
-    status: { type: String, enum: ["To Do", "In Progress", "Done"], default: "To Do" },
+    status: {
+      type: String,
+      enum: ["To Do", "In Progress", "Done"],
+      default: "To Do",
+    },
     assignedToId: { type: Schema.Types.ObjectId, ref: "User" },
     normalizedTitle: { type: String, lowercase: true, default: "" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 TaskSchema.index({ userStoryId: 1, normalizedTitle: 1 }, { unique: true });
-
 
 TaskSchema.pre("save", function (next) {
   if (this.title) {

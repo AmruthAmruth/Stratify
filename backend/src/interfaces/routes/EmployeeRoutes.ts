@@ -6,10 +6,29 @@ import { employeeDI } from "../../di/EmployeeDI";
 const employeeRouter = Router();
 const controller = employeeDI();
 
-employeeRouter.post("/create-manager", authMiddleware(["company"]), asyncHandler(controller.createManager));
-employeeRouter.post("/create-employee", authMiddleware(["company", "manager"]), asyncHandler(controller.createEmployee));
-employeeRouter.get("/unassigned-managers", authMiddleware(["company"]), asyncHandler(controller.getUnassignedManagers));
-employeeRouter.get("/member-for-manager",authMiddleware(["manager"]),asyncHandler(controller.getMembersForManager))
-employeeRouter.get("/member-for-employee",authMiddleware(["employee"]),asyncHandler(controller.getMemberForEmployee))
+employeeRouter.post(
+  "/create-manager",
+  authMiddleware(["company"]),
+  asyncHandler(controller.createManager),
+);
+employeeRouter.post(
+  "/create-employee",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.createEmployee),
+);
+employeeRouter.get(
+  "/unassigned-managers",
+  authMiddleware(["company"]),
+  asyncHandler(controller.getUnassignedManagers),
+);
+employeeRouter.get(
+  "/member-for-manager",
+  authMiddleware(["manager"]),
+  asyncHandler(controller.getMembersForManager),
+);
+employeeRouter.get(
+  "/member-for-employee",
+  authMiddleware(["employee"]),
+  asyncHandler(controller.getMemberForEmployee),
+);
 export default employeeRouter;
-

@@ -5,7 +5,7 @@ export interface ManagerDocument extends Document {
   email: string;
   phone: string;
   password: string;
-  role: "manager";  
+  role: "manager";
   position: string;
   joiningDate: Date;
   gender: "male" | "female" | "other";
@@ -23,7 +23,12 @@ const ManagerSchema = new Schema<ManagerDocument>(
     email: { type: String, required: true, unique: true, lowercase: true },
     phone: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    role: { type: String, enum: ["manager"], default: "manager", required: true },
+    role: {
+      type: String,
+      enum: ["manager"],
+      default: "manager",
+      required: true,
+    },
     position: { type: String, required: true },
     joiningDate: { type: Date, required: true },
     gender: { type: String, enum: ["male", "female", "other"], required: true },
@@ -32,14 +37,13 @@ const ManagerSchema = new Schema<ManagerDocument>(
     departmentId: { type: Schema.Types.ObjectId, ref: "Department" },
     profileImage: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
 
 ManagerSchema.index({ companyId: 1, email: 1 }, { unique: true });
 ManagerSchema.index({ companyId: 1, phone: 1 }, { unique: true });
 
 export const ManagerModel = mongoose.model<ManagerDocument>(
   "Manager",
-  ManagerSchema
+  ManagerSchema,
 );

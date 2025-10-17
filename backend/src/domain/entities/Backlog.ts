@@ -6,6 +6,6 @@ export class Backlog {
     public description: string,
     public createdBy: string,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
   ) {}
 }

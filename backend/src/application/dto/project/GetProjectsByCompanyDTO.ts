@@ -1,11 +1,11 @@
 export interface GetProjectsByCompanyDTO {
-  id:string | undefined;
+  id: string | undefined;
   projectName: string;
   projectDescription: string;
   departmentName: string;
   projectLead: string;
   status: "Planned" | "Active" | "Completed" | "Archived";
-  remainingTimeInDays: number; 
+  remainingTimeInDays: number;
 }
 
 export interface GetProjectsByCompanyResponse {
@@ -16,6 +16,5 @@ export interface GetProjectsByCompanyResponse {
     active: number;
     completed: number;
     archived: number;
-   
   };
 }

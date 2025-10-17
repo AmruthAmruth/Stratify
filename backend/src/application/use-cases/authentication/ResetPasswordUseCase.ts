@@ -15,14 +15,17 @@ export class ResetPasswordUseCase {
   constructor(
     private readonly _companyRepository: ICompanyRepository,
     private readonly _managerRepository: IManagerRepository,
-    private readonly _employeeRepository: IEmployeeRepository
+    private readonly _employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(email: string, password: string): Promise<boolean> {
-    
-    let user: UserType | null = await this._companyRepository.findByEmail(email);
-    let repo: ICompanyRepository | IManagerRepository | IEmployeeRepository | null =
-      this._companyRepository;
+    let user: UserType | null =
+      await this._companyRepository.findByEmail(email);
+    let repo:
+      | ICompanyRepository
+      | IManagerRepository
+      | IEmployeeRepository
+      | null = this._companyRepository;
 
     if (!user) {
       user = await this._managerRepository.findByEmail(email);
@@ -36,10 +39,8 @@ export class ResetPasswordUseCase {
 
     if (!user || !repo) throw new AppError(Messages.EMAIL_NOT_FOUND);
 
-   
     const hashedPassword = await hashPassword(password);
 
-   
     await repo.updatePassword(email, hashedPassword);
 
     return true;

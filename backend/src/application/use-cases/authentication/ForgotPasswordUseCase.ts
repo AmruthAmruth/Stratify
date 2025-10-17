@@ -16,12 +16,12 @@ export class ForgotPasswordUseCase {
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
-    private _sendOtpUseCase: SendOtpUseCase
+    private _sendOtpUseCase: SendOtpUseCase,
   ) {}
 
   async execute(email: string): Promise<Date> {
- 
-    let user: UserType | null = await this._companyRepository.findByEmail(email);
+    let user: UserType | null =
+      await this._companyRepository.findByEmail(email);
 
     if (!user) user = await this._managerRepository.findByEmail(email);
     if (!user) user = await this._employeeRepository.findByEmail(email);

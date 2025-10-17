@@ -1,4 +1,3 @@
-
 import { LeaveRepository } from "../infrastructure/repositories/LeaveRepository";
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { EmailService } from "../infrastructure/services/EmailService";
@@ -17,13 +16,21 @@ export const leaveDI = () => {
 
   const createLeaveUseCase = new CreateLeaveUseCase(leaveRepo, employeeRepo);
   const getEmployeeLeaveUseCase = new GetEmployeeLeaveUseCase(leaveRepo);
-  const getDepartmentLeaveUseCase = new GetDepartmentLeaveUseCase(leaveRepo, managerRepo, employeeRepo);
-  const approveLeaveUseCase = new ApproveLeaveUseCase(leaveRepo, employeeRepo, emailService);
+  const getDepartmentLeaveUseCase = new GetDepartmentLeaveUseCase(
+    leaveRepo,
+    managerRepo,
+    employeeRepo,
+  );
+  const approveLeaveUseCase = new ApproveLeaveUseCase(
+    leaveRepo,
+    employeeRepo,
+    emailService,
+  );
 
   return new LeaveController(
     createLeaveUseCase,
     getEmployeeLeaveUseCase,
     getDepartmentLeaveUseCase,
-    approveLeaveUseCase
+    approveLeaveUseCase,
   );
 };

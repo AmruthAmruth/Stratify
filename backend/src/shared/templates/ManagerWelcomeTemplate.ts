@@ -1,9 +1,9 @@
-export const employeeWelcomeTemplate = (
-  employeeName: string,
+export const managerWelcomeTemplate = (
+  managerName: string,
   companyName: string,
-  departmentName: string,
   position: string,
-  tempPassword: string
+  tempPassword: string,
+  departmentName?: string,
 ): string => {
   return `
   <!DOCTYPE html>
@@ -20,41 +20,52 @@ export const employeeWelcomeTemplate = (
               
               <!-- Header -->
               <tr>
-                <td style="background-color: #28a745; padding: 20px; text-align: center; color: #fff; font-size: 22px; font-weight: bold;">
-                  👋 Welcome to ${companyName}!
+                <td style="background-color: #007bff; padding: 20px; text-align: center; color: #fff; font-size: 22px; font-weight: bold;">
+                  👔 Welcome to ${companyName}!
                 </td>
               </tr>
               
               <!-- Body -->
               <tr>
                 <td style="padding: 30px; color: #333; font-size: 15px; line-height: 1.6;">
-                  <p>Dear <strong>${employeeName}</strong>,</p>
+                  <p>Dear <strong>${managerName}</strong>,</p>
                   <p>
-                    We’re thrilled to welcome you to <strong>${companyName}</strong>!  
-                    You’ve officially joined the <strong>${departmentName}</strong> department  
-                    as our new <strong>${position}</strong>.
+                    We’re pleased to inform you that you have been appointed as a  
+                    <strong>${position}</strong> at <strong>${companyName}</strong>
+                    ${
+                      departmentName
+                        ? ` in the <strong>${departmentName}</strong> department`
+                        : ""
+                    }.
                   </p>
+
                   <p>
-                    Your account has been created. Please use the following  
-                    temporary password to log in:
+                    Your manager account has been created successfully.  
+                    Please use the following temporary password to log in:
                   </p>
+
                   <div style="margin: 20px 0; padding: 15px; background-color: #f8f9fa; border: 1px dashed #ccc; text-align: center; font-size: 16px;">
                     <strong>Temporary Password:</strong><br/>
                     <span style="font-size: 18px; color: #d6336c;">${tempPassword}</span>
                   </div>
+
                   <p>
-                    🔒 For security reasons, please change this password immediately  
-                    after logging in.
+                    🔒 For security purposes, make sure to change your password immediately  
+                    after your first login.
                   </p>
+
                   <p style="text-align: center; margin: 30px 0;">
                     <a href="https://stratify.com/login"
-                       style="background-color: #28a745; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; display: inline-block;">
-                      Login to Your Account
+                       style="background-color: #007bff; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-size: 16px; display: inline-block;">
+                      Login to Manager Portal
                     </a>
                   </p>
+
                   <p>
-                    We look forward to working with you and wish you success in your journey here.  
+                    We’re confident that your leadership will help guide your team  
+                    to success, and we’re excited to see the impact you’ll make.  
                   </p>
+
                   <p>
                     Best regards,<br/>
                     ${companyName} HR Team

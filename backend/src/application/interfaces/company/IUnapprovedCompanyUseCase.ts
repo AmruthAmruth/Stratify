@@ -1,6 +1,3 @@
-
-
-
-export interface IUnapproveCompany{
-    execute(id:string,reason:string):Promise<void>
+export interface IUnapproveCompany {
+  execute(id: string, reason: string): Promise<void>;
 }

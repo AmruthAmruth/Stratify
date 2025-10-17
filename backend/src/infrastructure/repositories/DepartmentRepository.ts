@@ -7,10 +7,13 @@ import { DepartmentMapper } from "../mappers/DepartmentMapper";
 export class DepartmentRepository implements IDepartmentRepository {
   async findByNameAndCompany(
     name: string,
-    companyId: string
+    companyId: string,
   ): Promise<Department | null> {
     const normalizedName = name.toLowerCase().trim();
-    const doc = await DepartmentModel.findOne({ companyId, normalizedName }).exec();
+    const doc = await DepartmentModel.findOne({
+      companyId,
+      normalizedName,
+    }).exec();
     if (!doc) return null;
 
     return DepartmentMapper.toEntity(doc);
@@ -38,7 +41,7 @@ export class DepartmentRepository implements IDepartmentRepository {
     await DepartmentModel.findByIdAndUpdate(
       new Types.ObjectId(departmentId),
       { managerId: new Types.ObjectId(managerId) },
-      { new: true }
+      { new: true },
     ).exec();
   }
 
@@ -47,21 +50,25 @@ export class DepartmentRepository implements IDepartmentRepository {
     return DepartmentMapper.toEntities(docs);
   }
 
-  async getUnassignedDepartments(companyId: string): Promise<{ id: string; name: string }[]> {
+  async getUnassignedDepartments(
+    companyId: string,
+  ): Promise<{ id: string; name: string }[]> {
     const docs = await DepartmentModel.find({
       companyId,
       $or: [{ managerId: { $exists: false } }, { managerId: null }],
     }).select("_id name");
 
-    return docs.map(doc => ({
+    return docs.map((doc) => ({
       id: doc.id.toString(),
       name: doc.name,
     }));
   }
 
-  async findByManagerId(managerId: string): Promise<{ id: string; name: string }[]> {
+  async findByManagerId(
+    managerId: string,
+  ): Promise<{ id: string; name: string }[]> {
     const docs = await DepartmentModel.find({ managerId }).exec();
-    return docs.map(doc => ({
+    return docs.map((doc) => ({
       id: doc.id.toString(),
       name: doc.name,
     }));

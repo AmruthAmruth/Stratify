@@ -24,8 +24,10 @@ const SprintSchema = new Schema<SprintDocument>(
       default: "Planned",
     },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-
-export const SprentModel = mongoose.model<SprintDocument>("Sprint", SprintSchema);
+export const SprentModel = mongoose.model<SprintDocument>(
+  "Sprint",
+  SprintSchema,
+);

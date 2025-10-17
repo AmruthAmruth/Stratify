@@ -11,7 +11,7 @@ export const CreateManagerSchema = z.object({
   gender: z.enum(["male", "female", "other"]),
   dob: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Invalid date format for dob",
-  })
+  }),
 });
 
 export type CreateManagerDTO = z.infer<typeof CreateManagerSchema>;

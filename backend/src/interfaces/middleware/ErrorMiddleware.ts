@@ -2,7 +2,7 @@ import { Request, Response, NextFunction } from "express";
 
 export class AppError extends Error {
   statusCode: number;
-  details?: unknown; 
+  details?: unknown;
 
   constructor(message: string, statusCode: number = 500, details?: unknown) {
     super(message);
@@ -16,7 +16,7 @@ export const errorMiddleware = (
   err: Error | AppError,
   _req: Request,
   res: Response,
-  _next: NextFunction
+  _next: NextFunction,
 ): void => {
   console.error("Error:", err);
 

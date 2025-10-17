@@ -23,7 +23,7 @@ export class BacklogRepository implements IBacklogRepository {
         name: backlog.name,
         description: backlog.description,
       },
-      { new: true }
+      { new: true },
     ).exec();
 
     if (!updated) throw new Error("Backlog not found");
@@ -50,7 +50,10 @@ export class BacklogRepository implements IBacklogRepository {
     await BacklogModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async findByNameAndProject(name: string, projectId: string): Promise<Backlog | null> {
+  async findByNameAndProject(
+    name: string,
+    projectId: string,
+  ): Promise<Backlog | null> {
     const doc = await BacklogModel.findOne({
       name,
       projectId: new Types.ObjectId(projectId),

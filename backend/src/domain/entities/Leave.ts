@@ -12,6 +12,6 @@ export class Leave {
     public month?: number,
     public departmentId?: string,
     public companyId?: string,
-    public rejectedReason?: string 
+    public rejectedReason?: string,
   ) {}
 }

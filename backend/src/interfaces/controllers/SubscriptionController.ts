@@ -13,10 +13,10 @@ export class SubscriptionController {
   constructor(
     private _purchaseSubscriptionUseCase: IPurchaseSubscriptionUseCase,
     private _listSubscriptionPlansUseCase: IListSubscriptionPlansUseCase,
-    private _createPlanUseCase:ICreatePlanUseCase,
-    private _updatePlanUseCase:IUpdatePlanUseCase,
-    private _deletePlanUseCase:IDeletePlanUseCase,
-    private _listCompanisPlanUseCase:ListCompanyPurchasedPlanUseCase
+    private _createPlanUseCase: ICreatePlanUseCase,
+    private _updatePlanUseCase: IUpdatePlanUseCase,
+    private _deletePlanUseCase: IDeletePlanUseCase,
+    private _listCompanisPlanUseCase: ListCompanyPurchasedPlanUseCase,
   ) {}
 
   listPlans = async (_req: Request, res: Response): Promise<void> => {
@@ -29,7 +29,7 @@ export class SubscriptionController {
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
-        errors: result.error.issues.map(issue => ({
+        errors: result.error.issues.map((issue) => ({
           field: issue.path.join("."),
           message: issue.message,
         })),
@@ -39,7 +39,10 @@ export class SubscriptionController {
 
     const companyId = req.userId!;
     const { planName } = req.body;
-    const subscription = await this._purchaseSubscriptionUseCase.execute(planName, companyId);
+    const subscription = await this._purchaseSubscriptionUseCase.execute(
+      planName,
+      companyId,
+    );
     res.status(StatusCodes.CREATED).json({
       message: "Subscription purchased successfully",
       subscription,
@@ -49,45 +52,55 @@ export class SubscriptionController {
   verifyPayment = async (req: AuthRequest, res: Response): Promise<void> => {
     const companyId = req.userId!;
     const { orderId, paymentId, signature, planName } = req.body;
-    const subscription = await this._purchaseSubscriptionUseCase.verifyAndActivate(
-      companyId,
-      planName,
-      orderId,
-      paymentId,
-      signature
-    );
+    const subscription =
+      await this._purchaseSubscriptionUseCase.verifyAndActivate(
+        companyId,
+        planName,
+        orderId,
+        paymentId,
+        signature,
+      );
     res.status(StatusCodes.OK).json({
       message: "Payment verified & subscription activated",
       subscription,
     });
   };
 
-  purchasePlanForUnauthenticated = async (req: Request, res: Response): Promise<void> => {
+  purchasePlanForUnauthenticated = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     const { planName, companyId } = req.body;
-    const subscription = await this._purchaseSubscriptionUseCase.execute(planName, companyId);
+    const subscription = await this._purchaseSubscriptionUseCase.execute(
+      planName,
+      companyId,
+    );
     res.status(StatusCodes.CREATED).json({
       message: "Subscription purchased successfully",
       subscription,
     });
   };
 
-  verifyPaymentForUnauthenticated = async (req: Request, res: Response): Promise<void> => {
+  verifyPaymentForUnauthenticated = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     const { orderId, paymentId, signature, planName, companyId } = req.body;
-    const subscription = await this._purchaseSubscriptionUseCase.verifyAndActivate(
-      companyId,
-      planName,
-      orderId,
-      paymentId,
-      signature
-    );
+    const subscription =
+      await this._purchaseSubscriptionUseCase.verifyAndActivate(
+        companyId,
+        planName,
+        orderId,
+        paymentId,
+        signature,
+      );
     res.status(StatusCodes.OK).json({
       message: "Payment verified & subscription activated",
       subscription,
     });
   };
 
-
-   createPlan = async (req: Request, res: Response) => {
+  createPlan = async (req: Request, res: Response) => {
     const { plan, description, amount, durationInMonths } = req.body;
     const createdPlan = await this._createPlanUseCase.execute({
       plan,
@@ -106,7 +119,12 @@ export class SubscriptionController {
 
   updatePlan = async (req: Request, res: Response) => {
     const { plan, description, amount, durationInMonths } = req.body;
-    await this._updatePlanUseCase.execute(plan, description, amount, durationInMonths);
+    await this._updatePlanUseCase.execute(
+      plan,
+      description,
+      amount,
+      durationInMonths,
+    );
     res.status(StatusCodes.OK).json({ message: "Updated Plan Successfully" });
   };
 
@@ -114,5 +132,4 @@ export class SubscriptionController {
     const response = await this._listCompanisPlanUseCase.execute();
     res.status(StatusCodes.OK).json(response);
   };
-  
 }

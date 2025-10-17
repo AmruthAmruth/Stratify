@@ -14,8 +14,8 @@ export class EmployeeController {
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
-    private _getMemberForManagerUseCase:IGetMemberForMangerUseCase,
-    private _getMemberForEmployeeUseCase:IGetmemberForEmployeeUseCase
+    private _getMemberForManagerUseCase: IGetMemberForMangerUseCase,
+    private _getMemberForEmployeeUseCase: IGetmemberForEmployeeUseCase,
   ) {}
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -23,7 +23,7 @@ export class EmployeeController {
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
-        errors: result.error.issues.map(issue => ({
+        errors: result.error.issues.map((issue) => ({
           field: issue.path.join("."),
           message: issue.message,
         })),
@@ -32,8 +32,13 @@ export class EmployeeController {
     }
 
     const companyId = req.userId;
-    const response = await this._createManagerUseCase.execute({ ...req.body, companyId });
-    res.status(StatusCodes.CREATED).json({ message: "Manager created successfully", response });
+    const response = await this._createManagerUseCase.execute({
+      ...req.body,
+      companyId,
+    });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Manager created successfully", response });
   };
 
   createEmployee = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -41,7 +46,7 @@ export class EmployeeController {
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
-        errors: result.error.issues.map(issue => ({
+        errors: result.error.issues.map((issue) => ({
           field: issue.path.join("."),
           message: issue.message,
         })),
@@ -51,29 +56,43 @@ export class EmployeeController {
 
     const creatorId = req.userId!;
     const employeeDto = req.body;
-    const response = await this._createEmployeeUseCase.execute(employeeDto, creatorId);
-    res.status(StatusCodes.CREATED).json({ message: "Employee created successfully", response });
+    const response = await this._createEmployeeUseCase.execute(
+      employeeDto,
+      creatorId,
+    );
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Employee created successfully", response });
   };
 
-  getUnassignedManagers = async (req: AuthRequest, res: Response): Promise<void> => {
+  getUnassignedManagers = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const companyId = req.userId;
-    const managers = await this._getUnassignedManagersUseCase.execute(companyId!);
+    const managers = await this._getUnassignedManagersUseCase.execute(
+      companyId!,
+    );
     res.status(StatusCodes.OK).json({ managers });
   };
 
-
-  getMembersForManager=async(req:AuthRequest,res:Response):Promise<void>=>{
-    const managerId=req.userId;
+  getMembersForManager = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const managerId = req.userId;
     const response = await this._getMemberForManagerUseCase.execute(managerId!);
-    res.status(StatusCodes.OK).json(response)
-  }
+    res.status(StatusCodes.OK).json(response);
+  };
 
-
-  getMemberForEmployee = async(req:AuthRequest,res:Response):Promise<void>=>{
-    const employeeId=req.userId;
-    const response = await this._getMemberForEmployeeUseCase.execute(employeeId!);
-    res.status(StatusCodes.OK).json(response)
-  }
-
-
+  getMemberForEmployee = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const employeeId = req.userId;
+    const response = await this._getMemberForEmployeeUseCase.execute(
+      employeeId!,
+    );
+    res.status(StatusCodes.OK).json(response);
+  };
 }

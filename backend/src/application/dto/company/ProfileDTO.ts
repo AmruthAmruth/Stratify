@@ -7,11 +7,11 @@ export interface ProfileDTO {
   position: string;
   companyId: string;
   departmentId?: string;
-  departmentName?: string; 
+  departmentName?: string;
   profileImage?: string;
   dob: Date;
   gender?: string;
   joiningDate: Date;
-  experience?: number; 
-  age?: number;        
+  experience?: number;
+  age?: number;
 }

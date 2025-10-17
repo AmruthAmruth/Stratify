@@ -3,37 +3,38 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { CompanyMembersDTO, MemberDTO } from "../../dto/company/CompanyMembersDTO";
+import {
+  CompanyMembersDTO,
+  MemberDTO,
+} from "../../dto/company/CompanyMembersDTO";
 import { IGetCompanyMemebersUseCase } from "../../interfaces/company/IGetCompanyMembersUseCase";
 
-
-export class GetCompanyMemebersUseCase implements IGetCompanyMemebersUseCase{
-
-    constructor(
-        private _managerRepo:IManagerRepository,
-        private _employeeRepo:IEmployeeRepository,
-        private _departmentRepo:IDepartmentRepository
-
-    ){}
-    async execute(companyId: string): Promise<CompanyMembersDTO> {
-       if (!companyId) {
+export class GetCompanyMemebersUseCase implements IGetCompanyMemebersUseCase {
+  constructor(
+    private _managerRepo: IManagerRepository,
+    private _employeeRepo: IEmployeeRepository,
+    private _departmentRepo: IDepartmentRepository,
+  ) {}
+  async execute(companyId: string): Promise<CompanyMembersDTO> {
+    if (!companyId) {
       throw new AppError("Company ID is required", StatusCodes.FORBIDDEN);
     }
 
     const managers = await this._managerRepo.findByCompanyId(companyId);
     const employees = await this._employeeRepo.findByCompanyId(companyId);
 
-if ((!managers || managers.length === 0) && (!employees || employees.length === 0)) {
+    if (
+      (!managers || managers.length === 0) &&
+      (!employees || employees.length === 0)
+    ) {
       throw new AppError("No members found for this company", 404);
     }
 
-
-     const getDepartmentName = async (departmentId?: string) => {
+    const getDepartmentName = async (departmentId?: string) => {
       if (!departmentId) return undefined;
       const dept = await this._departmentRepo.findById(departmentId);
       return dept?.name;
     };
-
 
     const managersDTO: MemberDTO[] = await Promise.all(
       (managers || []).map(async (manager) => ({
@@ -43,7 +44,7 @@ if ((!managers || managers.length === 0) && (!employees || employees.length === 
         email: manager.email,
         phone: manager.phone,
         role: "Manager",
-      }))
+      })),
     );
 
     const employeesDTO: MemberDTO[] = await Promise.all(
@@ -54,11 +55,10 @@ if ((!managers || managers.length === 0) && (!employees || employees.length === 
         email: employee.email,
         phone: employee.phone,
         role: "Employee",
-      }))
+      })),
     );
 
-
-     const companyMembers: CompanyMembersDTO = {
+    const companyMembers: CompanyMembersDTO = {
       totalEmployees: employeesDTO.length,
       totalManagers: managersDTO.length,
       employees: employeesDTO,
@@ -66,7 +66,5 @@ if ((!managers || managers.length === 0) && (!employees || employees.length === 
     };
 
     return companyMembers;
-
-
-    }
+  }
 }

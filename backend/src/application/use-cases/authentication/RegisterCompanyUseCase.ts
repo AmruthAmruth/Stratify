@@ -15,7 +15,6 @@ export class RegisterCompanyUseCase {
   ) {}
 
   async execute(data: Company): Promise<Date> {
-    
     RegisterCompanySchema.parse(data);
 
     const existing = await this._companyRepo.findByEmail(data.email);
@@ -26,10 +25,10 @@ export class RegisterCompanyUseCase {
 
     const hashedPassword = await hashPassword(data.password);
 
-    const expiresAt = new Date(Date.now() + 30 * 60 * 1000); 
+    const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
     const tempData = new Company(
-      undefined,                
+      undefined,
       data.name,
       data.email,
       data.phone,
@@ -41,7 +40,7 @@ export class RegisterCompanyUseCase {
       data.state,
       data.country,
       data.zipcode,
-      hashedPassword,          
+      hashedPassword,
       data.status ?? "pending",
       "company",
       data.profileImage,
@@ -49,7 +48,6 @@ export class RegisterCompanyUseCase {
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);
 
-    
     const otpExpiresAt = await this._sendOtpUseCase.execute(data.email);
 
     return otpExpiresAt;

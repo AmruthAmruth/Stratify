@@ -3,7 +3,7 @@ export function subscriptionConfirmationTemplate(
   planName: string,
   amount: number,
   startDate: Date,
-  endDate: Date
+  endDate: Date,
 ): string {
   return `
   <!DOCTYPE html>

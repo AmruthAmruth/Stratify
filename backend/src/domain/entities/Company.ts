@@ -2,7 +2,7 @@ export type CompanyStatus = "pending" | "approved" | "rejected";
 
 export class Company {
   constructor(
-     public id: string | undefined,
+    public id: string | undefined,
     public name: string,
     public email: string,
     public phone: string,

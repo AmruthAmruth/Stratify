@@ -1,7 +1,10 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
-import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/token";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../shared/utils/token";
 import { Messages } from "../../../shared/constants/messages";
 import { Company } from "../../../domain/entities/Company";
 import { ICreateTrialSubscriptionUseCase } from "../../interfaces/subscriptions/ICreateTrialSubscriptionUseCase";
@@ -12,10 +15,13 @@ export class VerifyCompanyOTPUseCase {
     private _otpRepo: IOTPRepository,
     private _companyRepo: ICompanyRepository,
     private _tempRegRepo: ITempRegistrationRepository,
-    private _createTrialSubscriptionUseCase:ICreateTrialSubscriptionUseCase
+    private _createTrialSubscriptionUseCase: ICreateTrialSubscriptionUseCase,
   ) {}
 
-  async execute(email: string, otp: string): Promise<{ accessToken: string; refreshToken: string }> {
+  async execute(
+    email: string,
+    otp: string,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
     const storedOtp = await this._otpRepo.findByEmail(email);
     console.log("Stored OTP:", storedOtp, "Entered OTP:", otp);
 
@@ -26,44 +32,44 @@ export class VerifyCompanyOTPUseCase {
     const companyData = await this._tempRegRepo.findByEmail(email);
     if (!companyData) throw new Error("Registration data expired");
 
-  console.log("Company Data :",companyData);
-  
-    if (!companyData.password) throw new Error("Password is missing in temporary registration data");
+    console.log("Company Data :", companyData);
 
-    
+    if (!companyData.password)
+      throw new Error("Password is missing in temporary registration data");
+
     const createdCompany = await this._companyRepo.create(
       new Company(
-         undefined,                
-    companyData.name,        
-    companyData.email,        
-    companyData.phone,        
-    companyData.industry,     
-    companyData.description,
-    companyData.businessRegNo,
-    companyData.address,
-    companyData.city,
-    companyData.state,
-    companyData.country,
-    companyData.zipcode,
-    companyData.password,
-    companyData.status,
-    "company",                
-    companyData.profileImage
-      )
+        undefined,
+        companyData.name,
+        companyData.email,
+        companyData.phone,
+        companyData.industry,
+        companyData.description,
+        companyData.businessRegNo,
+        companyData.address,
+        companyData.city,
+        companyData.state,
+        companyData.country,
+        companyData.zipcode,
+        companyData.password,
+        companyData.status,
+        "company",
+        companyData.profileImage,
+      ),
     );
 
-    if (!createdCompany.id) throw new AppError("Company ID is missing after creation");
+    if (!createdCompany.id)
+      throw new AppError("Company ID is missing after creation");
 
-     await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
-    
+    await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
+
     const payload = { id: createdCompany.id, role: createdCompany.role };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-   
     await this._tempRegRepo.delete(email);
     await this._otpRepo.deleteByEmail(email);
 
     return { accessToken, refreshToken };
   }
-} 
+}

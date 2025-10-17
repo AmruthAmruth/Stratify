@@ -14,6 +14,6 @@ export class Project {
     public companyId: string,
     public teamMemberIds?: string[],
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
   ) {}
 }

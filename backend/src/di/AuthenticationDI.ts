@@ -1,4 +1,3 @@
-
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { OTPRepository } from "../infrastructure/repositories/OTPRepository";
 import { TempRegistrationRepository } from "../infrastructure/repositories/TempRegistrationRepository";
@@ -27,23 +26,55 @@ export const authenticationDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const subscriptionRepo = new SubscriptionRepository();
-    const superAdminRepo = new SuperAdminRepository();
+  const superAdminRepo = new SuperAdminRepository();
   const emailService = new EmailService();
 
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
-  const registerUseCase = new RegisterCompanyUseCase(companyRepo, sendOtpUseCase, tempRegRepo);
-  const createTrialSubscriptionUseCase = new CreateTrialSubscriptionUseCase(subscriptionRepo);
-  const verifyOtpUseCase = new VerifyCompanyOTPUseCase(otpRepo, companyRepo, tempRegRepo, createTrialSubscriptionUseCase);
-  const loginUseCase = new CompanyLoginUseCase(companyRepo, managerRepo, employeeRepo, subscriptionRepo);
-  const resendOtpUseCase = new ResendOtpUseCase(otpRepo, emailService, tempRegRepo);
-  const forgotPasswordUseCase = new ForgotPasswordUseCase(companyRepo, managerRepo, employeeRepo, sendOtpUseCase);
-  const verifyForgotPasswordOtpUseCase = new VerifyForgotPasswordOTPUseCase(otpRepo, companyRepo, managerRepo, employeeRepo);
-  const resetPasswordUseCase = new ResetPasswordUseCase(companyRepo, managerRepo, employeeRepo);
-const superAdminLoginUseCase = new LoginUseCase(superAdminRepo)
+  const registerUseCase = new RegisterCompanyUseCase(
+    companyRepo,
+    sendOtpUseCase,
+    tempRegRepo,
+  );
+  const createTrialSubscriptionUseCase = new CreateTrialSubscriptionUseCase(
+    subscriptionRepo,
+  );
+  const verifyOtpUseCase = new VerifyCompanyOTPUseCase(
+    otpRepo,
+    companyRepo,
+    tempRegRepo,
+    createTrialSubscriptionUseCase,
+  );
+  const loginUseCase = new CompanyLoginUseCase(
+    companyRepo,
+    managerRepo,
+    employeeRepo,
+    subscriptionRepo,
+  );
+  const resendOtpUseCase = new ResendOtpUseCase(
+    otpRepo,
+    emailService,
+    tempRegRepo,
+  );
+  const forgotPasswordUseCase = new ForgotPasswordUseCase(
+    companyRepo,
+    managerRepo,
+    employeeRepo,
+    sendOtpUseCase,
+  );
+  const verifyForgotPasswordOtpUseCase = new VerifyForgotPasswordOTPUseCase(
+    otpRepo,
+    companyRepo,
+    managerRepo,
+    employeeRepo,
+  );
+  const resetPasswordUseCase = new ResetPasswordUseCase(
+    companyRepo,
+    managerRepo,
+    employeeRepo,
+  );
+  const superAdminLoginUseCase = new LoginUseCase(superAdminRepo);
 
   const refreshTokenUseCase = new RefreshTokenUseCase();
-
-
 
   return new AuthenticationController(
     registerUseCase,
@@ -54,6 +85,6 @@ const superAdminLoginUseCase = new LoginUseCase(superAdminRepo)
     verifyForgotPasswordOtpUseCase,
     resetPasswordUseCase,
     superAdminLoginUseCase,
-    refreshTokenUseCase
+    refreshTokenUseCase,
   );
 };

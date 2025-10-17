@@ -1,5 +1,5 @@
 import { Manager } from "../../domain/entities/Manager";
-import { ManagerDocument } from "../models/ManagerModel"; 
+import { ManagerDocument } from "../models/ManagerModel";
 
 export class ManagerMapper {
   static toEntity(doc: ManagerDocument): Manager {
@@ -16,7 +16,7 @@ export class ManagerMapper {
       doc.dob,
       doc.companyId.toString(),
       doc.departmentId?.toString(),
-      doc.profileImage
+      doc.profileImage,
     );
   }
 

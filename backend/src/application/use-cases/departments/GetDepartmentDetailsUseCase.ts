@@ -3,23 +3,24 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { DepartmentDetailsDTO, TeamMemberDTO } from "../../dto/departments/DepartmentDetailsDTO";
+import {
+  DepartmentDetailsDTO,
+  TeamMemberDTO,
+} from "../../dto/departments/DepartmentDetailsDTO";
 import { IGetCompanyDepartmentDetailsUseCase } from "../../interfaces/departments/IGetDepartmentDetailsUseCase";
 
-
-
-
-export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetailsUseCase{
-    constructor(
-        private _departmentRepo:IDepartmentRepository,
-        private _managerRepo:IManagerRepository,
-        private _employeeRepo:IEmployeeRepository
-    ){}
-    async execute(departmentId: string): Promise<DepartmentDetailsDTO> {
-        
-         const department = await this._departmentRepo.findById(departmentId);
+export class GetDepartmentDetailsUseCase
+  implements IGetCompanyDepartmentDetailsUseCase
+{
+  constructor(
+    private _departmentRepo: IDepartmentRepository,
+    private _managerRepo: IManagerRepository,
+    private _employeeRepo: IEmployeeRepository,
+  ) {}
+  async execute(departmentId: string): Promise<DepartmentDetailsDTO> {
+    const department = await this._departmentRepo.findById(departmentId);
     if (!department) {
-      throw new AppError("Department Not Found",StatusCodes.NOT_FOUND)
+      throw new AppError("Department Not Found", StatusCodes.NOT_FOUND);
     }
 
     let headOfDepartment: string | undefined;
@@ -27,11 +28,9 @@ export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetails
     let headPhone: string | undefined;
     let headPosition: string | undefined;
 
-
-       if (department.managerId) {
+    if (department.managerId) {
       const manager = await this._managerRepo.findById(department.managerId);
       if (manager) {
-
         headOfDepartment = manager.name;
         headEmail = manager.email;
         headPhone = manager.phone;
@@ -39,27 +38,26 @@ export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetails
       }
     }
 
-
-    const employees = await this._employeeRepo.findByDepartmentId(department.id!);
-    const teamMembers: TeamMemberDTO[] = employees.map(emp => ({
-      id:emp.id,
+    const employees = await this._employeeRepo.findByDepartmentId(
+      department.id!,
+    );
+    const teamMembers: TeamMemberDTO[] = employees.map((emp) => ({
+      id: emp.id,
       name: emp.name,
       position: emp.position,
       email: emp.email,
       phone: emp.phone,
     }));
 
-  const departmentDetails: DepartmentDetailsDTO = {
+    const departmentDetails: DepartmentDetailsDTO = {
       departmentName: department.name,
-      description: department.description ?? "",  
+      description: department.description ?? "",
       headOfDepartment,
       headEmail,
       headPhone,
       headPosition,
       teamMembers,
     };
-return departmentDetails;
-
-
-    }
+    return departmentDetails;
+  }
 }

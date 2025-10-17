@@ -13,7 +13,7 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
     private readonly _taskRepo: ITaskRepository,
     private readonly _userStoryRepo: IUserStoryRepository,
     private readonly _employeeRepo: IEmployeeRepository,
-    private readonly _projectRepo: IProjectRepository
+    private readonly _projectRepo: IProjectRepository,
   ) {}
 
   async execute(taskDTO: CreateTaskDTO): Promise<Task> {
@@ -26,7 +26,7 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
       if (!employee) {
         throw new AppError(
           `Assigned user with ID ${taskDTO.assignedToId} does not exist`,
-          StatusCodes.NOT_FOUND
+          StatusCodes.NOT_FOUND,
         );
       }
 
@@ -34,7 +34,7 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
       if (employee.companyId !== project?.companyId) {
         throw new AppError(
           `Assigned user does not belong to the same company as the user story`,
-          StatusCodes.NOT_FOUND
+          StatusCodes.NOT_FOUND,
         );
       }
     }
@@ -47,7 +47,7 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
       taskDTO.status ?? "To Do",
       taskDTO.assignedToId,
       new Date(),
-      new Date()
+      new Date(),
     );
 
     return await this._taskRepo.create(task);

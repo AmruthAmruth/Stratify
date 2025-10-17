@@ -4,7 +4,7 @@ export interface Message {
   senderId: string;
   content: string;
   type: "text" | "image" | "file";
-  createdAt: string; // use ISO string
+  createdAt: string; 
 }
 
 export interface Conversation {

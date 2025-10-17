@@ -1,4 +1,3 @@
-
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
@@ -21,12 +20,29 @@ export const companyDI = () => {
   const emailService = new EmailService();
 
   const getCompanyById = new GetCompanyByIdUseCase(companyRepo);
-  const getPaginatedCompaniesUseCase = new GetPaginatedCompaniesUsecase(companyRepo);
+  const getPaginatedCompaniesUseCase = new GetPaginatedCompaniesUsecase(
+    companyRepo,
+  );
   const approveCompanyUseCase = new ApproveCompany(emailService, companyRepo);
-  const unapproveCompanyUseCase = new UnapproveCompany(emailService, companyRepo);
-  const getCompanyMembers = new GetCompanyMemebersUseCase(managerRepo, employeeRepo, departmentRepo);
-  const getTeamMemberProfile = new GetProfileUseCase(managerRepo, employeeRepo, departmentRepo);
-   const getMemberForCompanyUseCase = new GetMemberForCompanyUseCase(companyRepo,employeeRepo,managerRepo)
+  const unapproveCompanyUseCase = new UnapproveCompany(
+    emailService,
+    companyRepo,
+  );
+  const getCompanyMembers = new GetCompanyMemebersUseCase(
+    managerRepo,
+    employeeRepo,
+    departmentRepo,
+  );
+  const getTeamMemberProfile = new GetProfileUseCase(
+    managerRepo,
+    employeeRepo,
+    departmentRepo,
+  );
+  const getMemberForCompanyUseCase = new GetMemberForCompanyUseCase(
+    companyRepo,
+    employeeRepo,
+    managerRepo,
+  );
   return new CompanyController(
     getCompanyById,
     getPaginatedCompaniesUseCase,
@@ -34,6 +50,6 @@ export const companyDI = () => {
     unapproveCompanyUseCase,
     getCompanyMembers,
     getTeamMemberProfile,
-    getMemberForCompanyUseCase
+    getMemberForCompanyUseCase,
   );
 };

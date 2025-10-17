@@ -9,13 +9,3 @@ export class SuperAdminRepository implements ISuperAdminRepository {
     return new SuperAdmin(user.id.toString(), user.email, user.password);
   }
 }
-
-
-
-
-
-
-
-
-
-

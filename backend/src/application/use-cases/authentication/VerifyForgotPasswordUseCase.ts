@@ -16,21 +16,22 @@ export class VerifyForgotPasswordOTPUseCase {
     private readonly _otpRepository: IOTPRepository,
     private readonly _companyRepository: ICompanyRepository,
     private readonly _managerRepository: IManagerRepository,
-    private readonly _employeeRepository: IEmployeeRepository
+    private readonly _employeeRepository: IEmployeeRepository,
   ) {}
 
   async execute(
     email: string,
-    otp: string
+    otp: string,
   ): Promise<{ success: boolean; userName: string; role: string }> {
-    
     const storedOtp = await this._otpRepository.findByEmail(email);
     if (!storedOtp) throw new AppError(Messages.OTP_INVALID);
 
     if (storedOtp.code !== otp) throw new AppError(Messages.OTP_INVALID);
-    if (storedOtp.expiresAt < new Date()) throw new AppError(Messages.OTP_EXPIRED);
+    if (storedOtp.expiresAt < new Date())
+      throw new AppError(Messages.OTP_EXPIRED);
 
-    let user: UserType | null = await this._companyRepository.findByEmail(email);
+    let user: UserType | null =
+      await this._companyRepository.findByEmail(email);
     if (!user) user = await this._managerRepository.findByEmail(email);
     if (!user) user = await this._employeeRepository.findByEmail(email);
 

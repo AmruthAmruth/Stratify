@@ -15,7 +15,7 @@ export class TaskRepository implements ITaskRepository {
     const updated = await TaskModel.findByIdAndUpdate(
       new Types.ObjectId(task.id),
       TaskMapper.toDocument(task),
-      { new: true }
+      { new: true },
     ).exec();
 
     if (!updated) throw new Error("Task not found");

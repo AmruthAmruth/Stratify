@@ -42,7 +42,9 @@ export class ManagerRepository implements IManagerRepository {
     await ManagerModel.updateOne({ email }, { $set: { password } });
   }
 
-  async getUnassignedManagers(companyId: string): Promise<{ id: string; name: string }[]> {
+  async getUnassignedManagers(
+    companyId: string,
+  ): Promise<{ id: string; name: string }[]> {
     const docs = await ManagerModel.find({
       companyId,
       $or: [{ departmentId: { $exists: false } }, { departmentId: null }],

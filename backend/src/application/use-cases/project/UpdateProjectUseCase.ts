@@ -10,37 +10,33 @@ import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { UpdateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { IUpdateProjectUseCase } from "../../interfaces/project/IUpdateProjectUseCase";
 
-
-export class UpdateProjectUseCase implements IUpdateProjectUseCase{
-    constructor(
+export class UpdateProjectUseCase implements IUpdateProjectUseCase {
+  constructor(
     private _projectRepo: IProjectRepository,
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
-    private _employeeRepo: IEmployeeRepository
-    ){}
+    private _employeeRepo: IEmployeeRepository,
+  ) {}
 
-    async execute(projectDTO:UpdateProjectDTO): Promise<Project> {
-        
-        const existingProject = await this._projectRepo.findById(projectDTO.id!);
+  async execute(projectDTO: UpdateProjectDTO): Promise<Project> {
+    const existingProject = await this._projectRepo.findById(projectDTO.id!);
     if (!existingProject) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-
-     let creatorExists = false;
+    let creatorExists = false;
     let companyId: string | undefined;
     let createdByModel: "Company" | "Manager" | undefined;
 
-
-     const company = await this._companyRepo.findById(projectDTO.createdBy);
+    const company = await this._companyRepo.findById(projectDTO.createdBy);
     if (company) {
       creatorExists = true;
       companyId = company.id;
       createdByModel = "Company";
     }
 
-      if (!creatorExists) {
+    if (!creatorExists) {
       const manager = await this._managerRepo.findById(projectDTO.createdBy);
       if (manager) {
         creatorExists = true;
@@ -53,51 +49,51 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase{
       throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
     }
 
-      const department = await this._departmentRepo.findById(projectDTO.departmentId);
+    const department = await this._departmentRepo.findById(
+      projectDTO.departmentId,
+    );
     if (!department) {
       throw new AppError("Department not found", StatusCodes.NOT_FOUND);
     }
 
-
-
-
-     if (department.companyId !== companyId) {
+    if (department.companyId !== companyId) {
       throw new AppError("Department does not belong to creator company", 400);
     }
-
 
     if (projectDTO.name !== existingProject.name) {
       const nameExists = await this._projectRepo.findByNameAndCompany(
         projectDTO.name,
-        companyId
+        companyId,
       );
       if (nameExists && nameExists.id !== projectDTO.id) {
-        throw new AppError("Project name already exists for this company", StatusCodes.BAD_REQUEST);
+        throw new AppError(
+          "Project name already exists for this company",
+          StatusCodes.BAD_REQUEST,
+        );
       }
     }
-
 
     if (projectDTO.key !== existingProject.key) {
       const keyExists = await this._projectRepo.findByKeyAndCompany(
         projectDTO.key,
-        companyId
+        companyId,
       );
       if (keyExists && keyExists.id !== projectDTO.id) {
-        throw new AppError("Project key already exists for this company", StatusCodes.BAD_REQUEST);
+        throw new AppError(
+          "Project key already exists for this company",
+          StatusCodes.BAD_REQUEST,
+        );
       }
     }
 
-
-      await validateEmployees(
+    await validateEmployees(
       this._employeeRepo,
       projectDTO.teamMemberIds ?? [],
       companyId,
-      "Team member"
+      "Team member",
     );
 
-
-
-      const updatedProject = new Project(
+    const updatedProject = new Project(
       existingProject.id,
       projectDTO.name,
       projectDTO.key,
@@ -112,22 +108,9 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase{
       companyId,
       projectDTO.teamMemberIds ?? existingProject.teamMemberIds,
       existingProject.createdAt,
-      new Date() // updatedAt
+      new Date(), // updatedAt
     );
 
-      return await this._projectRepo.update(updatedProject);
-
-
-
-
-
-
-
-
-
-
-
-
-
-    }
+    return await this._projectRepo.update(updatedProject);
+  }
 }

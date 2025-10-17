@@ -6,12 +6,12 @@ export class CreateConversationUseCase implements ICreateConversationUseCase {
   constructor(private _conversationRepository: IConversationRepository) {}
 
   async execute(
-    data: Omit<Conversation, "id" | "createdAt" | "updatedAt">
+    data: Omit<Conversation, "id" | "createdAt" | "updatedAt">,
   ): Promise<Conversation> {
-    const existingConversation = await this._conversationRepository.findByMembers(data.members);
+    const existingConversation =
+      await this._conversationRepository.findByMembers(data.members);
     if (existingConversation) return existingConversation;
 
-  
     return await this._conversationRepository.create(data);
   }
 }

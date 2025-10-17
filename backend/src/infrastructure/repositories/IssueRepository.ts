@@ -16,8 +16,12 @@ export class IssueRepository implements IIssueRepository {
       status: issue.status,
       priority: issue.priority,
       projectId: new mongoose.Types.ObjectId(issue.projectId),
-      sprintId: issue.sprintId ? new mongoose.Types.ObjectId(issue.sprintId) : null,
-      assignedTo: issue.assignedTo ? new mongoose.Types.ObjectId(issue.assignedTo) : null,
+      sprintId: issue.sprintId
+        ? new mongoose.Types.ObjectId(issue.sprintId)
+        : null,
+      assignedTo: issue.assignedTo
+        ? new mongoose.Types.ObjectId(issue.assignedTo)
+        : null,
     });
 
     return IssueMapper.toEntity(created);
@@ -36,10 +40,14 @@ export class IssueRepository implements IIssueRepository {
         status: issue.status,
         priority: issue.priority,
         projectId: new mongoose.Types.ObjectId(issue.projectId),
-        sprintId: issue.sprintId ? new mongoose.Types.ObjectId(issue.sprintId) : null,
-        assignedTo: issue.assignedTo ? new mongoose.Types.ObjectId(issue.assignedTo) : null,
+        sprintId: issue.sprintId
+          ? new mongoose.Types.ObjectId(issue.sprintId)
+          : null,
+        assignedTo: issue.assignedTo
+          ? new mongoose.Types.ObjectId(issue.assignedTo)
+          : null,
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) throw new Error("Issue not found");
@@ -51,7 +59,9 @@ export class IssueRepository implements IIssueRepository {
   }
 
   async findAllByProject(projectId: string): Promise<Issue[]> {
-    const docs = await IssueModel.find({ projectId: new mongoose.Types.ObjectId(projectId) });
+    const docs = await IssueModel.find({
+      projectId: new mongoose.Types.ObjectId(projectId),
+    });
     return IssueMapper.toEntities(docs);
   }
 
@@ -61,22 +71,23 @@ export class IssueRepository implements IIssueRepository {
   }
 
   async findBySprintId(sprintId: string): Promise<Issue[]> {
-    const docs = await IssueModel.find({ sprintId: new mongoose.Types.ObjectId(sprintId) });
+    const docs = await IssueModel.find({
+      sprintId: new mongoose.Types.ObjectId(sprintId),
+    });
     return IssueMapper.toEntities(docs);
   }
 
-async findByProjectId(projectId: string): Promise<Issue[]> {
-  const docs = await IssueModel.find({
-    projectId: new mongoose.Types.ObjectId(projectId),
-  });
+  async findByProjectId(projectId: string): Promise<Issue[]> {
+    const docs = await IssueModel.find({
+      projectId: new mongoose.Types.ObjectId(projectId),
+    });
 
-  return IssueMapper.toEntities(docs);
-}
-
-  async deleteByProjectId(projectId: string): Promise<void> {
-    await IssueModel.deleteMany({ projectId: new mongoose.Types.ObjectId(projectId) });
+    return IssueMapper.toEntities(docs);
   }
 
-
-
+  async deleteByProjectId(projectId: string): Promise<void> {
+    await IssueModel.deleteMany({
+      projectId: new mongoose.Types.ObjectId(projectId),
+    });
+  }
 }

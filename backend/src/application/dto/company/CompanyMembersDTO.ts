@@ -1,8 +1,6 @@
-
-
 export interface MemberDTO {
   name: string;
-  department?: string; 
+  department?: string;
   position: string;
   email: string;
   phone: string;

@@ -9,10 +9,12 @@ export class ProjectLevelEmployeeAllocationUseCase
 {
   constructor(
     private _managerRepo: IManagerRepository,
-    private _employeeRepo: IEmployeeRepository
+    private _employeeRepo: IEmployeeRepository,
   ) {}
 
-  async execute(managerId: string): Promise<ProjectLevelEmployeeAllocationDTO[]> {
+  async execute(
+    managerId: string,
+  ): Promise<ProjectLevelEmployeeAllocationDTO[]> {
     const manager = await this._managerRepo.findById(managerId);
     if (!manager) {
       throw new AppError("Manager not found", 404);

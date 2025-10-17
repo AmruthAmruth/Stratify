@@ -15,7 +15,7 @@ export class GetProjectsByCompanyUseCase
   constructor(
     private _projectRepo: IProjectRepository,
     private _managerRepo: IManagerRepository,
-    private _departmentRepo: IDepartmentRepository
+    private _departmentRepo: IDepartmentRepository,
   ) {}
 
   async execute(companyId: string): Promise<GetProjectsByCompanyResponse> {
@@ -40,7 +40,7 @@ export class GetProjectsByCompanyUseCase
         if (project.endDate) {
           remainingTimeInDays = Math.ceil(
             (new Date(project.endDate).getTime() - new Date().getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           );
         }
 
@@ -53,7 +53,7 @@ export class GetProjectsByCompanyUseCase
           status: project.status ?? "Planned",
           remainingTimeInDays,
         };
-      })
+      }),
     );
 
     const counts = {

@@ -18,12 +18,10 @@ const BacklogSchema = new Schema<BacklogDocument>(
     createdBy: { type: Schema.Types.ObjectId, ref: "User", required: true },
     normalizedName: { type: String, lowercase: true, default: "" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
-
 BacklogSchema.index({ projectId: 1, normalizedName: 1 }, { unique: true });
-
 
 BacklogSchema.pre("save", function (next) {
   if (this.name) {
@@ -34,5 +32,5 @@ BacklogSchema.pre("save", function (next) {
 
 export const BacklogModel = mongoose.model<BacklogDocument>(
   "Backlog",
-  BacklogSchema
+  BacklogSchema,
 );

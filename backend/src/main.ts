@@ -22,14 +22,12 @@ app.use(
   cors({
     origin: process.env.CLIENT_URL || "http://localhost:5173",
     credentials: true,
-  })
+  }),
 );
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
-
 
 const logDirectory = path.join(__dirname, "logs");
 if (!fs.existsSync(logDirectory)) {
@@ -44,16 +42,13 @@ const accessLogStream = rfs.createStream("access.log", {
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use(morgan("dev"));
 
-
 connectDB()
-  .then(() => console.log("✅ MongoDB connected successfully"))
+  .then(() =>  console.log("Mongodb Connected"))
   .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
 app.use("/api", router);
 
-
 app.use(errorMiddleware);
-
 
 const server = http.createServer(app);
 
@@ -70,6 +65,7 @@ socketGateway.init();
 
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
-  console.log(`💬 WebSocket running and ready for connections`);
+  console.log(` Server running on http://localhost:${PORT}`);
+  console.log(`WebSocket running and ready for connections`);
 });
+ 

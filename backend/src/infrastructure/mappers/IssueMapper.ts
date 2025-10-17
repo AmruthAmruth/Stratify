@@ -1,7 +1,5 @@
-
 import { Issue } from "../../domain/entities/Issue";
 import { IssueDocument } from "../models/IssueModel";
-
 
 export class IssueMapper {
   static toEntity(doc: IssueDocument): Issue {
@@ -19,7 +17,7 @@ export class IssueMapper {
       doc.sprintId?.toString() || null,
       doc.assignedTo?.toString() || null,
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

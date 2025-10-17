@@ -5,10 +5,12 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { ProjectLevelEmployeeAllocationDTO } from "../../dto/project/ProjectLavelEmployeeAllocationDTO";
 import { IIssueLevelEmployeeAllocation } from "../../interfaces/project/IIssueLevelEmployeeAllocationUseCase";
 
-export class IssueLevelEmployeeAllocationUseCase implements IIssueLevelEmployeeAllocation {
+export class IssueLevelEmployeeAllocationUseCase
+  implements IIssueLevelEmployeeAllocation
+{
   constructor(
     private readonly _projectRepo: IProjectRepository,
-    private readonly _employeeRepo: IEmployeeRepository
+    private readonly _employeeRepo: IEmployeeRepository,
   ) {}
 
   async execute(projectId: string): Promise<ProjectLevelEmployeeAllocationDTO> {
@@ -20,19 +22,17 @@ export class IssueLevelEmployeeAllocationUseCase implements IIssueLevelEmployeeA
     if (!project.teamMemberIds || project.teamMemberIds.length === 0) {
       throw new AppError(
         "No team members assigned to this project",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
-   
-    
     const employeeList = await Promise.all(
       project.teamMemberIds.map(async (employeeId) => {
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
           throw new AppError(
             `Employee not found: ${employeeId}`,
-            StatusCodes.NOT_FOUND
+            StatusCodes.NOT_FOUND,
           );
         }
 
@@ -41,12 +41,11 @@ export class IssueLevelEmployeeAllocationUseCase implements IIssueLevelEmployeeA
           position: employee.position,
           employeeId: employee.id!,
         };
-      })
+      }),
     );
 
-    
     const allocation: ProjectLevelEmployeeAllocationDTO = {
-      departmentId: project.departmentId ?? "N/A", 
+      departmentId: project.departmentId ?? "N/A",
       employee: employeeList,
     };
 

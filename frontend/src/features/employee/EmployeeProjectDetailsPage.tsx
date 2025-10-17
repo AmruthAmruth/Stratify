@@ -4,47 +4,37 @@ import CollapsibleSection from "@/shared/components/CollapsibleSection/Collapsib
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import {
-  addEmployeetoProject,
-  createIssue,
-  createSprint,
+  createSubTask,
   employeeUnderTheProject,
-  getEmployeesNotInProject,
   getProjectDetails,
-  updateProject,
 } from "@/services/projects";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import {
-  createIssueFields,
-  createSprintFields,
+  createSubTaskFields,
 } from "@/shared/components/Forms/formFields";
 import {
-  createIssueSchema,
-  createSprintSchema,
-  createProjectSchema,
+  createSubTaskSchema,
 } from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
 import * as z from "zod";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
-const ManagerProjectDetailsPage = () => {
+// Assume employeeId is obtained from auth context or props
+const EMPLOYEE_ID = "current-employee-id"; // Replace with actual employee ID from auth
+
+const EmployeeProjectDetailsPage = () => {
   const [project, setProject] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
-  const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
-  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAssignStoryModalOpen, setIsAssignStoryModalOpen] = useState(false);
+  const [isSubTaskModalOpen, setIsSubTaskModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
   const [employees, setEmployees] = useState([]);
   const [expandedBacklog, setExpandedBacklog] = useState(null);
   const [expandedSprint, setExpandedSprint] = useState(null);
-  const [employeeNotInProject, setEmployeeNotInProject] = useState([]);
-  const [assignModalSprintId, setAssignModalSprintId] = useState(null);
-  const [assignModalStoryOptions, setAssignModalStoryOptions] = useState([]);
+  const [selectedIssue, setSelectedIssue] = useState(null);
   const { id } = useParams();
 
   useEffect(() => {
@@ -53,8 +43,6 @@ const ManagerProjectDetailsPage = () => {
         setLoading(true);
         const data = await getProjectDetails(id);
         const employeeData = await employeeUnderTheProject(id);
-        const employeesNotInProject = await getEmployeesNotInProject(id);
-        setEmployeeNotInProject(employeesNotInProject);
 
         if (employeeData && employeeData.employee) {
           setEmployees(employeeData.employee);
@@ -72,114 +60,89 @@ const ManagerProjectDetailsPage = () => {
     fetchProjectData(id);
   }, [id]);
 
-  const statusOptions = [
-    { value: "Planned", label: "Planned" },
-    { value: "Active", label: "Active" },
-    { value: "Completed", label: "Completed" },
-    { value: "Archived", label: "Archived" },
+  // Filter issues assigned to current employee
+  const assignedIssues = useMemo(() => {
+    if (!project) return [];
+    const allBacklogIssues = project.backlog || [];
+    const allSprints = [
+      ...(project.activeSprints || []),
+      ...(project.plannedSprints || []),
+      ...(project.completedSprints || []),
+    ];
+    const allSprintIssues = allSprints.flatMap((sprint) => sprint.issues || []);
+    const allIssues = [...allBacklogIssues, ...allSprintIssues];
+    return allIssues.filter((issue) => issue.assignedTo === EMPLOYEE_ID);
+  }, [project]);
+
+  // Filter subtasks for assigned issues
+  const assignedSubTasks = useMemo(() => {
+    return assignedIssues.flatMap((issue) => issue.subTasks || []);
+  }, [assignedIssues]);
+
+  const allActiveSprints = (project?.activeSprints || []).filter((sprint) =>
+    sprint.issues?.some((issue) => issue.assignedTo === EMPLOYEE_ID)
+  );
+  const allPlannedSprints = (project?.plannedSprints || []).filter((sprint) =>
+    sprint.issues?.some((issue) => issue.assignedTo === EMPLOYEE_ID)
+  );
+  const allCompletedSprints = (project?.completedSprints || []).filter((sprint) =>
+    sprint.issues?.some((issue) => issue.assignedTo === EMPLOYEE_ID)
+  );
+  const allSprints = [
+    ...allActiveSprints,
+    ...allPlannedSprints,
+    ...allCompletedSprints,
   ];
 
-  const editProjectFormFields = [
-    {
-      name: "name",
-      label: "Project Name",
-      type: "text",
-    },
-    {
-      name: "key",
-      label: "Project Key",
-      type: "text",
-    },
-    {
-      name: "description",
-      label: "Description",
-      type: "textarea",
-    },
-    {
-      name: "startDate",
-      label: "Start Date",
-      type: "date",
-    },
-    {
-      name: "endDate",
-      label: "End Date",
-      type: "date",
-    },
-    {
-      name: "status",
-      label: "Status",
-      type: "select",
-      options: statusOptions,
-    },
-    {
-      name: "teamMemberIds",
-      label: "Team Members",
-      type: "select",
-      multiple: true,
-      options: [
-        { value: "", label: "Select team members..." },
-        ...employees.map((emp) => ({
-          value: emp.employeeId,
-          label: `${emp.name} - ${emp.position}`,
-        })),
-      ],
-    },
-  ];
-
-  const initialEditValues = project
-    ? {
-        name: project.name || "",
-        key: project.key || "",
-        description: project.description || "",
-        startDate: project.startDate ? new Date(project.startDate).toISOString() : "",
-        endDate: project.endDate ? new Date(project.endDate).toISOString() : "",
-        status: project.status || "Planned",
-        teamMemberIds: project.teamMemberIds || [],
-      }
-    : undefined;
-
-  const freeBacklogOptions = useMemo(() => {
-    return (project?.backlog || [])
-      .filter((issue) => !issue.sprintId)
-      .map((issue) => ({
-        value: issue.id || issue._id,
-        label: `${issue.title} (${issue.type})`,
-      }));
-  }, [project?.backlog]);
-
-  const handleAssignIssue = (sprintId) => {
-    const options = freeBacklogOptions;
-    if (options.length === 0) {
-      enqueueSnackbar("No free backlog items to assign.", { variant: "info" });
-      return;
-    }
-    setAssignModalSprintId(sprintId);
-    setAssignModalStoryOptions(options);
-    setIsAssignStoryModalOpen(true);
+  const issueCounts = {
+    Planned: assignedIssues.filter((i) => i.status === "Planned").length,
+    InProgress: assignedIssues.filter(
+      (i) => i.status === "InProgress" || i.status === "In Progress"
+    ).length,
+    Done: assignedIssues.filter(
+      (i) => i.status === "Done" || i.status === "Completed"
+    ).length,
   };
 
-  const handleUpdateProject = async (values) => {
+  const subTaskCounts = {
+    Planned: assignedSubTasks.filter((t) => t.status === "Planned").length,
+    InProgress: assignedSubTasks.filter((t) => t.status === "In Progress").length,
+    Done: assignedSubTasks.filter((t) => t.status === "Done").length,
+  };
+
+  const sprintCounts = {
+    Planned: allPlannedSprints.length,
+    Active: allActiveSprints.length,
+    Completed: allCompletedSprints.length,
+  };
+
+  const totalEstimatedHours = assignedIssues.reduce(
+    (sum, i) => sum + (i.estimatedHours || 0),
+    0
+  );
+  const completedEstimatedHours = assignedIssues
+    .filter((i) => i.status === "Done" || i.status === "Completed")
+    .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
+
+  const handleCreateSubTask = async (values) => {
+    if (!selectedIssue) return;
     setSubmitLoading(true);
     try {
       const payload = {
-        id,
-        name: values.name,
-        key: values.key,
-        description: values.description,
-        startDate: values.startDate,
-        endDate: values.endDate,
-        departmentId: project.departmentId,
-        status: values.status,
-        teamMemberIds: values.teamMemberIds || [],
+        ...values,
+        issueId: selectedIssue.id || selectedIssue._id,
+        projectId: id,
+        assignedTo: EMPLOYEE_ID,
       };
-      await updateProject(payload);
-      enqueueSnackbar("Project updated successfully!", { variant: "success" });
+      await createSubTask(payload);
+      enqueueSnackbar("SubTask created successfully!", { variant: "success" });
       const updatedProject = await getProjectDetails(id);
       setProject(updatedProject);
-      setIsEditModalOpen(false);
+      setIsSubTaskModalOpen(false);
+      setSelectedIssue(null);
     } catch (err) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to update project.", {
+      enqueueSnackbar(err.message || "Failed to create subtask.", {
         variant: "error",
       });
     } finally {
@@ -187,177 +150,15 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const handleCreateIssue = async (values) => {
-    setSubmitLoading(true);
-    try {
-      const payload = { ...values, projectId: id };
-      await createIssue(payload);
-      enqueueSnackbar("Issue created successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
-      setIsBacklogModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to create issue.", {
-        variant: "error",
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
+  const openSubTaskModal = (issue) => {
+    setSelectedIssue(issue);
+    setIsSubTaskModalOpen(true);
   };
 
-  const createIssueFormFields = [
-    ...createIssueFields,
-    {
-      name: "assignedTo",
-      label: "Assign Issue to Team Member",
-      type: "select",
-      options: [
-        { value: "", label: "Select Team Member" },
-        ...employees.map((emp) => ({
-          value: emp.employeeId,
-          label: `${emp.name} - ${emp.position}`,
-        })),
-      ],
-    },
-  ];
-
-  const addEmployeeFormFields = [
-    {
-      name: "employeeId",
-      label: "Add Employee to Project",
-      type: "select",
-      options: [
-        { value: "", label: "Select Team Member" },
-        ...employeeNotInProject.map((emp) => ({
-          value: emp.employeeId,
-          label: `${emp.name}`,
-        })),
-      ],
-    },
-  ];
-
-  const addEmployeeSchema = z.object({
-    employeeId: z.string().min(1, "Please select an employee"),
-  });
-
-  const handleCreateSprint = async (values) => {
-    setSubmitLoading(true);
-    try {
-      const payload = { ...values, projectId: id };
-      await createSprint(payload);
-      enqueueSnackbar("Sprint created successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
-      setIsStoryModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to create sprint.", {
-        variant: "error",
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
+  const closeSubTaskModal = () => {
+    setIsSubTaskModalOpen(false);
+    setSelectedIssue(null);
   };
-
-  const handleAddEmployee = async (values) => {
-    setSubmitLoading(true);
-    try {
-      const payload = { employeeId: values.employeeId, projectId: id };
-      await addEmployeetoProject(payload);
-      enqueueSnackbar("Employee added successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
-      const employeeData = await employeeUnderTheProject(id);
-      if (employeeData && employeeData.employee) {
-        setEmployees(employeeData.employee);
-      }
-      const employeesNotInProject = await getEmployeesNotInProject(id);
-      setEmployeeNotInProject(employeesNotInProject);
-      setIsEmployeeModalOpen(false);
-    } catch (err) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to add employee.", {
-        variant: "error",
-      });
-    } finally {
-      setSubmitLoading(false);
-    }
-  };
-
-  const handleOpenIssueModal = () => {
-    setIsBacklogModalOpen(true);
-  };
-
-  const handleOpenSprintModal = () => {
-    setIsStoryModalOpen(true);
-  };
-
-  const handleOpenEmployeeModal = () => {
-    setIsEmployeeModalOpen(true);
-  };
-
-  const handleOpenEditModal = () => {
-    setIsEditModalOpen(true);
-  };
-
-  const assignStoryFormFields = useMemo(() => {
-    const sprintOptions = [
-      { value: "", label: "Select Sprint" },
-      ...(project?.activeSprints || []).map((sprint) => ({
-        value: sprint.id || sprint._id,
-        label: `${sprint.name} (Active)`,
-      })),
-      ...(project?.plannedSprints || []).map((sprint) => ({
-        value: sprint.id || sprint._id,
-        label: `${sprint.name} (Planned)`,
-      })),
-    ];
-
-    const issueOptions = [
-      { value: "", label: "Select Issue" },
-      ...(assignModalSprintId ? assignModalStoryOptions : freeBacklogOptions),
-    ];
-
-    const fields = [
-      ...(assignModalSprintId
-        ? []
-        : [
-            {
-              name: "sprintId",
-              label: "Select Sprint",
-              type: "select",
-              required: true,
-              options: sprintOptions,
-            },
-          ]
-        ),
-      {
-        name: "storyId",
-        label: "Select Backlog Issue",
-        type: "select",
-        required: true,
-        options: issueOptions,
-      },
-    ];
-
-    return fields;
-  }, [
-    project?.activeSprints,
-    project?.plannedSprints,
-    assignModalSprintId,
-    assignModalStoryOptions,
-    freeBacklogOptions,
-  ]);
-
-  const assignStorySchemaDynamic = assignModalSprintId 
-    ? z.object({
-        storyId: z.string().min(1, "Please select an issue"),
-      })
-    : z.object({
-        sprintId: z.string().min(1, "Please select a sprint"),
-        storyId: z.string().min(1, "Please select an issue"),
-      });
 
   const getStatusColor = (status) => {
     switch (status) {
@@ -443,55 +244,6 @@ const ManagerProjectDetailsPage = () => {
     );
   }
 
-  const allActiveSprints = project.activeSprints || [];
-  const allPlannedSprints = project.plannedSprints || [];
-  const allCompletedSprints = project.completedSprints || [];
-  const allSprints = [
-    ...allActiveSprints,
-    ...allPlannedSprints,
-    ...allCompletedSprints,
-  ];
-  const allBacklogIssues = project.backlog || [];
-  const allSprintIssues = allSprints.flatMap((sprint) => sprint.issues || []);
-  const allIssues = [...allBacklogIssues, ...allSprintIssues];
-  const allSubTasks = allIssues.flatMap((issue) => issue.subTasks || []);
-
-  const issueCounts = {
-    Planned: allIssues.filter((i) => i.status === "Planned").length,
-    InProgress: allIssues.filter(
-      (i) => i.status === "InProgress" || i.status === "In Progress"
-    ).length,
-    Done: allIssues.filter(
-      (i) => i.status === "Done" || i.status === "Completed"
-    ).length,
-  };
-
-  const subTaskCounts = {
-    Planned: allSubTasks.filter((t) => t.status === "Planned").length,
-    InProgress: allSubTasks.filter((t) => t.status === "In Progress").length,
-    Done: allSubTasks.filter((t) => t.status === "Done").length,
-  };
-
-  const sprintCounts = {
-    Planned: allPlannedSprints.length,
-    Active: allActiveSprints.length,
-    Completed: allCompletedSprints.length,
-  };
-
-  const totalEstimatedHours = allIssues.reduce(
-    (sum, i) => sum + (i.estimatedHours || 0),
-    0
-  );
-  const completedEstimatedHours = allIssues
-    .filter((i) => i.status === "Done" || i.status === "Completed")
-    .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
-
-  const selectedSprintName = assignModalSprintId
-    ? project.activeSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
-      project.plannedSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
-      "Unknown Sprint"
-    : null;
-
   return (
     <div className="min-h-screen bg-[#fbfbfb]">
       <div className="bg-[#fbfbfb] py-10 px-4 sm:px-6 lg:px-8">
@@ -531,19 +283,18 @@ const ManagerProjectDetailsPage = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-8 space-y-8">
         <div className="space-y-8">
-          {/* Fixed: Removed duplicate className */}
           <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-6">
             <DashboardCard
-              title="Total Sprints"
+              title="Assigned Sprints"
               value={allSprints.length}
               subtitle="Sprints"
               trend={allSprints.length > 0 ? "up" : "down"}
             />
             <DashboardCard
-              title="Backlog Items"
-              value={allBacklogIssues.length}
+              title="Assigned Issues"
+              value={assignedIssues.length}
               subtitle="Issues"
-              trend={allBacklogIssues.length > 0 ? "up" : "down"}
+              trend={assignedIssues.length > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Estimated Hours"
@@ -552,20 +303,20 @@ const ManagerProjectDetailsPage = () => {
               trend={completedEstimatedHours > 0 ? "up" : "down"}
             />
             <DashboardCard
-              title="Total Issues"
-              value={allIssues.length}
-              subtitle="Issues"
-              trend={allIssues.length > 0 ? "up" : "down"}
+              title="Assigned SubTasks"
+              value={assignedSubTasks.length}
+              subtitle="SubTasks"
+              trend={assignedSubTasks.length > 0 ? "up" : "down"}
             />
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
               <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
-                Issue Distribution
+                Assigned Issue Distribution
               </h3>
               <div className="w-full flex items-center justify-center">
-                <div className="w-[100%] h-100">
+                <div className="w-[100%] h-96">
                   <ReusableChart
                     type="doughnut"
                     title="Issues"
@@ -586,7 +337,7 @@ const ManagerProjectDetailsPage = () => {
                 SubTask Progress
               </h3>
               <div className="w-full flex items-center justify-center">
-                <div className="w-[100%] h-100">
+                <div className="w-[100%] h-96">
                   <ReusableChart
                     type="doughnut"
                     title="SubTasks"
@@ -604,10 +355,10 @@ const ManagerProjectDetailsPage = () => {
 
             <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
               <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
-                Sprint Overview
+                Assigned Sprint Overview
               </h3>
               <div className="w-full flex items-center justify-center">
-                <div className="w-[100%] h-100">
+                <div className="w-[100%] h-96">
                   <ReusableChart
                     type="doughnut"
                     title="Sprints"
@@ -626,15 +377,15 @@ const ManagerProjectDetailsPage = () => {
 
           <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-[#dfdcef]">
             <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-[#3b3b3b] tracking-tight">
-              Project Progress Summary
+              Assigned Project Progress Summary
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
               <DashboardCard
-                title="Issues Complete"
+                title="Assigned Issues Complete"
                 value={
-                  allIssues.length > 0
+                  assignedIssues.length > 0
                     ? `${Math.round(
-                        (issueCounts.Done / allIssues.length) * 100
+                        (issueCounts.Done / assignedIssues.length) * 100
                       )}%`
                     : "0%"
                 }
@@ -660,10 +411,10 @@ const ManagerProjectDetailsPage = () => {
                 trend={allActiveSprints.length > 0 ? "up" : "down"}
               />
               <DashboardCard
-                title="Backlog Issues"
-                value={allBacklogIssues.length}
+                title="Assigned Backlog Issues"
+                value={assignedIssues.filter(i => !i.sprintId).length}
                 subtitle="Issues"
-                trend={allBacklogIssues.length > 0 ? "up" : "down"}
+                trend={assignedIssues.filter(i => !i.sprintId).length > 0 ? "up" : "down"}
               />
             </div>
           </div>
@@ -716,15 +467,15 @@ const ManagerProjectDetailsPage = () => {
             </div>
             <div className="space-y-1">
               <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
-                Active Sprints
+                Active Sprints (Assigned)
               </p>
               <p className="text-base font-semibold text-[#3b3b3b]">
-                {project.activeSprintCount || 0}
+                {allActiveSprints.length}
               </p>
             </div>
             <div className="space-y-1">
               <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
-                Total Sprints
+                Total Assigned Sprints
               </p>
               <p className="text-base font-semibold text-[#3b3b3b]">
                 {allSprints.length}
@@ -733,36 +484,12 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-        <div className="flex flex-wrap gap-4">
-          <button
-            onClick={handleOpenEditModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
-          >
-            Edit Project
-          </button>
-          <button
-            onClick={handleOpenIssueModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
-          >
-            Create Issue
-          </button>
-          <button
-            onClick={handleOpenSprintModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
-          >
-            Create Sprint
-          </button>
-          <button
-            onClick={handleOpenEmployeeModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
-          >
-            Add Employee
-          </button>
-        </div>
+        {/* No action buttons for employee; only view assigned content */}
 
-        {project.backlog && project.backlog.length > 0 && (
+        {/* Assigned Backlog (only assigned issues) */}
+        {assignedIssues.filter(i => !i.sprintId).length > 0 && (
           <CollapsibleSection
-            title="Backlog"
+            title="Assigned Backlog"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path d="M9 2a1 1 0 000 2h2a1 1 0 100-2H9z" />
@@ -777,20 +504,21 @@ const ManagerProjectDetailsPage = () => {
             }
             iconBgColor="bg-[#dfdcef]"
             iconColor="text-[#009063]"
-            data={project.backlog}
+            data={assignedIssues.filter(i => !i.sprintId)}
             type="backlog"
             expandedItem={expandedBacklog}
             setExpandedItem={setExpandedBacklog}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
+            onCreateSubTask={openSubTaskModal}
           />
         )}
 
-        {/* Active Sprints */}
-        {project.activeSprints && project.activeSprints.length > 0 && (
+        {/* Active Sprints (only with assigned issues) */}
+        {allActiveSprints.length > 0 && (
           <CollapsibleSection
-            title="Active Sprints"
+            title="Active Sprints (Assigned)"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -801,21 +529,21 @@ const ManagerProjectDetailsPage = () => {
             }
             iconBgColor="bg-[#e6f7f0]"
             iconColor="text-[#009063]"
-            data={project.activeSprints}
+            data={allActiveSprints}
             type="sprint"
             expandedItem={expandedSprint}
             setExpandedItem={setExpandedSprint}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-            onAssignIssue={handleAssignIssue}
+            onCreateSubTask={openSubTaskModal}
           />
         )}
 
-        {/* Planned Sprints */}
-        {project.plannedSprints && project.plannedSprints.length > 0 && (
+        {/* Planned Sprints (only with assigned issues) */}
+        {allPlannedSprints.length > 0 && (
           <CollapsibleSection
-            title="Planned Sprints"
+            title="Planned Sprints (Assigned)"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -826,21 +554,21 @@ const ManagerProjectDetailsPage = () => {
             }
             iconBgColor="bg-[#dfdcef]"
             iconColor="text-[#3b3b3b]"
-            data={project.plannedSprints}
+            data={allPlannedSprints}
             type="sprint"
             expandedItem={expandedSprint}
             setExpandedItem={setExpandedSprint}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-            onAssignIssue={handleAssignIssue}
+            onCreateSubTask={openSubTaskModal}
           />
         )}
 
-        {/* Completed Sprints */}
-        {project.completedSprints && project.completedSprints.length > 0 && (
+        {/* Completed Sprints (only with assigned issues) */}
+        {allCompletedSprints.length > 0 && (
           <CollapsibleSection
-            title="Completed Sprints"
+            title="Completed Sprints (Assigned)"
             icon={
               <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                 <path
@@ -851,70 +579,29 @@ const ManagerProjectDetailsPage = () => {
             }
             iconBgColor="bg-[#e6f7f0]"
             iconColor="text-[#009063]"
-            data={project.completedSprints}
+            data={allCompletedSprints}
             type="sprint"
             expandedItem={expandedSprint}
             setExpandedItem={setExpandedSprint}
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
+            onCreateSubTask={openSubTaskModal}
           />
         )}
       </div>
 
+      {/* SubTask Creation Modal */}
       <Modal
-        isOpen={isBacklogModalOpen}
-        onClose={() => setIsBacklogModalOpen(false)}
-        title="Create Issue"
+        isOpen={isSubTaskModalOpen}
+        onClose={closeSubTaskModal}
+        title={`Create SubTask for "${selectedIssue?.title || 'Issue'}"`}
       >
         <AuthForm
-          fields={createIssueFormFields}
-          validationSchema={createIssueSchema}
-          onSubmit={handleCreateIssue}
-          buttonText={submitLoading ? "Creating..." : "Create New Issue"}
-          disabled={submitLoading}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={isStoryModalOpen}
-        onClose={() => setIsStoryModalOpen(false)}
-        title="Create Sprint"
-      >
-        <AuthForm
-          fields={createSprintFields}
-          validationSchema={createSprintSchema}
-          onSubmit={handleCreateSprint}
-          buttonText={submitLoading ? "Creating..." : "Create Sprint"}
-          disabled={submitLoading}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={isEmployeeModalOpen}
-        onClose={() => setIsEmployeeModalOpen(false)}
-        title="Add Employee"
-      >
-        <AuthForm
-          fields={addEmployeeFormFields}
-          validationSchema={addEmployeeSchema}
-          onSubmit={handleAddEmployee}
-          buttonText={submitLoading ? "Adding..." : "Add Employee"}
-          disabled={submitLoading}
-        />
-      </Modal>
-
-      <Modal
-        isOpen={isEditModalOpen}
-        onClose={() => setIsEditModalOpen(false)}
-        title="Edit Project"
-      >
-        <AuthForm
-          fields={editProjectFormFields}
-          validationSchema={createProjectSchema}
-          onSubmit={handleUpdateProject}
-          buttonText={submitLoading ? "Updating..." : "Update Project"}
-          initialValues={initialEditValues}
+          fields={createSubTaskFields}
+          validationSchema={createSubTaskSchema}
+          onSubmit={handleCreateSubTask}
+          buttonText={submitLoading ? "Creating..." : "Create SubTask"}
           disabled={submitLoading}
         />
       </Modal>
@@ -922,4 +609,4 @@ const ManagerProjectDetailsPage = () => {
   );
 };
 
-export default ManagerProjectDetailsPage;
+export default EmployeeProjectDetailsPage;

@@ -4,9 +4,10 @@ import SubscriptionModel from "../models/SubscriptionModel";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
-
   async create(subscription: Subscription): Promise<Subscription> {
-    const doc = new SubscriptionModel(SubscriptionMapper.toDocument(subscription));
+    const doc = new SubscriptionModel(
+      SubscriptionMapper.toDocument(subscription),
+    );
     await doc.save();
     return SubscriptionMapper.toEntity(doc);
   }
@@ -25,14 +26,16 @@ export class SubscriptionRepository implements ISubscriptionRepository {
   }
 
   async markExpired(subscriptionId: string): Promise<void> {
-    await SubscriptionModel.findByIdAndUpdate(subscriptionId, { status: "expired" });
+    await SubscriptionModel.findByIdAndUpdate(subscriptionId, {
+      status: "expired",
+    });
   }
 
   async updatePlan(subscription: Subscription): Promise<Subscription> {
     const updatedDoc = await SubscriptionModel.findByIdAndUpdate(
       subscription.id,
       SubscriptionMapper.toDocument(subscription),
-      { new: true }
+      { new: true },
     );
 
     if (!updatedDoc) throw new Error("Subscription not found");

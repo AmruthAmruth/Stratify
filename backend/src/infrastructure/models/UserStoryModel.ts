@@ -23,7 +23,11 @@ const UserStorySchema = new Schema<UserStoryDocument>(
     projectId: { type: Schema.Types.ObjectId, ref: "Project", required: true },
     backlogId: { type: Schema.Types.ObjectId, ref: "Backlog" },
     createdBy: { type: Schema.Types.ObjectId, required: true },
-    priority: { type: String, enum: ["Low", "Medium", "High"], default: "Medium" },
+    priority: {
+      type: String,
+      enum: ["Low", "Medium", "High"],
+      default: "Medium",
+    },
     status: {
       type: String,
       enum: ["Backlog", "To Do", "In Progress", "Done"],
@@ -32,13 +36,12 @@ const UserStorySchema = new Schema<UserStoryDocument>(
     storyPoints: { type: Number, required: true },
     sprintId: { type: Schema.Types.ObjectId, ref: "Sprint" },
     assignedToIds: [{ type: Schema.Types.ObjectId, ref: "Employee" }],
-    acceptanceCriteria: { type: String }
+    acceptanceCriteria: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 UserStorySchema.index({ projectId: 1, title: 1 }, { unique: true });
-
 
 UserStorySchema.pre("save", function (next) {
   if (this.title) this.title = this.title.trim();
@@ -47,5 +50,5 @@ UserStorySchema.pre("save", function (next) {
 
 export const UserStoryModel = mongoose.model<UserStoryDocument>(
   "UserStory",
-  UserStorySchema
+  UserStorySchema,
 );

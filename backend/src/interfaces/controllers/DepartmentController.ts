@@ -14,7 +14,7 @@ export class DepartmentController {
     private _getCompanyDepartmentsUseCase: IGetCompanyDepartmentUseCase,
     private _getDepartmentDetailsUseCase: IGetCompanyDepartmentDetailsUseCase,
     private _getUnassignedDepartmentsUseCase: IGetUnassignedDepartments,
-    private _getManagerDepartmentsUseCase: IGetManagerDepartmentsUseCase
+    private _getManagerDepartmentsUseCase: IGetManagerDepartmentsUseCase,
   ) {}
 
   createDepartment = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -22,7 +22,7 @@ export class DepartmentController {
     if (!result.success) {
       res.status(StatusCodes.BAD_REQUEST).json({
         status: "error",
-        errors: result.error.issues.map(issue => ({
+        errors: result.error.issues.map((issue) => ({
           field: issue.path.join("."),
           message: issue.message,
         })),
@@ -31,13 +31,22 @@ export class DepartmentController {
     }
 
     const companyId = req.userId;
-    const response = await this._createDepartmentUseCase.execute({ ...req.body, companyId });
-    res.status(StatusCodes.CREATED).json({ message: "Department created successfully", response });
+    const response = await this._createDepartmentUseCase.execute({
+      ...req.body,
+      companyId,
+    });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Department created successfully", response });
   };
 
-  getCompanyDepartments = async (req: AuthRequest, res: Response): Promise<void> => {
+  getCompanyDepartments = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const companyId = req.userId!;
-    const response = await this._getCompanyDepartmentsUseCase.execute(companyId);
+    const response =
+      await this._getCompanyDepartmentsUseCase.execute(companyId);
     res.status(StatusCodes.OK).json({ response });
   };
 
@@ -47,15 +56,23 @@ export class DepartmentController {
     res.status(StatusCodes.OK).json({ response });
   };
 
-  getUnassignedDepartments = async (req: AuthRequest, res: Response): Promise<void> => {
+  getUnassignedDepartments = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const companyId = req.userId!;
-    const departments = await this._getUnassignedDepartmentsUseCase.execute(companyId);
+    const departments =
+      await this._getUnassignedDepartmentsUseCase.execute(companyId);
     res.status(StatusCodes.OK).json({ departments });
   };
 
-  getManagerDepartments = async (req: Request, res: Response): Promise<void> => {
+  getManagerDepartments = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     const { managerId } = req.params;
-    const response = await this._getManagerDepartmentsUseCase.execute(managerId);
+    const response =
+      await this._getManagerDepartmentsUseCase.execute(managerId);
     res.status(StatusCodes.OK).json(response);
   };
 }

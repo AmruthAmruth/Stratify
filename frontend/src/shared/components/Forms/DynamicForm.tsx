@@ -47,9 +47,17 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         if (field.type === "file") {
           initialData[field.name] = null;
         } else if (field.type === "date") {
-          initialData[field.name] = initialValues?.[field.name] || null;
+          const initialDateValue = initialValues?.[field.name];
+          if (initialDateValue && typeof initialDateValue === "string") {
+            const date = new Date(initialDateValue);
+            initialData[field.name] = isNaN(date.getTime()) ? null : date.toISOString();
+          } else {
+            initialData[field.name] = null;
+          }
         } else if (field.type === "select" && field.multiple) {
           initialData[field.name] = initialValues?.[field.name] || [];
+        } else if (field.type === "textarea") {
+          initialData[field.name] = initialValues?.[field.name] ?? "";
         } else {
           initialData[field.name] = initialValues?.[field.name] ?? "";
         }
@@ -69,7 +77,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     }));
 
     const handleChange = (
-      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+      e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
       const { name, type, value, files } = e.target as HTMLInputElement;
 
@@ -337,6 +345,21 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                     dateFormat="yyyy-MM-dd"
                     placeholderText={`Select ${field.label}`}
                     className="border rounded-lg px-4 py-2 focus:outline-none transition w-full"
+                    style={{
+                      backgroundColor: "#fbfbfb",
+                      color: "#3b3b3b",
+                      borderColor: errors[field.name] ? "#f87171" : "#dfdcef",
+                    }}
+                  />
+                ) : field.type === "textarea" ? (
+                  <textarea
+                    name={field.name}
+                    value={(formData[field.name] as string) || ""}
+                    onChange={handleChange}
+                    onBlur={() => validateField(field.name)}
+                    placeholder={`Enter ${field.label.toLowerCase()}`}
+                    className="border rounded-lg px-4 py-2 focus:outline-none transition resize-vertical"
+                    rows={4}
                     style={{
                       backgroundColor: "#fbfbfb",
                       color: "#3b3b3b",

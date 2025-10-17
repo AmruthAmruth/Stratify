@@ -1,7 +1,7 @@
 import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface SubTaskDocument extends Document {
-  issueId: Types.ObjectId; 
+  issueId: Types.ObjectId;
   heading: string;
   description: string;
   hours: number;
@@ -24,11 +24,10 @@ const SubTaskSchema = new Schema<SubTaskDocument>(
     },
     assignedToId: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
-
 
 export const SubTaskModel = mongoose.model<SubTaskDocument>(
   "SubTask",
-  SubTaskSchema
+  SubTaskSchema,
 );

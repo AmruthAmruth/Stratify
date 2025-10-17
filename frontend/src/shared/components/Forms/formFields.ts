@@ -113,9 +113,9 @@ export const createProjectFields = [
 
 export const createIssueFields = [
   { name: "heading", label: "Issue Heading", type: "text" },
-  { name: "description", label: "Description", type: "text" },
-  { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "text" },
   { name: "size", label: "Size", type: "number" },
+  { name: "description", label: "Description", type: "textarea" },
+  { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "textarea" },
   { name: "estimatedHours", label: "Estimated Hours", type: "number" },
   { 
     name: "type", 
@@ -155,7 +155,7 @@ export const createSprintFields = [
 export const createSubTaskFields = [
   { name: "issueId", label: "Issue ID", type: "text" },
   { name: "heading", label: "Subtask Heading", type: "text" },
-  { name: "description", label: "Description", type: "text" },
+  { name: "description", label: "Description", type: "textarea" },
   { name: "hours", label: "Estimated Hours", type: "number" },
   { 
     name: "status", 

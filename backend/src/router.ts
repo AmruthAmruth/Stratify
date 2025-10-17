@@ -7,7 +7,6 @@ import subscriptionRouter from "./interfaces/routes/SubscriptionRouter";
 import projectRouter from "./interfaces/routes/ProjectRouter";
 import leaveRouter from "./interfaces/routes/LeaveRoues";
 
-
 const router = Router();
 
 router.use("/auth", authRouter);
@@ -16,6 +15,6 @@ router.use("/department", departmentRouter);
 router.use("/employee", employeeRouter);
 router.use("/subscription", subscriptionRouter);
 router.use("/project", projectRouter);
-router.use("/leave", leaveRouter); 
+router.use("/leave", leaveRouter);
 
 export default router;

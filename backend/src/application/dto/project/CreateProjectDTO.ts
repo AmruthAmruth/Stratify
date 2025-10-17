@@ -7,11 +7,9 @@ export interface CreateProjectDTO {
   departmentId: string;
   createdBy: string;
   status?: "Planned" | "Active" | "Completed" | "Archived";
-  teamMemberIds?: string[];  
+  teamMemberIds?: string[];
 }
 
-
-
 export interface UpdateProjectDTO extends CreateProjectDTO {
- id:string;
+  id: string;
 }

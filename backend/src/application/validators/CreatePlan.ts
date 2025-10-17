@@ -10,5 +10,4 @@ export const CreatePlanSchema = z.object({
     .positive("Duration must be greater than 0"),
 });
 
-
 export type CreatePlanDTO = z.infer<typeof CreatePlanSchema>;

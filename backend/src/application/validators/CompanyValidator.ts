@@ -14,6 +14,5 @@ export const RegisterCompanySchema: z.ZodType<RegisterCompanyDTO> = z.object({
   country: z.string().min(2, "Country is required"),
   zipcode: z.string().min(4, "Zipcode is required"),
   password: z.string().min(6, "Password must be at least 6 characters"),
-  profileImage: z.string().url("Profile image must be a valid URL").optional()
+  profileImage: z.string().url("Profile image must be a valid URL").optional(),
 });
- 

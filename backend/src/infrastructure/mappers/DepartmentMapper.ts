@@ -1,5 +1,5 @@
 import { Department } from "../../domain/entities/Department";
-import { DepartmentDocument } from "../models/DepartmentModel"; 
+import { DepartmentDocument } from "../models/DepartmentModel";
 
 export class DepartmentMapper {
   static toEntity(doc: DepartmentDocument): Department {
@@ -10,7 +10,7 @@ export class DepartmentMapper {
       doc.companyId.toString(),
       doc.managerId?.toString(),
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

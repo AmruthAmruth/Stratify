@@ -11,5 +11,8 @@ export interface IBacklogRepository {
 
   delete(id: string): Promise<void>;
 
-  findByNameAndProject(name:string,projectId:string):Promise<Backlog|null>
+  findByNameAndProject(
+    name: string,
+    projectId: string,
+  ): Promise<Backlog | null>;
 }

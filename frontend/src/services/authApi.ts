@@ -1,96 +1,55 @@
 import api from "./axiosInstance";
 import { AUTH_ROUTES } from "@/constants/routes";
+import { AxiosError } from "axios";
 
-export const superAdminLogin = async (data: { email: string; password: string }) => {
+
+const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
   try {
-    const response = await api.post(AUTH_ROUTES.SUPER_ADMIN_LOGIN, data);
+    const response = await request;
     return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
-
-export const companyRegistration = async (data: any) => {
-  try {
-    const formData = new FormData();
-
-    for (const key in data) {
-      if (key === "profileImage" && data.profileImage instanceof File) {
-        formData.append("profileImage", data.profileImage);
-      } else {
-        formData.append(key, String(data[key]));
-      }
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      throw err.response?.data || new Error(errorMessage || "Network error");
     }
+    throw new Error(errorMessage || "Network error");
+  }
+};
 
-    const response = await api.post(AUTH_ROUTES.COMPANY_REGISTER, formData, {
+export const superAdminLogin = (data: { email: string; password: string }) =>
+  handleRequest(api.post(AUTH_ROUTES.SUPER_ADMIN_LOGIN, data));
+
+export const companyRegistration = (data: Record<string, unknown>) => {
+  const formData = new FormData();
+  for (const key in data) {
+    if (key === "profileImage" && data.profileImage instanceof File) {
+      formData.append("profileImage", data.profileImage);
+    } else {
+      formData.append(key, String(data[key]));
+    }
+  }
+  return handleRequest(
+    api.post(AUTH_ROUTES.COMPANY_REGISTER, formData, {
       headers: { "Content-Type": "multipart/form-data" },
-    });
-
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
+    })
+  );
 };
 
-export const verifyOTP = async (data: { otp: string; email: string }) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.COMPANY_VERIFY_OTP, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const verifyOTP = (data: { otp: string; email: string }) =>
+  handleRequest(api.post(AUTH_ROUTES.COMPANY_VERIFY_OTP, data));
 
-export const companyLogin = async (data: { email: string; password: string }) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.COMPANY_LOGIN, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const companyLogin = (data: { email: string; password: string }) =>
+  handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGIN, data));
 
-export const logout = async () => {
-  try {
-    const response = await api.post(AUTH_ROUTES.COMPANY_LOGOUT);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const logout = () => handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGOUT));
 
-export const resendOTP = async (email: string) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.RESEND_OTP, { email });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const resendOTP = (email: string) =>
+  handleRequest(api.post(AUTH_ROUTES.RESEND_OTP, { email }));
 
-export const forgotPassword = async (email: string) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.FORGOT_PASSWORD, { email });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const forgotPassword = (email: string) =>
+  handleRequest(api.post(AUTH_ROUTES.FORGOT_PASSWORD, { email }));
 
-export const forgotPasswordVerifyOTP = async (data: { email: string; otp: string }) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.FORGOT_PASSWORD_VERIFY_OTP, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const forgotPasswordVerifyOTP = (data: { email: string; otp: string }) =>
+  handleRequest(api.post(AUTH_ROUTES.FORGOT_PASSWORD_VERIFY_OTP, data));
 
-export const updatePassword = async (data: { email: string; password: string }) => {
-  try {
-    const response = await api.post(AUTH_ROUTES.RESET_PASSWORD, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const updatePassword = (data: { email: string; password: string }) =>
+  handleRequest(api.post(AUTH_ROUTES.RESET_PASSWORD, data));

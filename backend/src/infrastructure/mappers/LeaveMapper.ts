@@ -1,5 +1,5 @@
 import { Leave } from "../../domain/entities/Leave";
-import { LeaveDocument } from "../models/LeaveModel"; 
+import { LeaveDocument } from "../models/LeaveModel";
 
 export class LeaveMapper {
   static toEntity(doc: LeaveDocument): Leave {
@@ -16,7 +16,7 @@ export class LeaveMapper {
       doc.month,
       doc.departmentId.toString(),
       doc.companyId.toString(),
-      doc.rejectedReason
+      doc.rejectedReason,
     );
   }
 

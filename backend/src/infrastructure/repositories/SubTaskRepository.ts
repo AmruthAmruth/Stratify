@@ -4,7 +4,6 @@ import { SubTaskModel } from "../models/SubTaskModel";
 import { SubTaskMapper } from "../mappers/SubTaskMapper";
 
 export class SubTaskRepository implements ISubtaskRepository {
-  
   async create(subtask: SubTask): Promise<SubTask> {
     const created = await SubTaskModel.create({
       issueId: subtask.issueId,
@@ -17,6 +16,10 @@ export class SubTaskRepository implements ISubtaskRepository {
 
     return SubTaskMapper.toEntity(created);
   }
+
+  
+
+
 
   async findAllByIssue(issueId: string): Promise<SubTask[]> {
     const docs = await SubTaskModel.find({ issueId });
@@ -39,7 +42,7 @@ export class SubTaskRepository implements ISubtaskRepository {
         assignedToId: subtask.assignedToId || null,
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
 
     if (!updated) throw new Error("SubTask not found");
@@ -50,23 +53,21 @@ export class SubTaskRepository implements ISubtaskRepository {
     await SubTaskModel.findByIdAndDelete(id);
   }
 
+  async findByProjectId(projectId: string): Promise<SubTask[]> {
+    const docs = await SubTaskModel.find()
+      .populate({
+        path: "issueId",
+        match: { projectId },
+        select: "_id projectId",
+      })
+      .exec();
 
- async findByProjectId(projectId: string): Promise<SubTask[]> {
-  const docs = await SubTaskModel.find()
-    .populate({
-      path: "issueId",
-      match: { projectId },
-      select: "_id projectId"
-    })
-    .exec();
+    const filteredDocs = docs.filter((doc) => doc.issueId !== null);
 
-  const filteredDocs = docs.filter(doc => doc.issueId !== null);
-
-  return SubTaskMapper.toEntities(filteredDocs);
-}
+    return SubTaskMapper.toEntities(filteredDocs);
+  }
 
   async deleteByIssueId(issueId: string): Promise<void> {
     await SubTaskModel.deleteMany({ issueId });
   }
-
 }

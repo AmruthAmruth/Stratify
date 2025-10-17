@@ -10,9 +10,9 @@ export class SubTaskMapper {
       doc.description,
       doc.hours,
       doc.status,
-       doc.assignedToId ? doc.assignedToId.toString() : null,
+      doc.assignedToId ? doc.assignedToId.toString() : null,
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

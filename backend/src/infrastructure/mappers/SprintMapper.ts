@@ -13,7 +13,7 @@ export class SprintMapper {
       doc.projectId.toString(),
       doc.status,
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 
@@ -23,7 +23,7 @@ export class SprintMapper {
       goal: sprint.goal,
       startDate: sprint.startDate,
       endDate: sprint.endDate,
-        projectId: new Types.ObjectId(sprint.projectId),
+      projectId: new Types.ObjectId(sprint.projectId),
       status: sprint.status,
     };
   }

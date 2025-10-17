@@ -8,7 +8,7 @@ export class SubTask {
     public status: "To Do" | "In Progress" | "Done" | "Blocked" = "To Do",
     public assignedToId: string | null,
     public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date()
+    public updatedAt: Date = new Date(),
   ) {}
 
   updateStatus(newStatus: "To Do" | "In Progress" | "Done" | "Blocked") {

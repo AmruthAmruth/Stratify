@@ -1,4 +1,3 @@
-
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { SubscriptionRepository } from "../infrastructure/repositories/SubscriptionRepository";
 import { PlanPriceRepostory } from "../infrastructure/repositories/PlanPriceRepository";
@@ -19,19 +18,30 @@ export const subscriptionDI = () => {
   const razorpayService = new RazorpayService();
   const emailService = new EmailService();
 
-  const purchaseSubscriptionUseCase = new PurchaseSubscriptionUseCase(subscriptionRepo, planRepo, razorpayService, emailService, companyRepo);
-  const listSubscriptionPlansUseCase = new ListSubscriptionPlansUseCase(planRepo);
-const createPlanUseCase = new CreatePlanUseCase(planRepo);
+  const purchaseSubscriptionUseCase = new PurchaseSubscriptionUseCase(
+    subscriptionRepo,
+    planRepo,
+    razorpayService,
+    emailService,
+    companyRepo,
+  );
+  const listSubscriptionPlansUseCase = new ListSubscriptionPlansUseCase(
+    planRepo,
+  );
+  const createPlanUseCase = new CreatePlanUseCase(planRepo);
   const updatePlanUseCase = new UpdatePlanUseCase(planRepo);
   const deletePlanUseCase = new DeletePlanUseCase(planRepo);
- const listCompanyPurchasedPlanUseCase = new ListCompanyPurchasedPlanUseCase(subscriptionRepo, companyRepo);
- 
- return new SubscriptionController(
+  const listCompanyPurchasedPlanUseCase = new ListCompanyPurchasedPlanUseCase(
+    subscriptionRepo,
+    companyRepo,
+  );
+
+  return new SubscriptionController(
     purchaseSubscriptionUseCase,
     listSubscriptionPlansUseCase,
     createPlanUseCase,
     updatePlanUseCase,
     deletePlanUseCase,
-listCompanyPurchasedPlanUseCase
+    listCompanyPurchasedPlanUseCase,
   );
 };

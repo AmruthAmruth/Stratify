@@ -16,8 +16,6 @@ export interface IssueDocument extends Document {
   updatedAt: Date;
 }
 
-
-
 const IssueSchema = new Schema<IssueDocument>(
   {
     heading: { type: String, required: true },
@@ -40,9 +38,7 @@ const IssueSchema = new Schema<IssueDocument>(
     sprintId: { type: Schema.Types.ObjectId, ref: "Sprint", default: null },
     assignedTo: { type: Schema.Types.ObjectId, ref: "User", default: null },
   },
-  { timestamps: true } 
+  { timestamps: true },
 );
 
-
-
-export const IssueModel = mongoose.model<IssueDocument>("Issue", IssueSchema)
+export const IssueModel = mongoose.model<IssueDocument>("Issue", IssueSchema);

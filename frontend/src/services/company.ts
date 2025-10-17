@@ -1,199 +1,85 @@
 import api from "./axiosInstance";
 import { COMPANY_ROUTES } from "@/constants/routes";
+import { AxiosError } from "axios";
 
-export const getAllCompanies = async (params?: {
+
+const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
+  try {
+    const response = await request;
+    return response.data;
+  } catch (err) {
+    if (err instanceof AxiosError) {
+      throw err.response?.data || new Error(errorMessage || "Network error");
+    }
+    throw new Error(errorMessage || "Network error");
+  }
+};
+
+
+export const getAllCompanies = (params?: {
   page?: number;
   pageSize?: number;
   cursor?: string;
   filter?: Record<string, unknown>;
   sort?: Record<string, 1 | -1>;
-}) => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.ALL_COMPANIES, { params });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+}) => handleRequest(api.get(COMPANY_ROUTES.ALL_COMPANIES, { params }));
 
-export const getAllDepartmentInACompany = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.COMPANY_DEPARTMENTS);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getAllDepartmentInACompany = () => handleRequest(api.get(COMPANY_ROUTES.COMPANY_DEPARTMENTS));
 
-export const createDepartment = async (data: Record<string, unknown>) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.CREATE_DEPARTMENT, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const createDepartment = (data: Record<string, unknown>) =>
+  handleRequest(api.post(COMPANY_ROUTES.CREATE_DEPARTMENT, data));
 
-export const createEmployee = async (data: Record<string, unknown>) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.CREATE_EMPLOYEE, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const createEmployee = (data: Record<string, unknown>) =>
+  handleRequest(api.post(COMPANY_ROUTES.CREATE_EMPLOYEE, data)); 
 
-export const createManager = async (data: Record<string, unknown>) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.CREATE_MANAGER, data);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const createManager = (data: Record<string, unknown>) =>
+  handleRequest(api.post(COMPANY_ROUTES.CREATE_MANAGER, data));
 
-export const getTeamMember = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.TEAM_MEMBERS);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getTeamMember = () => handleRequest(api.get(COMPANY_ROUTES.TEAM_MEMBERS));
 
-export const getUnassignedManager = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.UNASSIGNED_MANAGERS);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getUnassignedManager = () => handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_MANAGERS));
 
-export const getUnassignedDepartments = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.UNASSIGNED_DEPARTMENTS);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getUnassignedDepartments = () => handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_DEPARTMENTS));
 
-export const getDepartmentDetails = async (departmentId: string) => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.DEPARTMENT_DETAILS(departmentId));
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getDepartmentDetails = (departmentId: string) =>
+  handleRequest(api.get(COMPANY_ROUTES.DEPARTMENT_DETAILS(departmentId)));
 
-export const getTeamMemberProfile = async (profileId: string) => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.TEAM_MEMBER_PROFILE(profileId));
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getTeamMemberProfile = (profileId: string) =>
+  handleRequest(api.get(COMPANY_ROUTES.TEAM_MEMBER_PROFILE(profileId)));
 
-export const getCompanyProfile = async (profileId: string) => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.COMPANY_PROFILE(profileId));
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getCompanyProfile = (profileId: string) =>
+  handleRequest(api.get(COMPANY_ROUTES.COMPANY_PROFILE(profileId)));
 
-export const listSubscriptionPlan = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.SUBSCRIPTION_PLANS);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const listSubscriptionPlan = () => handleRequest(api.get(COMPANY_ROUTES.SUBSCRIPTION_PLANS));
 
-export const createSubscriptionPlan = async (planName: string) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.PURCHASE, { planName });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const createSubscriptionPlan = (planName: string) =>
+  handleRequest(api.post(COMPANY_ROUTES.PURCHASE, { planName }));
+   
+export const createSubscriptionPlanForUnauthenticated = (planName: string, companyId: string) =>
+  handleRequest(api.post(COMPANY_ROUTES.PURCHASE_UNAUTH, { planName, companyId }));
 
-export const createSubscriptionPlanForUnauthenticated = async (planName: string, companyId: string) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.PURCHASE_UNAUTH, { planName, companyId });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
-
-export const verifyPayment = async (payload: {
+export const verifyPayment = (payload: {
   orderId: string;
   paymentId: string;
   signature: string;
   planName: string;
-}) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.VERIFY_PAYMENT, payload);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Payment verification failed");
-  }
-};
+}) => handleRequest(api.post(COMPANY_ROUTES.VERIFY_PAYMENT, payload), "Payment verification failed");
 
-export const verifyPaymentForUnauthenticated = async (payload: {
+export const verifyPaymentForUnauthenticated = (payload: {
   orderId: string;
   paymentId: string;
   signature: string;
   planName: string;
   companyId: string;
-}) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.VERIFY_PAYMENT_UNAUTH, payload);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Payment verification failed");
-  }
-};
+}) => handleRequest(api.post(COMPANY_ROUTES.VERIFY_PAYMENT_UNAUTH, payload), "Payment verification failed");
 
-export const approveCompany = async (companyId: string) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.APPROVE_COMPANY, { companyId });
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const approveCompany = (companyId: string) =>
+  handleRequest(api.post(COMPANY_ROUTES.APPROVE_COMPANY, { companyId }));
 
-export const unapproveCompany = async (companyId: string,reason:string) => {
-  try {
-    const response = await api.post(COMPANY_ROUTES.UNAPPROVE_COMPANY, { companyId ,reason});
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const unapproveCompany = (companyId: string, reason: string) =>
+  handleRequest(api.post(COMPANY_ROUTES.UNAPPROVE_COMPANY, { companyId, reason }));
 
-export const getManagerDepartments = async (managerId: string) => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.MANAGER_DEPARTMENTS(managerId));
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const getManagerDepartments = (managerId: string) =>
+  handleRequest(api.get(COMPANY_ROUTES.MANAGER_DEPARTMENTS(managerId)));
 
-export const listPurchasedCompany = async () => {
-  try {
-    const response = await api.get(COMPANY_ROUTES.LIST_PURCHASED_COMPANY);
-    return response.data;
-  } catch (err: any) {
-    throw err.response?.data || new Error("Network error");
-  }
-};
+export const listPurchasedCompany = () => handleRequest(api.get(COMPANY_ROUTES.LIST_PURCHASED_COMPANY));

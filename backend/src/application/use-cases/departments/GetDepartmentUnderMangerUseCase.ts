@@ -3,14 +3,15 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepartmentResponseDTO";
 import { IGetManagerDepartmentsUseCase } from "../../interfaces/departments/IGetManagerDepartmentsUseCase";
 
-export class GetManagerDepartmentsUseCase implements IGetManagerDepartmentsUseCase {
+export class GetManagerDepartmentsUseCase
+  implements IGetManagerDepartmentsUseCase
+{
   constructor(
     private _departmentRepo: IDepartmentRepository,
-    private _employeeRepo: IEmployeeRepository
+    private _employeeRepo: IEmployeeRepository,
   ) {}
 
   async execute(managerId: string): Promise<ManagerDepartmentResponseDTO[]> {
-    
     const departments = await this._departmentRepo.findByManagerId(managerId);
 
     if (!departments || departments.length === 0) {
@@ -19,12 +20,14 @@ export class GetManagerDepartmentsUseCase implements IGetManagerDepartmentsUseCa
 
     const results: ManagerDepartmentResponseDTO[] = [];
     for (const dept of departments) {
-      const memberCount = await this._employeeRepo.totalEmployeeInADepartment(dept.id);
+      const memberCount = await this._employeeRepo.totalEmployeeInADepartment(
+        dept.id,
+      );
       results.push({
         id: dept.id,
         name: dept.name,
         memberCount,
-        status: "Active" 
+        status: "Active",
       });
     }
 

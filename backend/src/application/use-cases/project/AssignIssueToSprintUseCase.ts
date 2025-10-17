@@ -9,7 +9,7 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
   private readonly WEEKLY_LIMIT = 40;
   constructor(
     private _issueRepo: IssueRepository,
-    private _sprintRepo: SprintRepository
+    private _sprintRepo: SprintRepository,
   ) {}
   async execute(issueId: string, sprintId: string): Promise<Issue> {
     const issue = await this._issueRepo.findById(issueId);
@@ -21,7 +21,7 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
     if (!issue.assignedTo) {
       throw new AppError(
         "Issue must have an assigned employee before moving to a sprint",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -35,7 +35,7 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
       const available = this.WEEKLY_LIMIT - totalAllocatedHours;
       throw new AppError(
         `Employee capacity exceeded. Only ${available}h available in this sprint.`,
-        400
+        400,
       );
     }
 

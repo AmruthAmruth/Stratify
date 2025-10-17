@@ -27,61 +27,74 @@ export class ProjectController {
     private _createTaskUseCase: ICreateTaskUseCase,
     private _getProjectsByCompanyUseCase: IGetProjectsByCompanyUseCase,
     private _getProjectsByDepartmentUseCase: IGetProjectsByDepartmentUseCase,
-    private _createIssueUseCase:ICreateIssueUseCase,
-    private _createSubTaskUseCase:ICreateSubTaskUseCase,
-    private _createSprentUseCase:ICreateSprintUseCase,
-    private _assignIssueToSprintUseCase:IAssignIssueToSprintUseCase,
-    private _projectLevelEmployeeAllocationUseCase:IProjectLevelEmployeeAllocationUseCase,
-    private _issueLevelEmployeeAllocationUseCase:IIssueLevelEmployeeAllocation,
-    private _addEmployeeProjectUseCase:IAddEmployeeProjectUseCase,
-    private _getProjectDetailsUseCase:IGetProjectDetailsUseCase,
-    private _deleteProjectUseCase:IDeleteProjectUseCase,
-    private _updateProjectUseCase:IUpdateProjectUseCase,
-    private _getEmployeeNotInProjectUseCase:IGetEmployeeNotInProjectUseCase
+    private _createIssueUseCase: ICreateIssueUseCase,
+    private _createSubTaskUseCase: ICreateSubTaskUseCase,
+    private _createSprentUseCase: ICreateSprintUseCase,
+    private _assignIssueToSprintUseCase: IAssignIssueToSprintUseCase,
+    private _projectLevelEmployeeAllocationUseCase: IProjectLevelEmployeeAllocationUseCase,
+    private _issueLevelEmployeeAllocationUseCase: IIssueLevelEmployeeAllocation,
+    private _addEmployeeProjectUseCase: IAddEmployeeProjectUseCase,
+    private _getProjectDetailsUseCase: IGetProjectDetailsUseCase,
+    private _deleteProjectUseCase: IDeleteProjectUseCase,
+    private _updateProjectUseCase: IUpdateProjectUseCase,
+    private _getEmployeeNotInProjectUseCase: IGetEmployeeNotInProjectUseCase,
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
     const createdBy = req.userId;
     const projectDTO = { ...req.body, createdBy };
     const response = await this._createProjectUseCase.execute(projectDTO);
-    res.status(StatusCodes.CREATED).json({ message: "Project created successfully", response });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Project created successfully", response });
   };
 
   createUserStory = async (req: AuthRequest, res: Response): Promise<void> => {
     const createdBy = req.userId;
     const userStoryDTO = { ...req.body, createdBy };
     const response = await this._createUserStoryUseCase.execute(userStoryDTO);
-    res.status(StatusCodes.CREATED).json({ message: "User story created successfully", response });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "User story created successfully", response });
   };
 
   createBacklog = async (req: AuthRequest, res: Response): Promise<void> => {
     const createdBy = req.userId;
     const backlogDTO = { ...req.body, createdBy };
     const response = await this._createBacklogUseCase.execute(backlogDTO);
-    res.status(StatusCodes.CREATED).json({ message: "Backlog created successfully", response });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Backlog created successfully", response });
   };
 
-  // createSprint = async (req: AuthRequest, res: Response): Promise<void> => {
-  //   const createdBy = req.userId;
-  //   const sprintDTO = { ...req.body, createdBy }; 
-  //   const response = await this._createSprintUseCase.execute(sprintDTO);
-  //   res.status(StatusCodes.CREATED).json({ message: "Sprint created successfully", response });
-  // };
+ 
 
   createTask = async (req: Request, res: Response): Promise<void> => {
     const response = await this._createTaskUseCase.execute(req.body);
-    res.status(StatusCodes.CREATED).json({ message: "Task created successfully", response });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Task created successfully", response });
   };
 
-  getProjectsByCompany = async (req: AuthRequest, res: Response): Promise<void> => {
+  getProjectsByCompany = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const companyId = req.userId;
-    const response = await this._getProjectsByCompanyUseCase.execute(companyId!);
+    const response = await this._getProjectsByCompanyUseCase.execute(
+      companyId!,
+    );
     res.status(StatusCodes.OK).json(response);
   };
 
-  getProjectsByDepartment = async (req: AuthRequest, res: Response): Promise<void> => {
+  getProjectsByDepartment = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const managerId = req.userId;
-    const response = await this._getProjectsByDepartmentUseCase.execute(managerId!);
+    const response = await this._getProjectsByDepartmentUseCase.execute(
+      managerId!,
+    );
     res.status(StatusCodes.OK).json(response);
   };
 
@@ -91,76 +104,95 @@ export class ProjectController {
     res.status(StatusCodes.OK).json(response);
   };
 
-  
+  createIssue = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._createIssueUseCase.execute(req.body);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Issue Created Successfully", response });
+  };
 
-  createIssue=async (req:Request,res:Response):Promise<void>=>{
-      const response = await this._createIssueUseCase.execute(req.body);
-      res.status(StatusCodes.CREATED).json({message:"Issue Created Successfully",response})
-  }
+  createSubTask = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._createSubTaskUseCase.execute(req.body);
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Task Created Successfully", response });
+  };
 
-createSubTask=async(req:Request,res:Response):Promise<void>=>{
-  const response = await this._createSubTaskUseCase.execute(req.body);
-  res.status(StatusCodes.CREATED).json({message:"Task Created Successfully",response})
+  createSprint = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._createSprentUseCase.execute(req.body);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Sprint Created Successfully!", response });
+  };
+
+  assignIssueToSprint = async (req: Request, res: Response): Promise<void> => {
+    const { issueId, sprintId } = req.body;
+    const response = await this._assignIssueToSprintUseCase.execute(
+      issueId,
+      sprintId,
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Assine Issue to Sprint", response });
+  };
+
+  projectLevelEmployeeAllocation = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const managerId = req.userId;
+    const response = await this._projectLevelEmployeeAllocationUseCase.execute(
+      managerId!,
+    );
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  issueLevelEmployeeAllocation = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    const { id } = req.params;
+    const response =
+      await this._issueLevelEmployeeAllocationUseCase.execute(id);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  addEmployeeProject = async (req: Request, res: Response): Promise<void> => {
+    await this._addEmployeeProjectUseCase.execute(
+      req.body.projectId,
+      req.body.employeeId,
+    );
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Added Employee to the Project" });
+  };
+
+  deleteProject = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+
+    await this._deleteProjectUseCase.execute(id);
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Project Deleted Successfully!" });
+  };
+
+  updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
+    const createdBy = req.userId;
+    const response = await this._updateProjectUseCase.execute({
+      ...req.body,
+      createdBy,
+    });
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Updated the project successfully!", response });
+  };
+
+  getEmployeesNotInProject = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
+    const { id } = req.params;
+    const response = await this._getEmployeeNotInProjectUseCase.execute(id);
+    res.status(StatusCodes.OK).json(response);
+  };
 }
-
-
-
-createSprint=async(req:Request,res:Response):Promise<void>=>{
-  const response = await this._createSprentUseCase.execute(req.body);
-  res.status(StatusCodes.OK).json({message:"Sprint Created Successfully!",response})
-}
-
-
-assignIssueToSprint=async(req:Request,res:Response):Promise<void>=>{
-  const {issueId,sprintId}=req.body
-  const response = await this._assignIssueToSprintUseCase.execute(issueId,sprintId);
-  res.status(StatusCodes.OK).json({message:"Assine Issue to Sprint",response})
-}
- 
-
-projectLevelEmployeeAllocation=async(req:AuthRequest,res:Response):Promise<void>=>{
-  const managerId=req.userId;
-  const response = await this._projectLevelEmployeeAllocationUseCase.execute(managerId!);
-  res.status(StatusCodes.OK).json(response)
-}
-
-
-issueLevelEmployeeAllocation = async(req:Request,res:Response):Promise<void>=>{
-  const {id}=req.params;
-  const response = await this._issueLevelEmployeeAllocationUseCase.execute(id);
-  res.status(StatusCodes.OK).json(response)
-} 
-
-
-addEmployeeProject=async(req:Request,res:Response):Promise<void>=>{
-  await this._addEmployeeProjectUseCase.execute(req.body.projectId,req.body.employeeId);
-  res.status(StatusCodes.OK).json({message:"Added Employee to the Project"})
-}
-
- 
-deleteProject=async(req:Request,res:Response):Promise<void>=>{
-  const {id}=req.params
-  console.log("projectId++++",id);
-  
-  await this._deleteProjectUseCase.execute(id);
-  res.status(StatusCodes.OK).json({message:"Project Deleted Successfully!"})
-}
-
-
-updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
-  const createdBy = req.userId;
- const response= await this._updateProjectUseCase.execute({ ...req.body, createdBy });
-  res.status(StatusCodes.OK).json({message:"Updated the project successfully!",response},)
-};
-
-
-getEmployeesNotInProject=async(req:Request,res:Response):Promise<void>=>{
-  const {id}=req.params
-  const response = await this._getEmployeeNotInProjectUseCase.execute(id);
-  res.status(StatusCodes.OK).json(response)
-}
-
-
-
-} 
-       

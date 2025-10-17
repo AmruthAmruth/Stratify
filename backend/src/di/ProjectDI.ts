@@ -46,64 +46,82 @@ export const projectDI = () => {
     companyRepo,
     managerRepo,
     departmentRepo,
-    employeeRepo
+    employeeRepo,
   );
   const createUserStoryUseCase = new CreateUserStoryUseCase(
     userStoryRepo,
     backlogRepo,
     projectRepo,
-    employeeRepo
+    employeeRepo,
   );
   const createBacklogUseCase = new CreateBacklogUseCase(
     backlogRepo,
     companyRepo,
     managerRepo,
-    projectRepo
+    projectRepo,
   );
   const createTaskUseCase = new CreateTaskUseCase(
     taskRepo,
     userStoryRepo,
     employeeRepo,
-    projectRepo
+    projectRepo,
   );
   const getProjectsByCompanyUseCase = new GetProjectsByCompanyUseCase(
     projectRepo,
     managerRepo,
-    departmentRepo
+    departmentRepo,
   );
   const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(
     projectRepo,
-    managerRepo
+    managerRepo,
   );
   const createIssueUseCase = new CreateIssueUseCase(
     projectRepo,
     issueRepo,
-    employeeRepo
+    employeeRepo,
   );
   const createSubTaskUseCase = new CreateSubTaskUseCase(issueRepo, subTaskRepo);
   const createSprentUseCase = new CreateSprintUseCase(projectRepo, sprintRepo);
   const assineIssueToSprintUseCase = new AssignIssueToSprintUseCase(
     issueRepo,
-    sprintRepo
+    sprintRepo,
   );
   const projectLevelEmployeeAllocationUseCase =
     new ProjectLevelEmployeeAllocationUseCase(managerRepo, employeeRepo);
   const issueLevelEmployeeAllocationUseCase =
     new IssueLevelEmployeeAllocationUseCase(projectRepo, employeeRepo);
 
-    const addEmployeeProjectUseCase =new AddEmployeeProjectUseCase(projectRepo,employeeRepo)
+  const addEmployeeProjectUseCase = new AddEmployeeProjectUseCase(
+    projectRepo,
+    employeeRepo,
+  );
 
+  const getProjectDetailsUseCase = new GetProjectDetailsUseCase(
+    projectRepo,
+    issueRepo,
+    subTaskRepo,
+    sprintRepo,
+  );
 
-    const getProjectDetailsUseCase= new GetProjectDetailsUseCase(projectRepo,issueRepo,subTaskRepo,sprintRepo)
+  const deleteProjectUseCase = new DeleteProjectUseCase(
+    projectRepo,
+    issueRepo,
+    subTaskRepo,
+    sprintRepo,
+  );
 
+  const updateProjectUseCase = new UpdateProjectUseCase(
+    projectRepo,
+    companyRepo,
+    managerRepo,
+    departmentRepo,
+    employeeRepo,
+  );
 
-    const deleteProjectUseCase = new DeleteProjectUseCase(projectRepo,issueRepo,subTaskRepo,sprintRepo)
-
-    const updateProjectUseCase = new UpdateProjectUseCase(projectRepo,companyRepo,managerRepo,departmentRepo,employeeRepo)
-
-const getEmployeeNotInProjectUseCase = new GetEmployeeNotInProjectUseCase(projectRepo,employeeRepo)
-
-
+  const getEmployeeNotInProjectUseCase = new GetEmployeeNotInProjectUseCase(
+    projectRepo,
+    employeeRepo,
+  );
 
   return new ProjectController(
     createProjectUseCase,
@@ -122,7 +140,6 @@ const getEmployeeNotInProjectUseCase = new GetEmployeeNotInProjectUseCase(projec
     getProjectDetailsUseCase,
     deleteProjectUseCase,
     updateProjectUseCase,
-    getEmployeeNotInProjectUseCase
-
+    getEmployeeNotInProjectUseCase,
   );
 };

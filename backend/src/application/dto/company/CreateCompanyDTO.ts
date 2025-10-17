@@ -5,9 +5,9 @@ export interface BaseUserDTO {
 }
 
 export interface PersonDTO extends BaseUserDTO {
-  dob: string;          
+  dob: string;
   gender: "male" | "female" | "other";
-  joiningDate: string;   
+  joiningDate: string;
   profileImage?: string;
 }
 
@@ -20,23 +20,23 @@ export interface RegisterCompanyDTO extends BaseUserDTO {
   state: string;
   country: string;
   zipcode: string;
-  password: string;      
+  password: string;
   profileImage?: string;
 }
 
 export interface CreateManagerDTO extends PersonDTO {
   department: string;
-  employeeId: string;    
-  companyId: string;      
-  password?: string;     
+  employeeId: string;
+  companyId: string;
+  password?: string;
 }
 
 export interface CreateEmployeeDTO extends PersonDTO {
   designation: string;
-  employeeId: string;     
-  companyId: string;    
-  managerId?: string;     
-  password?: string;      
+  employeeId: string;
+  companyId: string;
+  managerId?: string;
+  password?: string;
 }
 
 export type RegisterUserDTO =

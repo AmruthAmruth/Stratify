@@ -4,16 +4,18 @@ import { ISprintRepository } from "../../../domain/repositories/ISprintRepositor
 import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { ProjectDetailsDTO, SprintWithIssuesDTO } from "../../dto/project/GetProjectDetailsDTO";
+import {
+  ProjectDetailsDTO,
+  SprintWithIssuesDTO,
+} from "../../dto/project/GetProjectDetailsDTO";
 import { IGetProjectDetailsUseCase } from "../../interfaces/project/IGetProjectDetailsUseCase";
-
 
 export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
     private _issueRepo: IIssueRepository,
     private _subTaskRepo: ISubtaskRepository,
-    private _sprintRepo: ISprintRepository
+    private _sprintRepo: ISprintRepository,
   ) {}
 
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
@@ -49,7 +51,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
             assignedToId: st.assignedToId ?? null,
           })),
         };
-      })
+      }),
     );
 
     const backlogIssues = issuesWithSubtasks.filter((i) => !i.sprintId);
@@ -61,14 +63,16 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
     const today = new Date();
 
     sprints.forEach((sprint) => {
-      const sprintIssues = issuesWithSubtasks.filter((i) => i.sprintId === sprint.id);
+      const sprintIssues = issuesWithSubtasks.filter(
+        (i) => i.sprintId === sprint.id,
+      );
       const sprintDTO: SprintWithIssuesDTO = {
         id: sprint.id!,
         name: sprint.name,
         goal: sprint.goal,
         startDate: sprint.startDate,
         endDate: sprint.endDate,
-        status: sprint.status, 
+        status: sprint.status,
         issues: sprintIssues,
       };
 

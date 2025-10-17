@@ -1,5 +1,5 @@
 import { Employee } from "../../domain/entities/Employee";
-import { EmployeeDocument } from "../models/EmployeeModel"; 
+import { EmployeeDocument } from "../models/EmployeeModel";
 export class EmployeeMapper {
   static toEntity(doc: EmployeeDocument): Employee {
     return new Employee(
@@ -18,7 +18,7 @@ export class EmployeeMapper {
       doc.managerId ? doc.managerId.toString() : undefined,
       doc.profileImage ?? undefined,
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

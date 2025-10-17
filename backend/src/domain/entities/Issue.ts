@@ -1,8 +1,5 @@
-
-
-
-export class Issue{
-    constructor(
+export class Issue {
+  constructor(
     public readonly id: string | undefined,
     public heading: string,
     public description: string,
@@ -16,27 +13,21 @@ export class Issue{
     public sprintId?: string | null,
     public assignedTo?: string | null,
     public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date()
-    ){}
+    public updatedAt: Date = new Date(),
+  ) {}
 
-
-    updateStatus(newStatus: "Planned" | "In Progress" | "Done" | "Blocked") {
+  updateStatus(newStatus: "Planned" | "In Progress" | "Done" | "Blocked") {
     this.status = newStatus;
     this.updatedAt = new Date();
   }
 
-   assignUser(userId: string) {
+  assignUser(userId: string) {
     this.assignedTo = userId;
     this.updatedAt = new Date();
   }
 
-   moveToSprint(sprintId: string) {
+  moveToSprint(sprintId: string) {
     this.sprintId = sprintId;
     this.updatedAt = new Date();
   }
-
-
-  
 }
-
-

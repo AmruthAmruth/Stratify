@@ -15,8 +15,8 @@ export const Messages = {
   INVALID_EMAIL_FORMAT: "Invalid email format",
   EMAIL_NOT_FOUND: "Email not found",
   COMPANY_NOT_FOUND: "Company not found",
- PHONE_ALREADY_EXISTS:"Phone number is already exist",
- PASSWORD_RESET_SUCCESS:"Password Reset Successfull",
+  PHONE_ALREADY_EXISTS: "Phone number is already exist",
+  PASSWORD_RESET_SUCCESS: "Password Reset Successfull",
   // General Auth messages
 
   TOKEN_EXPIRED: "Session expired. Please log in again",
@@ -32,7 +32,6 @@ export const Messages = {
   OTP_RESENT: "A new OTP has been resent successfully.",
   // Token messages
   NO_REFREASHTOKEN: "No refresh token provided",
-  
 
   // Other messages
   PROFILE_UPDATE_SUCCESS: "Profile updated successfully",
@@ -40,9 +39,7 @@ export const Messages = {
   PASSWORD_CHANGE_SUCCESS: "Password changed successfully",
   PASSWORD_CHANGE_FAILED: "Password change failed",
   COMPANY_DEACTIVATED: "Company account has been deactivated",
-  COMPANY_ACTIVATED: "Company account has been activated",    
+  COMPANY_ACTIVATED: "Company account has been activated",
   COMPNAY_NOT_FOUND: "Company not found",
-MANAGER_ALREADY_EXISTS: "Manager with this email already exists",
-
-  
+  MANAGER_ALREADY_EXISTS: "Manager with this email already exists",
 } as const;

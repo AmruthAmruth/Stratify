@@ -26,12 +26,12 @@ const SubscriptionSchema = new Schema<SubscriptionDocument>(
     amount: { type: Number, required: true },
     paymentId: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 const SubscriptionModel = mongoose.model<SubscriptionDocument>(
   "Subscription",
-  SubscriptionSchema
+  SubscriptionSchema,
 );
 
 export default SubscriptionModel;

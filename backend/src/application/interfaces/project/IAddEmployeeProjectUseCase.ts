@@ -1,5 +1,3 @@
-
-
-export interface IAddEmployeeProjectUseCase{
-    execute(projectId:string,employeeId:string):Promise<void>
+export interface IAddEmployeeProjectUseCase {
+  execute(projectId: string, employeeId: string): Promise<void>;
 }

@@ -2,7 +2,7 @@ export interface CreateSprintDTO {
   name: string;
   goal: string;
   startDate: Date;
-  endDate: Date 
+  endDate: Date;
   projectId: string;
-  status?: "Planned" | "Active" | "Completed"; 
+  status?: "Planned" | "Active" | "Completed";
 }

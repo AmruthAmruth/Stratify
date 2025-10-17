@@ -1,4 +1,3 @@
-
 import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { DepartmentRepository } from "../infrastructure/repositories/DepartmentRepository";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
@@ -18,17 +17,35 @@ export const departmentDI = () => {
   const managerRepo = new ManagerRepository();
   const emailService = new EmailService();
 
-  const createDepartmentUseCase = new CreateDepartmentUseCase(departmentRepo, managerRepo, companyRepo, emailService);
-  const getCompanyDepartmentsUseCase = new GetCompanyDepartmentUseCase(departmentRepo, managerRepo, employeeRepo);
-  const getDepartmentDetailsUseCase = new GetDepartmentDetailsUseCase(departmentRepo, managerRepo, employeeRepo);
-  const getUnassignedDepartmentsUseCase = new GetUnassignedDepartmentUseCase(departmentRepo);
-  const getManagerDepartmentsUseCase = new GetManagerDepartmentsUseCase(departmentRepo, employeeRepo);
+  const createDepartmentUseCase = new CreateDepartmentUseCase(
+    departmentRepo,
+    managerRepo,
+    companyRepo,
+    emailService,
+  );
+  const getCompanyDepartmentsUseCase = new GetCompanyDepartmentUseCase(
+    departmentRepo,
+    managerRepo,
+    employeeRepo,
+  );
+  const getDepartmentDetailsUseCase = new GetDepartmentDetailsUseCase(
+    departmentRepo,
+    managerRepo,
+    employeeRepo,
+  );
+  const getUnassignedDepartmentsUseCase = new GetUnassignedDepartmentUseCase(
+    departmentRepo,
+  );
+  const getManagerDepartmentsUseCase = new GetManagerDepartmentsUseCase(
+    departmentRepo,
+    employeeRepo,
+  );
 
   return new DepartmentController(
     createDepartmentUseCase,
     getCompanyDepartmentsUseCase,
     getDepartmentDetailsUseCase,
     getUnassignedDepartmentsUseCase,
-    getManagerDepartmentsUseCase
+    getManagerDepartmentsUseCase,
   );
 };

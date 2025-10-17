@@ -5,4 +5,3 @@ export interface ITempRegistrationRepository {
   findByEmail(email: string): Promise<Company | null>;
   delete(email: string): Promise<void>;
 }
-

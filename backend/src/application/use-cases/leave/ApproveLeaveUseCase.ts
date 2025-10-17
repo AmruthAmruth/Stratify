@@ -5,13 +5,13 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { ApproveLeaveDTO } from "../../dto/leave/ApproveLeaveDTO";
 import { IApproveLeaveUseCase } from "../../interfaces/leave/IApproveLeaveUseCase";
-import { leaveStatusTemplate } from "../../templates/leaveStatusTemplate";
+import { leaveStatusTemplate } from "../../../shared/templates/leaveStatusTemplate";
 
 export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
   constructor(
     private _leaveRepo: ILeaveRepository,
     private _employeeRepo: IEmployeeRepository,
-    private _emailService: IEmailService
+    private _emailService: IEmailService,
   ) {}
 
   async execute(leaveDTO: ApproveLeaveDTO): Promise<string> {
@@ -20,7 +20,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     if (status !== "Approved" && status !== "Rejected") {
       throw new AppError(
         "Invalid status. Must be 'Approved' or 'Rejected'.",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -32,14 +32,14 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     if (leave.status !== "Pending") {
       throw new AppError(
         "Only pending leaves can be approved or rejected",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
     if (status === "Rejected" && (!reason || reason.trim() === "")) {
       throw new AppError(
         "Reason is required when rejecting a leave",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -61,13 +61,13 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       leave.startDate,
       leave.endDate,
       status,
-      reason
+      reason,
     );
 
     await this._emailService.sendEmail(
       employee.email,
       `Your leave has been ${status}`,
-      html
+      html,
     );
 
     return `Leave has been ${status.toLowerCase()} successfully${

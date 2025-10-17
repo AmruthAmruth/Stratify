@@ -29,10 +29,26 @@ const ProjectSchema = new Schema<ProjectDocument>({
     enum: ["Planned", "Active", "Completed", "Archived"],
     default: "Planned",
   },
-  departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
-  projectLeadId: { type: Schema.Types.ObjectId, ref: "Manager", required: true },
-  createdBy: { type: Schema.Types.ObjectId, required: true, refPath: "createdByModel" },
-  createdByModel: { type: String, required: true, enum: ["Company", "Manager"] },
+  departmentId: {
+    type: Schema.Types.ObjectId,
+    ref: "Department",
+    required: true,
+  },
+  projectLeadId: {
+    type: Schema.Types.ObjectId,
+    ref: "Manager",
+    required: true,
+  },
+  createdBy: {
+    type: Schema.Types.ObjectId,
+    required: true,
+    refPath: "createdByModel",
+  },
+  createdByModel: {
+    type: String,
+    required: true,
+    enum: ["Company", "Manager"],
+  },
   companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
   teamMemberIds: [{ type: Schema.Types.ObjectId, ref: "Employee" }],
   normalizedName: { type: String, lowercase: true, default: "" },
@@ -48,4 +64,7 @@ ProjectSchema.pre("save", function (next) {
   next();
 });
 
-export const ProjectModel = mongoose.model<ProjectDocument>("Project", ProjectSchema);
+export const ProjectModel = mongoose.model<ProjectDocument>(
+  "Project",
+  ProjectSchema,
+);

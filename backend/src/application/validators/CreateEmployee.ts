@@ -11,7 +11,7 @@ export const CreateEmployeeSchema = z.object({
     message: "Invalid date format for joiningDate",
   }),
   position: z.string().min(2, "Position is required"),
-  gender: z.enum(["male", "female", "other"])
+  gender: z.enum(["male", "female", "other"]),
 });
 
 export type CreateEmployeeDTO = z.infer<typeof CreateEmployeeSchema>;

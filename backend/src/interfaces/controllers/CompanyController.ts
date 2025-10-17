@@ -17,7 +17,7 @@ export class CompanyController {
     private _unapproveCompanyUseCase: IUnapproveCompany,
     private _getCompanyMembersUseCase: IGetCompanyMemebersUseCase,
     private _getTeamMemberProfileUseCase: IGetProfileUseCase,
-    private _getMemberForCompanyUseCase:IGetMemberForCompanyUseCase
+    private _getMemberForCompanyUseCase: IGetMemberForCompanyUseCase,
   ) {}
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
@@ -26,7 +26,10 @@ export class CompanyController {
     res.status(StatusCodes.OK).json(company);
   };
 
-  getPaginatedCompanies = async (req: Request, res: Response): Promise<void> => {
+  getPaginatedCompanies = async (
+    req: Request,
+    res: Response,
+  ): Promise<void> => {
     const { page, pageSize, cursor, filter, sort } = req.query;
     const result = await this._getPaginatedCompaniesUseCase.execute({
       page: page ? Number(page) : undefined,
@@ -41,16 +44,23 @@ export class CompanyController {
   approveCompany = async (req: Request, res: Response): Promise<void> => {
     const { companyId } = req.body;
     await this._approveCompanyUseCase.execute(companyId);
-    res.status(StatusCodes.OK).json({ message: "Company approved successfully" });
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Company approved successfully" });
   };
 
   unapproveCompany = async (req: Request, res: Response): Promise<void> => {
     const { companyId, reason } = req.body;
     await this._unapproveCompanyUseCase.execute(companyId, reason);
-    res.status(StatusCodes.OK).json({ message: "Company unapproved successfully" });
+    res
+      .status(StatusCodes.OK)
+      .json({ message: "Company unapproved successfully" });
   };
 
-  getCompanyMembers = async (req: AuthRequest, res: Response): Promise<void> => {
+  getCompanyMembers = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const companyId = req.userId!;
     const response = await this._getCompanyMembersUseCase.execute(companyId);
     res.status(StatusCodes.OK).json({ response });
@@ -62,9 +72,12 @@ export class CompanyController {
     res.status(StatusCodes.OK).json({ response });
   };
 
-  getMemberForCompany=async(req:AuthRequest,res:Response):Promise<void>=>{
-    const companyId=req.userId;
+  getMemberForCompany = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const companyId = req.userId;
     const response = await this._getMemberForCompanyUseCase.execute(companyId!);
-    res.status(StatusCodes.OK).json(response)
-  }
+    res.status(StatusCodes.OK).json(response);
+  };
 }

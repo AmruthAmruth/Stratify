@@ -10,12 +10,12 @@ export class DeleteProjectUseCase implements IDeleteProjectUseCase {
     private _projectRepo: IProjectRepository,
     private _issueRepo: IIssueRepository,
     private _subTaskRepo: ISubtaskRepository,
-    private _sprintRepo: ISprintRepository
+    private _sprintRepo: ISprintRepository,
   ) {}
 
   async execute(projectId: string): Promise<void> {
-    console.log("Porject id",projectId);
-    
+    console.log("Porject id", projectId);
+
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
       throw new AppError("Project not found", 404);

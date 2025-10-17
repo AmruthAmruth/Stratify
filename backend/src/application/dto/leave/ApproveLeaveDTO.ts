@@ -1,5 +1,5 @@
-    export interface ApproveLeaveDTO {
-    leaveId: string;                    
-     status: "Approved" | "Rejected";
-    reason?:string                  
-    }
+export interface ApproveLeaveDTO {
+  leaveId: string;
+  status: "Approved" | "Rejected";
+  reason?: string;
+}

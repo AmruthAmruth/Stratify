@@ -1,5 +1,4 @@
-
-export interface ProjectLevelEmployeeAllocationDTO { 
+export interface ProjectLevelEmployeeAllocationDTO {
   departmentId: string;
   employee: {
     name: string;

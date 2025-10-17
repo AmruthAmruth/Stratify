@@ -14,7 +14,7 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
     private _userStoryRepo: IUserStoryRepository,
     private _backlogRepo: IBacklogRepository,
     private _projectRepo: IProjectRepository,
-    private _employeeRepo: IEmployeeRepository
+    private _employeeRepo: IEmployeeRepository,
   ) {}
 
   async execute(userStoryDTO: CreateUserStoryDTO): Promise<UserStory> {
@@ -26,18 +26,18 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
     if (backlog.projectId !== userStoryDTO.projectId) {
       throw new AppError(
         "Backlog does not belong to the given project",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
     const existingUserStory = await this._userStoryRepo.findByNameAndBackLogId(
       userStoryDTO.title,
-      userStoryDTO.backlogId
+      userStoryDTO.backlogId,
     );
     if (existingUserStory) {
       throw new AppError(
         "Already existing the user story title",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
@@ -49,7 +49,7 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
       this._employeeRepo,
       userStoryDTO.assignedToIds,
       project.companyId,
-      "Assigned user"
+      "Assigned user",
     );
 
     const userStory = new UserStory(
@@ -66,7 +66,7 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
       userStoryDTO.assignedToIds,
       userStoryDTO.acceptanceCriteria,
       new Date(),
-      new Date()
+      new Date(),
     );
 
     return await this._userStoryRepo.create(userStory);

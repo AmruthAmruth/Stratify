@@ -15,6 +15,6 @@ export class Employee {
     public managerId?: string,
     public profileImage?: string,
     public createdAt?: Date,
-    public updatedAt?: Date
+    public updatedAt?: Date,
   ) {}
 }

@@ -6,7 +6,6 @@ import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
 import { ProjectMapper } from "../mappers/ProjectMapper";
 
 export class ProjectRepository implements IProjectRepository {
-
   async create(project: Project): Promise<Project> {
     const created = await ProjectModel.create({
       name: project.name,
@@ -20,7 +19,7 @@ export class ProjectRepository implements IProjectRepository {
       createdBy: new Types.ObjectId(project.createdBy),
       createdByModel: project.createdByModel,
       companyId: new Types.ObjectId(project.companyId),
-      teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
+      teamMemberIds: project.teamMemberIds?.map((id) => new Types.ObjectId(id)),
       createdAt: project.createdAt,
       updatedAt: project.updatedAt,
     });
@@ -40,12 +39,13 @@ export class ProjectRepository implements IProjectRepository {
         status: project.status,
         departmentId: new Types.ObjectId(project.departmentId),
         projectLeadId: new Types.ObjectId(project.projectLeadId),
-        teamMemberIds: project.teamMemberIds?.map(id => new Types.ObjectId(id)),
+        teamMemberIds: project.teamMemberIds?.map(
+          (id) => new Types.ObjectId(id),
+        ),
         updatedAt: new Date(),
       },
-      { new: true }
+      { new: true },
     );
-    
 
     if (!updated) throw new AppError("Project not found", 404);
     return ProjectMapper.toEntity(updated);
@@ -66,24 +66,29 @@ export class ProjectRepository implements IProjectRepository {
     return ProjectMapper.toEntities(projects);
   }
 
-  async findByNameAndCompany(name?: string, companyId?: string): Promise<Project | null> {
-  if (!name || !companyId) {
-    throw new AppError("Project name or companyId is missing", 400);
-  }
+  async findByNameAndCompany(
+    name?: string,
+    companyId?: string,
+  ): Promise<Project | null> {
+    if (!name || !companyId) {
+      throw new AppError("Project name or companyId is missing", 400);
+    }
 
-  const project = await ProjectModel.findOne({ 
-    companyId: new Types.ObjectId(companyId),
-    normalizedName: name.toLowerCase().trim(),
-  });
-
-  return project ? ProjectMapper.toEntity(project) : null;
-}
-
-
-  async findByKeyAndCompany(key: string, companyId: string): Promise<Project | null> {
     const project = await ProjectModel.findOne({
       companyId: new Types.ObjectId(companyId),
-      key: key
+      normalizedName: name.toLowerCase().trim(),
+    });
+
+    return project ? ProjectMapper.toEntity(project) : null;
+  }
+
+  async findByKeyAndCompany(
+    key: string,
+    companyId: string,
+  ): Promise<Project | null> {
+    const project = await ProjectModel.findOne({
+      companyId: new Types.ObjectId(companyId),
+      key: key,
     });
     return project ? ProjectMapper.toEntity(project) : null;
   }
@@ -98,11 +103,11 @@ export class ProjectRepository implements IProjectRepository {
         status: 1,
         startDate: 1,
         endDate: 1,
-        departmentId: 1
-      }
+        departmentId: 1,
+      },
     );
 
-    return projects.map(doc => ({
+    return projects.map((doc) => ({
       id: doc.id.toString(),
       name: doc.name,
       description: doc.description,
@@ -123,10 +128,10 @@ export class ProjectRepository implements IProjectRepository {
         status: 1,
         startDate: 1,
         endDate: 1,
-      }
+      },
     );
 
-    return projects.map(doc => ({
+    return projects.map((doc) => ({
       id: doc.id.toString(),
       name: doc.name,
       description: doc.description,

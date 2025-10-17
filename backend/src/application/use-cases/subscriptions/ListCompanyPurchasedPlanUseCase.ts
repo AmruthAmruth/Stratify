@@ -4,10 +4,10 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { PurchasePlanDTO } from "../../dto/subscriptions/CompanyPurchasedPlanDTO";
 import { IListPurchasedPlanUseCase } from "../../interfaces/subscriptions/IListPurchasedPlanUseCase";
 
-export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCase {
+export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCase{
   constructor(
     private _subscriptionRepo: ISubscriptionRepository,
-    private _companyRepo: ICompanyRepository
+    private _companyRepo: ICompanyRepository,
   ) {}
 
   async execute(): Promise<PurchasePlanDTO[]> {
@@ -21,9 +21,12 @@ export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCas
 
     for (const plan of plans) {
       const company = await this._companyRepo.findById(plan.companyId);
-      if (!company) continue; 
+      if (!company) continue;
 
-      const validityInMonths = this.calculateValidity(plan.startDate, plan.endDate);
+      const validityInMonths = this.calculateValidity(
+        plan.startDate,
+        plan.endDate,
+      );
 
       purchasedPlans.push({
         companyName: company.name,

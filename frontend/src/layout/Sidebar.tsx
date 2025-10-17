@@ -15,7 +15,7 @@ import {
   Bell 
 } from 'lucide-react';
 
-// Map menu labels to icons
+
 const iconMap: Record<string, React.FC<any>> = {
   Dashboard: Home,
   Companies: Users,

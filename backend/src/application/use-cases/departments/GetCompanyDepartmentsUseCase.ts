@@ -10,12 +10,11 @@ export class GetCompanyDepartmentUseCase
   constructor(
     private _departmentRepo: IDepartmentRepository,
     private _managerRepo: IManagerRepository,
-    private _employeeRepo: IEmployeeRepository
+    private _employeeRepo: IEmployeeRepository,
   ) {}
   async execute(companyId: string): Promise<DepartmentDetails[]> {
-    const departments = await this._departmentRepo.findDepartmentsByCompanyId(
-      companyId
-    );
+    const departments =
+      await this._departmentRepo.findDepartmentsByCompanyId(companyId);
 
     const enrichedDepartments: DepartmentDetails[] = await Promise.all(
       departments.map(async (dept) => {
@@ -36,7 +35,7 @@ export class GetCompanyDepartmentUseCase
           managerName,
           numOfEmployees,
         };
-      })
+      }),
     );
 
     return enrichedDepartments;

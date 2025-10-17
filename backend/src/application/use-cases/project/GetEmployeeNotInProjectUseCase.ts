@@ -5,11 +5,12 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { IssueLevelEmployeeAllocationDTO } from "../../dto/project/IssueLeavelEmployeeAllocationDTO";
 import { IGetEmployeeNotInProjectUseCase } from "../../interfaces/project/IGetEmployeeNotInProjectUseCase";
 
-export class GetEmployeeNotInProjectUseCase implements IGetEmployeeNotInProjectUseCase {
-
+export class GetEmployeeNotInProjectUseCase
+  implements IGetEmployeeNotInProjectUseCase
+{
   constructor(
     private readonly _projectRepo: IProjectRepository,
-    private readonly _employeeRepo: IEmployeeRepository
+    private readonly _employeeRepo: IEmployeeRepository,
   ) {}
 
   async execute(projectId: string): Promise<IssueLevelEmployeeAllocationDTO[]> {
@@ -18,31 +19,36 @@ export class GetEmployeeNotInProjectUseCase implements IGetEmployeeNotInProjectU
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-
-   const departmentId = project.departmentId;
+    const departmentId = project.departmentId;
     if (!departmentId) {
-      throw new AppError("Project does not have a department assigned", StatusCodes.BAD_REQUEST);
+      throw new AppError(
+        "Project does not have a department assigned",
+        StatusCodes.BAD_REQUEST,
+      );
     }
 
-    const departmentEmployees = await this._employeeRepo.findByDepartmentId(departmentId);
+    const departmentEmployees =
+      await this._employeeRepo.findByDepartmentId(departmentId);
     if (!departmentEmployees || departmentEmployees.length === 0) {
-      throw new AppError("No employees found in this department", StatusCodes.NOT_FOUND);
+      throw new AppError(
+        "No employees found in this department",
+        StatusCodes.NOT_FOUND,
+      );
     }
 
-
-
-       const projectEmployeeIds: string[] = project.teamMemberIds || [];
-
+    const projectEmployeeIds: string[] = project.teamMemberIds || [];
 
     const availableEmployees = departmentEmployees
-      .filter((emp) => emp.id) 
+      .filter((emp) => emp.id)
       .filter((emp) => !projectEmployeeIds.includes(emp.id!));
 
-      const result: IssueLevelEmployeeAllocationDTO[] = availableEmployees.map((emp) => ({
-      name: emp.name,
-      employeeId: emp.id!,
-      role: emp.role,
-    }));
+    const result: IssueLevelEmployeeAllocationDTO[] = availableEmployees.map(
+      (emp) => ({
+        name: emp.name,
+        employeeId: emp.id!,
+        role: emp.role,
+      }),
+    );
 
     return result;
   }

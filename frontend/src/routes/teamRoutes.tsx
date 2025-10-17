@@ -1,3 +1,4 @@
+import EmployeeProjectDetailsPage from "@/features/employee/EmployeeProjectDetailsPage";
 import Leave from "@/features/employee/Leave";
 import type { RouteObject } from "react-router";
 const teamRoutes: RouteObject[] = [
@@ -8,7 +9,12 @@ const teamRoutes: RouteObject[] = [
   {
     path: "leave-status",
     element: <Leave/>
+  },
+  {
+    path: "my-tasks",
+    element: <EmployeeProjectDetailsPage/>
   }
+
 ];
 
 export default teamRoutes;

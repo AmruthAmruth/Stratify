@@ -1,5 +1,5 @@
 import { Backlog } from "../../domain/entities/Backlog";
-import { BacklogDocument } from "../models/BacklogModel"; 
+import { BacklogDocument } from "../models/BacklogModel";
 
 export class BacklogMapper {
   static toEntity(doc: BacklogDocument): Backlog {
@@ -10,7 +10,7 @@ export class BacklogMapper {
       doc.description,
       doc.createdBy.toString(),
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

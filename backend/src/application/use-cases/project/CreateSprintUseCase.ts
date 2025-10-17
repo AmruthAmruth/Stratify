@@ -9,17 +9,15 @@ import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseC
 export class CreateSprintUseCase implements ICreateSprintUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
-    private _sprintRepo: ISprintRepository
+    private _sprintRepo: ISprintRepository,
   ) {}
 
   async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
-   
     const project = await this._projectRepo.findById(sprintDTO.projectId);
     if (!project) {
       throw new AppError("Project not found", StatusCodes.NOT_FOUND);
     }
 
-  
     const projectStart = new Date(project.startDate);
     const projectEnd = new Date(project.endDate);
     const sprintStart = new Date(sprintDTO.startDate);
@@ -28,32 +26,30 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
     if (sprintStart < projectStart || sprintEnd > projectEnd) {
       throw new AppError(
         `Sprint duration must fall within the project's start (${project.startDate.toDateString()}) and end (${project.endDate.toDateString()}) dates.`,
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
     if (sprintStart > sprintEnd) {
       throw new AppError(
         "Sprint start date cannot be after sprint end date.",
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
- 
     const overlappingSprint = await this._sprintRepo.findOverlappingSprint(
       sprintDTO.projectId,
       sprintDTO.startDate,
-      sprintDTO.endDate
+      sprintDTO.endDate,
     );
 
     if (overlappingSprint) {
       throw new AppError(
         `Sprint overlaps with existing sprint "${overlappingSprint.name}".`,
-        StatusCodes.BAD_REQUEST
+        StatusCodes.BAD_REQUEST,
       );
     }
 
- 
     const newSprint = new Sprint(
       undefined,
       sprintDTO.name,
@@ -61,7 +57,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
       sprintStart,
       sprintEnd,
       sprintDTO.projectId,
-      sprintDTO.status ?? "Planned"
+      sprintDTO.status ?? "Planned",
     );
 
     return await this._sprintRepo.create(newSprint);

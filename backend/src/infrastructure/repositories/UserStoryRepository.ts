@@ -5,7 +5,6 @@ import { UserStoryModel } from "../models/UserStoryModel";
 import { UserStoryMapper } from "../mappers/UserStoryMapper";
 
 export class UserStoryRepository implements IUserStoryRepository {
-
   async create(userStory: UserStory): Promise<UserStory> {
     const doc = new UserStoryModel(UserStoryMapper.toDocument(userStory));
     const created = await doc.save();
@@ -16,7 +15,7 @@ export class UserStoryRepository implements IUserStoryRepository {
     const updated = await UserStoryModel.findByIdAndUpdate(
       new Types.ObjectId(userStory.id),
       UserStoryMapper.toDocument(userStory),
-      { new: true }
+      { new: true },
     ).exec();
 
     if (!updated) throw new Error("User story not found");
@@ -30,7 +29,9 @@ export class UserStoryRepository implements IUserStoryRepository {
   }
 
   async findByProject(projectId: string): Promise<UserStory[]> {
-    const docs = await UserStoryModel.find({ projectId: new Types.ObjectId(projectId) }).exec();
+    const docs = await UserStoryModel.find({
+      projectId: new Types.ObjectId(projectId),
+    }).exec();
     return docs.map(UserStoryMapper.toEntity);
   }
 
@@ -38,23 +39,30 @@ export class UserStoryRepository implements IUserStoryRepository {
     await UserStoryModel.findByIdAndDelete(new Types.ObjectId(id)).exec();
   }
 
-  async findByNameAndBackLogId(name: string, backlogId: string): Promise<UserStory | null> {
+  async findByNameAndBackLogId(
+    name: string,
+    backlogId: string,
+  ): Promise<UserStory | null> {
     const doc = await UserStoryModel.findOne({ title: name, backlogId }).exec();
     return doc ? UserStoryMapper.toEntity(doc) : null;
   }
 
   async findByBacklogId(backlogId: string): Promise<UserStory[]> {
-    const docs = await UserStoryModel.find({ backlogId: new Types.ObjectId(backlogId) }).exec();
+    const docs = await UserStoryModel.find({
+      backlogId: new Types.ObjectId(backlogId),
+    }).exec();
     return docs.map(UserStoryMapper.toEntity);
   }
 
   async findBySprintId(sprintId: string): Promise<UserStory[]> {
-    const docs = await UserStoryModel.find({ sprintId: new Types.ObjectId(sprintId) }).exec();
+    const docs = await UserStoryModel.find({
+      sprintId: new Types.ObjectId(sprintId),
+    }).exec();
     return docs.map(UserStoryMapper.toEntity);
   }
 
   async findByIds(userStoryIds: string[]): Promise<UserStory[]> {
-    const objectIds = userStoryIds.map(id => new Types.ObjectId(id));
+    const objectIds = userStoryIds.map((id) => new Types.ObjectId(id));
     const docs = await UserStoryModel.find({ _id: { $in: objectIds } }).exec();
     return docs.map(UserStoryMapper.toEntity);
   }
@@ -66,10 +74,11 @@ export class UserStoryRepository implements IUserStoryRepository {
       const updated = await UserStoryModel.findByIdAndUpdate(
         new Types.ObjectId(story.id),
         UserStoryMapper.toDocument(story),
-        { new: true }
+        { new: true },
       ).exec();
 
-      if (!updated) throw new Error(`User story not found with id: ${story.id}`);
+      if (!updated)
+        throw new Error(`User story not found with id: ${story.id}`);
 
       updatedStories.push(UserStoryMapper.toEntity(updated));
     }

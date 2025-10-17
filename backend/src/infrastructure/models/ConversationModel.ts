@@ -18,7 +18,7 @@ const ConversationSchema = new Schema<ConversationDocument>(
     createdAt: { type: Date, required: true, default: () => new Date() },
     updatedAt: { type: Date, required: true, default: () => new Date() },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 ConversationSchema.pre("save", function (next) {
@@ -28,5 +28,5 @@ ConversationSchema.pre("save", function (next) {
 
 export const ConversationModel = mongoose.model<ConversationDocument>(
   "Conversation",
-  ConversationSchema
+  ConversationSchema,
 );

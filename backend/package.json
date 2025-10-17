@@ -6,7 +6,8 @@
   "scripts": {
     "lint": "eslint . --ext .ts",
     "lint:fix": "eslint . --ext .ts --fix",
-    "start": "npm run lint && nodemon"
+    "start": "npm run lint && nodemon",
+     "format": "prettier --write 'src/**/*.{js,ts,jsx,tsx,json,css,md}'"
   },
   "keywords": [],
   "author": "",
@@ -26,6 +27,7 @@
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
     "nodemailer": "^7.0.5",
+    "prettier": "^3.0.3",
     "razorpay": "^2.9.6",
     "rotating-file-stream": "^3.2.7",
     "socket.io": "^4.8.1",

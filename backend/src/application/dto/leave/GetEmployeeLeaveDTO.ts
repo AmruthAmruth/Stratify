@@ -4,16 +4,14 @@ export interface LeaveCountsDTO {
   Earned: number;
 }
 
-
 export interface LeaveDTO {
-  employeeId: string;                     
-  startDate: Date;                        
-  endDate: Date;                          
-  type: "Casual" | "Sick" | "Earned" | "Other"; 
-  status?: "Pending" | "Approved" | "Rejected"; 
-  reason?: string;                        
+  employeeId: string;
+  startDate: Date;
+  endDate: Date;
+  type: "Casual" | "Sick" | "Earned" | "Other";
+  status?: "Pending" | "Approved" | "Rejected";
+  reason?: string;
 }
-
 
 export interface EmployeeLeaveDTO {
   leaveCounts: LeaveCountsDTO;

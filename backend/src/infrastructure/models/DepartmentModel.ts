@@ -18,7 +18,7 @@ const DepartmentSchema = new Schema<DepartmentDocument>(
     managerId: { type: Schema.Types.ObjectId, ref: "Manager" },
     normalizedName: { type: String, lowercase: true, default: "" },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 DepartmentSchema.index({ companyId: 1, normalizedName: 1 }, { unique: true });
@@ -32,5 +32,5 @@ DepartmentSchema.pre("save", function (next) {
 
 export const DepartmentModel = mongoose.model<DepartmentDocument>(
   "Department",
-  DepartmentSchema
+  DepartmentSchema,
 );

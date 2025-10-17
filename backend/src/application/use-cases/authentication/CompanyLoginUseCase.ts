@@ -1,6 +1,9 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { LoginDTO } from "../../validators/LoginValidator";
-import { generateAccessToken, generateRefreshToken } from "../../../shared/utils/token";
+import {
+  generateAccessToken,
+  generateRefreshToken,
+} from "../../../shared/utils/token";
 import { comparePassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
@@ -19,11 +22,15 @@ export class CompanyLoginUseCase {
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
-    private _subscriptionRepository: ISubscriptionRepository
+    private _subscriptionRepository: ISubscriptionRepository,
   ) {}
 
-  async execute(data: LoginDTO): Promise<{ accessToken: string; refreshToken: string }> {
-    let user: UserType | null = await this._companyRepository.findByEmail(data.email);
+  async execute(
+    data: LoginDTO,
+  ): Promise<{ accessToken: string; refreshToken: string }> {
+    let user: UserType | null = await this._companyRepository.findByEmail(
+      data.email,
+    );
 
     if (!user) user = await this._managerRepository.findByEmail(data.email);
     if (!user) user = await this._employeeRepository.findByEmail(data.email);
@@ -32,24 +39,28 @@ export class CompanyLoginUseCase {
     const isPassword = await comparePassword(data.password, user.password);
     if (!isPassword) throw new AppError(Messages.LOGIN_FAILED, 401);
 
-
     if (user instanceof Company) {
       if (user.status === "pending" || user.status === "rejected") {
-        throw new AppError("Your account is still pending approval by Stratify Team.", 403);
+        throw new AppError(
+          "Your account is still pending approval by Stratify Team.",
+          403,
+        );
       }
 
-      const subscription = await this._subscriptionRepository.findByCompanyId(user.id!);
+      const subscription = await this._subscriptionRepository.findByCompanyId(
+        user.id!,
+      );
 
       if (!subscription || !["trial", "active"].includes(subscription.status)) {
         throw new AppError(
           "Your subscription is not active. Please subscribe to continue.",
-          402, 
-          { companyId: user.id! } 
+          402,
+          { companyId: user.id! },
         );
       }
     }
 
-    const payload = { id: user.id!, role: user.role ,name:user.name};
+    const payload = { id: user.id!, role: user.role, name: user.name };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 

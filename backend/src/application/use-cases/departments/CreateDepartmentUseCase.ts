@@ -8,33 +8,30 @@ import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateDepartmentDTO } from "../../dto/departments/CreateDepartmentDTO";
 import { ICreateDepartmentUseCase } from "../../interfaces/departments/ICreateDepartmentUseCase";
-import { departmentManagerAssignedTemplate } from "../../templates/DepartmentManagerAssignedTemplate";
+import { departmentManagerAssignedTemplate } from "../../../shared/templates/DepartmentManagerAssignedTemplate";
 
 export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
   constructor(
     private _departmentRepo: IDepartmentRepository,
     private _managerRepo: IManagerRepository,
     private _companyRepo: ICompanyRepository,
-    private _emailService: IEmailService
+    private _emailService: IEmailService,
   ) {}
 
   async execute(data: CreateDepartmentDTO): Promise<Department> {
-   
     const company = await this._companyRepo.findById(data.companyId);
     if (!company) {
       throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-  
     const existingDepartment = await this._departmentRepo.findByNameAndCompany(
       data.name,
-      data.companyId
+      data.companyId,
     );
     if (existingDepartment) {
       throw new AppError("Department already exists", 400);
     }
 
-    
     let managerEmail: string | null = null;
     let managerName: string | null = null;
 
@@ -46,14 +43,13 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       if (manager.departmentId) {
         throw new AppError(
           "Manager is already assigned to another department",
-          400
+          400,
         );
       }
       managerEmail = manager.email;
       managerName = manager.name;
     }
 
-    
     const department = new Department(
       undefined,
       data.name,
@@ -61,27 +57,25 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       data.companyId,
       data.managerId,
       new Date(),
-      new Date()
+      new Date(),
     );
 
-    
     const createdDepartment = await this._departmentRepo.create(department);
 
-   
     if (managerEmail && managerName) {
       const html = departmentManagerAssignedTemplate(
         managerName,
         createdDepartment.name,
-        company.name
+        company.name,
       );
 
       await this._emailService.sendEmail(
         managerEmail,
         `You have been assigned as Manager of ${createdDepartment.name}`,
-        html
+        html,
       );
     }
- 
+
     return createdDepartment;
   }
 }

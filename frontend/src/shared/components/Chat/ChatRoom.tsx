@@ -18,7 +18,6 @@ export const ChatRoom: React.FC = () => {
     const socket = getSocket();
     if (!socket || !activeConversationId) return;
 
-    // Join current conversation room
     socket.emit("joinConversation", activeConversationId);
 
     const handleMessage = (msg: any) => {

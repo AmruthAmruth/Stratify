@@ -5,7 +5,7 @@ import { Types } from "mongoose";
 
 export class ConversationRepository implements IConversationRepository {
 
-  // Create a new conversation
+  
   async create(data: Omit<Conversation, "id">): Promise<Conversation> {
     const convoDoc = await ConversationModel.create(data);
 
@@ -16,11 +16,10 @@ export class ConversationRepository implements IConversationRepository {
       convoDoc.members.map((m) => m.toString()),
       convoDoc.lastMessage,
       convoDoc.createdAt,
-      convoDoc.updatedAt
+      convoDoc.updatedAt,
     );
   }
-
-  // Find conversation by ID safely
+  
   async findById(id: string): Promise<Conversation | null> {
     if (!Types.ObjectId.isValid(id)) return null;
 
@@ -34,16 +33,18 @@ export class ConversationRepository implements IConversationRepository {
       convoDoc.members.map((m) => m.toString()),
       convoDoc.lastMessage,
       convoDoc.createdAt,
-      convoDoc.updatedAt
+      convoDoc.updatedAt,
     );
   }
 
-  // Find all conversations for a user
+  
   async findUserConversations(userId: string): Promise<Conversation[]> {
     if (!Types.ObjectId.isValid(userId)) return [];
 
     const userObjectId = new Types.ObjectId(userId);
-    const convoDocs = await ConversationModel.find({ members: userObjectId }).sort({ updatedAt: -1 });
+    const convoDocs = await ConversationModel.find({
+      members: userObjectId,
+    }).sort({ updatedAt: -1 });
 
     return convoDocs.map(
       (convo) =>
@@ -54,23 +55,23 @@ export class ConversationRepository implements IConversationRepository {
           convo.members.map((m) => m.toString()),
           convo.lastMessage,
           convo.createdAt,
-          convo.updatedAt
-        )
+          convo.updatedAt,
+        ),
     );
   }
 
-  // Update the last message of a conversation
+  
   async updateLastMessage(id: string, message: string): Promise<void> {
     if (!Types.ObjectId.isValid(id)) return;
 
     await ConversationModel.findByIdAndUpdate(
       id,
       { lastMessage: message, updatedAt: new Date() },
-      { new: true }
+      { new: true },
     );
   }
 
-  // Find a conversation by exact members safely
+  
   async findByMembers(members: string[]): Promise<Conversation | null> {
     const objectIds: Types.ObjectId[] = [];
 
@@ -92,7 +93,7 @@ export class ConversationRepository implements IConversationRepository {
       convoDoc.members.map((m) => m.toString()),
       convoDoc.lastMessage,
       convoDoc.createdAt,
-      convoDoc.updatedAt
+      convoDoc.updatedAt,
     );
   }
 }

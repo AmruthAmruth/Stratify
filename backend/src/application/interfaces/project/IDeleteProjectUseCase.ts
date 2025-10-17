@@ -1,5 +1,3 @@
-
-
-export interface IDeleteProjectUseCase{
-    execute(projectId:string):Promise<void>
+export interface IDeleteProjectUseCase {
+  execute(projectId: string): Promise<void>;
 }

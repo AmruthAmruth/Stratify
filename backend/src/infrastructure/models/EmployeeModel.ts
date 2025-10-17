@@ -8,9 +8,9 @@ export interface EmployeeDocument extends Document {
   dob: Date;
   joiningDate: Date;
   position: string;
-   companyId: Types.ObjectId;   
-  departmentId: Types.ObjectId; 
-  managerId?: Types.ObjectId; 
+  companyId: Types.ObjectId;
+  departmentId: Types.ObjectId;
+  managerId?: Types.ObjectId;
   profileImage?: string;
   password: string;
   gender: "male" | "female" | "other";
@@ -29,7 +29,11 @@ const EmployeeSchema: Schema<EmployeeDocument> = new Schema(
     position: { type: String, required: true },
 
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
-    departmentId: { type: Schema.Types.ObjectId, ref: "Department", required: true },
+    departmentId: {
+      type: Schema.Types.ObjectId,
+      ref: "Department",
+      required: true,
+    },
     managerId: { type: Schema.Types.ObjectId, ref: "Manager", default: null },
 
     profileImage: { type: String, default: null },
@@ -49,7 +53,7 @@ const EmployeeSchema: Schema<EmployeeDocument> = new Schema(
       required: true,
     },
   },
-  { timestamps: true } 
+  { timestamps: true },
 );
 
 export const EmployeeModel: Model<EmployeeDocument> =

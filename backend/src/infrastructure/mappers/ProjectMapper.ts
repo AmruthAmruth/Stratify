@@ -16,9 +16,9 @@ export class ProjectMapper {
       doc.createdBy.toString(),
       doc.createdByModel,
       doc.companyId.toString(),
-      doc.teamMemberIds?.map(id => id.toString()) || [],
+      doc.teamMemberIds?.map((id) => id.toString()) || [],
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 

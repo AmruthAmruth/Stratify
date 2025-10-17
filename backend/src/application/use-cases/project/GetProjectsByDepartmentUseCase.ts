@@ -13,7 +13,7 @@ export class GetProjectsByDepartmentUseCase
 {
   constructor(
     private _projectRepo: IProjectRepository,
-    private _managerRepo: IManagerRepository
+    private _managerRepo: IManagerRepository,
   ) {}
 
   async execute(managerId: string): Promise<GetProjectsByDepartmentResponse> {
@@ -27,7 +27,7 @@ export class GetProjectsByDepartmentUseCase
     if (!departmentId) {
       throw new AppError(
         "Manager does not belong to any department",
-        StatusCodes.NOT_FOUND
+        StatusCodes.NOT_FOUND,
       );
     }
 
@@ -49,7 +49,7 @@ export class GetProjectsByDepartmentUseCase
       const remainingTimeInDays = project.endDate
         ? Math.ceil(
             (new Date(project.endDate).getTime() - new Date().getTime()) /
-              (1000 * 60 * 60 * 24)
+              (1000 * 60 * 60 * 24),
           )
         : 0;
 

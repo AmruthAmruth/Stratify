@@ -11,23 +11,31 @@ export class LeaveController {
     private _createLeaveUseCase: ICreateLeaveUseCase,
     private _getEmployeeLeaveUseCase: IGetEmployeeLeaveUseCase,
     private _getDepartmentLeaveUseCase: IGetDepartmentLeaveUseCase,
-    private _approveLeaveUseCase: IApproveLeaveUseCase
+    private _approveLeaveUseCase: IApproveLeaveUseCase,
   ) {}
 
   createLeave = async (req: AuthRequest, res: Response): Promise<void> => {
     const employeeId = req.userId;
     const leaveDTO = { employeeId, ...req.body };
     const response = await this._createLeaveUseCase.execute(leaveDTO);
-    res.status(StatusCodes.CREATED).json({ message: "Leave created successfully", response });
+    res
+      .status(StatusCodes.CREATED)
+      .json({ message: "Leave created successfully", response });
   };
 
-  getEmployeeLeaves = async (req: AuthRequest, res: Response): Promise<void> => {
+  getEmployeeLeaves = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const employeeId = req.userId;
     const response = await this._getEmployeeLeaveUseCase.execute(employeeId!);
     res.status(StatusCodes.OK).json(response);
   };
 
-  getDepartmentLeaves = async (req: AuthRequest, res: Response): Promise<void> => {
+  getDepartmentLeaves = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
     const managerId = req.userId;
     const response = await this._getDepartmentLeaveUseCase.execute(managerId!);
     res.status(StatusCodes.OK).json(response);

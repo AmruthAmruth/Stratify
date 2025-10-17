@@ -1,6 +1,6 @@
 export const unapproveCompanyTemplate = (
   companyName: string,
-  reason: string
+  reason: string,
 ): string => {
   return `
   <!DOCTYPE html>

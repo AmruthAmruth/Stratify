@@ -20,7 +20,7 @@ export class CompanyMapper {
       doc.password,
       doc.status,
       "company",
-      doc.profileImage
+      doc.profileImage,
     );
   }
 

@@ -36,7 +36,7 @@ export class LeaveRepository implements ILeaveRepository {
         departmentId: new Types.ObjectId(leave.departmentId),
         companyId: new Types.ObjectId(leave.companyId),
       },
-      { new: true }
+      { new: true },
     ).exec();
 
     if (!updated) throw new Error("Leave not found");
@@ -54,7 +54,7 @@ export class LeaveRepository implements ILeaveRepository {
   async findOverlappingLeave(
     employeeId: string,
     startDate: Date,
-    endDate: Date
+    endDate: Date,
   ): Promise<Leave | null> {
     const overlapping = await LeaveModel.findOne({
       employeeId: new Types.ObjectId(employeeId),
@@ -70,7 +70,7 @@ export class LeaveRepository implements ILeaveRepository {
     employeeId: string,
     start: Date,
     end: Date,
-    leaveType: string
+    leaveType: string,
   ): Promise<number> {
     const leaves = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
@@ -83,9 +83,10 @@ export class LeaveRepository implements ILeaveRepository {
     for (const leave of leaves) {
       const leaveStart = leave.startDate < start ? start : leave.startDate;
       const leaveEnd = leave.endDate > end ? end : leave.endDate;
-      totalDays += Math.ceil(
-        (leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24)
-      ) + 1;
+      totalDays +=
+        Math.ceil(
+          (leaveEnd.getTime() - leaveStart.getTime()) / (1000 * 60 * 60 * 24),
+        ) + 1;
     }
     return totalDays;
   }
@@ -93,7 +94,7 @@ export class LeaveRepository implements ILeaveRepository {
   async countLeaveDaysByMonth(
     employeeId: string,
     month: number,
-    type: string
+    type: string,
   ): Promise<number> {
     const leaves = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
@@ -105,13 +106,17 @@ export class LeaveRepository implements ILeaveRepository {
     return leaves.reduce((sum, leave) => {
       const start = leave.startDate;
       const end = leave.endDate;
-      return sum + Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+      return (
+        sum +
+        Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) +
+        1
+      );
     }, 0);
   }
 
   async getLeavesByEmployeeAndDateRange(
     startOfMonth: Date,
-    endOfMonth: Date
+    endOfMonth: Date,
   ): Promise<Leave[]> {
     const docs = await LeaveModel.find({
       startDate: { $lte: endOfMonth },
@@ -123,7 +128,10 @@ export class LeaveRepository implements ILeaveRepository {
     return LeaveMapper.toEntities(docs);
   }
 
-  async findLeavesByEmployeeAndMonth(employeeId: string, month: number): Promise<Leave[]> {
+  async findLeavesByEmployeeAndMonth(
+    employeeId: string,
+    month: number,
+  ): Promise<Leave[]> {
     const docs = await LeaveModel.find({
       employeeId: new Types.ObjectId(employeeId),
       month,
@@ -134,7 +142,10 @@ export class LeaveRepository implements ILeaveRepository {
     return LeaveMapper.toEntities(docs);
   }
 
-  async findLeavesByDepartment(departmentId: string, currentMonth: number): Promise<Leave[]> {
+  async findLeavesByDepartment(
+    departmentId: string,
+    currentMonth: number,
+  ): Promise<Leave[]> {
     const docs = await LeaveModel.find({
       departmentId: new Types.ObjectId(departmentId),
       month: currentMonth,
@@ -148,7 +159,7 @@ export class LeaveRepository implements ILeaveRepository {
   async findLeavesByDepartmentAndDateRange(
     departmentId: string,
     start: Date,
-    end: Date
+    end: Date,
   ): Promise<Leave[]> {
     const docs = await LeaveModel.find({
       departmentId: new Types.ObjectId(departmentId),

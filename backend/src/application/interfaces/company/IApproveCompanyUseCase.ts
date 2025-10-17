@@ -1,5 +1,3 @@
-
-
-export interface IApproveCompanyUseCase{
-    execute(id:string):Promise<void>
+export interface IApproveCompanyUseCase {
+  execute(id: string): Promise<void>;
 }

@@ -3,7 +3,6 @@ import { TaskDocument } from "../models/TaskModel";
 import { Task } from "../../domain/entities/Task";
 
 export class TaskMapper {
- 
   static toEntity(doc: HydratedDocument<TaskDocument>): Task {
     return new Task(
       doc.id.toString(),
@@ -13,7 +12,7 @@ export class TaskMapper {
       doc.status,
       doc.assignedToId?.toString(),
       doc.createdAt,
-      doc.updatedAt
+      doc.updatedAt,
     );
   }
 
@@ -23,7 +22,9 @@ export class TaskMapper {
       title: task.title,
       description: task.description,
       status: task.status ?? "To Do",
-      assignedToId: task.assignedToId ? new Types.ObjectId(task.assignedToId) : undefined,
+      assignedToId: task.assignedToId
+        ? new Types.ObjectId(task.assignedToId)
+        : undefined,
     };
   }
 }

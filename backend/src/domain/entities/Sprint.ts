@@ -8,7 +8,7 @@ export class Sprint {
     public projectId: string,
     public status: "Planned" | "Active" | "Completed" = "Planned",
     public createdAt: Date = new Date(),
-    public updatedAt: Date = new Date()
+    public updatedAt: Date = new Date(),
   ) {}
 
   activate() {

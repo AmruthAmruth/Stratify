@@ -3,18 +3,20 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { GetMemberForCompanyDTO, MemberDTO } from "../../dto/chat/GetMemberForCompanyDTO";
+import {
+  GetMemberForCompanyDTO,
+  MemberDTO,
+} from "../../dto/chat/GetMemberForCompanyDTO";
 import { IGetMemberForCompanyUseCase } from "../../interfaces/chat/IGetMemberForCompanyUseCase";
 
 export class GetMemberForCompanyUseCase implements IGetMemberForCompanyUseCase {
   constructor(
     private _companyRepo: ICompanyRepository,
     private _employeeRepo: IEmployeeRepository,
-    private _managerRepo: IManagerRepository
+    private _managerRepo: IManagerRepository,
   ) {}
 
   async execute(companyId: string): Promise<GetMemberForCompanyDTO> {
- 
     const company = await this._companyRepo.findById(companyId);
     if (!company) {
       throw new AppError("Company not found", StatusCodes.NOT_FOUND);

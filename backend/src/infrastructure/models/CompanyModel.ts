@@ -16,7 +16,7 @@ export interface ICompanyDoc extends Document {
   password: string;
   status: CompanyStatus;
   profileImage?: string;
- role: "company" | "manager" | "employee";
+  role: "company" | "manager" | "employee";
 }
 
 const CompanySchema = new Schema<ICompanyDoc>(
@@ -25,7 +25,11 @@ const CompanySchema = new Schema<ICompanyDoc>(
     email: { type: String, required: true, unique: true },
     phone: { type: String, required: true, unique: true },
     industry: { type: String, required: true },
-     role: { type: String, enum: ["company", "manager", "employee"], required: true },
+    role: {
+      type: String,
+      enum: ["company", "manager", "employee"],
+      required: true,
+    },
     description: { type: String },
     businessRegNo: { type: String, required: true },
     address: { type: String, required: true },
@@ -34,10 +38,14 @@ const CompanySchema = new Schema<ICompanyDoc>(
     country: { type: String, required: true },
     zipcode: { type: String, required: true },
     password: { type: String, required: true },
-    status: { type: String, enum: ["pending", "approved", "rejected"], default: "pending" },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
     profileImage: { type: String },
   },
-  { timestamps: true }
+  { timestamps: true },
 );
 
 export default mongoose.model<ICompanyDoc>("Company", CompanySchema);
