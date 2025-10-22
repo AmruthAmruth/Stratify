@@ -3,6 +3,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { DepartmentDetails } from "../../dto/departments/CompanyDepartmentsDTO";
 import { IGetCompanyDepartmentUseCase } from "../../interfaces/departments/IGetCompanyDepartmentsUseCase";
+import { DepartmentMapper } from "../../mappers/DepartmentMapper"; 
 
 export class GetCompanyDepartmentUseCase
   implements IGetCompanyDepartmentUseCase
@@ -12,6 +13,7 @@ export class GetCompanyDepartmentUseCase
     private _managerRepo: IManagerRepository,
     private _employeeRepo: IEmployeeRepository,
   ) {}
+
   async execute(companyId: string): Promise<DepartmentDetails[]> {
     const departments =
       await this._departmentRepo.findDepartmentsByCompanyId(companyId);
@@ -28,13 +30,11 @@ export class GetCompanyDepartmentUseCase
         const numOfEmployees =
           await this._employeeRepo.totalEmployeeInADepartment(dept.id!);
 
-        return {
-          id: dept.id!,
-          name: dept.name,
-          description: dept.description,
+        return DepartmentMapper.toCompanyDepartmentDTO(
+          dept,
           managerName,
           numOfEmployees,
-        };
+        );
       }),
     );
 

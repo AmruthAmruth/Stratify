@@ -2,6 +2,7 @@ import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentR
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { ManagerDepartmentResponseDTO } from "../../dto/departments/ManagerDepartmentResponseDTO";
 import { IGetManagerDepartmentsUseCase } from "../../interfaces/departments/IGetManagerDepartmentsUseCase";
+import { DepartmentMapper } from "../../mappers/DepartmentMapper";
 
 export class GetManagerDepartmentsUseCase
   implements IGetManagerDepartmentsUseCase
@@ -18,18 +19,14 @@ export class GetManagerDepartmentsUseCase
       return [];
     }
 
-    const results: ManagerDepartmentResponseDTO[] = [];
-    for (const dept of departments) {
-      const memberCount = await this._employeeRepo.totalEmployeeInADepartment(
-        dept.id,
-      );
-      results.push({
-        id: dept.id,
-        name: dept.name,
-        memberCount,
-        status: "Active",
-      });
-    }
+    const results = await Promise.all(
+      departments.map(async (dept) => {
+        const memberCount = await this._employeeRepo.totalEmployeeInADepartment(
+          dept.id,
+        );
+        return DepartmentMapper.toManagerDepartmentDTO(dept, memberCount);
+      }),
+    );
 
     return results;
   }

@@ -9,6 +9,7 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateDepartmentDTO } from "../../dto/departments/CreateDepartmentDTO";
 import { ICreateDepartmentUseCase } from "../../interfaces/departments/ICreateDepartmentUseCase";
 import { departmentManagerAssignedTemplate } from "../../../shared/templates/DepartmentManagerAssignedTemplate";
+import { DepartmentMapper } from "../../mappers/DepartmentMapper";
 
 export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
   constructor(
@@ -49,16 +50,8 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       managerEmail = manager.email;
       managerName = manager.name;
     }
-
-    const department = new Department(
-      undefined,
-      data.name,
-      data.description,
-      data.companyId,
-      data.managerId,
-      new Date(),
-      new Date(),
-    );
+    
+   const department = DepartmentMapper.toDomain(data);
 
     const createdDepartment = await this._departmentRepo.create(department);
 

@@ -3,11 +3,9 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import {
-  DepartmentDetailsDTO,
-  TeamMemberDTO,
-} from "../../dto/departments/DepartmentDetailsDTO";
+import { DepartmentDetailsDTO } from "../../dto/departments/DepartmentDetailsDTO";
 import { IGetCompanyDepartmentDetailsUseCase } from "../../interfaces/departments/IGetDepartmentDetailsUseCase";
+import { DepartmentMapper } from "../../mappers/DepartmentMapper";
 
 export class GetDepartmentDetailsUseCase
   implements IGetCompanyDepartmentDetailsUseCase
@@ -17,12 +15,14 @@ export class GetDepartmentDetailsUseCase
     private _managerRepo: IManagerRepository,
     private _employeeRepo: IEmployeeRepository,
   ) {}
+
   async execute(departmentId: string): Promise<DepartmentDetailsDTO> {
     const department = await this._departmentRepo.findById(departmentId);
     if (!department) {
       throw new AppError("Department Not Found", StatusCodes.NOT_FOUND);
     }
 
+    
     let headOfDepartment: string | undefined;
     let headEmail: string | undefined;
     let headPhone: string | undefined;
@@ -38,26 +38,20 @@ export class GetDepartmentDetailsUseCase
       }
     }
 
-    const employees = await this._employeeRepo.findByDepartmentId(
-      department.id!,
-    );
-    const teamMembers: TeamMemberDTO[] = employees.map((emp) => ({
-      id: emp.id,
-      name: emp.name,
-      position: emp.position,
-      email: emp.email,
-      phone: emp.phone,
-    }));
+  
+    const employees = await this._employeeRepo.findByDepartmentId(department.id!);
+    const teamMembers = DepartmentMapper.toTeamMemberDTOs(employees);
 
-    const departmentDetails: DepartmentDetailsDTO = {
-      departmentName: department.name,
-      description: department.description ?? "",
+ 
+    const departmentDetails = DepartmentMapper.toDepartmentDetailsDTO(
+      department,
       headOfDepartment,
       headEmail,
       headPhone,
       headPosition,
       teamMembers,
-    };
+    );
+
     return departmentDetails;
   }
 }
