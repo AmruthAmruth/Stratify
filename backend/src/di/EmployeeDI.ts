@@ -46,6 +46,7 @@ export const employeeDI = () => {
     departmentRepo,
     companyRepo,
   );
+  
   return new EmployeeController(
     createManagerUseCase,
     createEmployeeUseCase,

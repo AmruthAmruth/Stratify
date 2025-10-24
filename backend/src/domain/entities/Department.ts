@@ -8,4 +8,6 @@ export class Department {
     public createdAt?: Date,
     public updatedAt?: Date,
   ) {}
+
+
 }

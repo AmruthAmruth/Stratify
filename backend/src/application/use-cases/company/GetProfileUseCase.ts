@@ -19,6 +19,7 @@ export class GetProfileUseCase implements IGetProfileUseCase {
     const manager = await this._managerRepo.findById(id);
     if (manager) {
       const departmentName = manager.departmentId
+      
         ? (await this._departmentRepo.findById(manager.departmentId))?.name
         : undefined;
 
