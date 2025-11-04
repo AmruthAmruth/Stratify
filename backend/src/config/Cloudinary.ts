@@ -1,9 +1,6 @@
-import { v2 as cloudinary } from "cloudinary";
-
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
-
-export default cloudinary;
+export const CookieConfig = {
+  httpOnly: process.env.COOKIE_HTTP_ONLY === "true",
+  secure: process.env.COOKIE_SECURE === "true",
+  sameSite: process.env.COOKIE_SAME_SITE as "strict" | "lax" | "none",
+  maxAge: Number(process.env.COOKIE_MAX_AGE),
+};

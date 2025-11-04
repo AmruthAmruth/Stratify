@@ -33,33 +33,23 @@ export class AuthenticationController {
     private _refreshTokenUseCase: IRefreashTokenUseCase,
   ) {}
 
-  
- refresh = async (req: Request, res: Response) => {
-  const refreshToken = req.cookies.refreshToken;
-  console.log("Refresh Token:", refreshToken);
+  refresh = async (req: Request, res: Response) => {
+    const refreshToken = req.cookies.refreshToken;
+    if (!refreshToken) {
+      res.status(StatusCodes.UNAUTHORIZED).json({
+        message: Messages.NO_REFREASHTOKEN,
+      });
+      return;
+    }
 
-  if (!refreshToken) {
-    return res.status(StatusCodes.UNAUTHORIZED).json({
-      message: Messages.NO_REFREASHTOKEN,
-    });
-  }
-
-  try {
-    const { accessToken, refreshToken: newRefreshToken, user } =
+    const { accessToken, refreshToken: newRefreshToken } =
       await this._refreshTokenUseCase.execute(refreshToken);
 
     res.cookie("refreshToken", newRefreshToken, CookieConfig);
 
-    return res.json({
-      accessToken,
-      user,
-    });
-  } catch (error) {
-    return res
-      .status(StatusCodes.FORBIDDEN)
-      .json({ message: "Invalid or expired refresh token" });
-  }
-};
+    res.json({ accessToken });
+  };
+
 
 
   superAdminLogin = async (req: Request, res: Response): Promise<void> => {
