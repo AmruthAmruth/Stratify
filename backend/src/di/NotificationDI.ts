@@ -1,5 +1,6 @@
 
 import { CreateNotificationUseCase } from "../application/use-cases/notification/CreateNotificationUseCase";
+import { GetNotificationUseCase } from "../application/use-cases/notification/GetNotificationUseCase";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 import { NotificationController } from "../interfaces/controllers/NotificationController";
 
@@ -13,6 +14,6 @@ export const notificationDI=()=>{
 
  const createNotificationUseCase = new CreateNotificationUseCase(notificationRepo);
 
-
-   return new NotificationController(createNotificationUseCase);
+const getNotificationUseCase = new GetNotificationUseCase(notificationRepo)
+   return new NotificationController(createNotificationUseCase,getNotificationUseCase);
 }

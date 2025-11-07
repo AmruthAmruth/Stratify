@@ -5,8 +5,7 @@ import "./App.css";
 
 const App = () => { 
 
-
-  return (
+     return (
     <SnackbarProvider maxSnack={3}>
       <BrowserRouter>
         <AppRoutes />

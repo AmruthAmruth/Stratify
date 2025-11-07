@@ -17,7 +17,7 @@ const DepartmentLeaves = () => {
     peadingLeave: 0,
     approvedLeave: 0,
     activeMembers: 0,
-  });
+  });   
   const [leaves, setLeaves] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isRejectLeaveModalOpen, setIsRejectLeaveModalOpen] = useState(false);

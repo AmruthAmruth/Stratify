@@ -3,12 +3,14 @@ import { ICreateNotificationUseCase } from "../../application/interfaces/notific
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import {io,} from '../../main'
-import { emitNotification } from "../../infrastructure/socket/notificationSocket";
+import { emitNotification } from "../../infrastructure/socket/NotificationSocket";
+import { IGetNotificationUseCase } from "../../application/interfaces/notification/IGetNotificationUseCase";
 
 
 export class NotificationController{
          constructor(
-            private _createNotificationUseCase:ICreateNotificationUseCase
+            private _createNotificationUseCase:ICreateNotificationUseCase,
+            private _getNotificationUseCase:IGetNotificationUseCase
          ){}
         
          createNotification=async(req:AuthRequest,res:Response):Promise<void>=>{
@@ -21,6 +23,13 @@ export class NotificationController{
             res.status(StatusCodes.CREATED).json({message:"Notification Created Successfully!",response})
 
          }
+
+   getNotificationByUserId=async(req:AuthRequest,res:Response):Promise<void>=>{
+      const userId = req.userId;
+      const response = await this._getNotificationUseCase.execute(userId!)
+      res.status(StatusCodes.OK).json({message:"All Notification",response})
+   }
+
 
 
 }

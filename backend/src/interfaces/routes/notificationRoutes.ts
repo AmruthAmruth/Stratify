@@ -6,6 +6,14 @@ import { notificationDI } from "../../di/NotificationDI";
 const notificationRouter = express.Router();
 const controller = notificationDI()
 
-notificationRouter.post('/',authMiddleware(["company","manager","employee"]),asyncHandler(controller.createNotification))
-
+notificationRouter
+  .route('/')
+  .post(
+    authMiddleware(["company", "manager", "employee"]),
+    asyncHandler(controller.createNotification)
+  )
+  .get(
+    authMiddleware(["company", "manager", "employee"]),
+    asyncHandler(controller.getNotificationByUserId)
+  );
 export default notificationRouter
