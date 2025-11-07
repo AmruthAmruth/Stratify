@@ -75,9 +75,3 @@ export const LEAVE_ROUTES = {
 
 
 
-
-export const CHAT_ROUTES={
-  CHAT_FOR_MANAGER:"/api/employee/member-for-manager",
-  CHAT_FOR_EMPLOYEE:"/api/employee/member-for-employee",
-  CHAT_FOR_COMPANY:"/api/company/member-for-company"
-}

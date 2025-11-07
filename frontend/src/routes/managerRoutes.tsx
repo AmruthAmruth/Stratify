@@ -1,6 +1,5 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
-import { ManagerChat } from "@/features/manager/ManagerChat";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import ManagerProjects from "@/features/manager/ManagerProjects";
 import type { RouteObject } from "react-router-dom";
@@ -30,10 +29,6 @@ const managerRoutes: RouteObject[] = [
   {
     path: "/leave-status",
     element: <DepartmentLeaves />,
-  },
-  {
-    path: "/chat",
-    element: <ManagerChat />,
   }
 
 ];

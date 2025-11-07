@@ -5,7 +5,6 @@ import Projects from "@/features/company/CompanyProjects";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
-import { CompanyChat } from "@/features/company/CompanyChat";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -38,9 +37,6 @@ const adminRoutes: RouteObject[] = [
   },{
       path: "projects",
       element: <Projects />,
-    },{
-      path: "chat",
-      element: <CompanyChat />,
     }
     
     

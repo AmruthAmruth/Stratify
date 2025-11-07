@@ -39,7 +39,7 @@ export const initSocket = (server: HttpServer) => {
 }
 
 
-export const emitNotification = (io: Server, userId: string, notification: any) => {
+export const emitNotification = (io: Server, userId: string, notification: unknown) => {
   const socketId = connectedUsers.get(userId);
   if (socketId) {
     io.to(socketId).emit("new-notification", notification);
