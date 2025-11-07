@@ -2,6 +2,7 @@ import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPa
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import ManagerProjects from "@/features/manager/ManagerProjects";
+import Notification from "@/features/manager/Notification";
 import type { RouteObject } from "react-router-dom";
 
 const managerRoutes: RouteObject[] = [
@@ -29,6 +30,10 @@ const managerRoutes: RouteObject[] = [
   {
     path: "/leave-status",
     element: <DepartmentLeaves />,
+  },
+  {
+    path: "/notification",
+    element: <Notification />,
   }
 
 ];

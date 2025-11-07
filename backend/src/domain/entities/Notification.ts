@@ -1,10 +1,8 @@
-
-
 export class Notification {
   constructor(
     public readonly id: string | undefined,
     public readonly userId: string,
-    public readonly role: "Company" | "Manager" | "Employee",
+    public readonly role: "company" | "manager" | "employee",
     public readonly title: string,
     public readonly message: string,
     public readonly type: "info" | "success" | "warning" | "error",
@@ -12,8 +10,7 @@ export class Notification {
     public readonly createdAt: Date = new Date()
   ) {}
 
-
-   markAsRead(): Notification {
+  markAsRead(): Notification {
     if (this.isRead) return this;
     return new Notification(
       this.id,
@@ -27,8 +24,7 @@ export class Notification {
     );
   }
 
-
-   markAsUnread(): Notification {
+  markAsUnread(): Notification {
     if (!this.isRead) return this;
     return new Notification(
       this.id,
@@ -41,11 +37,4 @@ export class Notification {
       this.createdAt
     );
   }
-
-
-
-
-
 }
-
-

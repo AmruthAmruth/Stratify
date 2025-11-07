@@ -10,7 +10,7 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
     const notification = new Notification(
       "",
       data.userId,
-      data.role,
+      data.role.toLowerCase() as "company" | "manager" | "employee",
       data.title,
       data.message,
       data.type,
@@ -18,6 +18,8 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
       new Date()
     );
     const savedNotification = await this._notificationRepo.create(notification);
+    console.log("Created successfully");
+    
     return savedNotification;
   }
 }

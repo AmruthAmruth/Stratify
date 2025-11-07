@@ -23,4 +23,10 @@ authRouter.post(
 authRouter.post("/resetpassword", asyncHandler(controller.resetPassword));
 authRouter.post("/super-admin-login", asyncHandler(controller.superAdminLogin));
 authRouter.post("/refresh-token", asyncHandler(controller.refresh));
+
+
+
+
+
+
 export default authRouter;

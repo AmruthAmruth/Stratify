@@ -33,7 +33,7 @@ const Navbar = ({ role }: { role: string }) => {
 
       <div className="flex items-center space-x-6">
         {/* Notification Bell */}
-        <button
+        <button 
           type="button"
           className="relative p-2 rounded-full hover:bg-green-50 transition-colors duration-200"
           title="Notifications"

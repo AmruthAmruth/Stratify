@@ -18,6 +18,7 @@ import { AuthenticationController } from "../interfaces/controllers/Authenticati
 import { LoginUseCase } from "../application/use-cases/authentication/LoginUseCase";
 import { SuperAdminRepository } from "../infrastructure/repositories/SuperAdminRepository";
 import { RefreshTokenUseCase } from "../application/use-cases/authentication/RefreashTokenUseCase";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const authenticationDI = () => {
   const companyRepo = new companyRepository();
@@ -27,6 +28,7 @@ export const authenticationDI = () => {
   const managerRepo = new ManagerRepository();
   const subscriptionRepo = new SubscriptionRepository();
   const superAdminRepo = new SuperAdminRepository();
+  const notificationRepo=new NotificationRepository()
   const emailService = new EmailService();
 
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
@@ -49,6 +51,7 @@ export const authenticationDI = () => {
     managerRepo,
     employeeRepo,
     subscriptionRepo,
+    notificationRepo
   );
   const resendOtpUseCase = new ResendOtpUseCase(
     otpRepo,

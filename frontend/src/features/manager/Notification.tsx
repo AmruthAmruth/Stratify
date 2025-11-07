@@ -3,12 +3,13 @@ import { RootState } from '@/store';
 import React from 'react'
 import { useSelector } from 'react-redux';
 
-const Contact = () => {
-  const userId = useSelector((state: RootState) => state.auth.userId);
+const Notification = () => {
+    const userId = useSelector((state: RootState) => state.auth.userId);
    const { notifications } = useNotifications(userId!);
-
+   console.log("Notification",notifications);
+   
   return (
-    <div className="w-80 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
+   <div className="w-80 p-4 bg-white dark:bg-gray-900 rounded-2xl shadow-lg">
       <h3 className="font-bold mb-3">Notifications</h3>
       {notifications.length === 0 ? (
         <p className="text-gray-400 text-sm">No notifications</p>
@@ -31,4 +32,4 @@ const Contact = () => {
   )
 }
 
-export default Contact
+export default Notification

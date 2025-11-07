@@ -10,7 +10,6 @@ import { UnapproveCompany } from "../application/use-cases/company/UnApproveComp
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
 import { CompanyController } from "../interfaces/controllers/CompanyController";
-
 export const companyDI = () => {
   const companyRepo = new companyRepository();
   const employeeRepo = new EmployeeRepository();

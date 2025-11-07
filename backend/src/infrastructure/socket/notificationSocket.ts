@@ -32,10 +32,7 @@ export const initSocket = (server: HttpServer) => {
       }
     });
   });
-
   return io;
-
-
 }
 
 
@@ -43,6 +40,8 @@ export const emitNotification = (io: Server, userId: string, notification: unkno
   const socketId = connectedUsers.get(userId);
   if (socketId) {
     io.to(socketId).emit("new-notification", notification);
+    console.log("new Notification",notification);
+    
     console.log(`Sent notification to user ${userId}`);
   }
 };

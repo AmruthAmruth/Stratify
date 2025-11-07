@@ -14,6 +14,8 @@ import { Manager } from "../../../domain/entities/Manager";
 import { Employee } from "../../../domain/entities/Employee";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
+import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { Notification } from "../../../domain/entities/Notification";
 
 type UserType = Company | Manager | Employee;
 
@@ -23,6 +25,7 @@ export class CompanyLoginUseCase {
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
     private _subscriptionRepository: ISubscriptionRepository,
+    private _notificationRepository:INotificationRepository
   ) {}
 
   async execute(
@@ -59,6 +62,18 @@ export class CompanyLoginUseCase {
         );
       }
     }
+
+
+    const notification = new Notification(
+      undefined,
+      user.id!,
+      user.role,
+      "Login successful",
+      `Welcome back ${user.name}! you are successfully logged in`,
+      "success"
+    )
+
+    await this._notificationRepository.create(notification)
 
     const payload = { id: user.id!, role: user.role, name: user.name };
     const accessToken = generateAccessToken(payload);

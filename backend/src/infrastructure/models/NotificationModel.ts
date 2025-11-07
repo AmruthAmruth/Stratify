@@ -2,7 +2,7 @@ import mongoose, { Schema, Document, Types } from "mongoose";
 
 export interface NotificationDocument extends Document {
   userId: Types.ObjectId; 
-  role: "Company" | "Manager" | "Employee"; 
+  role: "company" | "manager" | "employee"; 
   title: string;
   message: string;
   type: "info" | "success" | "warning" | "error";
