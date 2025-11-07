@@ -37,7 +37,7 @@ export const authMiddleware = (
       req.role = decoded.role;
       req.userId = decoded.id;
 
-      console.log("Decoded Token:", decoded);
+      console.log("Token Verification Successfull:", decoded.role);
       next();
     } catch (err) {
       console.error("Auth error:", err);
