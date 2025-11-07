@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "@/store/slices/authSlice";
 import { useSnackbar } from "notistack";
+import { connectSocket } from "@/shared/socket/socket";
 
 
 const Login: React.FC = () => {
@@ -49,6 +50,8 @@ const handleLogin = async (values: LoginValues) => {
           name:decoded.name,
         })
       );
+
+      connectSocket(decoded.id)
 
       navigate("/dashboard");
     }
