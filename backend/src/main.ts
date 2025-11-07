@@ -11,7 +11,7 @@ import http from "http";
 
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
-import { initSocket } from "./infrastructure/socket/notificationSocket";
+import { initSocket } from "./infrastructure/socket/NotificationSocket";
 
 
 
