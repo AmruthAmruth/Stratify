@@ -11,6 +11,9 @@ import http from "http";
 
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
+import { initSocket } from "./infrastructure/socket/notificationSocket";
+
+
 
 dotenv.config();
 
@@ -56,6 +59,8 @@ app.use(errorMiddleware);
 
 
 const server = http.createServer(app);
+const io=initSocket(server)
+export {io}
 
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
