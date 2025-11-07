@@ -1,0 +1,52 @@
+import { Notification } from "../../domain/entities/Notification";
+import { INotificationRepository } from "../../domain/repositories/INotificationRepository";
+import { NotificationModel } from "../models/NotificationModel";
+
+export class NotificationRepository implements INotificationRepository {
+  async create(notification: Notification): Promise<Notification> {
+    const newNotif = new NotificationModel({
+      userId: notification.userId,
+      title: notification.title,
+      role:notification.role,
+      message: notification.message,
+      type: notification.type,
+      isRead: notification.isRead,
+      createdAt: notification.createdAt,
+    });
+
+    const saved = await newNotif.save();
+
+    return new Notification(
+      saved.id.toString(),
+      saved.userId.toString(),
+      saved.role,
+      saved.title,
+      saved.message,
+      saved.type,
+      saved.isRead,
+      saved.createdAt
+    );
+  }
+
+  async findByUserId(userId: string): Promise<Notification[]> {
+    const notifications = await NotificationModel.find({ userId }).sort({ createdAt: -1 });
+
+    return notifications.map(
+      (n) =>
+        new Notification(
+          n.id.toString(),
+          n.userId.toString(),
+          n.role,
+          n.title,
+          n.message,
+          n.type,
+          n.isRead,
+          n.createdAt
+        )
+    );
+  }
+
+  async markAsRead(id: string): Promise<void> {
+    await NotificationModel.findByIdAndUpdate(id, { isRead: true });
+  }
+}
