@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Bell } from 'lucide-react'; 
 import { useDispatch } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
+import { getSocket } from '@/shared/socket/socket';
 
 const Navbar = ({ role }: { role: string }) => {
   const dispatch = useDispatch();
@@ -25,6 +26,24 @@ const Navbar = ({ role }: { role: string }) => {
     }
   };
 
+  const [count,setCount]=useState(1)
+
+
+useEffect(() => {
+  const socket = getSocket();
+  if (!socket) return;
+
+  socket.on("new-notification", (data) => {
+    console.log("New notification received:", data); // <-- log the notification
+    setCount((prev) => prev + 1);
+  });
+
+  return () => {
+    socket.off("new-notification");
+  };
+},);
+
+
   return (
     <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-[#dfdcef]">
       <h1 className="text-xl font-semibold text-gray-900">
@@ -39,7 +58,11 @@ const Navbar = ({ role }: { role: string }) => {
           title="Notifications"
         >
           <Bell className="h-6 w-6 text-gray-600" />
-          <span className="absolute top-1.5 right-1.5 h-2 w-2 bg-red-500 rounded-full"></span>
+         {count > 0 && (
+        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+          {count}
+        </span>
+      )}
         </button>
 
         {/* Logout Button */}

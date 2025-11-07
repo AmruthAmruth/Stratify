@@ -56,6 +56,7 @@ export class EmployeeController {
       employeeDto,
       creatorId,
     );
+
     res
       .status(StatusCodes.CREATED)
       .json({ message: "Employee created successfully", response });

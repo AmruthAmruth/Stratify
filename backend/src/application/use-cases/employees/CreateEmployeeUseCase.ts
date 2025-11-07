@@ -15,6 +15,7 @@ import { CreateEmployeeDTO } from "../../dto/employees/CreateEmployeeDTO";
 import { ICreateEmployeeUseCase } from "../../interfaces/employees/ICreateEmployeeUseCase";
 import { employeeWelcomeTemplate } from "../../../shared/templates/EmployeeWelcomeTemplate";
 
+
 export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
   constructor(
     private _companyRepo: ICompanyRepository,
@@ -101,6 +102,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       `👋 Welcome to ${company.name}!`,
       html,
     );
+
 
     return createdEmployee;
   }

@@ -4,7 +4,9 @@ import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentR
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
+import { emitNotification } from "../../../infrastructure/socket/NotificationSocket";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { io } from "../../../main";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateProjectDTO } from "../../dto/project/CreateProjectDTO";
@@ -105,6 +107,8 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       now,
       now,
     );
+
+    emitNotification(io, department.managerId!, "New Project is Created!");
 
     return await this._projectRepo.create(project);
   }
