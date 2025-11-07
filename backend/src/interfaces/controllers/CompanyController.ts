@@ -7,7 +7,6 @@ import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company
 import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import { IGetMemberForCompanyUseCase } from "../../application/interfaces/chat/IGetMemberForCompanyUseCase";
 
 export class CompanyController {
   constructor(
@@ -17,7 +16,6 @@ export class CompanyController {
     private _unapproveCompanyUseCase: IUnapproveCompany,
     private _getCompanyMembersUseCase: IGetCompanyMemebersUseCase,
     private _getTeamMemberProfileUseCase: IGetProfileUseCase,
-    private _getMemberForCompanyUseCase: IGetMemberForCompanyUseCase,
   ) {}
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
@@ -72,12 +70,5 @@ export class CompanyController {
     res.status(StatusCodes.OK).json({ response });
   };
 
-  getMemberForCompany = async (
-    req: AuthRequest,
-    res: Response,
-  ): Promise<void> => {
-    const companyId = req.userId;
-    const response = await this._getMemberForCompanyUseCase.execute(companyId!);
-    res.status(StatusCodes.OK).json(response);
-  };
+
 }

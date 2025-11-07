@@ -13,11 +13,7 @@ companyRouter.get(
   authMiddleware(["company"]),
   asyncHandler(controller.getCompanyMembers),
 );
-companyRouter.get(
-  "/member-for-company",
-  authMiddleware(["company"]),
-  asyncHandler(controller.getMemberForCompany),
-);
+
 companyRouter.get(
   "/team-member-profile/:id",
   asyncHandler(controller.getTeamMemberProfile),

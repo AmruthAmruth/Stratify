@@ -8,11 +8,9 @@ import fs from "fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
-import { Server } from "socket.io";
 
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
-import { createSocketGateway } from "./di/ChatDI";
 
 dotenv.config();
 
@@ -29,43 +27,38 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
+
 const logDirectory = path.join(__dirname, "logs");
 if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory);
 }
+
 
 const accessLogStream = rfs.createStream("access.log", {
   interval: "1d",
   path: logDirectory,
   maxFiles: 7,
 });
+
 app.use(morgan("combined", { stream: accessLogStream }));
 app.use(morgan("dev"));
 
-connectDB()
-  .then(() =>  console.log("Mongodb Connected"))
-  .catch((err) => console.error("❌ MongoDB connection failed:", err));
 
+connectDB()
+  .then(() => console.log(" MongoDB Connected"))
+  .catch((err) => console.error(" MongoDB connection failed:", err));
+
+  
 app.use("/api", router);
+
 
 app.use(errorMiddleware);
 
+
 const server = http.createServer(app);
-
-const io = new Server(server, {
-  cors: {
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
-    methods: ["GET", "POST"],
-    credentials: true,
-  },
-});
-
-const socketGateway = createSocketGateway(io);
-socketGateway.init();
 
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
-  console.log(`WebSocket running and ready for connections`);
 });
  

@@ -6,16 +6,12 @@ import { AuthRequest } from "../middleware/AuthMiddleware";
 import { CreateManagerSchema } from "../../application/validators/CreateManager";
 import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
 import { StatusCodes } from "../../shared/constants/statusCodes";
-import { IGetMemberForMangerUseCase } from "../../application/interfaces/chat/IGetMemberForMangerUseCase";
-import { IGetmemberForEmployeeUseCase } from "../../application/interfaces/chat/IGetMemberForEmployeeUseCase";
 
 export class EmployeeController {
   constructor(
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
-    private _getMemberForManagerUseCase: IGetMemberForMangerUseCase,
-    private _getMemberForEmployeeUseCase: IGetmemberForEmployeeUseCase,
   ) {}
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -76,23 +72,4 @@ export class EmployeeController {
     res.status(StatusCodes.OK).json({ managers });
   };
 
-  getMembersForManager = async (
-    req: AuthRequest,
-    res: Response,
-  ): Promise<void> => {
-    const managerId = req.userId;
-    const response = await this._getMemberForManagerUseCase.execute(managerId!);
-    res.status(StatusCodes.OK).json(response);
-  };
-
-  getMemberForEmployee = async (
-    req: AuthRequest,
-    res: Response,
-  ): Promise<void> => {
-    const employeeId = req.userId;
-    const response = await this._getMemberForEmployeeUseCase.execute(
-      employeeId!,
-    );
-    res.status(StatusCodes.OK).json(response);
-  };
 }
