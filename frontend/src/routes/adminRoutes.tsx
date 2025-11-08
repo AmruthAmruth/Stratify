@@ -5,6 +5,7 @@ import Projects from "@/features/company/CompanyProjects";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
+import Notification from "@/features/company/Notoification";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -34,13 +35,15 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team-member-profile/:id",
     element: <ProfilePage />,
-  },{
-      path: "projects",
-      element: <Projects />,
-    }
-    
-    
+  },
+  {
+    path: "projects",
+    element: <Projects />,
+  },
+  {
+    path: "notification",
+    element: <Notification />,
+  },
 ];
 
 export default adminRoutes;
-  

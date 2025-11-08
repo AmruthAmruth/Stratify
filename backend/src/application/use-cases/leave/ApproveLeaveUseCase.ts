@@ -20,7 +20,6 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
   async execute(leaveDTO: ApproveLeaveDTO): Promise<string> {
     const { leaveId, status, reason } = leaveDTO;
 
-    
     if (status !== "Approved" && status !== "Rejected") {
       throw new AppError(
         "Invalid status. Must be 'Approved' or 'Rejected'.",
@@ -33,12 +32,12 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       throw new AppError("Leave not found", StatusCodes.NOT_FOUND);
     }
 
-    if (leave.status !== "Pending") {
-      throw new AppError(
-        "Only pending leaves can be approved or rejected",
-        StatusCodes.BAD_REQUEST
-      );
-    }
+    // if (leave.status !== "Pending") {
+    //   throw new AppError(
+    //     "Only pending leaves can be approved or rejected",
+    //     StatusCodes.BAD_REQUEST
+    //   );
+    // }
     if (status === "Rejected" && (!reason || reason.trim() === "")) {
       throw new AppError(
         "Reason is required when rejecting a leave",
@@ -66,10 +65,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       reason
     );
 
-    const title =
-      status === "Approved"
-        ? "Leave Approved"
-        : "Leave Rejected";
+    const title = status === "Approved" ? "Leave Approved" : "Leave Rejected";
 
     const message =
       status === "Approved"
@@ -88,7 +84,6 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     );
 
     await this._notificationRepo.create(notification);
-
 
     await this._emailService.sendEmail(
       employee.email,
