@@ -9,6 +9,7 @@ import { GetDepartmentDetailsUseCase } from "../application/use-cases/department
 import { GetUnassignedDepartmentUseCase } from "../application/use-cases/departments/GetUnassignedDepartments";
 import { GetManagerDepartmentsUseCase } from "../application/use-cases/departments/GetDepartmentUnderMangerUseCase";
 import { DepartmentController } from "../interfaces/controllers/DepartmentController";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const departmentDI = () => {
   const companyRepo = new companyRepository();
@@ -16,12 +17,13 @@ export const departmentDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const emailService = new EmailService();
-
+  const notificationRepo=new NotificationRepository();
   const createDepartmentUseCase = new CreateDepartmentUseCase(
     departmentRepo,
     managerRepo,
     companyRepo,
     emailService,
+    notificationRepo
   );
   const getCompanyDepartmentsUseCase = new GetCompanyDepartmentUseCase(
     departmentRepo,

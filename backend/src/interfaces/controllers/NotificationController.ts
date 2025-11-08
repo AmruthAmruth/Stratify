@@ -2,8 +2,6 @@ import { Response,Request } from "express";
 import { ICreateNotificationUseCase } from "../../application/interfaces/notification/ICreateNotificationUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import {io,} from '../../main'
-import { emitNotification } from "../../infrastructure/socket/NotificationSocket";
 import { IGetNotificationUseCase } from "../../application/interfaces/notification/IGetNotificationUseCase";
 import { IToggleReadStatusUseCase } from "../../application/interfaces/notification/IToggleReadStatusUseCase";
 import { IDeleteNotificationUseCase } from "../../application/interfaces/notification/IDeleteNotificationUseCase";
@@ -25,7 +23,7 @@ export class NotificationController{
             
             const notificationDTO ={...req.body,userId,role}
             const response = await this._createNotificationUseCase.execute(notificationDTO)
-            emitNotification(io, notificationDTO.userId, req.body.message);
+         
             res.status(StatusCodes.CREATED).json({message:"Notification Created Successfully!",response})
 
          }

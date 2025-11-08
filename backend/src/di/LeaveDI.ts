@@ -7,12 +7,14 @@ import { GetDepartmentLeaveUseCase } from "../application/use-cases/leave/GetDep
 import { ApproveLeaveUseCase } from "../application/use-cases/leave/ApproveLeaveUseCase";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { LeaveController } from "../interfaces/controllers/LeaveController";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const leaveDI = () => {
   const leaveRepo = new LeaveRepository();
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const emailService = new EmailService();
+ const notificationRepo=new NotificationRepository()
 
   const createLeaveUseCase = new CreateLeaveUseCase(leaveRepo, employeeRepo);
   const getEmployeeLeaveUseCase = new GetEmployeeLeaveUseCase(leaveRepo);
@@ -25,6 +27,7 @@ export const leaveDI = () => {
     leaveRepo,
     employeeRepo,
     emailService,
+    notificationRepo
   );
 
   return new LeaveController(

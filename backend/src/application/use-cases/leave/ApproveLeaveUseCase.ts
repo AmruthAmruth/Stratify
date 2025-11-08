@@ -6,21 +6,25 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { ApproveLeaveDTO } from "../../dto/leave/ApproveLeaveDTO";
 import { IApproveLeaveUseCase } from "../../interfaces/leave/IApproveLeaveUseCase";
 import { leaveStatusTemplate } from "../../../shared/templates/leaveStatusTemplate";
+import { Notification } from "../../../domain/entities/Notification";
+import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 
 export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
   constructor(
     private _leaveRepo: ILeaveRepository,
     private _employeeRepo: IEmployeeRepository,
     private _emailService: IEmailService,
+    private _notificationRepo: INotificationRepository
   ) {}
 
   async execute(leaveDTO: ApproveLeaveDTO): Promise<string> {
     const { leaveId, status, reason } = leaveDTO;
 
+    
     if (status !== "Approved" && status !== "Rejected") {
       throw new AppError(
         "Invalid status. Must be 'Approved' or 'Rejected'.",
-        StatusCodes.BAD_REQUEST,
+        StatusCodes.BAD_REQUEST
       );
     }
 
@@ -32,19 +36,17 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     if (leave.status !== "Pending") {
       throw new AppError(
         "Only pending leaves can be approved or rejected",
-        StatusCodes.BAD_REQUEST,
+        StatusCodes.BAD_REQUEST
       );
     }
-
     if (status === "Rejected" && (!reason || reason.trim() === "")) {
       throw new AppError(
         "Reason is required when rejecting a leave",
-        StatusCodes.BAD_REQUEST,
+        StatusCodes.BAD_REQUEST
       );
     }
 
     leave.status = status;
-
     if (status === "Rejected") {
       leave.rejectedReason = reason;
     }
@@ -61,13 +63,37 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       leave.startDate,
       leave.endDate,
       status,
-      reason,
+      reason
     );
+
+    const title =
+      status === "Approved"
+        ? "Leave Approved"
+        : "Leave Rejected";
+
+    const message =
+      status === "Approved"
+        ? `Your leave request from ${leave.startDate} to ${leave.endDate} has been approved.`
+        : `Your leave request from ${leave.startDate} to ${leave.endDate} has been rejected. Reason: ${reason}`;
+
+    const type = status === "Approved" ? "success" : "error";
+
+    const notification = new Notification(
+      undefined,
+      employee.id!,
+      employee.role,
+      title,
+      message,
+      type
+    );
+
+    await this._notificationRepo.create(notification);
+
 
     await this._emailService.sendEmail(
       employee.email,
       `Your leave has been ${status}`,
-      html,
+      html
     );
 
     return `Leave has been ${status.toLowerCase()} successfully${

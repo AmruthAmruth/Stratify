@@ -7,6 +7,7 @@ import { CreateManagerUseCase } from "../application/use-cases/managers/CreateMa
 import { CreateEmployeeUseCase } from "../application/use-cases/employees/CreateEmployeeUseCase";
 import { GetUnassignedManagersUseCase } from "../application/use-cases/managers/GetUnassignedManagersUseCase";
 import { EmployeeController } from "../interfaces/controllers/EmployeeController";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const employeeDI = () => {
   const companyRepo = new companyRepository();
@@ -14,7 +15,8 @@ export const employeeDI = () => {
   const managerRepo = new ManagerRepository();
   const departmentRepo = new DepartmentRepository();
   const emailService = new EmailService();
-
+  const notificationRepo=new NotificationRepository();
+  
   const createManagerUseCase = new CreateManagerUseCase(
     companyRepo,
     managerRepo,
@@ -27,6 +29,7 @@ export const employeeDI = () => {
     departmentRepo,
     managerRepo,
     emailService,
+    notificationRepo
   );
   const getUnassignedManagersUseCase = new GetUnassignedManagersUseCase(
     managerRepo,
