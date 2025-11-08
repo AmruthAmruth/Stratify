@@ -1,5 +1,6 @@
 import { Notification } from "../../domain/entities/Notification";
 import { INotificationRepository } from "../../domain/repositories/INotificationRepository";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
 import { NotificationModel } from "../models/NotificationModel";
 
 export class NotificationRepository implements INotificationRepository {
@@ -46,7 +47,40 @@ export class NotificationRepository implements INotificationRepository {
     );
   }
 
+
+
   async markAsRead(id: string): Promise<void> {
     await NotificationModel.findByIdAndUpdate(id, { isRead: true });
   }
+
+  async updateReadStatus(id: string): Promise<void> {
+  const notification = await NotificationModel.findById(id);
+  if (!notification) {
+    throw new AppError("Notification not found",404);
+  }
+
+  notification.isRead = !notification.isRead;
+  await notification.save();
+}
+
+async findById(id: string): Promise<Notification> {
+  const notification = await NotificationModel.findById(id);
+  
+  if (!notification) {
+    throw new AppError("Notification not found",404);
+  }
+
+  return new Notification(
+    notification.id.toString(),
+    notification.userId.toString(),
+    notification.role,
+    notification.title,
+    notification.message,
+    notification.type,
+    notification.isRead,
+    notification.createdAt
+  );
+}
+
+
 }

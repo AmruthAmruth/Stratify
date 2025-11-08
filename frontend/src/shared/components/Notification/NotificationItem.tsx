@@ -16,16 +16,18 @@ const typeColors = {
 const NotificationItem: React.FC<Props> = ({ notification, onMarkRead }) => {
   return (
     <div
-      className={`p-3 mb-2 rounded-md cursor-pointer ${
+      className={`p-3 mb-2 text-black rounded-md cursor-pointer transition-opacity duration-300 ${
         typeColors[notification.type]
       } ${notification.isRead ? "opacity-50" : "opacity-100"}`}
       onClick={() => onMarkRead?.(notification.id)}
     >
       <h4 className="font-semibold">{notification.title}</h4>
       <p className="text-sm">{notification.message}</p>
-      <small>{new Date(notification.createdAt).toLocaleString()}</small>
+      <small className="text-xs opacity-75">
+        {new Date(notification.createdAt).toLocaleString()}
+      </small>
     </div>
   );
 };
 
-export default NotificationItem; 
+export default NotificationItem;
