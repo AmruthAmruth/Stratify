@@ -1,16 +1,18 @@
-import { Response } from "express";
+import { Response,Request } from "express";
 import { ICreateNotificationUseCase } from "../../application/interfaces/notification/ICreateNotificationUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import {io,} from '../../main'
 import { emitNotification } from "../../infrastructure/socket/NotificationSocket";
 import { IGetNotificationUseCase } from "../../application/interfaces/notification/IGetNotificationUseCase";
+import { IToggleReadStatusUseCase } from "../../application/interfaces/notification/IToggleReadStatusUseCase";
 
 
 export class NotificationController{
          constructor(
             private _createNotificationUseCase:ICreateNotificationUseCase,
-            private _getNotificationUseCase:IGetNotificationUseCase
+            private _getNotificationUseCase:IGetNotificationUseCase,
+            private _toggleReadStatusUseCase:IToggleReadStatusUseCase
          ){}
         
          createNotification=async(req:AuthRequest,res:Response):Promise<void>=>{
@@ -30,6 +32,12 @@ export class NotificationController{
       res.status(StatusCodes.OK).json({message:"All Notification",response})
    }
 
+
+   toggleReadStatus=async(req:Request,res:Response):Promise<void>=>{
+      const {notificationId}=req.body
+      await this._toggleReadStatusUseCase.execute(notificationId!)
+      res.status(StatusCodes.OK).json({message:"Notification Status updated"})
+   }
 
 
 }

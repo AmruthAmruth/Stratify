@@ -16,4 +16,6 @@ notificationRouter
     authMiddleware(["company", "manager", "employee"]),
     asyncHandler(controller.getNotificationByUserId)
   );
+
+  notificationRouter.post('/update-status',asyncHandler(controller.toggleReadStatus))
 export default notificationRouter
