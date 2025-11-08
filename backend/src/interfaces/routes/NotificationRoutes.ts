@@ -15,7 +15,7 @@ notificationRouter
   .get(
     authMiddleware(["company", "manager", "employee"]),
     asyncHandler(controller.getNotificationByUserId)
-  );
+  )
 
 notificationRouter.post(
   "/update-status",
@@ -25,9 +25,9 @@ notificationRouter.post(
   "/delete-notification",
   asyncHandler(controller.deleteNotification)
 );
-notificationRouter.post(
-  "/delete-all-notification",
+notificationRouter.delete(
+  "/delete-all-notification/:id",
   authMiddleware(["company", "manager", "employee"]),
-  asyncHandler(controller.deleteNotification)
+  asyncHandler(controller.deleteAllNotificatins)
 );
 export default notificationRouter;

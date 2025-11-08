@@ -44,7 +44,7 @@ export class NotificationController{
    }
 
    deleteNotification=async(req:Request,res:Response):Promise<void>=>{
-      const {id}=req.body;
+      const id=req.params.id;
       await this._deleteNotificationUseCase.execute(id);
       res.status(StatusCodes.OK).json({message:"Deleted Notification"})
    }
