@@ -75,5 +75,8 @@ export const LEAVE_ROUTES = {
 
 
 export const NOTIFICATION_ROUTES={
-  GET_NOTIFICATIONS:"/api/notification"
+  GET_NOTIFICATIONS:"/api/notification",
+  TOGGLE_STATUS_UPDATE:"/api/notification/update-status",
+  DELETE_NOTIFICATION:"/api/notification/delete-notification",
+  DELETE_ALL_NOTIFICATION:"/api/notification/delete-all-notification"
 }
