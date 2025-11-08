@@ -54,7 +54,6 @@ connectDB()
   
 app.use("/api", router);
 
-
 app.use(errorMiddleware);
 
 

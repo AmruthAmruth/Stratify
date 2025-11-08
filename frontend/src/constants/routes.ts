@@ -74,4 +74,6 @@ export const LEAVE_ROUTES = {
 };
 
 
-
+export const NOTIFICATION_ROUTES={
+  GET_NOTIFICATIONS:"/api/notification"
+}
