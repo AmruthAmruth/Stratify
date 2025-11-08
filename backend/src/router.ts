@@ -6,7 +6,7 @@ import employeeRouter from "./interfaces/routes/EmployeeRoutes";
 import subscriptionRouter from "./interfaces/routes/SubscriptionRouter";
 import projectRouter from "./interfaces/routes/ProjectRouter";
 import leaveRouter from "./interfaces/routes/LeaveRoues";
-import notificationRouter from "./interfaces/routes/notificationRoutes";
+import notificationRouter from "./interfaces/routes/NotificationRoutes";
 
 const router = Router();
 
