@@ -82,5 +82,23 @@ async findById(id: string): Promise<Notification> {
   );
 }
 
+async delete(id: string): Promise<void> {
+  const notification = await NotificationModel.findById(id);
+  if (!notification) {
+    throw new AppError("Notification not found", 404);
+  }
+
+  await NotificationModel.findByIdAndDelete(id);
+}
+
+
+async deleteAll(userId: string): Promise<void> {
+  const result = await NotificationModel.deleteMany({ userId });
+
+  if (result.deletedCount === 0) {
+    throw new AppError("No notifications found for this user", 404);
+  }
+}
+
 
 }
