@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Bell } from 'lucide-react'; 
 import { useDispatch } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
@@ -11,8 +11,12 @@ const Navbar = ({ role }: { role: string }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+  const location = useLocation();
   const userName = role;
 
+  const [count, setCount] = useState(0);
+
+  // ✅ Handle logout
   const handleLogout = async () => {
     try {
       const result = await logout();
@@ -26,23 +30,29 @@ const Navbar = ({ role }: { role: string }) => {
     }
   };
 
-  const [count,setCount]=useState(1)
+  // ✅ Listen for new notifications
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
 
+    const handleNewNotification = (data: any) => {
+      console.log("New notification received:", data);
+      setCount((prev) => prev + 1);
+    };
 
-useEffect(() => {
-  const socket = getSocket();
-  if (!socket) return;
+    socket.on("new-notification", handleNewNotification);
 
-  socket.on("new-notification", (data) => {
-    console.log("New notification received:", data);
-    setCount((prev) => prev + 1);
-  });
+    return () => {
+      socket.off("new-notification", handleNewNotification);
+    };
+  }, []);
 
-  return () => {
-    socket.off("new-notification");
-  };
-},);
-
+  // ✅ Reset count when user navigates to /notification
+  useEffect(() => {
+    if (location.pathname === "/notification") {
+      setCount(0);
+    }
+  }, [location.pathname]);
 
   return (
     <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-[#dfdcef]">
@@ -52,18 +62,18 @@ useEffect(() => {
 
       <div className="flex items-center space-x-6">
         {/* Notification Bell */}
-        <button 
-          type="button"
+        <Link
+          to="/notification"
           className="relative p-2 rounded-full hover:bg-green-50 transition-colors duration-200"
           title="Notifications"
         >
           <Bell className="h-6 w-6 text-gray-600" />
-         {count > 0 && (
-        <span className="absolute top-0 right-0 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-          {count}
-        </span>
-      )}
-        </button>
+          {count > 0 && (
+            <span className="absolute top-0 right-0 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
+              {count}
+            </span>
+          )}
+        </Link>
 
         {/* Logout Button */}
         <button
