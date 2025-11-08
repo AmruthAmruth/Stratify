@@ -18,4 +18,6 @@ notificationRouter
   );
 
   notificationRouter.post('/update-status',asyncHandler(controller.toggleReadStatus))
+  notificationRouter.post('/delete-notification',asyncHandler(controller.deleteNotification))
+   notificationRouter.post('/delete-all-notification',authMiddleware(["company","manager","employee"]),asyncHandler(controller.deleteNotification))
 export default notificationRouter
