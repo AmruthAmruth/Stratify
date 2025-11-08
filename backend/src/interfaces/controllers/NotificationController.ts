@@ -38,13 +38,16 @@ export class NotificationController{
 
 
    toggleReadStatus=async(req:Request,res:Response):Promise<void>=>{
-      const {notificationId}=req.body
-      await this._toggleReadStatusUseCase.execute(notificationId!)
+      const {id}=req.body
+      
+      await this._toggleReadStatusUseCase.execute(id!)
       res.status(StatusCodes.OK).json({message:"Notification Status updated"})
    }
 
    deleteNotification=async(req:Request,res:Response):Promise<void>=>{
       const id=req.params.id;
+      console.log(id);
+      
       await this._deleteNotificationUseCase.execute(id);
       res.status(StatusCodes.OK).json({message:"Deleted Notification"})
    }
@@ -55,4 +58,4 @@ export class NotificationController{
       res.status(StatusCodes.OK).json({message:"Delete all notifications"})
    }
 
-}
+}  

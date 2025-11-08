@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from "react";
 import NotificationItem from "./NotificationItem";
 import { INotification } from "./types";
-import { getNotification } from "@/services/notification";
+import {
+  deleteAllNotifications,
+  deleteNotification,
+  getNotification,
+  toggleStatusUpdate,
+} from "@/services/notification";
 import { connectSocket, getSocket } from "@/shared/socket/socket";
 
 const NotificationBoard = ({ userId }: { userId: string }) => {
@@ -11,11 +16,10 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
   const hasInitialized = useRef(false);
 
   useEffect(() => {
-    // Prevent multiple initializations
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
-    // Initialize socket once
+    // Initialize socket
     if (!socketRef.current) {
       socketRef.current = getSocket() || connectSocket(userId);
     }
@@ -28,7 +32,8 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
         if (data?.response?.length) {
           const sorted = data.response.sort(
             (a, b) =>
-              new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+              new Date(b.createdAt).getTime() -
+              new Date(a.createdAt).getTime()
           );
           setNotifications(sorted);
         } else {
@@ -44,59 +49,78 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     fetchNotifications();
 
-    // Handle live notifications - appears as instantly as React state updates allow
+    // Handle live incoming notifications
     const handleNewNotification = (notification: INotification) => {
-      console.log("📩 Real-time notification received:", notification);
-
-      // Directly update state (React will batch and re-render asynchronously, but this is the standard way)
-      // If you're on React 18+, consider adding flushSync for synchronous rendering (import { ..., flushSync } from "react"; and wrap the setNotifications call)
-      // For older React versions, this inherent async update may introduce a tiny delay (~16ms per frame)
+      console.log("📩 New notification received:", notification);
       setNotifications((prev) => {
-        // Check if notification already exists
-        const exists = prev.some((n) => n.id === notification.id);
-        if (exists) {
-          console.log("⚠️ Duplicate notification ignored:", notification.id);
-          return prev;
-        }
-
-        // Add new notification at the top
-        console.log("✅ Adding new notification to UI");
+        if (prev.some((n) => n.id === notification.id)) return prev;
         return [notification, ...prev];
       });
     };
 
-    // Listen for both possible event names from backend
     if (socketRef.current) {
       socketRef.current.on("new-notification", handleNewNotification);
       socketRef.current.on("notification", handleNewNotification);
-      
-      console.log("🔌 Socket listeners registered");
     }
 
-    // Cleanup function
     return () => {
       if (socketRef.current) {
         socketRef.current.off("new-notification", handleNewNotification);
         socketRef.current.off("notification", handleNewNotification);
-        console.log("🔌 Socket listeners cleaned up");
       }
     };
   }, [userId]);
 
-  const handleMarkRead = (id: string) => {
-    // Update the notification as read without removing it
-    setNotifications((prev) =>
-      prev.map((n) =>
-        n.id === id ? { ...n, isRead: true } : n
-      )
-    );
+  // ✅ Toggle read/unread status
+  const handleToggleRead = async (id: string) => {
+    try {
+      await toggleStatusUpdate(id);
+      setNotifications((prev) =>
+        prev.map((n) =>
+          n.id === id ? { ...n, isRead: !n.isRead } : n
+        )
+      );
+    } catch (err) {
+      console.error("Failed to toggle read status:", err);
+    }
+  };
+
+  // ✅ Delete one notification
+  const handleDelete = async (id: string) => {
+    try {
+      await deleteNotification(id);
+      setNotifications((prev) => prev.filter((n) => n.id !== id));
+    } catch (err) {
+      console.error("Failed to delete notification:", err);
+    }
+  };
+
+  // ✅ Delete all notifications
+  const handleDeleteAll = async () => {
+    try {
+      await deleteAllNotifications();
+      setNotifications([]);
+    } catch (err) {
+      console.error("Failed to delete all notifications:", err);
+    }
   };
 
   return (
     <div className="w-full max-w-md mx-auto p-4 text-black bg-white shadow-md rounded-md">
-      <h3 className="text-lg font-bold mb-4">
-        Notifications {notifications.length > 0 && `(${notifications.length})`}
-      </h3>
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-bold">
+          Notifications {notifications.length > 0 && `(${notifications.length})`}
+        </h3>
+        {notifications.length > 0 && (
+          <button
+            onClick={handleDeleteAll}
+            className="text-sm text-red-600 hover:underline"
+          >
+            Clear All
+          </button>
+        )}
+      </div>
+
       <div className="space-y-2">
         {isLoading ? (
           <p className="text-sm text-gray-500">Loading notifications...</p>
@@ -107,7 +131,8 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
             <NotificationItem
               key={n.id}
               notification={n}
-              onMarkRead={handleMarkRead}
+              onMarkRead={() => handleToggleRead(n.id)}  
+              onDelete={() => handleDelete(n.id)}          
             />
           ))
         )}

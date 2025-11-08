@@ -21,12 +21,12 @@ notificationRouter.post(
   "/update-status",
   asyncHandler(controller.toggleReadStatus)
 );
-notificationRouter.post(
-  "/delete-notification",
+notificationRouter.delete(
+  "/delete-notification/:id",
   asyncHandler(controller.deleteNotification)
 );
 notificationRouter.delete(
-  "/delete-all-notification/:id",
+  "/delete-all-notification",
   authMiddleware(["company", "manager", "employee"]),
   asyncHandler(controller.deleteAllNotificatins)
 );

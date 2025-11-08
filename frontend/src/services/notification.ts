@@ -17,6 +17,8 @@ const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
 
 
 export const getNotification= () => handleRequest(api.get(NOTIFICATION_ROUTES.GET_NOTIFICATIONS));
+
+
 export const toggleStatusUpdate = (id: string) =>
   handleRequest(api.post(NOTIFICATION_ROUTES.TOGGLE_STATUS_UPDATE, { id }));
 
