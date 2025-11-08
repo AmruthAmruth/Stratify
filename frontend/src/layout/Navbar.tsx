@@ -34,7 +34,7 @@ useEffect(() => {
   if (!socket) return;
 
   socket.on("new-notification", (data) => {
-    console.log("New notification received:", data); // <-- log the notification
+    console.log("New notification received:", data);
     setCount((prev) => prev + 1);
   });
 
