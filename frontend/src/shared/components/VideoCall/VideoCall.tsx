@@ -11,15 +11,13 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName, token }) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!token) {
+    if (!token || typeof token !== "string") {
       console.error("Invalid Zego token:", token);
       return;
     }
 
-    // 1. Create Zego instance
     const zp = ZegoUIKitPrebuilt.create(token);
 
-    // 2. Join room
     zp.joinRoom({
       container: containerRef.current!,
       sharedLinks: [
@@ -29,17 +27,12 @@ const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName, token }) => {
         },
       ],
       scenario: {
-        mode: ZegoUIKitPrebuilt.GroupCall, // Supports multiple participants
+        mode: ZegoUIKitPrebuilt.GroupCall,
       },
       showScreenSharingButton: true,
       showPreJoinView: false,
       userName,
     });
-
-    return () => {
-      // Optional: leave room on unmount
-      zp.destroy();
-    };
   }, [roomId, userName, token]);
 
   return <div ref={containerRef} style={{ width: "100%", height: "100vh" }} />;

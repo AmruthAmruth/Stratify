@@ -1,6 +1,9 @@
 import React, { useState } from "react";
 import VideoCall from "@/shared/components/VideoCall/VideoCall";
-import { generateToken } from "@/services/meetingService";
+import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
+
+const appId = Number(import.meta.env.VITE_ZEGO_APP_ID);
+const serverSecret = import.meta.env.VITE_ZEGO_SERVER_SECRET;
 
 const JoinMeeting: React.FC = () => {
   const [roomId, setRoomId] = useState("");
@@ -10,18 +13,16 @@ const JoinMeeting: React.FC = () => {
   const handleJoin = async () => {
     if (!roomId || !userName) return;
 
-    try {
-      // 1. Request token from backend for this user
-      const response = await generateToken(roomId, userName);
-
-      // 2. Use returned token to join the meeting
-      setZegoToken(response.token);
-    } catch (err) {
-      console.error("Error generating token:", err);
-    }
+    const kitToken = ZegoUIKitPrebuilt.generateKitTokenForTest(
+      appId,
+      serverSecret,
+      roomId,
+      Date.now().toString(),
+      userName
+    );
+    setZegoToken(kitToken);
   };
 
-  // 3. If token is ready, join the video call
   if (zegoToken) {
     return <VideoCall roomId={roomId} userName={userName} token={zegoToken} />;
   }
@@ -29,7 +30,6 @@ const JoinMeeting: React.FC = () => {
   return (
     <div className="flex flex-col items-center mt-10">
       <h2 className="text-xl font-semibold mb-4">Join Meeting</h2>
-
       <input
         type="text"
         placeholder="Enter Room ID"
@@ -37,7 +37,6 @@ const JoinMeeting: React.FC = () => {
         value={roomId}
         onChange={(e) => setRoomId(e.target.value)}
       />
-
       <input
         type="text"
         placeholder="Enter Your Name"
@@ -45,7 +44,6 @@ const JoinMeeting: React.FC = () => {
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
       />
-
       <button
         onClick={handleJoin}
         className="bg-green-600 text-white px-4 py-2 rounded"
