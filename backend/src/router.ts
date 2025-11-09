@@ -7,6 +7,7 @@ import subscriptionRouter from "./interfaces/routes/SubscriptionRouter";
 import projectRouter from "./interfaces/routes/ProjectRouter";
 import leaveRouter from "./interfaces/routes/LeaveRoues";
 import notificationRouter from "./interfaces/routes/NotificationRoutes";
+import meetingRouter from "./interfaces/routes/MeetingRoutes";
 
 const router = Router();
 
@@ -18,4 +19,5 @@ router.use("/subscription", subscriptionRouter);
 router.use("/project", projectRouter);
 router.use("/leave", leaveRouter);
 router.use("/notification",notificationRouter);
+router.use("/meeting",meetingRouter)
 export default router;

@@ -14,10 +14,13 @@ export const notificationDI = () => {
   );
 
   const getNotificationUseCase = new GetNotificationUseCase(notificationRepo);
- const toggleReadStatusUseCase = new ToggleReadStatusUseCase(notificationRepo)
-const deleteNotificationUseCase = new DeleteNotificationUseCase(notificationRepo)
-const deleteAllNotificationsUSeCase=new DeleteAllNotificationsUseCase(notificationRepo)
-
+  const toggleReadStatusUseCase = new ToggleReadStatusUseCase(notificationRepo);
+  const deleteNotificationUseCase = new DeleteNotificationUseCase(
+    notificationRepo
+  );
+  const deleteAllNotificationsUSeCase = new DeleteAllNotificationsUseCase(
+    notificationRepo
+  );
 
   return new NotificationController(
     createNotificationUseCase,
