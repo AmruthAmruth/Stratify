@@ -9,7 +9,8 @@ const controller = meetingDI()
 
 meetingRouter.post('/',authMiddleware(["manager"]),asyncHandler(controller.createMeeting))
 meetingRouter.post("/token", authMiddleware(["manager", "employee"]), asyncHandler(controller.genarateToken));
-meetingRouter.post('/join',asyncHandler(controller.joinMeeting))
-meetingRouter.post('/close',asyncHandler(controller.closeMeeting))
+meetingRouter.post('/join/:roomId', asyncHandler(controller.joinMeeting));
+meetingRouter.post('/close/:roomId', asyncHandler(controller.closeMeeting));
+
 
 export default meetingRouter

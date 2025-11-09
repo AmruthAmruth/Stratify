@@ -80,3 +80,11 @@ export const NOTIFICATION_ROUTES={
   DELETE_NOTIFICATION:"/api/notification/delete-notification",
   DELETE_ALL_NOTIFICATION:"/api/notification/delete-all-notification"
 }
+
+
+export const MEETING_ROUTES={
+  CREATE_MEETING:"/api/meeting",
+  GENARATE_TOKEN:"/api/meeting/token",
+  JOING_MEETING:'/api/meeting/join',
+  CLOSE_MEETING:'/api/meeting/close'
+}

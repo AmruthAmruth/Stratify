@@ -1,4 +1,5 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
+import CreateMeeting from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import ManagerProjects from "@/features/manager/ManagerProjects";
@@ -34,7 +35,11 @@ const managerRoutes: RouteObject[] = [
   {
     path: "/notification",
     element: <Notification />,
-  }
+  },
+  {
+    path: "/meetings",
+    element: <CreateMeeting />,
+  },
 
 ];
 

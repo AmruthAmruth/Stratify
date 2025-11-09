@@ -43,7 +43,7 @@ const adminRoutes: RouteObject[] = [
   {
     path: "notification",
     element: <Notification />,
-  },
+  }
 ];
 
 export default adminRoutes;
