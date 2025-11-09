@@ -7,7 +7,7 @@ export class ZegoTokenService {
     private readonly serverSecret: string
   ) {}
 
-  generate(roomId: string, userId: string, userName: string): string {
+  generate(roomId: string, userId: string, _userName: string): string {
     const effectiveTimeInSeconds = 3600;
 
     const payload = JSON.stringify({

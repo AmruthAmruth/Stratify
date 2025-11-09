@@ -1,5 +1,7 @@
+import { CloseMeetingUseCase } from "../application/use-cases/meeting/CloseMeetingUseCase";
 import { CreateMeetingUseCase } from "../application/use-cases/meeting/CreateMeetingUseCase";
 import { GenerateMeetingTokenUseCase } from "../application/use-cases/meeting/GenerateMeetingTokenUseCase";
+import { JoinMeetingUseCase } from "../application/use-cases/meeting/JoinMeetingUseCase";
 import { MeetingRepository } from "../infrastructure/repositories/MeetingRepository";
 import { ZegoTokenService } from "../infrastructure/services/zego/ZegoTokenService";
 import { MeetingController } from "../interfaces/controllers/MeetingController";
@@ -20,8 +22,13 @@ export const meetingDI = () => {
     zegoTokenService
   );
 
+  const joinMeetingUseCase=new JoinMeetingUseCase(meetingRepository);
+  const closeMeetinguseCase=new CloseMeetingUseCase(meetingRepository)
+
   return  new MeetingController(
     createMeetingUseCase,
-    generateMeetingTokenUseCase
+    generateMeetingTokenUseCase,
+    joinMeetingUseCase,
+    closeMeetinguseCase
   )
 };
