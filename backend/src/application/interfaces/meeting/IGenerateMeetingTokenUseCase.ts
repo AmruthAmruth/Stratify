@@ -1,3 +1,3 @@
 export interface IGenerateMeetingTokenUseCase{
-    execute(roomId:string,userId:string,userName:string):Promise<void>
+    execute(roomId:string,userId:string,userName:string):Promise<string>
 }
