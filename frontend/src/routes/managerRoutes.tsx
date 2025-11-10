@@ -1,7 +1,8 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
-import CreateMeeting from "@/features/manager/CreateMeeting";
+import { CreateMeeting } from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
+import { ManagerMeeting } from "@/features/manager/ManagerMeeting";
 import ManagerProjects from "@/features/manager/ManagerProjects";
 import Notification from "@/features/manager/Notification";
 import type { RouteObject } from "react-router-dom";
@@ -36,10 +37,11 @@ const managerRoutes: RouteObject[] = [
     path: "/notification",
     element: <Notification />,
   },
-  {
+    {
     path: "/meetings",
-    element: <CreateMeeting />,
+    element: <ManagerMeeting />,
   },
+  
 
 ];
 

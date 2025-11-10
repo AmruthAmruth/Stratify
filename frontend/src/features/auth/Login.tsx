@@ -61,7 +61,7 @@ const handleLogin = async (values: LoginValues) => {
     const errorMessage = err?.message || "Login failed";
 
     // check if it's the subscription error
-    if (
+    if ( // replace with real logged-in name
       errorMessage ===
         "Your subscription is not active. Please subscribe to continue." &&
       err?.details?.companyId

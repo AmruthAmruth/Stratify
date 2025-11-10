@@ -1,5 +1,6 @@
+
+import { EmployeeJoinMeeting } from "@/features/employee/EmployeeJoinMeeting";
 import EmployeeProjectDetailsPage from "@/features/employee/EmployeeProjectDetailsPage";
-import JoinMeeting from "@/features/employee/JoinMeeting";
 import Leave from "@/features/employee/Leave";
 import Notification from "@/features/employee/Notification";
 import type { RouteObject } from "react-router";
@@ -20,11 +21,10 @@ const teamRoutes: RouteObject[] = [
     path: "notification",
     element: <Notification/>
   },
-   {
-    path: "meetings",
-    element: <JoinMeeting/>
-  }
-
+{
+    path: "/meetings",
+    element: <EmployeeJoinMeeting />,
+  },
 ];
 
 export default teamRoutes;
