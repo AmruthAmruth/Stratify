@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { createMeeting, getMeetingsByCreator } from "@/services/meetingService";
+import { closeMeeting, createMeeting, getMeetingsByCreator } from "@/services/meetingService";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { VideoCall } from "@/shared/components/Meetings/VideoCall";
@@ -52,18 +52,29 @@ export const ManagerMeeting: React.FC = () => {
     setActiveRoomId(meeting.roomId);
   };
 
+  const handleCloseMeeting = async (roomId: string) => {
+    try {
+      await closeMeeting(roomId);
+      enqueueSnackbar("Meeting closed successfully!", { variant: "success" });
+      fetchMeetings(); // Refresh the list to update status
+    } catch (error: any) {
+      console.error("Error closing meeting:", error);
+      enqueueSnackbar("Failed to close meeting", { variant: "error" });
+    }
+  };
+
   if (activeRoomId) {
     return <VideoCall roomId={activeRoomId} userName={userName} />;
   }
 
-  // ============== Pagination Logic ==============
+  // Pagination
   const totalPages = Math.ceil(meetings.length / itemsPerPage);
   const paginatedMeetings = meetings.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
   );
 
-  // ============== Table Config ==============
+  // Table Columns
   const columns = [
     { key: "title", label: "Meeting Title" },
     { key: "status", label: "Status" },
@@ -96,45 +107,52 @@ export const ManagerMeeting: React.FC = () => {
     return row[key];
   };
 
+  // Table Actions (Join + Close)
   const actions = [
     {
       label: "Join",
       type: "approve",
       onClick: (row: any) => handleJoin(row),
+      show: (row: any) => row.status === "open", // Only show join for open meetings
+    },
+    {
+      label: "Close",
+      type: "reject",
+      onClick: (row: any) => handleCloseMeeting(row.roomId),
+      show: (row: any) => row.status === "open", // Only show close for open meetings
     },
   ];
 
   return (
     <div className="p-8 text-gray-800">
-      {/* ====== Header Section ====== */}
-    <div className="mb-8 bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
-  <h1 className="text-2xl font-bold text-[#3b3b3b] mb-2">Manager Meetings</h1>
-  <p className="text-sm text-[#3b3b3b]/60">
-    Create and manage your meetings with your team.
-  </p>
-</div>
-      {/* ====== Create Meeting Form ====== */}
-     <div className="bg-[#fbfbfb] p-6 rounded-xl shadow-lg mb-8 flex items-center gap-4 border border-[#dfdcef]">
-  <input
-    type="text"
-    placeholder="Enter meeting title..."
-    value={title}
-    onChange={(e) => setTitle(e.target.value)}
-    className="flex-1 border border-[#dfdcef] rounded-lg px-4 py-2 text-sm text-[#3b3b3b] focus:outline-none focus:ring-2 focus:ring-[#009063] placeholder:text-[#3b3b3b]/60 bg-white"
-  />
-  <button
-    onClick={handleCreate}
-    className="bg-[#009063] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-[#007a4d] transition-all hover:shadow-lg hover:scale-105"
-  >
-    + Create Meeting
-  </button>
-</div>
+      {/* Header */}
+      <div className="mb-8 bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
+        <h1 className="text-2xl font-bold text-[#3b3b3b] mb-2">Manager Meetings</h1>
+        <p className="text-sm text-[#3b3b3b]/60">
+          Create and manage your meetings with your team.
+        </p>
+      </div>
 
-      {/* ====== Meetings Table ====== */}
+      {/* Create Meeting */}
+      <div className="bg-[#fbfbfb] p-6 rounded-xl shadow-lg mb-8 flex items-center gap-4 border border-[#dfdcef]">
+        <input
+          type="text"
+          placeholder="Enter meeting title..."
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          className="flex-1 border border-[#dfdcef] rounded-lg px-4 py-2 text-sm text-[#3b3b3b] focus:outline-none focus:ring-2 focus:ring-[#009063] placeholder:text-[#3b3b3b]/60 bg-white"
+        />
+        <button
+          onClick={handleCreate}
+          className="bg-[#009063] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-[#007a4d] transition-all hover:shadow-lg hover:scale-105"
+        >
+          + Create Meeting
+        </button>
+      </div>
+
+      {/* Meetings Table */}
       <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">
-          Your Meetings
-        </h2>
+        <h2 className="text-lg font-semibold mb-4 text-gray-900">Your Meetings</h2>
 
         <Table
           columns={columns}
