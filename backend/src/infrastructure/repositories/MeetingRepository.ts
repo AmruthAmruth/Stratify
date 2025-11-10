@@ -1,6 +1,6 @@
 import { Meeting } from "../../domain/entities/Meeting";
 import { IMeetingRepository } from "../../domain/repositories/IMeetingRepository";
-import { MeetingModel } from "../models/MeetingModel";
+import { MeetingDocument, MeetingModel } from "../models/MeetingModel";
 
 export class MeetingRepository implements IMeetingRepository {
   async create(meeting: Omit<Meeting, "id" | "createdAt" | "updatedAt">): Promise<Meeting> {
@@ -19,7 +19,7 @@ export class MeetingRepository implements IMeetingRepository {
   }
 
   
-  private toDomain(doc: any): Meeting {
+  private toDomain(doc: MeetingDocument): Meeting {
     const obj = doc.toObject();
     return {
       id: obj._id.toString(),
