@@ -15,7 +15,7 @@ export const EmployeeJoinMeeting: React.FC = () => {
   }
 
   return (
-    <div style={{ padding: "2rem" }}>
+    <div style={{ padding: "2rem" }} className="text-black">
       <h2>Join a Meeting</h2>
       <input
         type="text"
