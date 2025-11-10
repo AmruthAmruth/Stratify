@@ -21,7 +21,7 @@ export class MeetingRepository implements IMeetingRepository {
 
 
  async findMeetingByCreatorId(creatorId: string): Promise<Meeting[]> {
-  const docs = await MeetingModel.find({ creatorId: creatorId});
+  const docs = await MeetingModel.find({ creatorId: creatorId,status:"open"});
   return docs.map(doc => this.toDomain(doc));
 }
 
