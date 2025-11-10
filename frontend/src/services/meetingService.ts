@@ -28,3 +28,6 @@ export const joinMeeting = (roomId: string) =>
 
 export const closeMeeting = (roomId: string) =>
   handleRequest(api.post(`${MEETING_ROUTES.CLOSE_MEETING}/${roomId}`));
+
+
+export const employeeMeetings=()=>handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_FOR_EMPLOYEE))

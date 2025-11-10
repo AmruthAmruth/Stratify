@@ -88,4 +88,5 @@ export const MEETING_ROUTES={
   JOING_MEETING:'/api/meeting/join',
   CLOSE_MEETING:'/api/meeting/close',
   GET_MEETINGS_BY_CREATOR:"/api/meeting",
+  GET_MEETINGS_FOR_EMPLOYEE:'/api/meeting/meetings'
 }
