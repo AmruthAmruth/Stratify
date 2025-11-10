@@ -5,7 +5,9 @@ import { GetMeetingForEmployeeUseCase } from "../application/use-cases/meeting/G
 import { GetMeetingsByCreatorUseCase } from "../application/use-cases/meeting/GetMeetingsByCreatorUseCase";
 import { JoinMeetingUseCase } from "../application/use-cases/meeting/JoinMeetingUseCase";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
+import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { MeetingRepository } from "../infrastructure/repositories/MeetingRepository";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 import { ZegoTokenService } from "../infrastructure/services/zego/ZegoTokenService";
 import { MeetingController } from "../interfaces/controllers/MeetingController";
 
@@ -20,8 +22,11 @@ export const meetingDI = () => {
   );
 
   const employeeRepository=new EmployeeRepository()
+  const notificationRepository=new NotificationRepository()
+  const managerRepository=new ManagerRepository()
 
-  const createMeetingUseCase = new CreateMeetingUseCase(meetingRepository);
+
+  const createMeetingUseCase = new CreateMeetingUseCase(meetingRepository,notificationRepository,employeeRepository,managerRepository);
   const generateMeetingTokenUseCase = new GenerateMeetingTokenUseCase(
     meetingRepository,
     zegoTokenService
