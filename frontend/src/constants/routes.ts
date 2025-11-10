@@ -86,5 +86,6 @@ export const MEETING_ROUTES={
   CREATE_MEETING:"/api/meeting",
   GENARATE_TOKEN:"/api/meeting/token",
   JOING_MEETING:'/api/meeting/join',
-  CLOSE_MEETING:'/api/meeting/close'
+  CLOSE_MEETING:'/api/meeting/close',
+  GET_MEETINGS_BY_CREATOR:"/api/meeting"
 }

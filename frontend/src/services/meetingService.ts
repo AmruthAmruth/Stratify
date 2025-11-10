@@ -20,4 +20,5 @@ export const createMeeting = (title: string) =>
   handleRequest(api.post(MEETING_ROUTES.CREATE_MEETING, {title}));
 
 
-export const generateToken=(roomId: string, userName: string)=>handleRequest(api.post(MEETING_ROUTES.GENARATE_TOKEN,{roomId,userName}))
+export const getMeetingsByCreator = () => handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_BY_CREATOR));
+export const generateToken = (roomId: string, userName: string) => handleRequest(api.post(MEETING_ROUTES.GENARATE_TOKEN, { roomId, userName }));
