@@ -1,8 +1,10 @@
 import { CloseMeetingUseCase } from "../application/use-cases/meeting/CloseMeetingUseCase";
 import { CreateMeetingUseCase } from "../application/use-cases/meeting/CreateMeetingUseCase";
 import { GenerateMeetingTokenUseCase } from "../application/use-cases/meeting/GenerateMeetingTokenUseCase";
+import { GetMeetingForEmployeeUseCase } from "../application/use-cases/meeting/GetMeetingForEmployeeUseCase";
 import { GetMeetingsByCreatorUseCase } from "../application/use-cases/meeting/GetMeetingsByCreatorUseCase";
 import { JoinMeetingUseCase } from "../application/use-cases/meeting/JoinMeetingUseCase";
+import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { MeetingRepository } from "../infrastructure/repositories/MeetingRepository";
 import { ZegoTokenService } from "../infrastructure/services/zego/ZegoTokenService";
 import { MeetingController } from "../interfaces/controllers/MeetingController";
@@ -17,6 +19,8 @@ export const meetingDI = () => {
     ZEGO_SERVER_SECRET
   );
 
+  const employeeRepository=new EmployeeRepository()
+
   const createMeetingUseCase = new CreateMeetingUseCase(meetingRepository);
   const generateMeetingTokenUseCase = new GenerateMeetingTokenUseCase(
     meetingRepository,
@@ -26,7 +30,7 @@ export const meetingDI = () => {
   const joinMeetingUseCase=new JoinMeetingUseCase(meetingRepository);
   const closeMeetinguseCase=new CloseMeetingUseCase(meetingRepository)
   const getMeetingsByCreatorUseCase=new GetMeetingsByCreatorUseCase(meetingRepository)
-
+  const getMeetingForEmployeeUseCase = new GetMeetingForEmployeeUseCase(meetingRepository,employeeRepository)
 
 
   return  new MeetingController(
@@ -34,6 +38,7 @@ export const meetingDI = () => {
     generateMeetingTokenUseCase,
     joinMeetingUseCase,
     closeMeetinguseCase,
-    getMeetingsByCreatorUseCase
+    getMeetingsByCreatorUseCase,
+    getMeetingForEmployeeUseCase
   )
 };

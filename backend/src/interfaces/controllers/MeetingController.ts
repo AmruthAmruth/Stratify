@@ -1,6 +1,7 @@
 import { ICloseMeetingUseCase } from "../../application/interfaces/meeting/ICloseMeetingUseCase";
 import { ICreateMeetingUseCase } from "../../application/interfaces/meeting/ICreateMeetingUseCase";
 import { IGenerateMeetingTokenUseCase } from "../../application/interfaces/meeting/IGenerateMeetingTokenUseCase";
+import { IGetMeetingsForEmployeeUseCase } from "../../application/interfaces/meeting/IGetMeetingForEmployeeUseCase";
 import { IGetMeetingsByCreatorUseCase } from "../../application/interfaces/meeting/IGetMeetingsByCreatorUseCase";
 import { IJoinMeetingUseCase } from "../../application/interfaces/meeting/IJoinMeetingUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
@@ -14,7 +15,8 @@ export class MeetingController{
           private _generateMeetingTokenUseCase:IGenerateMeetingTokenUseCase,
           private _joinMeetingUseCase:IJoinMeetingUseCase,
           private _closeMeetingUseCase:ICloseMeetingUseCase,
-          private _getMeetingsByCreatorUseCase:IGetMeetingsByCreatorUseCase
+          private _getMeetingsByCreatorUseCase:IGetMeetingsByCreatorUseCase,
+          private _getMeetingForEmployeeUseCase:IGetMeetingsForEmployeeUseCase
     ){}
 
     createMeeting=async(req:AuthRequest,res:Response):Promise<void>=>{
@@ -47,6 +49,12 @@ export class MeetingController{
       getMeetingsByCreator=async(req:AuthRequest,res:Response):Promise<void>=>{
         const userId=req.userId;
         const response = await this._getMeetingsByCreatorUseCase.execute(userId!);
+        res.status(StatusCodes.OK).json(response)
+      }
+
+      getMeetingForEmployee=async(req:AuthRequest,res:Response):Promise<void>=>{
+        const userId=req.userId;
+        const response = await this._getMeetingForEmployeeUseCase.execute(userId!)
         res.status(StatusCodes.OK).json(response)
       }
 
