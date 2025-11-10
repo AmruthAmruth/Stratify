@@ -1,3 +1,4 @@
+
 import { Meeting } from "../../domain/entities/Meeting";
 import { IMeetingRepository } from "../../domain/repositories/IMeetingRepository";
 import { MeetingDocument, MeetingModel } from "../models/MeetingModel";
@@ -17,6 +18,12 @@ export class MeetingRepository implements IMeetingRepository {
   async close(roomId: string): Promise<void> {
     await MeetingModel.updateOne({ roomId }, { status: "closed" });
   }
+
+
+ async findMeetingByCreatorId(creatorId: string): Promise<Meeting[]> {
+  const docs = await MeetingModel.find({ creatorId: creatorId});
+  return docs.map(doc => this.toDomain(doc));
+}
 
   
   private toDomain(doc: MeetingDocument): Meeting {

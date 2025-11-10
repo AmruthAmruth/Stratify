@@ -1,6 +1,7 @@
 import { ICloseMeetingUseCase } from "../../application/interfaces/meeting/ICloseMeetingUseCase";
 import { ICreateMeetingUseCase } from "../../application/interfaces/meeting/ICreateMeetingUseCase";
 import { IGenerateMeetingTokenUseCase } from "../../application/interfaces/meeting/IGenerateMeetingTokenUseCase";
+import { IGetMeetingsByCreatorUseCase } from "../../application/interfaces/meeting/IGetMeetingsByCreatorUseCase";
 import { IJoinMeetingUseCase } from "../../application/interfaces/meeting/IJoinMeetingUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AuthRequest } from "../middleware/AuthMiddleware";
@@ -12,7 +13,8 @@ export class MeetingController{
           private _createMeetingUseCase:ICreateMeetingUseCase,
           private _generateMeetingTokenUseCase:IGenerateMeetingTokenUseCase,
           private _joinMeetingUseCase:IJoinMeetingUseCase,
-          private _closeMeetingUseCase:ICloseMeetingUseCase
+          private _closeMeetingUseCase:ICloseMeetingUseCase,
+          private _getMeetingsByCreatorUseCase:IGetMeetingsByCreatorUseCase
     ){}
 
     createMeeting=async(req:AuthRequest,res:Response):Promise<void>=>{
@@ -41,6 +43,12 @@ export class MeetingController{
         res.status(StatusCodes.OK).json({message:"Meeting Closed Successfully"})
       }
 
+
+      getMeetingsByCreator=async(req:AuthRequest,res:Response):Promise<void>=>{
+        const userId=req.userId;
+        const response = await this._getMeetingsByCreatorUseCase.execute(userId!);
+        res.status(StatusCodes.OK).json(response)
+      }
 
 
 }

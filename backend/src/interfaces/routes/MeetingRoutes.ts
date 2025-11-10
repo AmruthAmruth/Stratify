@@ -11,6 +11,6 @@ meetingRouter.post('/',authMiddleware(["manager"]),asyncHandler(controller.creat
 meetingRouter.post("/token", authMiddleware(["manager", "employee"]), asyncHandler(controller.genarateToken));
 meetingRouter.post('/join/:roomId', asyncHandler(controller.joinMeeting));
 meetingRouter.post('/close/:roomId', asyncHandler(controller.closeMeeting));
-
+meetingRouter.get('/',authMiddleware(["manager"]),asyncHandler(controller.getMeetingsByCreator))
 
 export default meetingRouter
