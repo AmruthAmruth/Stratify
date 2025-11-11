@@ -30,4 +30,6 @@ notificationRouter.delete(
   authMiddleware(["company", "manager", "employee"]),
   asyncHandler(controller.deleteAllNotificatins)
 );
+
+notificationRouter.post('/read-all',authMiddleware(["company","employee","manager"]),asyncHandler(controller.readAllNotification))
 export default notificationRouter;

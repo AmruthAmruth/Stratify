@@ -6,6 +6,7 @@ import { IGetNotificationUseCase } from "../../application/interfaces/notificati
 import { IToggleReadStatusUseCase } from "../../application/interfaces/notification/IToggleReadStatusUseCase";
 import { IDeleteNotificationUseCase } from "../../application/interfaces/notification/IDeleteNotificationUseCase";
 import { IDeleteAllNotificationsUseCase } from "../../application/interfaces/notification/IDeleteAllNotificationsUseCase";
+import { IReadAllNotificationUseCase } from "../../application/interfaces/notification/IReadAllNotificaionUseCase";
 
 
 export class NotificationController{
@@ -14,7 +15,8 @@ export class NotificationController{
             private _getNotificationUseCase:IGetNotificationUseCase,
             private _toggleReadStatusUseCase:IToggleReadStatusUseCase,
             private _deleteNotificationUseCase:IDeleteNotificationUseCase,
-            private _deleteAllNotificationUseCase:IDeleteAllNotificationsUseCase
+            private _deleteAllNotificationUseCase:IDeleteAllNotificationsUseCase,
+            private _readAllNotificaionUseCase:IReadAllNotificationUseCase
          ){}
         
          createNotification=async(req:AuthRequest,res:Response):Promise<void>=>{
@@ -56,4 +58,9 @@ export class NotificationController{
       res.status(StatusCodes.OK).json({message:"Delete all notifications"})
    }
 
-}  
+   readAllNotification=async(req:AuthRequest,_res:Response):Promise<void>=>{
+      const userId=req.userId;
+      await this._readAllNotificaionUseCase.execute(userId!)
+   }
+
+}   

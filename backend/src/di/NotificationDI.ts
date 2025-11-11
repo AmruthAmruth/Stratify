@@ -2,6 +2,7 @@ import { CreateNotificationUseCase } from "../application/use-cases/notification
 import { DeleteAllNotificationsUseCase } from "../application/use-cases/notification/DeleteAllNotificationsUseCase";
 import { DeleteNotificationUseCase } from "../application/use-cases/notification/DeleteNotificationUseCase";
 import { GetNotificationUseCase } from "../application/use-cases/notification/GetNotificationUseCase";
+import { ReadAllNotificaionUseCase } from "../application/use-cases/notification/ReadAllNotificationUseCase";
 import { ToggleReadStatusUseCase } from "../application/use-cases/notification/ToggleReadStatusUseCase";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 import { NotificationController } from "../interfaces/controllers/NotificationController";
@@ -22,11 +23,14 @@ export const notificationDI = () => {
     notificationRepo
   );
 
+  const readAllNotificationUseCase=new ReadAllNotificaionUseCase(notificationRepo)
+
   return new NotificationController(
     createNotificationUseCase,
     getNotificationUseCase,
     toggleReadStatusUseCase,
     deleteNotificationUseCase,
-    deleteAllNotificationsUSeCase
+    deleteAllNotificationsUSeCase,
+    readAllNotificationUseCase
   );
 };

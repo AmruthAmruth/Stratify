@@ -8,4 +8,5 @@ export interface INotificationRepository {
   findById(id:string):Promise<Notification>
   delete(id:string):Promise<void>
   deleteAll(userId:string):Promise<void>
+  markAsReadAll(userId:string):Promise<void>
 }

@@ -101,4 +101,12 @@ async deleteAll(userId: string): Promise<void> {
 }
 
 
+async markAsReadAll(userId: string): Promise<void> {
+  await NotificationModel.updateMany(
+    { userId, isRead: false },
+    { $set: { isRead: true } }
+  );
+}
+
+
 }
