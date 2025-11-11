@@ -8,6 +8,7 @@ import { IApproveLeaveUseCase } from "../../interfaces/leave/IApproveLeaveUseCas
 import { leaveStatusTemplate } from "../../../shared/templates/leaveStatusTemplate";
 import { Notification } from "../../../domain/entities/Notification";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 
 export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
   constructor(
@@ -82,7 +83,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       message,
       type
     );
-
+ NotificationEmitter.emit(notification);
     await this._notificationRepo.create(notification);
 
     await this._emailService.sendEmail(

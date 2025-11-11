@@ -5,6 +5,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { ICreateMeetingUseCase } from "../../interfaces/meeting/ICreateMeetingUseCase";
 import { randomUUID } from "crypto";
 
@@ -51,6 +52,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
         `📅 A new meeting "${title}" has been created by ${manager.name}. Please check your meeting section for details.`,
         "info",
       );
+       NotificationEmitter.emit(notification);
       await this._notificationRepo.create(notification);
     }
 
