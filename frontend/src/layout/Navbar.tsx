@@ -6,6 +6,7 @@ import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
 import { getSocket } from '@/shared/socket/socket';
+import { getNotification } from '@/services/notification'; // ✅ Import API to fetch notifications
 
 const Navbar = ({ role }: { role: string }) => {
   const dispatch = useDispatch();
@@ -14,7 +15,7 @@ const Navbar = ({ role }: { role: string }) => {
   const location = useLocation();
   const userName = role;
 
-  const [count, setCount] = useState(0);
+  const [unreadCount, setUnreadCount] = useState(0);
 
   // ✅ Handle logout
   const handleLogout = async () => {
@@ -30,6 +31,23 @@ const Navbar = ({ role }: { role: string }) => {
     }
   };
 
+  // ✅ Fetch initial notifications and calculate unread count
+  useEffect(() => {
+    const fetchUnreadCount = async () => {
+      try {
+        const data = await getNotification();
+        if (data?.response?.length) {
+          const unread = data.response.filter((n: any) => !n.isRead).length;
+          setUnreadCount(unread);
+        }
+      } catch (err) {
+        console.error("Failed to fetch notifications:", err);
+      }
+    };
+
+    fetchUnreadCount();
+  }, []);
+
   // ✅ Listen for new notifications
   useEffect(() => {
     const socket = getSocket();
@@ -37,7 +55,7 @@ const Navbar = ({ role }: { role: string }) => {
 
     const handleNewNotification = (data: any) => {
       console.log("New notification received:", data);
-      setCount((prev) => prev + 1);
+      setUnreadCount((prev) => prev + 1); // Increment unread count
     };
 
     socket.on("new-notification", handleNewNotification);
@@ -50,7 +68,7 @@ const Navbar = ({ role }: { role: string }) => {
   // ✅ Reset count when user navigates to /notification
   useEffect(() => {
     if (location.pathname === "/notification") {
-      setCount(0);
+      setUnreadCount(0);
     }
   }, [location.pathname]);
 
@@ -68,9 +86,9 @@ const Navbar = ({ role }: { role: string }) => {
           title="Notifications"
         >
           <Bell className="h-6 w-6 text-gray-600" />
-          {count > 0 && (
+          {unreadCount > 0 && (
             <span className="absolute top-0 right-0 bg-red-500 text-white text-xs w-5 h-5 flex items-center justify-center rounded-full">
-              {count}
+              {unreadCount}
             </span>
           )}
         </Link>
