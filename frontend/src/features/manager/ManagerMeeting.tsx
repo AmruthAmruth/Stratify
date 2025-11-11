@@ -44,7 +44,7 @@ export const ManagerMeeting: React.FC = () => {
       enqueueSnackbar("Meeting created successfully!", { variant: "success" });
     } catch (error: any) {
       console.error("Error creating meeting:", error);
-      enqueueSnackbar("Failed to create meeting", { variant: "error" });
+      enqueueSnackbar( error.message || "Failed to create meeting", { variant: "error" });
     }
   };
 

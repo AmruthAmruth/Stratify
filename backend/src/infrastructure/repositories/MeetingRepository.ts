@@ -25,6 +25,11 @@ export class MeetingRepository implements IMeetingRepository {
   return docs.map(doc => this.toDomain(doc));
 }
 
+async findByTitle(title: string): Promise<boolean> {
+  const doc = await MeetingModel.findOne({ title: { $regex: `^${title}$`, $options: "i" } });
+  return !!doc
+}
+
   
   private toDomain(doc: MeetingDocument): Meeting {
     const obj = doc.toObject();

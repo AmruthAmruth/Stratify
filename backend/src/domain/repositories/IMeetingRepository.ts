@@ -5,4 +5,5 @@ export interface IMeetingRepository {
   findByRoomId(roomId: string): Promise<Meeting | null>;
   close(roomId: string): Promise<void>;
   findMeetingByCreatorId(creatorId:string):Promise<Meeting[]>
+  findByTitle(title:string):Promise<boolean>
 }

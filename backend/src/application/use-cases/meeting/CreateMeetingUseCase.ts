@@ -4,6 +4,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { ICreateMeetingUseCase } from "../../interfaces/meeting/ICreateMeetingUseCase";
 import { randomUUID } from "crypto";
 
@@ -17,6 +18,13 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
 
   async execute(creatorId: string, title: string): Promise<Meeting> {
     
+
+    const existingMeeting=await this._meetingRepo.findByTitle(title);
+    if(existingMeeting){
+      throw new AppError(`A meeting with the title "${title}" already exists.`)
+    }
+
+
     const meeting = new Meeting(
       undefined,
       randomUUID(),
