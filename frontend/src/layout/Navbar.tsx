@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect } from 'react';
 import { Bell } from 'lucide-react'; 
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
 import { getSocket } from '@/shared/socket/socket';
-import { getNotification } from '@/services/notification'; // ✅ Import API to fetch notifications
+import { RootState } from '@/store';
+import { addNotification } from '@/store/slices/notificationSlice';
 
 const Navbar = ({ role }: { role: string }) => {
   const dispatch = useDispatch();
@@ -15,9 +16,9 @@ const Navbar = ({ role }: { role: string }) => {
   const location = useLocation();
   const userName = role;
 
-  const [unreadCount, setUnreadCount] = useState(0);
+  const notifications = useSelector((state: RootState) => state.notification.notifications);
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  // ✅ Handle logout
   const handleLogout = async () => {
     try {
       const result = await logout();
@@ -31,31 +32,13 @@ const Navbar = ({ role }: { role: string }) => {
     }
   };
 
-  // ✅ Fetch initial notifications and calculate unread count
-  useEffect(() => {
-    const fetchUnreadCount = async () => {
-      try {
-        const data = await getNotification();
-        if (data?.response?.length) {
-          const unread = data.response.filter((n: any) => !n.isRead).length;
-          setUnreadCount(unread);
-        }
-      } catch (err) {
-        console.error("Failed to fetch notifications:", err);
-      }
-    };
-
-    fetchUnreadCount();
-  }, []);
-
-  // ✅ Listen for new notifications
+  // Listen for new notifications
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
     const handleNewNotification = (data: any) => {
-      console.log("New notification received:", data);
-      setUnreadCount((prev) => prev + 1); // Increment unread count
+      dispatch(addNotification(data));
     };
 
     socket.on("new-notification", handleNewNotification);
@@ -63,14 +46,7 @@ const Navbar = ({ role }: { role: string }) => {
     return () => {
       socket.off("new-notification", handleNewNotification);
     };
-  }, []);
-
-  // ✅ Reset count when user navigates to /notification
-  useEffect(() => {
-    if (location.pathname === "/notification") {
-      setUnreadCount(0);
-    }
-  }, [location.pathname]);
+  }, [dispatch]);
 
   return (
     <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-[#dfdcef]">
@@ -79,7 +55,6 @@ const Navbar = ({ role }: { role: string }) => {
       </h1>
 
       <div className="flex items-center space-x-6">
-        {/* Notification Bell */}
         <Link
           to="/notification"
           className="relative p-2 rounded-full hover:bg-green-50 transition-colors duration-200"
@@ -93,7 +68,6 @@ const Navbar = ({ role }: { role: string }) => {
           )}
         </Link>
 
-        {/* Logout Button */}
         <button
           onClick={handleLogout}
           className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors duration-200"

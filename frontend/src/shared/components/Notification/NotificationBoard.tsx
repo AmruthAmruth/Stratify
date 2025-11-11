@@ -1,6 +1,14 @@
 import { useEffect, useRef, useState } from "react";
 import NotificationItem from "./NotificationItem";
-import { INotification } from "./types";
+import { useDispatch, useSelector } from "react-redux";
+import { RootState } from "@/store";
+import {
+  setNotifications,
+  addNotification,
+  updateNotification,
+  removeNotification,
+  clearNotifications,
+} from "@/store/slices/notificationSlice";
 import {
   deleteAllNotifications,
   deleteNotification,
@@ -11,20 +19,18 @@ import {
 import { connectSocket, getSocket } from "@/shared/socket/socket";
 
 const NotificationBoard = ({ userId }: { userId: string }) => {
-  const [notifications, setNotifications] = useState<INotification[]>([]);
+  const dispatch = useDispatch();
+  const notifications = useSelector((state: RootState) => state.notification.notifications);
   const [isLoading, setIsLoading] = useState(true);
   const socketRef = useRef<any>(null);
   const hasInitialized = useRef(false);
 
-  // Calculate unread count
-  const unreadCount = notifications.filter((n) => !n.isRead).length;
+  const unreadCount = notifications.filter(n => !n.isRead).length;
 
-  // Fetch notifications and setup socket
   useEffect(() => {
     if (hasInitialized.current) return;
     hasInitialized.current = true;
 
-    // Initialize socket
     if (!socketRef.current) {
       socketRef.current = getSocket() || connectSocket(userId);
     }
@@ -35,17 +41,14 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
         const data = await getNotification();
         if (data?.response?.length) {
           const sorted = data.response.sort(
-            (a, b) =>
-              new Date(b.createdAt).getTime() -
-              new Date(a.createdAt).getTime()
+            (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
-          setNotifications(sorted);
+          dispatch(setNotifications(sorted));
         } else {
-          setNotifications([]);
+          dispatch(setNotifications([]));
         }
       } catch (err) {
         console.error("Failed to fetch notifications:", err);
-        setNotifications([]);
       } finally {
         setIsLoading(false);
       }
@@ -53,12 +56,8 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     fetchNotifications();
 
-    // Handle real-time notifications
-    const handleNewNotification = (notification: INotification) => {
-      setNotifications((prev) => {
-        if (prev.some((n) => n.id === notification.id)) return prev;
-        return [notification, ...prev];
-      });
+    const handleNewNotification = (notification: any) => {
+      dispatch(addNotification(notification));
     };
 
     if (socketRef.current) {
@@ -72,64 +71,51 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
         socketRef.current.off("notification", handleNewNotification);
       }
     };
-  }, [userId]);
+  }, [userId, dispatch]);
 
-  // Toggle read/unread status
   const handleToggleRead = async (id: string) => {
+    const notification = notifications.find(n => n.id === id);
+    if (!notification) return;
+
+    dispatch(updateNotification({ ...notification, isRead: !notification.isRead }));
+
     try {
-      setNotifications((prev) =>
-        prev.map((n) =>
-          n.id === id ? { ...n, isRead: !n.isRead } : n
-        )
-      );
       await toggleStatusUpdate(id);
     } catch (err) {
-      console.error("Failed to toggle read status:", err);
-      // Revert if backend fails
-      setNotifications((prev) =>
-        prev.map((n) =>
-          n.id === id ? { ...n, isRead: !n.isRead } : n
-        )
-      );
+      dispatch(updateNotification(notification)); // revert on error
     }
   };
 
-  // Mark all notifications as read
   const handleToggleReadAll = async () => {
     const prevNotifications = [...notifications];
-    setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })));
+    dispatch(setNotifications(notifications.map(n => ({ ...n, isRead: true }))));
 
     try {
       await readAllNotification();
     } catch (err) {
-      console.error("Failed to mark all as read:", err);
-      setNotifications(prevNotifications);
+      dispatch(setNotifications(prevNotifications));
     }
   };
 
-  // Delete single notification
   const handleDelete = async (id: string) => {
     const prevNotifications = [...notifications];
-    setNotifications((prev) => prev.filter((n) => n.id !== id));
+    dispatch(removeNotification(id));
 
     try {
       await deleteNotification(id);
     } catch (err) {
-      console.error("Failed to delete notification:", err);
-      setNotifications(prevNotifications);
+      dispatch(setNotifications(prevNotifications));
     }
   };
 
-  // Delete all notifications
   const handleDeleteAll = async () => {
     const prevNotifications = [...notifications];
-    setNotifications([]);
+    dispatch(clearNotifications());
 
     try {
       await deleteAllNotifications();
     } catch (err) {
-      console.error("Failed to delete all notifications:", err);
-      setNotifications(prevNotifications);
+      dispatch(setNotifications(prevNotifications));
     }
   };
 
