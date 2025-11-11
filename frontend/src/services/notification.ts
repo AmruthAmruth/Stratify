@@ -26,3 +26,7 @@ export const deleteNotification = (id: string) =>
   handleRequest(api.delete(`${NOTIFICATION_ROUTES.DELETE_NOTIFICATION}/${id}`));
 
 export const deleteAllNotifications= () => handleRequest(api.delete(NOTIFICATION_ROUTES.DELETE_ALL_NOTIFICATION));
+
+
+
+export const readAllNotification=()=>handleRequest(api.post(NOTIFICATION_ROUTES.READ_ALL_NOTIFICATION))
