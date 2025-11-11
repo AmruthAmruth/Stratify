@@ -54,7 +54,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
   return (
     <div
       ref={meetingContainer}
-      style={{ width: "85vw", height: "90vh", backgroundColor: "#000" }}
+      style={{ width: "85vw", height: "90vh", backgroundColor: "#ffff" }}
     />
   );
 };
