@@ -1,10 +1,9 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import NotificationItem from "./NotificationItem";
 import { useDispatch, useSelector } from "react-redux";
 import { RootState } from "@/store";
 import {
   setNotifications,
-  addNotification,
   updateNotification,
   removeNotification,
   clearNotifications,
@@ -16,25 +15,15 @@ import {
   readAllNotification,
   toggleStatusUpdate,
 } from "@/services/notification";
-import { connectSocket, getSocket } from "@/shared/socket/socket";
 
-const NotificationBoard = ({ userId }: { userId: string }) => {
+const NotificationBoard = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state: RootState) => state.notification.notifications);
   const [isLoading, setIsLoading] = useState(true);
-  const socketRef = useRef<any>(null);
-  const hasInitialized = useRef(false);
 
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
   useEffect(() => {
-    if (hasInitialized.current) return;
-    hasInitialized.current = true;
-
-    if (!socketRef.current) {
-      socketRef.current = getSocket() || connectSocket(userId);
-    }
-
     const fetchNotifications = async () => {
       try {
         setIsLoading(true);
@@ -55,23 +44,7 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
     };
 
     fetchNotifications();
-
-    const handleNewNotification = (notification: any) => {
-      dispatch(addNotification(notification));
-    };
-
-    if (socketRef.current) {
-      socketRef.current.on("new-notification", handleNewNotification);
-      socketRef.current.on("notification", handleNewNotification);
-    }
-
-    return () => {
-      if (socketRef.current) {
-        socketRef.current.off("new-notification", handleNewNotification);
-        socketRef.current.off("notification", handleNewNotification);
-      }
-    };
-  }, [userId, dispatch]);
+  }, [dispatch]);
 
   const handleToggleRead = async (id: string) => {
     const notification = notifications.find(n => n.id === id);
@@ -81,7 +54,7 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     try {
       await toggleStatusUpdate(id);
-    } catch (err) {
+    } catch {
       dispatch(updateNotification(notification)); // revert on error
     }
   };
@@ -92,7 +65,7 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     try {
       await readAllNotification();
-    } catch (err) {
+    } catch {
       dispatch(setNotifications(prevNotifications));
     }
   };
@@ -103,7 +76,7 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     try {
       await deleteNotification(id);
-    } catch (err) {
+    } catch {
       dispatch(setNotifications(prevNotifications));
     }
   };
@@ -114,7 +87,7 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
 
     try {
       await deleteAllNotifications();
-    } catch (err) {
+    } catch {
       dispatch(setNotifications(prevNotifications));
     }
   };
@@ -125,24 +98,22 @@ const NotificationBoard = ({ userId }: { userId: string }) => {
         <h3 className="text-lg font-bold text-[#3b3b3b]">
           Notifications {unreadCount > 0 && `(${unreadCount})`}
         </h3>
-        <div className="flex gap-2">
-          {notifications.length > 0 && (
-            <>
-              <button
-                onClick={handleToggleReadAll}
-                className="text-sm text-[#009063] hover:text-[#007a4d] hover:underline transition-colors duration-200"
-              >
-                Mark All Read
-              </button>
-              <button
-                onClick={handleDeleteAll}
-                className="text-sm text-[#3b3b3b] hover:text-[#009063] hover:underline transition-colors duration-200"
-              >
-                Clear All
-              </button>
-            </>
-          )}
-        </div>
+        {notifications.length > 0 && (
+          <div className="flex gap-2">
+            <button
+              onClick={handleToggleReadAll}
+              className="text-sm text-[#009063] hover:text-[#007a4d] hover:underline transition-colors duration-200"
+            >
+              Mark All Read
+            </button>
+            <button
+              onClick={handleDeleteAll}
+              className="text-sm text-[#3b3b3b] hover:text-[#009063] hover:underline transition-colors duration-200"
+            >
+              Clear All
+            </button>
+          </div>
+        )}
       </div>
 
       <div className="space-y-2">

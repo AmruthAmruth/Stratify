@@ -8,13 +8,6 @@ interface Props {
   onDelete?: (id: string) => void;
 }
 
-const typeColors = {
-  info: "bg-blue-100 text-blue-800",
-  success: "bg-green-100 text-green-800",
-  warning: "bg-yellow-100 text-yellow-800",
-  error: "bg-red-100 text-red-800",
-};
-
 const NotificationItem: React.FC<Props> = ({
   notification,
   onMarkRead,
@@ -22,44 +15,65 @@ const NotificationItem: React.FC<Props> = ({
 }) => {
   return (
     <div
-      className={`p-3 mb-2 rounded-md transition-opacity duration-300 shadow-sm border flex items-start justify-between ${
-        typeColors[notification.type]
-      } ${notification.isRead ? "opacity-60" : "opacity-100"}`}
+      className={`p-4 rounded-lg border border-[#dfdcef] flex items-start justify-between transition-all duration-300 hover:shadow-md ${
+        notification.isRead ? "bg-white" : "bg-[#dfdcef]/40 shadow-sm"
+      }`}
     >
-      {/* Left: Notification content */}
+      {/* Left: Notification content + unread dot */}
       <div
-        className="flex-1 cursor-pointer"
+        className="flex items-start gap-4 flex-1 cursor-pointer select-none"
         onClick={() => onMarkRead?.(notification.id)}
       >
-        <h4 className="font-semibold text-sm">{notification.title}</h4>
-        <p className="text-xs">{notification.message}</p>
-        <small className="text-[10px] opacity-70">
-          {new Date(notification.createdAt).toLocaleString()}
-        </small>
+        {/* Unread indicator dot */}
+        {!notification.isRead && (
+          <div className="w-3 h-3 bg-[#009063] rounded-full mt-1 flex-shrink-0" />
+        )}
+
+        {/* Text content */}
+        <div className="space-y-1.5">
+          <h4
+            className={`text-base text-[#3b3b3b] ${
+              notification.isRead ? "font-medium" : "font-bold"
+            }`}
+          >
+            {notification.title}
+          </h4>
+          <p className="text-sm text-[#3b3b3b]/75 leading-relaxed">
+            {notification.message}
+          </p>
+          <small className="text-xs text-[#3b3b3b]/50 block">
+            {new Date(notification.createdAt).toLocaleString(undefined, {
+              month: "short",
+              day: "numeric",
+              hour: "2-digit",
+              minute: "2-digit",
+            })}
+          </small>
+        </div>
       </div>
 
-      {/* Right: Icons */}
-      <div className="flex items-center gap-2 ml-3">
-        {/* Read/Unread Toggle */}
+      {/* Right: Action icons */}
+      <div className="flex items-center gap-2 flex-shrink-0">
+        {/* Mark as read/unread */}
         <button
           onClick={() => onMarkRead?.(notification.id)}
-          className="p-1 hover:bg-gray-200 rounded-full"
+          className="p-2 hover:bg-[#dfdcef] rounded-full transition-colors duration-200"
           title={notification.isRead ? "Mark as Unread" : "Mark as Read"}
         >
           {notification.isRead ? (
-            <MailOpen className="w-4 h-4 text-gray-600" />
+            <MailOpen className="w-5 h-5 text-[#3b3b3b]/50" />
           ) : (
-            <Mail className="w-4 h-4 text-gray-600" />
+            <Mail className="w-5 h-5 text-[#009063]" />
           )}
         </button>
 
-        {/* Delete Notification */}
+        {/* Delete */}
         <button
           onClick={() => onDelete?.(notification.id)}
-          className="p-1 hover:bg-gray-200 rounded-full"
+          className="p-2 hover:bg-red-50 rounded-full transition-colors duration-200 group"
           title="Delete Notification"
         >
-          <Trash2 className="w-4 h-4 text-red-500" />
+          <Trash2 className="w-5 h-5 text-[#3b3b3b]/50 group-hover:text-red-600 transition-colors" />
         </button>
       </div>
     </div>

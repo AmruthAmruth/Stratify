@@ -1,20 +1,19 @@
+// src/shared/components/Navbar/Navbar.tsx
 import React, { useEffect } from 'react';
 import { Bell } from 'lucide-react'; 
 import { useDispatch, useSelector } from 'react-redux';
-import { Link, useLocation, useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
-import { getSocket } from '@/shared/socket/socket';
+import { connectSocket, getSocket } from '@/shared/socket/socket';
 import { RootState } from '@/store';
 import { addNotification } from '@/store/slices/notificationSlice';
 
-const Navbar = ({ role }: { role: string }) => {
+const Navbar = ({ role, userId }: { role: string; userId: string }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
-  const location = useLocation();
-  const userName = role;
 
   const notifications = useSelector((state: RootState) => state.notification.notifications);
   const unreadCount = notifications.filter(n => !n.isRead).length;
@@ -32,13 +31,15 @@ const Navbar = ({ role }: { role: string }) => {
     }
   };
 
-  // Listen for new notifications
   useEffect(() => {
-    const socket = getSocket();
-    if (!socket) return;
+    let socket = getSocket();
+
+    if (!socket) {
+      socket = connectSocket(userId);
+    }
 
     const handleNewNotification = (data: any) => {
-      dispatch(addNotification(data));
+      dispatch(addNotification(data)); // updates Redux in real time
     };
 
     socket.on("new-notification", handleNewNotification);
@@ -46,12 +47,12 @@ const Navbar = ({ role }: { role: string }) => {
     return () => {
       socket.off("new-notification", handleNewNotification);
     };
-  }, [dispatch]);
+  }, [dispatch, userId]);
 
   return (
     <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-[#dfdcef]">
       <h1 className="text-xl font-semibold text-gray-900">
-        Welcome, <span className="text-[#009063]">{userName}</span>
+        Welcome, <span className="text-[#009063]">{role}</span>
       </h1>
 
       <div className="flex items-center space-x-6">
