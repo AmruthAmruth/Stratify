@@ -8,6 +8,7 @@ import projectRouter from "./interfaces/routes/ProjectRouter";
 import leaveRouter from "./interfaces/routes/LeaveRoues";
 import notificationRouter from "./interfaces/routes/NotificationRoutes";
 import meetingRouter from "./interfaces/routes/MeetingRoutes";
+import chatRouter from "./interfaces/routes/ChatRoutes";
 
 const router = Router();
 
@@ -20,4 +21,5 @@ router.use("/project", projectRouter);
 router.use("/leave", leaveRouter);
 router.use("/notification",notificationRouter);
 router.use("/meeting",meetingRouter)
+router.use('/chat',chatRouter)
 export default router;

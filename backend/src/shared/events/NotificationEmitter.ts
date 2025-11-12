@@ -1,5 +1,5 @@
 import { Notification } from "../../domain/entities/Notification";
-import { emitNotification } from "../../infrastructure/socket/NotificationSocket";
+import { emitNotification } from "../../infrastructure/socket/SocketServer";
 import { io } from "../../main";
 
  
