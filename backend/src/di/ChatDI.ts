@@ -1,4 +1,5 @@
 
+import { GetChatUseCase } from "../application/use-cases/chat/GetChatUseCase";
 import { GetTeamForChatUseCase } from "../application/use-cases/chat/GetTeamForChatUseCase";
 import { SaveChatUseCase } from "../application/use-cases/chat/SaveChatUseCase";
 import { ChatRepository } from "../infrastructure/repositories/ChatRepository";
@@ -12,5 +13,8 @@ export const ChatDI = (): ChatController => {
     const chatRepo=new ChatRepository()
     const getTeamForChatUseCase = new GetTeamForChatUseCase(managerRepo, employeeRepo);
       const saveChatUseCase = new SaveChatUseCase(chatRepo)
-    return new ChatController(getTeamForChatUseCase,saveChatUseCase);
+    const getConversationUseCase = new GetChatUseCase(chatRepo)
+
+
+    return new ChatController(getTeamForChatUseCase,saveChatUseCase,getConversationUseCase);
 }

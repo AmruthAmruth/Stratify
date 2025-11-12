@@ -18,4 +18,7 @@ chatRouter.get(
     asyncHandler(controller.getTeamForManager)
 );
 
+chatRouter.get('/history/:receiverId',authMiddleware(["manager","employee"]),asyncHandler(controller.getChatHistory))
+
+
 export default chatRouter;
