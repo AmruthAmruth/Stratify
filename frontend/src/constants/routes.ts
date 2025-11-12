@@ -95,5 +95,6 @@ export const MEETING_ROUTES={
 
 export const CHAT_ROUTES={
   SENT_MESSAGE:'/api/chat/send',
-  TEAM_MEMEBER_LIST:'/api/chat/team'
+  TEAM_MEMEBER_LIST:'/api/chat/team',
+   CHAT_HISTROY_ROUTES:'/api/chat/history',
 }

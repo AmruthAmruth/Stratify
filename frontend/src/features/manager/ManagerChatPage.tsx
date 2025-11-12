@@ -1,27 +1,94 @@
 import { useEffect, useState } from "react";
 import ChatBox from "@/shared/components/Chat/ChatBox";
-import { getTeamMemeberList } from "@/services/chat";
+import { getChatHistory, getTeamMemeberList } from "@/services/chat";
+import { useSelector, useDispatch } from "react-redux";
+import { RootState } from "@/store";
+import { getSocket } from "@/shared/socket/socket";
 
 interface Employee {
   id: string;
   name: string;
+  lastMessage?: string;
+  unreadCount?: number;
 }
 
 const ManagerChatPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const [chatLoading, setChatLoading] = useState(false);
+  const userId = useSelector((state: RootState) => state.auth.userId);
+  const dispatch = useDispatch();
 
+  // ✅ Fetch team members once
   useEffect(() => {
     getTeamMemeberList()
       .then((data) => {
-        setEmployees(data || []);
+        if (data && Array.isArray(data)) {
+          setEmployees(data.map((emp: Employee) => ({ ...emp, unreadCount: 0 })));
+        }
       })
       .catch((err) => console.error("Failed to fetch team members:", err))
       .finally(() => setLoading(false));
   }, []);
 
-  return ( 
+  // ✅ Listen for incoming messages via socket
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleReceiveMessage = (msg: any) => {
+      // If the current chat is open, don't increment unread
+      if (msg.senderId !== userId) {
+        setEmployees((prev) => {
+          let updated = [...prev];
+          const index = updated.findIndex((e) => e.id === msg.senderId);
+          if (index !== -1) {
+            const emp = { ...updated[index] };
+            emp.lastMessage = msg.message;
+
+            // Increase unread count only if not selected
+            if (!selectedEmployee || selectedEmployee.id !== msg.senderId) {
+              emp.unreadCount = (emp.unreadCount || 0) + 1;
+            }
+
+            // Move this employee to the top
+            updated.splice(index, 1);
+            updated.unshift(emp);
+          }
+          return updated;
+        });
+      }
+    };
+
+    socket.on("receive-message", handleReceiveMessage);
+    return () => {
+      socket.off("receive-message", handleReceiveMessage);
+    };
+  }, [userId, selectedEmployee]);
+
+  // ✅ Fetch chat history whenever employee is selected
+  useEffect(() => {
+    if (!selectedEmployee) return;
+    setChatLoading(true);
+
+    getChatHistory(selectedEmployee.id)
+      .then((data) => {
+        setChatHistory(data || []);
+      })
+      .catch((err) => console.error("Failed to load chat history:", err))
+      .finally(() => setChatLoading(false));
+
+    // Reset unread count for this chat
+    setEmployees((prev) =>
+      prev.map((emp) =>
+        emp.id === selectedEmployee.id ? { ...emp, unreadCount: 0 } : emp
+      )
+    );
+  }, [selectedEmployee]);
+
+  return (
     <div className="flex h-screen bg-[#fbfbfb] text-[#3b3b3b]">
       {/* Sidebar */}
       <div className="w-1/3 md:w-1/4 bg-white border-r border-[#dfdcef] flex flex-col transition-all duration-300">
@@ -30,7 +97,9 @@ const ManagerChatPage = () => {
         </div>
 
         {loading ? (
-          <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">Loading...</p>
+          <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">
+            Loading...
+          </p>
         ) : employees.length === 0 ? (
           <p className="p-4 text-[#3b3b3b]/50 text-center">No employees found.</p>
         ) : (
@@ -39,22 +108,35 @@ const ManagerChatPage = () => {
               <li
                 key={emp.id}
                 onClick={() => setSelectedEmployee(emp)}
-                className={`flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${
+                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${
                   selectedEmployee?.id === emp.id
                     ? "bg-[#009063]/10 shadow-sm"
                     : ""
                 }`}
               >
                 {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md transition-transform duration-200 hover:scale-105">
+                <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
                   {emp.name.charAt(0).toUpperCase()}
                 </div>
 
-                {/* Name */}
+                {/* Name + last message */}
                 <div className="flex-1">
                   <p className="font-medium text-[#3b3b3b]">{emp.name}</p>
-                  <p className="text-sm text-[#3b3b3b]/60">Tap to chat</p>
+                  {emp.lastMessage ? (
+                    <p className="text-sm text-[#3b3b3b]/60 truncate max-w-[160px]">
+                      {emp.lastMessage}
+                    </p>
+                  ) : (
+                    <p className="text-sm text-[#3b3b3b]/60">Tap to chat</p>
+                  )}
                 </div>
+
+                {/* Unread badge */}
+                {emp.unreadCount && emp.unreadCount > 0 && (
+                  <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
+                    {emp.unreadCount}
+                  </span>
+                )}
               </li>
             ))}
           </ul>
@@ -71,14 +153,20 @@ const ManagerChatPage = () => {
                 {selectedEmployee.name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h2 className="font-semibold text-lg text-[#3b3b3b]">{selectedEmployee.name}</h2>
+                <h2 className="font-semibold text-lg text-[#3b3b3b]">
+                  {selectedEmployee.name}
+                </h2>
                 <p className="text-sm text-[#009063] font-medium">Online</p>
               </div>
             </div>
 
             {/* Chat Box */}
             <div className="flex-1 overflow-hidden">
-              <ChatBox receiverId={selectedEmployee.id} />
+              <ChatBox
+                receiverId={selectedEmployee.id}
+                initialMessages={chatHistory}
+                loading={chatLoading}
+              />
             </div>
           </>
         ) : (

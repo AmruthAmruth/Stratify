@@ -19,7 +19,7 @@ export const sendTheMessage = (data: Record<string, unknown>) =>
 
 export const getTeamMemeberList=()=>handleRequest(api.get(CHAT_ROUTES.TEAM_MEMEBER_LIST))
 
-
+export const getChatHistory=(receiverId:string)=>handleRequest(api.get(`${CHAT_ROUTES.CHAT_HISTROY_ROUTES}/${receiverId}`))
 
 
 
