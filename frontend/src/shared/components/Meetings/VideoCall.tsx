@@ -8,7 +8,7 @@ interface VideoCallProps {
 
 export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
   const meetingContainer = useRef<HTMLDivElement>(null);
-  const zpRef = useRef<any>(null); // ✅ Keep Zego instance for cleanup
+  const zpRef = useRef<any>(null); 
 
   useEffect(() => {
     const appID = 1198444485;
@@ -18,11 +18,11 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
       appID,
       serverSecret,
       roomId,
-      Date.now().toString(), // unique userId
+      Date.now().toString(),
       userName
     );
 
-    // ✅ Prevent duplicate join
+    
     if (zpRef.current) return;
     const zp = ZegoUIKitPrebuilt.create(kitToken);
     zpRef.current = zp;
@@ -40,10 +40,9 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
       },
     });
 
-    // ✅ Clean up properly when leaving
     return () => {
       try {
-        zpRef.current?.destroy(); // cleanly close session
+        zpRef.current?.destroy(); 
         zpRef.current = null;
       } catch (err) {
         console.warn("Cleanup error:", err);
