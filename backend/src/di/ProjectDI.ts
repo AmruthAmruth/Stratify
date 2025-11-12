@@ -27,6 +27,7 @@ import { GetProjectDetailsUseCase } from "../application/use-cases/project/GetPr
 import { DeleteProjectUseCase } from "../application/use-cases/project/DeleteProjectUseCase";
 import { UpdateProjectUseCase } from "../application/use-cases/project/UpdateProjectUseCase";
 import { GetEmployeeNotInProjectUseCase } from "../application/use-cases/project/GetEmployeeNotInProjectUseCase";
+import { GetIssueForEmployeeUseCase } from "../application/use-cases/project/GetIssueForEmployeeUseCase";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -123,6 +124,9 @@ export const projectDI = () => {
     employeeRepo,
   );
 
+
+  const getIssueForEmployeeUseCase = new GetIssueForEmployeeUseCase(issueRepo)
+
   return new ProjectController(
     createProjectUseCase,
     createUserStoryUseCase,
@@ -141,5 +145,6 @@ export const projectDI = () => {
     deleteProjectUseCase,
     updateProjectUseCase,
     getEmployeeNotInProjectUseCase,
+    getIssueForEmployeeUseCase
   );
 };

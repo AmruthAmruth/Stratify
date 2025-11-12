@@ -16,10 +16,7 @@ projectRouter.post(
   authMiddleware(["company", "manager"]),
   asyncHandler(controller.createUserStory),
 );
-//projectRouter.post("/create-backlog", authMiddleware(["company", "manager"]), asyncHandler(controller.createBacklog));
-//projectRouter.post("/create-sprint", authMiddleware(["company", "manager"]), asyncHandler(controller.createSprint));
-//projectRouter.post("/create-task", asyncHandler(controller.createTask));
-//projectRouter.post("/assigned-to-sprint", authMiddleware(["company", "manager"]), asyncHandler(controller.assignUserStoryToSprint));
+
 projectRouter.post("/create-issue", asyncHandler(controller.createIssue));
 projectRouter.post("/create-sprint", asyncHandler(controller.createSprint));
 projectRouter.post(
@@ -62,5 +59,8 @@ projectRouter.get(
   asyncHandler(controller.getEmployeesNotInProject),
 );
 projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
+
+
+projectRouter.get('/issues',authMiddleware(['employee']),asyncHandler(controller.getIssueForEmployee))
 
 export default projectRouter;

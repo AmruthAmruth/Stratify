@@ -8,4 +8,5 @@ export interface IIssueRepository {
   findBySprintId(sprintId: string): Promise<Issue[]>;
   findByProjectId(projectId: string): Promise<Issue[]>;
   deleteByProjectId(projectId: string): Promise<void>;
+  findByUserId(userId:string):Promise<Issue[]>
 }
