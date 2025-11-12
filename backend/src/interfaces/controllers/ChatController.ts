@@ -1,13 +1,13 @@
 import { Response } from "express";
 import { ChatEmitter } from "../../shared/events/ChatEmitter";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import { IGetTeamForManagerUseCase } from "../../application/interfaces/chat/IGetTeamForManagerUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { IGetTeamForChatUseCase } from "../../application/interfaces/chat/IGetTeamForChatUseCase";
 
 export class ChatController {
 
     constructor(
-        private _getTeamForManagerUseCase: IGetTeamForManagerUseCase
+        private _getTeamForManagerUseCase: IGetTeamForChatUseCase
     ) {}
 
     // Send a chat message

@@ -1,4 +1,4 @@
-export interface GetTeamForManagerDTO {
+export interface GetTeamForChatDTO {
   id: string;
   name: string;
 }
