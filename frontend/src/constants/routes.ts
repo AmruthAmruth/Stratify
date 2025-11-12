@@ -91,3 +91,8 @@ export const MEETING_ROUTES={
   GET_MEETINGS_BY_CREATOR:"/api/meeting",
   GET_MEETINGS_FOR_EMPLOYEE:'/api/meeting/meetings',
 }
+
+
+export const CHAT_ROUTES={
+  SENT_MESSAGE:'/api/chat/send'
+}

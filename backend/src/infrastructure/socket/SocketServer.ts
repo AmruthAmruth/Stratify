@@ -27,6 +27,7 @@ export const initSocket = (server: HttpServer) => {
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("receive-message", {
           senderId,
+          receiverId,
           message,
           createdAt: new Date().toISOString(),
         });
@@ -34,6 +35,7 @@ export const initSocket = (server: HttpServer) => {
 
       socket.emit("message-sent", {
         receiverId,
+          senderId,
         message,
         createdAt: new Date().toISOString(),
       });

@@ -1,4 +1,5 @@
 
+import EmployeeChatPage from "@/features/employee/EmployeeChatPage";
 import { EmployeeJoinMeeting } from "@/features/employee/EmployeeJoinMeeting";
 import EmployeeProjectDetailsPage from "@/features/employee/EmployeeProjectDetailsPage";
 import Leave from "@/features/employee/Leave";
@@ -24,6 +25,10 @@ const teamRoutes: RouteObject[] = [
 {
     path: "/meetings",
     element: <EmployeeJoinMeeting />,
+  },
+  {
+    path: "/message",
+    element: <EmployeeChatPage />,
   },
 ];
 

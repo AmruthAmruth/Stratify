@@ -2,7 +2,7 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { companyDI } from "../../di/CompanyDI";
-import { emitNotification } from "../../infrastructure/socket/NotificationSocket";
+import { emitNotification } from "../../infrastructure/socket/SocketServer";
 import { io } from "../../main";
 
 const companyRouter = Router();

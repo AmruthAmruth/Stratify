@@ -24,7 +24,7 @@ const roleRoutesMap: Record<UserRole, RouteObject[]> = {
 
 const AppRoutes: React.FC = () => {
   const userRole = useSelector((state: RootState) => state.auth.role) ?? "general";
-  
+ 
   
   const roleRoutes = roleRoutesMap[userRole as UserRole] ?? []; 
 

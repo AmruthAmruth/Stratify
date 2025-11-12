@@ -4,7 +4,7 @@ import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentR
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
-import { emitNotification } from "../../../infrastructure/socket/NotificationSocket";
+import { emitNotification } from "../../../infrastructure/socket/SocketServer";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { io } from "../../../main";
 import { StatusCodes } from "../../../shared/constants/statusCodes";

@@ -1,6 +1,7 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
 import { CreateMeeting } from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
+import ManagerChatPage from "@/features/manager/ManagerChatPage";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import { ManagerMeeting } from "@/features/manager/ManagerMeeting";
 import ManagerProjects from "@/features/manager/ManagerProjects";
@@ -40,6 +41,10 @@ const managerRoutes: RouteObject[] = [
     {
     path: "/meetings",
     element: <ManagerMeeting />,
+  },
+  {
+    path: "/chat",
+    element: <ManagerChatPage />,
   },
   
 

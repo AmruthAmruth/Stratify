@@ -17,7 +17,7 @@ import { initSocket } from "./infrastructure/socket/SocketServer";
 
 dotenv.config();
 
-const app = express();
+const app = express(); 
 
 app.use(
   cors({
