@@ -17,6 +17,7 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
 export const sendTheMessage = (data: Record<string, unknown>) =>
   handleRequest(api.post(CHAT_ROUTES.SENT_MESSAGE, data));
 
+export const getTeamMemeberList=()=>handleRequest(api.get(CHAT_ROUTES.TEAM_MEMEBER_LIST))
 
 
 

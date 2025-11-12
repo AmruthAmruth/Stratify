@@ -62,47 +62,55 @@ const ChatBox = ({ receiverId }: { receiverId: string }) => {
   );
 
   return (
-    <div className="flex flex-col w-full max-w-md border rounded-lg p-4 bg-white shadow text-black">
+    <div className="flex flex-col h-full bg-white border border-[#dfdcef] rounded-lg overflow-hidden shadow-sm">
+      {/* Clear Chat Button */}
+      <button 
+        onClick={() => dispatch(clearChat())} 
+        className="self-end p-2 text-sm text-[#3b3b3b]/70 hover:text-[#009063] transition-colors duration-200 mr-4 mt-2"
+      >
+        Clear Chat
+      </button>
+
       {/* Chat area */}
-      <button onClick={()=>dispatch(clearChat())}>Clear Chat</button>
-      <div className="flex-1 overflow-y-auto mb-4 space-y-3">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4">
         {filteredMessages.length > 0 ? (
           filteredMessages.map((msg, index) => (
             <div
-              key={index}
+              key={`${msg.senderId}-${msg.createdAt}-${index}`}
               className={`flex ${
                 msg.senderId === userId ? "justify-end" : "justify-start"
-              }`}
+              } animate-in slide-in-from-bottom-2 duration-300 fade-in`}
             >
               <div
-                className={`p-2 px-4 rounded-2xl max-w-[75%] break-words ${
+                className={`p-3 px-4 rounded-3xl max-w-[80%] transition-all duration-200 ${
                   msg.senderId === userId
-                    ? "bg-blue-500 text-white"
-                    : "bg-gray-200 text-black"
+                    ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
+                    : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
                 }`}
               >
-                {msg.message}
+                <p className="break-words">{msg.message}</p>
               </div>
             </div>
           ))
         ) : (
-          <p className="text-gray-400 text-center">No messages yet</p>
+          <p className="text-[#3b3b3b]/40 text-center font-medium">No messages yet</p>
         )}
         <div ref={messagesEndRef} />
       </div>
 
       {/* Input area */}
-      <div className="flex gap-2">
+      <div className="flex gap-2 p-4 border-t border-[#dfdcef] bg-[#fbfbfb]">
         <input
           value={message}
           onChange={(e) => setMessage(e.target.value)}
           onKeyDown={(e) => e.key === "Enter" && sendMessage()}
           placeholder="Type a message..."
-          className="flex-1 border rounded-lg px-3 py-2 outline-none text-black"
+          className="flex-1 border border-[#dfdcef] rounded-2xl px-4 py-3 outline-none text-[#3b3b3b] bg-white placeholder:text-[#3b3b3b]/40 transition-all duration-200 focus:border-[#009063]/50 focus:shadow-sm"
         />
         <button
           onClick={sendMessage}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+          disabled={!message.trim()}
+          className="bg-[#009063] hover:bg-[#009063]/90 disabled:bg-[#009063]/50 disabled:cursor-not-allowed text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
         >
           Send
         </button>

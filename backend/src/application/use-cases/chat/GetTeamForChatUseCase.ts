@@ -11,11 +11,11 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
   ) {}
 
   async execute(userId: string): Promise<GetTeamForChatDTO[]> {
-    // Check if user is a manager
+    
     const manager = await this._managerRepo.findById(userId);
 
     if (manager) {
-      // Manager: return all employees in their department
+    
       const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
 
       return employees
@@ -26,21 +26,21 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
         }));
     }
 
-    // If user is an employee
+    
     const employee = await this._employeeRepo.findById(userId);
     if (!employee) {
       throw new AppError("User not found as manager or employee");
     }
 
-    // Get all employees in the same department
+   
     const departmentEmployees = await this._employeeRepo.findByDepartmentId(employee.departmentId!);
 
-    // Get employee's manager
+    
     const employeeManager = await this._managerRepo.findById(employee.managerId!);
 
     const team: GetTeamForChatDTO[] = [];
 
-    // Add all employees in the department
+    
     team.push(
       ...departmentEmployees
         .filter(emp => emp.id)
@@ -50,7 +50,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
         }))
     );
 
-    // Add manager if exists and not already in the list
+    
     if (employeeManager) {
       const exists = team.some(member => member.id === employeeManager.id);
       if (!exists) {
