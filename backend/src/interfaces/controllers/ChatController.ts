@@ -1,16 +1,42 @@
-
 import { Response } from "express";
 import { ChatEmitter } from "../../shared/events/ChatEmitter";
 import { AuthRequest } from "../middleware/AuthMiddleware";
+import { IGetTeamForManagerUseCase } from "../../application/interfaces/chat/IGetTeamForManagerUseCase";
+import { StatusCodes } from "../../shared/constants/statusCodes";
 
+export class ChatController {
 
-export class ChatController{
-    sentMessage=async(req:AuthRequest,res:Response):Promise<void>=>{
-        const senderId=req.userId!;
-        const {receiverId,message}=req.body;
-          console.log(req.body);
-          
-        ChatEmitter.emitMessage(receiverId,senderId,message);
-        res.status(200).json({message:"Message sent successfully"})
+    constructor(
+        private _getTeamForManagerUseCase: IGetTeamForManagerUseCase
+    ) {}
+
+    // Send a chat message
+    sentMessage = async (req: AuthRequest, res: Response): Promise<void> => {
+        const senderId = req.userId;
+        if (!senderId) {
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            return;
+        }
+
+        const { receiverId, message } = req.body;
+        if (!receiverId || !message) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: "receiverId and message are required" });
+            return;
+        }
+
+        ChatEmitter.emitMessage(receiverId, senderId, message);
+        res.status(StatusCodes.OK).json({ message: "Message sent successfully" });
+    }
+
+    // Get all employees under the manager's team
+    getTeamForManager = async (req: AuthRequest, res: Response): Promise<void> => {
+        const userId = req.userId;
+        if (!userId) {
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            return;
+        }
+
+        const team = await this._getTeamForManagerUseCase.execute(userId);
+        res.status(StatusCodes.OK).json(team);
     }
 }
