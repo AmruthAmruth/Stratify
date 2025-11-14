@@ -63,4 +63,8 @@ projectRouter.get("/project/:id", asyncHandler(controller.getProjectDetails));
 
 projectRouter.get('/issues',authMiddleware(['employee']),asyncHandler(controller.getIssueForEmployee))
 
+projectRouter.post("/remove-emp",asyncHandler(controller.removeEmployeeInProject))
+
+
+
 export default projectRouter;

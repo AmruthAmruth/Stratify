@@ -13,4 +13,5 @@ export interface IProjectRepository {
   findByKeyAndCompany(key: string, companyId: string): Promise<Project | null>;
   findByCompanyId(companyId: string): Promise<Partial<Project>[]>;
   findByDepartmentId(departmentId: string): Promise<Partial<Project>[]>;
+ // removeEmployeeFromProject(project:string,employeeId:string):Promise<void>
 }
