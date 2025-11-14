@@ -98,7 +98,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
 
     
     const employeeNotification = new Notification(
-      undefined,
+      
       createdEmployee.id!,
       "employee",
       "Welcome to the team!",
@@ -112,7 +112,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       const manager = await this._managerRepo.findById(department.managerId);
       if (manager) {
         const managerNotification = new Notification(
-          undefined,
+         
           manager.id!,
           manager.role,
           "New Employee Added",

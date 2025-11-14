@@ -65,7 +65,6 @@ export class CompanyLoginUseCase {
 
 
     const notification = new Notification(
-      undefined,
       user.id!,
       user.role,
       "Login successful",

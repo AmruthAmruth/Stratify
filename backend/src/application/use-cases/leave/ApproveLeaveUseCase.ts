@@ -76,7 +76,6 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     const type = status === "Approved" ? "success" : "error";
 
     const notification = new Notification(
-      undefined,
       employee.id!,
       employee.role,
       title,

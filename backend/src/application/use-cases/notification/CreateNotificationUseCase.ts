@@ -9,7 +9,6 @@ export class CreateNotificationUseCase implements ICreateNotificationUseCase {
 
   async execute(data: CreateNotificationDTO): Promise<Notification> {
     const notification = new Notification(
-      "",
       data.userId,
       data.role.toLowerCase() as "company" | "manager" | "employee",
       data.title,

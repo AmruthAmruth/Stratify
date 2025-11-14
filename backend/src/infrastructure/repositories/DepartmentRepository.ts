@@ -27,10 +27,6 @@ export class DepartmentRepository implements IDepartmentRepository {
       managerId: department.managerId ?? null,
     }).save();
 
-    console.log("saved database data: ", created);
-
-    console.log("saved entity department: ",department);
-
     return DepartmentMapper.toEntity(created);
   }
 

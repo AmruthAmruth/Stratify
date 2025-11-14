@@ -55,7 +55,6 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       }
 
       const notification = new Notification(
-        undefined,
         manager.id!,
         manager.role,
         "Department Assignment",

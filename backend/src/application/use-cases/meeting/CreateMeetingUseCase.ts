@@ -45,7 +45,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
 
     for (const emp of employees) {
       const notification = new Notification(
-        undefined,
+      
         emp.id!,
         emp.role,
         "New Meeting Scheduled",
