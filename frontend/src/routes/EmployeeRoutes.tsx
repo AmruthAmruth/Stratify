@@ -1,7 +1,6 @@
 
 import EmployeeChatPage from "@/features/employee/EmployeeChatPage";
 import { EmployeeJoinMeeting } from "@/features/employee/EmployeeJoinMeeting";
-import EmployeeProjectDetailsPage from "@/features/employee/EmployeeProjectDetailsPage";
 import Leave from "@/features/employee/Leave";
 import Notification from "@/features/employee/Notification";
 import Task from "@/features/employee/Task";

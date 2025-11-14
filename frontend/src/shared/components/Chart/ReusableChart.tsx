@@ -41,12 +41,9 @@ const ReusableChart: React.FC<ChartProps> = ({
   data,
   title,
   backgroundColors = [
-    "#3b82f6",
-    "#10b981",
-    "#f59e0b",
-    "#ef4444",
-    "#8b5cf6",
-    "#14b8a6",
+    "#009063", 
+    "#dfdcef", 
+    "#3b3b3b",  
   ],
 }) => {
   const chartData = {
@@ -56,6 +53,7 @@ const ReusableChart: React.FC<ChartProps> = ({
         label: title || "Dataset",
         data,
         backgroundColor: backgroundColors,
+        borderColor: "#3b3b3b", 
         borderWidth: 1,
       },
     ],
@@ -63,15 +61,45 @@ const ReusableChart: React.FC<ChartProps> = ({
 
   const options = {
     responsive: true,
+    backgroundColor: "#fbfbfb", 
     plugins: {
+      tooltip: {
+        backgroundColor: "#fbfbfb",  
+        titleColor: "#3b3b3b",       
+        bodyColor: "#3b3b3b",        
+        borderColor: "#dfdcef",      
+        borderWidth: 1,
+      },
       legend: {
         position: "bottom" as const,
+        labels: {
+          color: "#3b3b3b", 
+        },
       },
       title: {
         display: !!title,
         text: title,
+        color: "#3b3b3b",  
       },
     },
+    scales: type === "line" || type === "bar" ? {
+      x: {
+        ticks: {
+          color: "#3b3b3b", 
+        },
+        grid: {
+          color: "#dfdcef",  
+        },
+      },
+      y: {
+        ticks: {
+          color: "#3b3b3b",  
+        },
+        grid: {
+          color: "#dfdcef",  
+        },
+      },
+    } : undefined,
   };
 
   switch (type) {

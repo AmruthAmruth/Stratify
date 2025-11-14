@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 import { RootState } from '../store/index'
 
 import MainLayout from "../layout/MainLayout";
-import superAdminRoutes from "./superAdminRoutes";
-import adminRoutes from "./adminRoutes";
-import managerRoutes from "./managerRoutes";
-import teamRoutes from "./teamRoutes";
-import generalRoutes from "./generalRoutes"; 
+import superAdminRoutes from "./SuperAdminRoutes";
+import adminRoutes from "./CompanyRoutes";
+import managerRoutes from "./ManagerRoutes";
+import teamRoutes from "./EmployeeRoutes";
+import generalRoutes from "./GenaralRoutes"; 
 
 type UserRole = "superAdmin" | "company" | "manager" | "employee" | "general";
 

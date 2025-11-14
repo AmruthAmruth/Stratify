@@ -9,7 +9,7 @@ import { companyRegistration } from "@/services/authApi"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"
 import { Loader2, Building2 } from "lucide-react"
-import { Navbar } from "../Genaral/Navbar"
+import { Navbar } from "../genaral/Navbar"
 
 const Register: React.FC = () => {
   const navigate = useNavigate()

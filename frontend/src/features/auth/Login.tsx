@@ -2,7 +2,7 @@ import React from "react";
 import AuthForm from "../../shared/components/Forms/DynamicForm";
 import { loginFields } from "../../shared/components/Forms/formFields";
 import { loginSchema } from "@/shared/utils/validations";
-import { Navbar } from "../Genaral/Navbar";
+import { Navbar } from "../genaral/Navbar";
 import { Users } from "lucide-react";
 import { companyLogin } from "@/services/authApi";
 import { jwtDecode } from "jwt-decode";
