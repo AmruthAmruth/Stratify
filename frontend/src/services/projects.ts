@@ -74,3 +74,9 @@ export const getEmployeesNotInProject = (id: string) =>
 
 export const addEmployeetoProject = (data: Record<string, unknown>) =>
   handleRequest(api.post(PROJECT_ROUTES.Add_EMPLOYEE_TO_PROJECT, data));
+
+
+
+
+export const getIssuesForEmployee = () =>
+  handleRequest(api.get(PROJECT_ROUTES.GET_ISSSUES_FOR_EMPLOYEE));

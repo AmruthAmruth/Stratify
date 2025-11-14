@@ -18,6 +18,7 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
     private _emailService: IEmailService,
+    
   ) {}
 
   async execute(managerDto: CreateManagerDTO): Promise<Manager> {

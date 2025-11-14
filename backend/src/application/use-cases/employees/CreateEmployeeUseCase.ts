@@ -16,6 +16,7 @@ import {
 import { CreateEmployeeDTO } from "../../dto/employees/CreateEmployeeDTO";
 import { ICreateEmployeeUseCase } from "../../interfaces/employees/ICreateEmployeeUseCase";
 import { employeeWelcomeTemplate } from "../../../shared/templates/EmployeeWelcomeTemplate";
+import { EmployeeMapper } from "../../mappers/EmployeeMapper";
 
 export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
   constructor(
@@ -71,21 +72,11 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       ? department.managerId.toString()
       : undefined;
 
-    const employee = new Employee(
-      undefined,
-      employeeDto.name,
-      employeeDto.email,
-      employeeDto.phone,
-      employeeDto.dob,
-      employeeDto.joiningDate,
-      employeeDto.position,
+    const employee = EmployeeMapper.toDomain(
+      employeeDto,
       hashedPassword,
       companyId,
-      employeeDto.departmentId,
-      employeeDto.gender,
-      "employee",
-      employeeDto.managerId || managerIdToAssign,
-      employeeDto.profileImage
+      managerIdToAssign
     );
 
     const createdEmployee = await this._employeeRepo.create(employee);

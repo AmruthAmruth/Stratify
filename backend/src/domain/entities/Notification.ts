@@ -1,15 +1,23 @@
 export class Notification {
+  private id:string | undefined
   constructor(
-    public readonly id: string | undefined,
+    id: string | undefined,
     public readonly userId: string,
     public readonly role: "company" | "manager" | "employee",
     public readonly title: string,
     public readonly message: string,
-    public readonly type: "info" | "success" | "warning" | "error",
+    public type: "info" | "success" | "warning" | "error",
     public readonly isRead: boolean = false,
     public readonly createdAt: Date = new Date()
-  ) {}
+  ) {
+    this.id = id;
+  }
 
+  changeType(type:"info" | "success" | "warning" | "error"){
+    this.type = type
+  }
+
+  
   markAsRead(): Notification {
     if (this.isRead) return this;
     return new Notification(

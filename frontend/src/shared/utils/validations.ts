@@ -6,7 +6,7 @@ export const registerSchema = z
     email: z.string().email("Invalid email"),
     phone: z.string().min(10, "Phone number must be at least 10 digits"),
     industry: z.string().min(1, "Industry is required"),
-    description: z.string().min(1, "Description is required").optional(),
+    description: z.string().min(1, "Description is required"),
     businessRegNo: z.string().min(1, "Business Reg. No is required"),
     address: z.string().min(1, "Address is required"),
     city: z.string().min(1, "City is required"),

@@ -20,6 +20,7 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
     private readonly _companyRepo: ICompanyRepository,
     private readonly _emailService: IEmailService,
     private readonly _notificationRepo: INotificationRepository
+    
   ) {}
 
   async execute(data: CreateDepartmentDTO): Promise<Department> {

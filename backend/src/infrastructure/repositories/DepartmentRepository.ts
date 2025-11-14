@@ -7,7 +7,7 @@ import { DepartmentMapper } from "../mappers/DepartmentMapper";
 export class DepartmentRepository implements IDepartmentRepository {
   async findByNameAndCompany(
     name: string,
-    companyId: string,
+    companyId: string
   ): Promise<Department | null> {
     const normalizedName = name.toLowerCase().trim();
     const doc = await DepartmentModel.findOne({
@@ -27,6 +27,10 @@ export class DepartmentRepository implements IDepartmentRepository {
       managerId: department.managerId ?? null,
     }).save();
 
+    console.log("saved database data: ", created);
+
+    console.log("saved entity department: ",department);
+
     return DepartmentMapper.toEntity(created);
   }
 
@@ -41,7 +45,7 @@ export class DepartmentRepository implements IDepartmentRepository {
     await DepartmentModel.findByIdAndUpdate(
       new Types.ObjectId(departmentId),
       { managerId: new Types.ObjectId(managerId) },
-      { new: true },
+      { new: true }
     ).exec();
   }
 
@@ -51,7 +55,7 @@ export class DepartmentRepository implements IDepartmentRepository {
   }
 
   async getUnassignedDepartments(
-    companyId: string,
+    companyId: string
   ): Promise<{ id: string; name: string }[]> {
     const docs = await DepartmentModel.find({
       companyId,
@@ -65,7 +69,7 @@ export class DepartmentRepository implements IDepartmentRepository {
   }
 
   async findByManagerId(
-    managerId: string,
+    managerId: string
   ): Promise<{ id: string; name: string }[]> {
     const docs = await DepartmentModel.find({ managerId }).exec();
     return docs.map((doc) => ({

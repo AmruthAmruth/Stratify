@@ -6,6 +6,7 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateLeaveDTO } from "../../dto/leave/CreateLeaveDTO";
 import { ICreateLeaveUseCase } from "../../interfaces/leave/ICreateLeaveUseCase";
 import { LEAVE_POLICY } from "../../../shared/constants/leavePolicy";
+import { LeaveMapper } from "../../mappers/LeaveMapper";
 
 export class CreateLeaveUseCase implements ICreateLeaveUseCase {
   constructor(
@@ -83,19 +84,13 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       }
     }
 
-    const leave = new Leave(
-      undefined,
-      leaveDTO.employeeId,
+    const leave = LeaveMapper.toDomain(
+      leaveDTO,
+      employee,
       start,
       end,
-      leaveType,
-      "Pending",
-      leaveDTO.reason,
-      new Date(),
-      new Date(),
       leaveMonth,
-      employee.departmentId,
-      employee.companyId,
+      leaveType
     );
 
     return await this._leaveRepo.create(leave);
