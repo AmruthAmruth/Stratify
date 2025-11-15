@@ -18,9 +18,6 @@ import { createProjectFields } from "@/shared/components/Forms/formFields";
 import { createProjectSchema } from "@/shared/utils/validations";
 import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
 
-// ============================================================================
-// TYPES & INTERFACES
-// ============================================================================
 
 interface Employee {
   employeeId: string;

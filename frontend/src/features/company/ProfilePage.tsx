@@ -59,7 +59,7 @@ const ProfilePage: React.FC = () => {
       </div>
     );
   }
-
+ 
   const dob = profile.dob ? new Date(profile.dob) : null;
   const joiningDate = profile.joiningDate ? new Date(profile.joiningDate) : null;
 
@@ -83,7 +83,8 @@ const ProfilePage: React.FC = () => {
               </button>
               <div className="h-6 w-px bg-gray-300"></div>
               <h1 className="text-3xl font-bold text-gray-900">Employee Profile</h1>
-            </div>
+            </div>  
+            
           </div>
         </div>
       </div>

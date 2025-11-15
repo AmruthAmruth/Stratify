@@ -16,7 +16,7 @@ import { useSnackbar } from "notistack";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import { useNavigate } from "react-router-dom";
 
-// Updated interface to match API response
+
 interface DepartmentDetails {
   id: string;
   name: string;

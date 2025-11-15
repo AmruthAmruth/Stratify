@@ -27,18 +27,15 @@ const Projects = () => {
     return <div className="text-black">Loading...</div>;
   }
 
-  // ----------------------
-  // Filter Logic
-  // ----------------------
+
   const filteredProjects = projects.projects
     .filter((p: any) =>
       p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
     )
     .filter((p: any) => (filterStatus ? p.status === filterStatus : true));
 
-  // ----------------------
-  // Sorting Logic
-  // ----------------------
+  
+    
   const sortedProjects = [...filteredProjects].sort((a: any, b: any) => {
     if (!sortBy) return 0;
 
@@ -58,9 +55,8 @@ const Projects = () => {
     return 0;
   });
 
-  // ----------------------
-  // Pagination
-  // ----------------------
+  
+  
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -68,12 +64,12 @@ const Projects = () => {
     startIndex + itemsPerPage
   );
 
-  // Unique status options for filter
+  
   const uniqueStatus = Array.from(
     new Set(projects.projects.map((p: any) => p.status))
   );
 
-  // Clear filters
+  
   const clearFilters = () => {
     setSearchTerm('');
     setFilterStatus('');

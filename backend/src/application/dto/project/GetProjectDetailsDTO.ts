@@ -9,7 +9,6 @@ export interface ProjectDetailsDTO {
   departmentId: string;
   projectLeadId: string;
   companyId: string;
-
   backlog: IssueDTO[];
   activeSprints: SprintWithIssuesDTO[];
   plannedSprints: SprintWithIssuesDTO[];
