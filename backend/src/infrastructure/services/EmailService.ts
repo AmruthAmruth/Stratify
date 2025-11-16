@@ -5,7 +5,6 @@ export class EmailService implements IEmailService {
   private transporter;
   constructor() {
     console.log("Email:", process.env.EMAIL_USER);
-console.log("Pass:", process.env.EMAIL_PASS ? "Loaded" : "Missing");
     this.transporter = nodemailer.createTransport({
       service: "Gmail",
       auth: {

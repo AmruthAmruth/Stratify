@@ -50,7 +50,7 @@ const Navbar = ({ role, userId }: { role: string; userId: string }) => {
   }, [dispatch, userId]);
 
   return (
-    <header className="w-full bg-white shadow px-6 py-4 flex justify-between items-center border-b border-[#dfdcef]">
+    <header className="w-full bg-white shadow px-6 py-6 flex justify-between items-center border-b border-[#dfdcef]">
       <h1 className="text-xl font-semibold text-gray-900">
         Welcome, <span className="text-[#009063]">{role}</span>
       </h1>

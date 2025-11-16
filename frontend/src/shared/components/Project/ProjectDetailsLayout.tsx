@@ -67,9 +67,10 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
 
 
 {/* CHARTS SECTION */}
-<div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-10">
-  {/* Sprint Status Chart */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm">
+<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+
+  {/* 1. Sprint Status Summary */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
     <ReusableChart
       type="doughnut"
       title="Sprint Overview"
@@ -82,8 +83,8 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
     />
   </div>
 
-  {/* Issue Type Distribution */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm">
+  {/* 2. Issue Type Distribution */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
     <ReusableChart
       type="pie"
       title="Backlog Issue Types"
@@ -95,11 +96,30 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
     />
   </div>
 
-  {/* Issue Priority Overview */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm">
+  {/* 3. Issue Status Overview */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+    <ReusableChart
+      type="pie"
+      title="Issue Status Overview"
+      labels={["Planned", "In Progress", "Done"]}
+      data={[
+        project.backlog.filter((i) => i.status === "Planned").length +
+          project.activeSprints.flatMap((s) => s.issues).filter((i) => i.status === "Planned").length,
+
+        project.backlog.filter((i) => i.status === "In Progress").length +
+          project.activeSprints.flatMap((s) => s.issues).filter((i) => i.status === "In Progress").length,
+
+        project.backlog.filter((i) => i.status === "Done").length +
+          project.activeSprints.flatMap((s) => s.issues).filter((i) => i.status === "Done").length,
+      ]}
+    />
+  </div>
+
+  {/* 4. Priority Distribution */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
     <ReusableChart
       type="bar"
-      title="Backlog Priority Breakdown"
+      title="Priority Breakdown"
       labels={["High", "Medium", "Low"]}
       data={[
         project.backlog.filter((i) => i.priority === "High").length,
@@ -109,11 +129,11 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
     />
   </div>
 
-  {/* Employee Distribution Across Issues */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm">
+  {/* 5. Assigned Employee Workload */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
     <ReusableChart
       type="line"
-      title="Workload by Employees"
+      title="Employee Workload"
       labels={project.assignedEmployee.map((emp) => emp.name)}
       data={project.assignedEmployee.map(
         (emp) =>
@@ -122,7 +142,19 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
       )}
     />
   </div>
+
+  {/* 6. Hours Estimation Chart */}
+  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+    <ReusableChart
+      type="bar"
+      title="Estimated Hours (Backlog)"
+      labels={project.backlog.map((i) => i.heading)}
+      data={project.backlog.map((i) => i.estimatedHours)}
+    />
+  </div>
+
 </div>
+
 
       
 

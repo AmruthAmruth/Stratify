@@ -19,33 +19,39 @@ const ProjectHeader: React.FC<Props> = ({
   description,
 }) => {
   return (
-    <div className="rounded-xl border border-[#dfdcef] p-6 shadow-md space-y-4 bg-[#fbfbfb]">
-      <div className="flex items-start justify-between">
-        <h1 className="text-3xl font-bold text-[#3b3b3b] leading-tight">
-          {name}
-          <span className="ml-2 inline-block text-sm font-medium text-gray-500 bg-gray-100 px-2 py-1 rounded-full">
+    <div className="rounded-2xl border border-[#dfdcef] p-8 shadow-sm bg-[#fbfbfb]">
+      <div className="space-y-6">
+        <div className="space-y-3">
+          <h1 className="text-3xl font-semibold text-[#3b3b3b] leading-tight">
+            {name}
+          </h1>
+          <span className="inline-block text-sm font-medium text-[#3b3b3b]/70 bg-white border border-[#dfdcef] px-3 py-1.5 rounded-full">
             {keyCode}
           </span>
-        </h1>
-      </div>
+        </div>
 
-      <p className="text-lg text-[#3b3b3b] leading-relaxed max-w-2xl">
-        {description}
-      </p>
+        <p className="text-lg text-[#3b3b3b]/80 leading-relaxed max-w-3xl">
+          {description}
+        </p>
 
-      <div className="flex flex-wrap gap-6 text-sm text-gray-600">
-        <span className="flex items-center gap-2 font-medium">
-          <span className="inline-block w-2 h-2 bg-[#009063] rounded-full"></span>
-          Status: <span className="text-[#009063] font-semibold">{status}</span>
-        </span>
-        <span className="flex items-center gap-1">
-          Start: <time className="text-[#3b3b3b] font-medium">{new Date(startDate).toLocaleDateString()}</time>
-        </span>
-        <span className="flex items-center gap-1">
-          End: <time className="text-[#3b3b3b] font-medium">{new Date(endDate).toLocaleDateString()}</time>
-        </span>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 text-sm text-[#3b3b3b]/70">
+          <div className="bg-white border border-[#dfdcef] rounded-lg p-4">
+            <span className="flex items-center gap-2 font-medium">
+              <span className="inline-block w-2 h-2 bg-[#009063] rounded-full"></span>
+              Status
+            </span>
+            <span className="block text-[#009063] font-semibold mt-1">{status}</span>
+          </div>
+          <div className="bg-white border border-[#dfdcef] rounded-lg p-4">
+            <span className="block font-medium mb-1">Start Date</span>
+            <time className="text-[#3b3b3b] font-semibold block">{new Date(startDate).toLocaleDateString()}</time>
+          </div>
+          <div className="bg-white border border-[#dfdcef] rounded-lg p-4">
+            <span className="block font-medium mb-1">End Date</span>
+            <time className="text-[#3b3b3b] font-semibold block">{new Date(endDate).toLocaleDateString()}</time>
+          </div>
+        </div>
       </div>
-      
     </div>
   );
 };

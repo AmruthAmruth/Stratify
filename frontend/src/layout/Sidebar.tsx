@@ -1,33 +1,19 @@
-import React, { useState } from 'react';
-import { useLocation, Link } from 'react-router-dom';
-import { roleMenus } from './roleMenus';
+import React, { useState } from "react";
+import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { RootState } from '@/store/index';
-import { UserRole } from './types';
-import { 
-  Menu, 
-  ChevronRight, 
-  Home, 
-  Users, 
-  FileText, 
-  Mail, 
-  CreditCard, 
-  Bell 
-} from 'lucide-react';
+import { RootState } from "@/store/index";
+import { UserRole } from "./types";
+import { roleMenus } from "./roleMenus";
+import * as Icons from "lucide-react";
 
-
-const iconMap: Record<string, React.FC<any>> = {
-  Dashboard: Home,
-  Companies: Users,
-  Plans: FileText,
-  Messages: Mail,
-  Payments: CreditCard,
-  Notification: Bell,
+const getIcon = (iconName: string) => {
+  return (Icons as any)[iconName] || Icons.Circle;
 };
 
 const Sidebar: React.FC = () => {
   const role = useSelector((state: RootState) => state.auth.role) as UserRole;
   const menus = role ? roleMenus[role] : [];
+
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -48,7 +34,7 @@ const Sidebar: React.FC = () => {
         className={`
           fixed lg:static top-0 left-0 h-screen bg-[#fbfbfb] shadow-xl border-r border-[#dfdcef]
           flex flex-col transition-all duration-300 ease-in-out z-50
-          ${isCollapsed ? '-translate-x-full lg:translate-x-0 lg:w-20' : 'translate-x-0 w-72'}
+          ${isCollapsed ? "-translate-x-full lg:translate-x-0 lg:w-20" : "translate-x-0 w-72"}
         `}
       >
         {/* Header */}
@@ -74,18 +60,17 @@ const Sidebar: React.FC = () => {
             absolute -right-4 top-8 w-8 h-8 bg-white border-2 border-[#dfdcef]
             rounded-full flex items-center justify-center shadow-md hover:shadow-lg 
             transition-all duration-200 hover:border-[#009063] group z-10
-            ${isCollapsed ? 'rotate-180' : ''}
+            ${isCollapsed ? "rotate-180" : ""}
           `}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
-          <Menu className="w-4 h-4 text-[#3b3b3b] group-hover:text-[#009063] transition-colors" />
+          <Icons.Menu className="w-4 h-4 text-[#3b3b3b] group-hover:text-[#009063]" />
         </button>
 
-        {/* Menu items */}
+        {/* Menu Items */}
         <nav className="flex-1 px-4 py-6 overflow-y-auto">
           <ul className="space-y-2">
             {menus.map((item) => {
-              const IconComponent = iconMap[item.label] || Home;
+              const IconComponent = getIcon(item.icon);
               const isActive = currentPath === item.path;
 
               return (
@@ -99,9 +84,9 @@ const Sidebar: React.FC = () => {
                         ? "bg-[#dfdcef] text-[#009063] shadow-sm border border-[#009063]/20"
                         : "text-[#3b3b3b] hover:bg-[#f2f2f2] hover:text-[#009063]"
                       }
-                      ${isCollapsed ? 'justify-center px-3' : ''}
+                      ${isCollapsed ? "justify-center px-3" : ""}
                     `}
-                    title={isCollapsed ? item.label : ''}
+                    title={isCollapsed ? item.label : ""}
                   >
                     {/* Active indicator */}
                     {isActive && (
@@ -111,15 +96,17 @@ const Sidebar: React.FC = () => {
                     <IconComponent
                       className={`
                         w-5 h-5 transition-colors duration-200 flex-shrink-0
-                        ${isActive ? 'text-[#009063]' : 'text-gray-500 group-hover:text-[#009063]'}
-                        ${isCollapsed ? '' : 'mr-4'}
+                        ${isActive ? "text-[#009063]" : "text-gray-500 group-hover:text-[#009063]"}
+                        ${isCollapsed ? "" : "mr-4"}
                       `}
                     />
 
                     {!isCollapsed && (
                       <>
                         <span className="font-medium tracking-wide flex-1">{item.label}</span>
-                        {isActive && <ChevronRight className="w-4 h-4 text-[#009063] ml-2" />}
+                        {isActive && (
+                          <Icons.ChevronRight className="w-4 h-4 text-[#009063] ml-2" />
+                        )}
                       </>
                     )}
                   </Link>
