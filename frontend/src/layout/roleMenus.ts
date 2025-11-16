@@ -37,7 +37,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
   employee: [  
     { label: "Dashboard", path: "/dashboard" },
     { label: "My Tasks", path: "/my-task" },
-    { label: "Attendance", path: "/attendance" },
+    { label: "Project", path: "/project" },
     { label: "Leave Status", path: "/leave-status" },
     { label: "Meetings", path: "/meetings" },
     { label: "Message", path: "/message" },

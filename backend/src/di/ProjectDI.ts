@@ -103,6 +103,7 @@ export const projectDI = () => {
     issueRepo,
     subTaskRepo,
     sprintRepo,
+    employeeRepo
   );
 
   const deleteProjectUseCase = new DeleteProjectUseCase(

@@ -66,4 +66,6 @@ export class EmployeeRepository implements IEmployeeRepository {
     const docs = await EmployeeModel.find({ companyId }).exec();
     return EmployeeMapper.toEntities(docs);
   }
+
+  
 }

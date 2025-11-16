@@ -3,6 +3,7 @@ import EmployeeChatPage from "@/features/employee/EmployeeChatPage";
 import { EmployeeJoinMeeting } from "@/features/employee/EmployeeJoinMeeting";
 import Leave from "@/features/employee/Leave";
 import Notification from "@/features/employee/Notification";
+import ProjectPage from "@/features/employee/ProjectPage";
 import Task from "@/features/employee/Task";
 import type { RouteObject } from "react-router";
 const teamRoutes: RouteObject[] = [
@@ -29,6 +30,10 @@ const teamRoutes: RouteObject[] = [
   {
     path: "/message",
     element: <EmployeeChatPage />,
+  }, 
+  {
+    path: "/project",
+    element: <ProjectPage />,
   }, 
 ];
 

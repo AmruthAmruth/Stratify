@@ -9,11 +9,12 @@ export interface ProjectDetailsDTO {
   departmentId: string;
   projectLeadId: string;
   companyId: string;
+
   backlog: IssueDTO[];
   activeSprints: SprintWithIssuesDTO[];
   plannedSprints: SprintWithIssuesDTO[];
   completedSprints: SprintWithIssuesDTO[];
-
+  assinedEmployee:EmployeeDTO[]
   activeSprintCount: number;
   plannedSprintCount: number;
   completedSprintCount: number;
@@ -51,4 +52,10 @@ export interface SubTaskDTO {
   hours: number;
   status: "To Do" | "In Progress" | "Done" | "Blocked";
   assignedToId?: string | null;
+}
+
+export interface EmployeeDTO{
+  id:string;
+  name:string;
+  position:string;
 }
