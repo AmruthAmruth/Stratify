@@ -8,14 +8,14 @@ import IssueList from "./IssueList";
 import SprintList from "./SprintList";
 import EmployeeList from "./EmployeeList";
 
-// Modal + Form;
-
-// Form fields + validation + API
-import { createIssueFields,createSprintFields } from "../Forms/formFields";
-import { createIssueSchema,createSprintSchema } from "@/shared/utils/validations";
-import { createIssue, createSprint } from "@/services/projects";
+// Modal + dynamic form
 import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
+
+// Form fields + schemas + API calls
+import { createIssueFields, createSprintFields } from "../Forms/formFields";
+import { createIssueSchema, createSprintSchema } from "@/shared/utils/validations";
+import { createIssue, createSprint } from "@/services/projects";
 
 interface Props {
   project: ProjectDTO;
@@ -23,30 +23,20 @@ interface Props {
 }
 
 const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
-  const canCreateIssue = role === "company" || role === "manager";
+  const canManage = role === "company" || role === "manager";
 
-  // --- modal state ---
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
+  const [isSprintModalOpen, setIsSprintModalOpen] = useState(false);
 
-  // form reference for resetting after submit
-  const formRef = useRef<{ resetForm: () => void }>(null);
+  const issueFormRef = useRef<{ resetForm: () => void }>(null);
+  const sprintFormRef = useRef<{ resetForm: () => void }>(null);
 
-  // ------------ ISSUE SUBMIT HANDLER -------------
+  // -------- CREATE ISSUE ----------
   const handleSubmitIssue = async (values: Record<string, any>) => {
     try {
-      const payload = {
-        ...values,
-        projectId: project.id, // attach project id
-      };
-
-      await createIssue(payload);
-
+      await createIssue({ ...values, projectId: project.id });
       alert("Issue created successfully!");
-
-      // reset form
-      formRef.current?.resetForm();
-
-      // close modal
+      issueFormRef.current?.resetForm();
       setIsIssueModalOpen(false);
     } catch (err) {
       console.error(err);
@@ -54,10 +44,18 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
     }
   };
 
-
-  const handleSubmitSprint=async(values:Record<string,any>)=>{
-    createSprint()
-  }
+  // -------- CREATE SPRINT ----------
+  const handleSubmitSprint = async (values: Record<string, any>) => {
+    try {
+      await createSprint({ ...values, projectId: project.id });
+      alert("Sprint created successfully!");
+      sprintFormRef.current?.resetForm();
+      setIsSprintModalOpen(false);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create sprint");
+    }
+  };
 
   return (
     <div className="space-y-6 p-4 text-black">
@@ -72,6 +70,33 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
         description={project.description}
       />
 
+      {/* ----- ADMIN BUTTONS ----- */}
+      {canManage && (
+        <div className="flex flex-wrap gap-3 mt-4">
+
+          {/* Edit Project */}
+          <button
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+          >
+            Edit Project
+          </button>
+
+          {/* Add Employee */}
+          <button
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+          >
+            Add Employee
+          </button>
+
+          {/* Assign Issue to Sprint */}
+          <button
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+          >
+            Assign Issue to Sprint
+          </button>
+        </div>
+      )}
+
       {/* ISSUE MODAL */}
       <Modal
         isOpen={isIssueModalOpen}
@@ -79,7 +104,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
         title="Create New Issue"
       >
         <AuthForm
-          ref={formRef}
+          ref={issueFormRef}
           fields={createIssueFields}
           validationSchema={createIssueSchema}
           onSubmit={handleSubmitIssue}
@@ -87,9 +112,24 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
         />
       </Modal>
 
+      {/* SPRINT MODAL */}
+      <Modal
+        isOpen={isSprintModalOpen}
+        onClose={() => setIsSprintModalOpen(false)}
+        title="Create New Sprint"
+      >
+        <AuthForm
+          ref={sprintFormRef}
+          fields={createSprintFields}
+          validationSchema={createSprintSchema}
+          onSubmit={handleSubmitSprint}
+          buttonText="Create Sprint"
+        />
+      </Modal>
+
       {/* BACKLOG */}
       <ProjectSection title="Backlog Items">
-        {canCreateIssue && (
+        {canManage && (
           <button
             onClick={() => setIsIssueModalOpen(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded mb-3"
@@ -97,32 +137,38 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
             + Create Issue
           </button>
         )}
-        <IssueList issues={project.backlog} role={role} />
+        <IssueList issues={project.backlog ?? []} role={role} />
       </ProjectSection>
 
       {/* ACTIVE SPRINTS */}
       <ProjectSection title="Active Sprints">
-        {canCreateIssue && (
-          <button className="bg-green-600 text-white px-4 py-2 rounded mb-3">
+        {canManage && (
+          <button
+            onClick={() => setIsSprintModalOpen(true)}
+            className="bg-green-600 text-white px-4 py-2 rounded mb-3"
+          >
             + Create Sprint
           </button>
         )}
-        <SprintList sprints={project.activeSprints} role={role} />
+        <SprintList sprints={project.activeSprints ?? []} role={role} />
       </ProjectSection>
 
-      {/* PLANNED SPRINTS */}
+      {/* PLANNED */}
       <ProjectSection title="Planned Sprints">
-        <SprintList sprints={project.plannedSprints} role={role} />
+        <SprintList sprints={project.plannedSprints ?? []} role={role} />
       </ProjectSection>
 
-      {/* COMPLETED SPRINTS */}
+      {/* COMPLETED */}
       <ProjectSection title="Completed Sprints">
-        <SprintList sprints={project.completedSprints} role={role} />
+        <SprintList sprints={project.completedSprints ?? []} role={role} />
       </ProjectSection>
 
       {/* EMPLOYEES */}
       <ProjectSection title="Assigned Employees">
-        <EmployeeList employees={project.assignedEmployee} />
+        <EmployeeList
+          employees={project.assinedEmployee ?? []}
+          onRemove={(emp) => console.log("Remove employee:", emp)}
+        />
       </ProjectSection>
     </div>
   );

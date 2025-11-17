@@ -153,10 +153,10 @@ export const createSprintFields = [
 
 
 export const createSubTaskFields = [
-  { name: "title", label: "Task Title", type: "text", placeholder: "Enter task title" },
+  { name: "heading", label: "Task Title", type: "text", placeholder: "Enter task title" },
   { name: "description", label: "Description", type: "textarea", placeholder: "Describe the task" },
-  { name: "estimatedHours", label: "Estimated Hours", type: "number", placeholder: "e.g., 5" },
-  { name: "priority", label: "Priority", type: "select", options: ["Low", "Medium", "High"] },
+  { name: "hours", label: "Estimated Hours", type: "number", placeholder: "e.g., 5" },
+  { name: "status", label: "Status", type: "select", options: ["To Do", "In Progress", "Done"] },
 ];
 
 

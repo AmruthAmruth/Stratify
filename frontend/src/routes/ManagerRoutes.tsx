@@ -1,4 +1,5 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
+import ProjectPage from "@/features/common/ProjectPage";
 import { CreateMeeting } from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerChatPage from "@/features/manager/ManagerChatPage";
@@ -28,7 +29,7 @@ const managerRoutes: RouteObject[] = [
   },
   {
     path: "project/:id",
-    element: <ManagerProjectDetailsPage />,
+    element: <ProjectPage />,
   },
   {
     path: "/leave-status",

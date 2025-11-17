@@ -1,6 +1,13 @@
 // components/project/IssueList.tsx
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { IssueDTO, UserRole, SubTaskDTO } from "./types";
+import { createSubTask } from "@/services/projects";
+
+import { createSubTaskFields } from "../Forms/formFields";
+import { createSubTaskSchema } from "@/shared/utils/validations";
+
+import Modal from "../ModalFrom/ModalForm";
+import AuthForm from "../Forms/DynamicForm";
 
 interface Props {
   issues: IssueDTO[];
@@ -9,18 +16,51 @@ interface Props {
 
 const IssueList: React.FC<Props> = ({ issues, role }) => {
   const canEdit = role === "company" || role === "manager";
-  const [expandedIssues, setExpandedIssues] = useState<Set<string>>(() => new Set());
+
+  const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
+
+  // ---------------- CREATE SUBTASK MODAL ----------------
+  const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
+  const [currentIssueId, setCurrentIssueId] = useState<string | null>(null);
+
+  const formRef = useRef<{ resetForm: () => void }>(null);
 
   const toggleExpanded = (issueId: string) => {
     setExpandedIssues((prev) => {
       const newSet = new Set(prev);
-      if (newSet.has(issueId)) {
-        newSet.delete(issueId);
-      } else {
-        newSet.add(issueId);
-      }
+      if (newSet.has(issueId)) newSet.delete(issueId);
+      else newSet.add(issueId);
       return newSet;
     });
+  };
+
+  const hasSubtasks = (issue: IssueDTO) =>
+    issue.subTasks && issue.subTasks.length > 0;
+
+  // ---------------- SUBTASK SUBMIT HANDLER ----------------
+  const handleSubmitSubTask = async (values: Record<string, any>) => {
+    try {
+      console.log("Worked here as well");
+      
+      if (!currentIssueId) return;
+
+      const payload = {
+        ...values,
+        issueId: currentIssueId,
+      };
+  console.log("subtask palyload",payload);
+  
+      // await createSubTask(payload);
+
+      alert("Subtask created successfully!");
+
+      formRef.current?.resetForm();
+      setIsSubtaskModalOpen(false);
+      setCurrentIssueId(null);
+    } catch (err) {
+      console.error(err);
+      alert("Failed to create subtask");
+    }
   };
 
   if (!issues.length) {
@@ -33,10 +73,27 @@ const IssueList: React.FC<Props> = ({ issues, role }) => {
     );
   }
 
-  const hasSubtasks = (issue: IssueDTO) => issue.subTasks && issue.subTasks.length > 0;
-
   return (
     <div className="space-y-8">
+
+      {/* ---------------- MODAL FOR CREATE SUBTASK ---------------- */}
+      <Modal
+        isOpen={isSubtaskModalOpen}
+        onClose={() => {
+          setIsSubtaskModalOpen(false);
+          setCurrentIssueId(null);
+        }}
+        title="Create New Subtask"
+      >
+        <AuthForm
+          ref={formRef}
+          fields={createSubTaskFields}
+          validationSchema={createSubTaskSchema}
+          onSubmit={handleSubmitSubTask}
+          buttonText="Create Subtask"
+        />
+      </Modal>
+
       {issues.map((issue) => {
         const isExpanded = expandedIssues.has(issue.id);
         const showSubtasksSection = canEdit || hasSubtasks(issue);
@@ -82,52 +139,50 @@ const IssueList: React.FC<Props> = ({ issues, role }) => {
                 </div>
               </div>
 
-              {/* Issue Controls */}
+              {/* Controls */}
               {canEdit && (
                 <div className="flex gap-3 pt-2 border-t border-[#dfdcef]">
-                  <button 
-                    className="flex-1 text-sm font-medium text-[#3b3b3b] border border-[#dfdcef] rounded-lg px-4 py-2.5 hover:border-[#009063] hover:text-[#009063] transition-colors duration-200"
-                    onClick={() => console.log('Edit issue:', issue.id)}
-                  >
+                  <button className="flex-1 text-sm font-medium text-[#3b3b3b] border border-[#dfdcef] rounded-lg px-4 py-2.5">
                     Edit Issue
                   </button>
-                  <button 
-                    className="flex-1 text-sm font-medium text-white bg-red-500 rounded-lg px-4 py-2.5 hover:bg-red-600 transition-colors duration-200"
-                    onClick={() => console.log('Delete issue:', issue.id)}
-                  >
+                  <button className="flex-1 text-sm font-medium text-white bg-red-500 rounded-lg px-4 py-2.5">
                     Delete Issue
                   </button>
                 </div>
               )}
             </div>
 
-            {/* Subtasks Section */}
+            {/* Subtasks */}
             {showSubtasksSection && (
               <div className="border-t border-[#dfdcef]">
                 <div className="p-8 pt-0 space-y-4">
                   <div className="flex justify-between items-center">
-                    <h4 className="text-xl font-semibold text-[#3b3b3b]">
-                      Subtasks
-                    </h4>
+                    <h4 className="text-xl font-semibold text-[#3b3b3b]">Subtasks</h4>
+
                     <div className="flex gap-3">
                       {canEdit && (
-                        <button 
-                          className="text-sm font-medium text-white bg-[#009063] rounded-lg px-6 py-2.5 hover:bg-[#007a4d] transition-colors duration-200"
-                          onClick={() => console.log('Create new subtask for issue:', issue.id)}
+                        <button
+                          className="text-sm font-medium text-white bg-[#009063] rounded-lg px-6 py-2.5"
+                          onClick={() => {
+                            setCurrentIssueId(issue.id);
+                            setIsSubtaskModalOpen(true);
+                          }}
                         >
                           + Create Subtask
                         </button>
                       )}
+
                       {hasSubtasks(issue) && (
-                        <button 
-                          className="text-sm font-medium text-[#3b3b3b] border border-[#dfdcef] rounded-lg px-6 py-2.5 hover:border-[#009063] hover:text-[#009063] transition-colors duration-200"
+                        <button
+                          className="text-sm font-medium text-[#3b3b3b] border border-[#dfdcef] rounded-lg px-6 py-2.5"
                           onClick={() => toggleExpanded(issue.id)}
                         >
-                          {isExpanded ? '− Hide' : '+ Show'} Subtasks
+                          {isExpanded ? "− Hide" : "+ Show"} Subtasks
                         </button>
                       )}
                     </div>
                   </div>
+
                   {hasSubtasks(issue) && isExpanded && (
                     <div className="space-y-4 pt-4 border-t border-[#dfdcef]">
                       {issue.subTasks.map((sub: SubTaskDTO) => (
@@ -143,25 +198,25 @@ const IssueList: React.FC<Props> = ({ issues, role }) => {
                               {sub.status}
                             </span>
                           </div>
+
                           <p className="text-sm text-[#3b3b3b]/80 leading-relaxed">
                             {sub.description}
                           </p>
+
                           <div className="flex items-center justify-between pt-2 border-t border-[#dfdcef]">
                             <span className="text-sm text-[#3b3b3b]/70 font-medium">
-                              Hours: <span className="text-[#3b3b3b] font-semibold">{sub.hours}</span>
+                              Hours:{" "}
+                              <span className="text-[#3b3b3b] font-semibold">
+                                {sub.hours}
+                              </span>
                             </span>
+
                             {canEdit && (
                               <div className="flex gap-2">
-                                <button 
-                                  className="text-xs font-medium text-[#3b3b3b] border border-[#dfdcef] rounded px-3 py-1.5 hover:border-[#009063] hover:text-[#009063] transition-colors duration-200"
-                                  onClick={() => console.log('Edit subtask:', sub.id)}
-                                >
+                                <button className="text-xs font-medium text-[#3b3b3b] border border-[#dfdcef] rounded px-3 py-1.5">
                                   Edit
                                 </button>
-                                <button 
-                                  className="text-xs font-medium text-white bg-red-500 rounded px-3 py-1.5 hover:bg-red-600 transition-colors duration-200"
-                                  onClick={() => console.log('Delete subtask:', sub.id)}
-                                >
+                                <button className="text-xs font-medium text-white bg-red-500 rounded px-3 py-1.5">
                                   Delete
                                 </button>
                               </div>

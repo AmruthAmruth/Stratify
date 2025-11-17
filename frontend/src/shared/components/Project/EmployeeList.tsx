@@ -9,67 +9,42 @@ interface Props {
   onRemove: (emp: EmployeeDTO) => void;
 }
 
-const EmployeeList: React.FC<Props> = ({ employees, onRemove }) => {
-  // -------------------------
-  // FILTER & SORT STATES
-  // -------------------------
+const EmployeeList: React.FC<Props> = ({ employees = [], onRemove }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
-
-  // (Optional) Filter by Position
   const [filterValue, setFilterValue] = useState<string>("");
 
-  // Extract unique positions for dropdown
+  // Unique positions
   const positionOptions = Array.from(
-    new Set(employees.map((emp) => emp.position))
+    new Set((employees ?? []).map((emp) => emp.position))
   );
 
-  // -------------------------
-  // FILTER + SORT LOGIC
-  // -------------------------
+  // FILTER + SORT
   const filteredEmployees = useMemo(() => {
-    let data = [...employees];
+    let data = [...(employees ?? [])];
 
-    // Search
     if (searchTerm.trim()) {
       const lower = searchTerm.toLowerCase();
-      data = data.filter((emp) =>
-        emp.name.toLowerCase().includes(lower)
-      );
+      data = data.filter((e) => e.name.toLowerCase().includes(lower));
     }
 
-    // Filter by position
     if (filterValue) {
-      data = data.filter((emp) => emp.position === filterValue);
+      data = data.filter((e) => e.position === filterValue);
     }
 
-    // Sorting
     if (sortBy) {
-      data.sort((a: any, b: any) => {
-        if (sortOrder === "asc") {
-          return a[sortBy].localeCompare(b[sortBy]);
-        }
-        return b[sortBy].localeCompare(a[sortBy]);
-      });
+      data.sort((a: any, b: any) =>
+        sortOrder === "asc"
+          ? a[sortBy].localeCompare(b[sortBy])
+          : b[sortBy].localeCompare(a[sortBy])
+      );
     }
 
     return data;
   }, [employees, searchTerm, filterValue, sortBy, sortOrder]);
 
-  // -------------------------
-  // CLEAR ALL FILTERS
-  // -------------------------
-  const handleClearFilters = () => {
-    setSearchTerm("");
-    setFilterValue("");
-    setSortBy("");
-    setSortOrder("asc");
-  };
-
-  // -------------------------
-  // TABLE COLUMNS & ACTIONS
-  // -------------------------
+  // COLUMNS
   const columns = [
     { key: "name", label: "Employee Name" },
     { key: "position", label: "Position" },
@@ -86,9 +61,6 @@ const EmployeeList: React.FC<Props> = ({ employees, onRemove }) => {
   return (
     <div className="mt-4">
 
-      {/* ------------------------- */}
-      {/* FILTER BAR */}
-      {/* ------------------------- */}
       <TableFilterBar
         searchTerm={searchTerm}
         setSearchTerm={setSearchTerm}
@@ -103,14 +75,16 @@ const EmployeeList: React.FC<Props> = ({ employees, onRemove }) => {
         setSortBy={setSortBy}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
-        onClearFilters={handleClearFilters}
+        onClearFilters={() => {
+          setSearchTerm("");
+          setFilterValue("");
+          setSortBy("");
+          setSortOrder("asc");
+        }}
         filterLabel="All Positions"
         searchPlaceholder="Search employees..."
       />
 
-      {/* ------------------------- */}
-      {/* TABLE */}
-      {/* ------------------------- */}
       <Table
         columns={columns}
         data={filteredEmployees}
