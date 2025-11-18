@@ -1,5 +1,5 @@
 // components/project/ProjectDetailsLayout.tsx
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { ProjectDTO, UserRole } from "./types";
 
 import ProjectHeader from "./ProjectHeader";
@@ -8,14 +8,19 @@ import IssueList from "./IssueList";
 import SprintList from "./SprintList";
 import EmployeeList from "./EmployeeList";
 
-// Modal + dynamic form
+// Modal + Dynamic Form
 import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
 
-// Form fields + schemas + API calls
+// Form schemas + other forms
 import { createIssueFields, createSprintFields } from "../Forms/formFields";
 import { createIssueSchema, createSprintSchema } from "@/shared/utils/validations";
-import { createIssue, createSprint } from "@/services/projects";
+
+import {
+  createIssue,
+  createSprint,
+  projectLevelTeamAllocation,  // ⬅️ NEW API CALL
+} from "@/services/projects";
 
 interface Props {
   project: ProjectDTO;
@@ -25,13 +30,32 @@ interface Props {
 const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
   const canManage = role === "company" || role === "manager";
 
+  // ────────────────────────────────
+  // MODAL STATES
+  // ────────────────────────────────
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isSprintModalOpen, setIsSprintModalOpen] = useState(false);
+  const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
 
+  // Refs for AuthForm Reset
   const issueFormRef = useRef<{ resetForm: () => void }>(null);
   const sprintFormRef = useRef<{ resetForm: () => void }>(null);
+  const employeeFormRef = useRef<{ resetForm: () => void }>(null);
 
-  // -------- CREATE ISSUE ----------
+  // ────────────────────────────────
+  // AVAILABLE EMPLOYEES STATE
+  // ────────────────────────────────
+  const [employeeList, setEmployeeList] = useState<any[]>([]);
+
+  useEffect(() => {
+    projectLevelTeamAllocation(project.departmentId).then((data) => {
+      setEmployeeList(data[0].employee ?? []); // FIXED
+    });
+  }, []);
+
+  // ────────────────────────────────
+  // CREATE ISSUE
+  // ────────────────────────────────
   const handleSubmitIssue = async (values: Record<string, any>) => {
     try {
       await createIssue({ ...values, projectId: project.id });
@@ -44,7 +68,9 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
     }
   };
 
-  // -------- CREATE SPRINT ----------
+  // ────────────────────────────────
+  // CREATE SPRINT
+  // ────────────────────────────────
   const handleSubmitSprint = async (values: Record<string, any>) => {
     try {
       await createSprint({ ...values, projectId: project.id });
@@ -56,6 +82,42 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
       alert("Failed to create sprint");
     }
   };
+
+  // ────────────────────────────────
+  // ASSIGN EMPLOYEE TO PROJECT
+  // ────────────────────────────────
+  const handleSubmitEmployee = async (values: Record<string, any>) => {
+    try {
+      await assignEmployeeToProject({
+        projectId: project.id,
+        employeeId: values.employeeId,
+      });
+
+      alert("Employee assigned successfully!");
+      employeeFormRef.current?.resetForm();
+      setIsEmployeeModalOpen(false);
+
+    } catch (error) {
+      console.error(error);
+      alert("Failed to assign employee");
+    }
+  };
+
+  // ────────────────────────────────
+  // DYNAMIC FIELD FOR EMPLOYEE SELECTION
+  // ────────────────────────────────
+  const addEmployeeFields = [
+    {
+      name: "employeeId",
+      label: "Select Employee",
+      type: "select",
+      placeholder: "Choose employee",
+      options: employeeList.map((emp) => ({
+        label: `${emp.name} — ${emp.position}`,
+        value: emp.id,
+      })),
+    },
+  ];
 
   return (
     <div className="space-y-6 p-4 text-black">
@@ -70,34 +132,33 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
         description={project.description}
       />
 
-      {/* ----- ADMIN BUTTONS ----- */}
+      {/* ─────────────────────────────── */}
+      {/* ADMIN BUTTONS */}
+      {/* ─────────────────────────────── */}
       {canManage && (
         <div className="flex flex-wrap gap-3 mt-4">
 
-          {/* Edit Project */}
-          <button
-            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
-          >
+          <button className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90">
             Edit Project
           </button>
 
-          {/* Add Employee */}
+          {/* ADD EMPLOYEE */}
           <button
+            onClick={() => setIsEmployeeModalOpen(true)}
             className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
           >
             Add Employee
           </button>
 
-          {/* Assign Issue to Sprint */}
-          <button
-            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
-          >
+          <button className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90">
             Assign Issue to Sprint
           </button>
         </div>
       )}
 
+      {/* ─────────────────────────────── */}
       {/* ISSUE MODAL */}
+      {/* ─────────────────────────────── */}
       <Modal
         isOpen={isIssueModalOpen}
         onClose={() => setIsIssueModalOpen(false)}
@@ -112,7 +173,9 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
         />
       </Modal>
 
+      {/* ─────────────────────────────── */}
       {/* SPRINT MODAL */}
+      {/* ─────────────────────────────── */}
       <Modal
         isOpen={isSprintModalOpen}
         onClose={() => setIsSprintModalOpen(false)}
@@ -124,6 +187,23 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
           validationSchema={createSprintSchema}
           onSubmit={handleSubmitSprint}
           buttonText="Create Sprint"
+        />
+      </Modal>
+
+      {/* ─────────────────────────────── */}
+      {/* ADD EMPLOYEE MODAL */}
+      {/* ─────────────────────────────── */}
+      <Modal
+        isOpen={isEmployeeModalOpen}
+        onClose={() => setIsEmployeeModalOpen(false)}
+        title="Assign Employee to Project"
+      >
+        <AuthForm
+          ref={employeeFormRef}
+          fields={addEmployeeFields}
+          validationSchema={null} // No validation needed
+          onSubmit={handleSubmitEmployee}
+          buttonText="Assign Employee"
         />
       </Modal>
 

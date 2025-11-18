@@ -1,3 +1,4 @@
+// components/Forms/DynamicForm.tsx
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import React, { useState, useEffect, useImperativeHandle, forwardRef } from "react";
@@ -44,23 +45,28 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const initializeFormData = () => {
       const initialData: Record<string, unknown> = {};
       fields.forEach((field) => {
+        let defaultValue: unknown;
         if (field.type === "file") {
-          initialData[field.name] = null;
+          defaultValue = null;
         } else if (field.type === "date") {
           const initialDateValue = initialValues?.[field.name];
           if (initialDateValue && typeof initialDateValue === "string") {
             const date = new Date(initialDateValue);
-            initialData[field.name] = isNaN(date.getTime()) ? null : date.toISOString();
+            defaultValue = isNaN(date.getTime()) ? null : date.toISOString();
           } else {
-            initialData[field.name] = null;
+            defaultValue = null;
           }
         } else if (field.type === "select" && field.multiple) {
-          initialData[field.name] = initialValues?.[field.name] || [];
+          defaultValue = initialValues?.[field.name] || [];
+        } else if (field.type === "number") {
+          const initialNumValue = initialValues?.[field.name];
+          defaultValue = typeof initialNumValue === "number" ? initialNumValue : null;
         } else if (field.type === "textarea") {
-          initialData[field.name] = initialValues?.[field.name] ?? "";
+          defaultValue = initialValues?.[field.name] ?? "";
         } else {
-          initialData[field.name] = initialValues?.[field.name] ?? "";
+          defaultValue = initialValues?.[field.name] ?? "";
         }
+        initialData[field.name] = defaultValue;
       });
       setFormData(initialData);
       setErrors({});
@@ -79,19 +85,21 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
-      const { name, type, value, files } = e.target as HTMLInputElement;
-
-      if (type === "file" && files?.[0]) {
-        const file = files[0];
+      const { name, type, value } = e.target as HTMLInputElement;
+      if (type === "file" && e.target.files?.[0]) {
+        const file = e.target.files[0];
         setFormData((prev) => ({ ...prev, [name]: file }));
-
         const reader = new FileReader();
         reader.onload = () => {
           setPreview((prev) => ({ ...prev, [name]: reader.result }));
         };
         reader.readAsDataURL(file);
       } else {
-        setFormData((prev) => ({ ...prev, [name]: value }));
+        let newValue = value;
+        if (type === "number") {
+          newValue = value.trim() === "" ? null : parseFloat(value);
+        }
+        setFormData((prev) => ({ ...prev, [name]: newValue }));
       }
     };
 
@@ -126,9 +134,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
       console.log("Submitting formData:", formData);
-
       const result = validationSchema.safeParse(formData);
-
       if (!result.success) {
         const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
         const fieldErrors: Record<string, string> = {};
@@ -138,7 +144,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         setErrors(fieldErrors);
         return;
       }
-
       setErrors({});
       onSubmit(formData);
     };
@@ -148,7 +153,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         if (typeof opt === "string") return opt === value;
         return opt.value === value;
       });
-
       if (typeof option === "string") {
         return option.charAt(0).toUpperCase() + option.slice(1);
       }
@@ -166,13 +170,11 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
             const colSpan = field.type === "file" || (field.type === "select" && field.multiple)
               ? "col-span-1 md:col-span-2"
               : "";
-
             return (
               <div key={field.name} className={`flex flex-col ${colSpan}`}>
                 <label className="block font-medium mb-2" style={{ color: "#3b3b3b" }}>
                   {field.label}
                 </label>
-
                 {field.type === "file" ? (
                   <div className="flex flex-col gap-3">
                     <label
@@ -208,7 +210,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                         className="hidden"
                       />
                     </label>
-
                     {preview[field.name] && (
                       <div
                         className="relative w-44 h-44 rounded-xl overflow-hidden shadow-lg"
@@ -258,7 +259,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                             const isSelected = (
                               (formData[field.name] as string[]) || []
                             ).includes(value);
-
                             return (
                               <label
                                 key={idx}
@@ -278,7 +278,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                           })}
                       </div>
                     </div>
-
                     {/* Selected items display */}
                     {((formData[field.name] as string[]) || []).length > 0 && (
                       <div className="flex flex-wrap gap-2">
@@ -382,7 +381,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                     }}
                   />
                 )}
-
                 {errors[field.name] && (
                   <p className="text-xs mt-1" style={{ color: "#f87171" }}>
                     {errors[field.name]}
@@ -392,7 +390,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
             );
           })}
         </div>
-
         <button
           type="submit"
           disabled={disabled}

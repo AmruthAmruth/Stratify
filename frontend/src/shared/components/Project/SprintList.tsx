@@ -1,7 +1,7 @@
 // components/project/SprintList.tsx
 import React from "react";
 import { SprintDTO, UserRole } from "./types";
-import IssueList from "./IssueList";
+import IssueList from "./IssueList"; // ✅ Added missing import
 
 interface Props {
   sprints: SprintDTO[];
@@ -19,6 +19,14 @@ const SprintList: React.FC<Props> = ({ sprints, role }) => {
     );
   }
 
+  const formatDate = (dateStr: string) => {
+    return new Date(dateStr).toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+      year: "numeric",
+    });
+  };
+
   return (
     <div className="space-y-6">
       {sprints.map((sprint) => (
@@ -28,7 +36,7 @@ const SprintList: React.FC<Props> = ({ sprints, role }) => {
         >
           {/* Subtle futuristic overlay */}
           <div className="absolute inset-0 bg-gradient-to-r from-[#009063]/5 via-transparent to-[#009063]/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
-          
+
           <div className="relative space-y-4">
             <h3 className="text-3xl font-black text-[#3b3b3b] leading-tight tracking-tight drop-shadow-sm">
               {sprint.name}
@@ -40,7 +48,7 @@ const SprintList: React.FC<Props> = ({ sprints, role }) => {
             <div className="flex flex-wrap gap-6 text-sm text-[#3b3b3b]/70">
               <span className="flex items-center gap-2 font-mono bg-white/50 rounded-lg px-4 py-2 border border-[#dfdcef]/50 backdrop-blur-sm">
                 <time className="text-[#3b3b3b] font-semibold">
-                  {new Date(sprint.startDate).toLocaleDateString()} → {new Date(sprint.endDate).toLocaleDateString()}
+                  {formatDate(sprint.startDate)} → {formatDate(sprint.endDate)}
                 </time>
               </span>
               <span className="flex items-center gap-3 font-medium bg-white/50 rounded-lg px-4 py-2 border border-[#dfdcef]/50 backdrop-blur-sm">
@@ -51,7 +59,7 @@ const SprintList: React.FC<Props> = ({ sprints, role }) => {
             </div>
 
             {/* Issues Section */}
-            {sprint.issues && sprint.issues.length > 0 && (
+            {sprint.issues?.length > 0 && (
               <div className="mt-8">
                 <div className="w-full h-px bg-gradient-to-r from-transparent via-[#009063]/30 to-transparent mb-4"></div>
                 <h4 className="text-xl font-black text-[#3b3b3b] mb-4 tracking-tight">

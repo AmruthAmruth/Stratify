@@ -21,10 +21,23 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CLIENT_URL || "http://localhost:5173",
+    origin: (origin, callback) => {
+      const allowed = ["http://localhost:5173"];
+
+      if (
+        origin &&
+        (allowed.includes(origin) ||
+          /\.trycloudflare\.com$/.test(new URL(origin).hostname))
+      ) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
-  }),
+  })
 );
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

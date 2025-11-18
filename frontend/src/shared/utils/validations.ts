@@ -213,7 +213,6 @@ export const createSubTaskSchema = z.object({
   issueId: z.string().min(1, "Issue ID is required"),
   heading: z.string().min(1, "Subtask Heading is required"),
   description: z.string().min(1, "Description is required"),
-  hours: z.number().min(1, "Estimated hours must be at least 1"),
   status: z.enum(["To Do", "In Progress", "Done", "Blocked"]).optional(),
   assignedToId: z.string().nullable().optional(),
 });
