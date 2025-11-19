@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+/* ============================================================
+   AUTH MODULE
+============================================================ */
 export const registerSchema = z
   .object({
     name: z.string().min(1, "Name is required"),
@@ -18,13 +21,16 @@ export const registerSchema = z
 
     profileImage: z
       .instanceof(File)
-      .refine(file => file.size <= 5 * 1024 * 1024, "Max file size is 5MB")
+      .refine((file) => file.size <= 5 * 1024 * 1024, "Max file size is 5MB")
       .optional(),
   })
-  .refine(data => data.password === data.confirmPassword, {
-    message: "Passwords do not match",
-    path: ["confirmPassword"],
-  });
+  .refine(
+    (data) => data.password === data.confirmPassword,
+    {
+      message: "Passwords do not match",
+      path: ["confirmPassword"],
+    }
+  );
 
 export const loginSchema = z.object({
   email: z.string().email("Invalid email"),
@@ -32,14 +38,18 @@ export const loginSchema = z.object({
 });
 
 
-
+/* ============================================================
+   DEPARTMENTS MODULE
+============================================================ */
 export const addDepartmentSchema = z.object({
   name: z.string().min(2, "Department name must be at least 2 characters"),
   description: z.string().min(1, "Description is required").optional(),
 });
 
 
-
+/* ============================================================
+   MEMBERS MODULE
+============================================================ */
 export const addMemberSchema = z.object({
   name: z.string().min(1, "Name is required"),
   email: z.string().email("Invalid email"),
@@ -62,7 +72,9 @@ export const addMemberSchema = z.object({
 });
 
 
-
+/* ============================================================
+   SUBSCRIPTION PLANS MODULE
+============================================================ */
 export const addPlanSchema = z.object({
   plan: z.string().min(1, "Plan is required"),
   description: z.string().min(1, "Description is required"),
@@ -71,39 +83,52 @@ export const addPlanSchema = z.object({
 });
 
 
-export const rejectionValidationSchema=z.object({
+/* ============================================================
+   REJECTION / APPROVAL MODULE
+============================================================ */
+export const rejectionValidationSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
- 
+});
+
+export const createRejectLeaveSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+});
+
+export const updateIssueSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+});
+
+export const updateSprintSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
+});
+
+export const updateTaskSchema = z.object({
+  reason: z.string().min(1, "Reason is required"),
 });
 
 
-
-
+/* ============================================================
+   PROJECTS MODULE
+============================================================ */
 export const createProjectSchema = z.object({
   name: z.string().min(1, "Project name is required"),
   key: z.string().min(1, "Project key is required"),
   description: z.string().min(1, "Description is required"),
-  startDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+  startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "Start date is required",
   }),
-  endDate:  z.string().refine((val) => !isNaN(Date.parse(val)), {
+  endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
     message: "End date is required",
   }),
   status: z.enum(["Planned", "Active", "Completed", "Archived"], {
     required_error: "Status is required",
   }),
-  
 });
 
 
-
-
-
-
-
-
-
-
+/* ============================================================
+   LEAVE MANAGEMENT MODULE
+============================================================ */
 export const createLeaveSchema = z
   .object({
     startDate: z
@@ -130,52 +155,22 @@ export const createLeaveSchema = z
     }),
     reason: z.string().min(1, "Reason is required"),
   })
-  .refine((data) => {
-    const start = new Date(data.startDate);
-    const end = new Date(data.endDate);
-    return end.setHours(0, 0, 0, 0) >= start.setHours(0, 0, 0, 0);
-  }, {
-    message: "End date cannot be before start date",
-    path: ["endDate"], 
-  });
+  .refine(
+    (data) => {
+      const start = new Date(data.startDate);
+      const end = new Date(data.endDate);
+      return end.setHours(0, 0, 0, 0) >= start.setHours(0, 0, 0, 0);
+    },
+    {
+      message: "End date cannot be before start date",
+      path: ["endDate"],
+    }
+  );
 
 
-
-  
-
-
-export const createRejectLeaveSchema = z.object({
-  reason: z.string().min(1, "Reason is required"),
-
-});
-
-
-
-
-export const updateIssueSchema = z.object({
-  reason: z.string().min(1, "Reason is required"),
-
-});
-
-
-
-
-export const updateSprintSchema = z.object({
-  reason: z.string().min(1, "Reason is required"),
-
-});
-
-
-export const updateTaskSchema = z.object({
-  reason: z.string().min(1, "Reason is required"),
-
-});
-
-
-
-
-
-
+/* ============================================================
+   ISSUE MANAGEMENT MODULE
+============================================================ */
 export const createIssueSchema = z.object({
   heading: z.string().min(1, "Heading is required"),
   description: z.string().min(1, "Description is required"),
@@ -188,27 +183,30 @@ export const createIssueSchema = z.object({
   priority: z.enum(["Low", "Medium", "High"], {
     errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
   }),
-  
 });
 
 
-
-
+/* ============================================================
+   SPRINTS MODULE
+============================================================ */
 export const createSprintSchema = z.object({
   name: z.string().min(1, "Sprint Name is required"),
   goal: z.string().min(1, "Goal is required"),
   startDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: "Start date is required and must be a valid date",
-    }),
+    message: "Start date is required and must be a valid date",
+  }),
 
   endDate: z.string().refine((val) => !isNaN(Date.parse(val)), {
-      message: "End date is required and must be a valid date",
-    }),
+    message: "End date is required and must be a valid date",
+  }),
+
   status: z.enum(["Planned", "Active", "Completed"]).optional(),
 });
 
 
-
+/* ============================================================
+   SUBTASK MODULE
+============================================================ */
 export const createSubTaskSchema = z.object({
   issueId: z.string().min(1, "Issue ID is required"),
   heading: z.string().min(1, "Subtask Heading is required"),
