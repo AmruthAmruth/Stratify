@@ -17,7 +17,7 @@ departmentRouter.get(
   asyncHandler(controller.getCompanyDepartments),
 );
 departmentRouter.get(
-  "/department-details/:id",
+  "/department-details/:id", 
   asyncHandler(controller.getDepartmentDetails),
 );
 departmentRouter.get(
