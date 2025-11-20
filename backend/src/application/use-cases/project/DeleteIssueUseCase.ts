@@ -6,6 +6,8 @@ export class DeleteIssueUseCase implements IDeleteIssueUseCase {
   constructor(private _issueRepo: IIssueRepository) {}
 
   async execute(issueId: string): Promise<void> {
+    console.log(issueId);
+    
     const issue = await this._issueRepo.findById(issueId);
     if (!issue) {
       throw new AppError("Issue Not found");

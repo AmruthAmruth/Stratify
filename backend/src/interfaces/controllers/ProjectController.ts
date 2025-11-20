@@ -235,7 +235,7 @@ export class ProjectController {
   deleteIssue=async(req:Request,res:Response):Promise<void>=>{
     const {issueId}=req.params
     await this._deleteIssueUseCase.execute(issueId!)
-    res.status(StatusCodes.OK).json({message:"Issue Updated Successfully!"})
+    res.status(StatusCodes.OK).json({message:"Issue Deleted Successfully!"})
   }
 
 
