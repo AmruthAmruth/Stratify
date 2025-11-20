@@ -9,3 +9,8 @@ export interface CreateIssuesDTO {
   projectId: string;
   assignedTo: string | null;
 }
+
+
+export interface UpdateIssueDTO extends CreateIssuesDTO {
+  id: string;
+}

@@ -47,8 +47,7 @@ export const createSprint = (data: Record<string, unknown>) =>
 export const createSubTask = (data: Record<string, unknown>) =>
   handleRequest(api.post(PROJECT_ROUTES.CREATE_SUB_TASK, data));
 
-export const updateIssue = (id: string, data: Record<string, unknown>) =>
-  handleRequest(api.put(`/issues/${id}`, data));
+
 
 export const updateSprint = () =>
   handleRequest(api.get(PROJECT_ROUTES.CREATE_SPRINT));
@@ -80,3 +79,8 @@ export const addEmployeetoProject = (data: Record<string, unknown>) =>
 
 export const getIssuesForEmployee = () =>
   handleRequest(api.get(PROJECT_ROUTES.GET_ISSSUES_FOR_EMPLOYEE));
+
+
+export const updateIssue=(data: Record<string, unknown>)=>{
+  handleRequest(api.put(PROJECT_ROUTES.UPDATE_ISSUE,data))
+}

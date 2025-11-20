@@ -20,6 +20,7 @@ import { IUpdateProjectUseCase } from "../../application/interfaces/project/IUpd
 import { IGetEmployeeNotInProjectUseCase } from "../../application/interfaces/project/IGetEmployeeNotInProjectUseCase";
 import { IGetIssueForEmployeeUseCase } from "../../application/interfaces/project/IGetIssueForEmployeeUseCase";
 import { IRemoveEmployeeInProjectUseCase } from "../../application/interfaces/project/IRemoveEmployeeINProjectUseCase";
+import { IUpdateIssueUseCase } from "../../application/interfaces/project/IUpdateIssueUseCase";
 
 export class ProjectController {
   constructor(
@@ -41,7 +42,8 @@ export class ProjectController {
     private _updateProjectUseCase: IUpdateProjectUseCase,
     private _getEmployeeNotInProjectUseCase: IGetEmployeeNotInProjectUseCase,
     private _getIssueForEmployeeUseCase:IGetIssueForEmployeeUseCase,
-    private _removeEmployeeInProjectUseCase:IRemoveEmployeeInProjectUseCase
+    private _removeEmployeeInProjectUseCase:IRemoveEmployeeInProjectUseCase,
+    private _updateIssueUseCase:IUpdateIssueUseCase
   ) {}
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -217,6 +219,15 @@ export class ProjectController {
 
     res.status(StatusCodes.OK).json({message:"Employee Removed Successfully from project!"})
   }
+
+
+
+
+  updateIssue=async(req:Request,res:Response):Promise<void>=>{
+    const response = await this._updateIssueUseCase.execute(req.body)
+    res.status(StatusCodes.OK).json({message:"Updated Issue Successfully!",response})
+  }
+
 
 
 }

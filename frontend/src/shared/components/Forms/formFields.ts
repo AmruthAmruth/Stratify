@@ -133,6 +133,29 @@ export const createIssueFields = [
 
 
 
+export const updateIssueFields = [
+  { name: "heading", label: "Issue Heading", type: "text" },
+  { name: "size", label: "Size", type: "number" },
+  { name: "description", label: "Description", type: "textarea" },
+  { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "textarea" },
+  { name: "estimatedHours", label: "Estimated Hours", type: "number" },
+
+  {
+    name: "type",
+    label: "Issue Type",
+    type: "select",
+    options: ["User Story", "Bug"],
+  },
+
+  {
+    name: "priority",
+    label: "Priority",
+    type: "select",
+    options: ["Low", "Medium", "High"],
+  }
+];
+
+
 
 
 
@@ -164,12 +187,12 @@ export const createSubTaskFields = [
 
 
 
-export const updateIssueFields=[
-  { name: "startDate", label: "Start Date", type: "date" },
-  { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
-]
+// export const updateIssueFields=[
+//   { name: "startDate", label: "Start Date", type: "date" },
+//   { name: "endDate", label: "End Date", type: "date" },
+//   {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
+//  { name: "reason", label: "Reason", type: "text" },
+// ]
 
 
 

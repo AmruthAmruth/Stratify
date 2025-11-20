@@ -94,9 +94,7 @@ export const createRejectLeaveSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
 });
 
-export const updateIssueSchema = z.object({
-  reason: z.string().min(1, "Reason is required"),
-});
+
 
 export const updateSprintSchema = z.object({
   reason: z.string().min(1, "Reason is required"),
@@ -184,6 +182,36 @@ export const createIssueSchema = z.object({
     errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
   }),
 });
+
+
+
+export const updateIssueSchema = z.object({
+  heading: z.string().min(1, "Heading is required"),
+  description: z.string().min(1, "Description is required"),
+  acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
+
+  size: z.number({
+    required_error: "Size is required",
+    invalid_type_error: "Size must be a number",
+  }),
+
+  estimatedHours: z.number({
+    required_error: "Estimated Hours is required",
+    invalid_type_error: "Estimated Hours must be a number",
+  }),
+
+  type: z.enum(["User Story", "Bug"], {
+    errorMap: () => ({ message: "Type must be either User Story or Bug" }),
+  }),
+
+  priority: z.enum(["Low", "Medium", "High"], {
+    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
+  }),
+});
+
+
+
+
 
 
 /* ============================================================

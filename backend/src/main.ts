@@ -18,16 +18,19 @@ import { initSocket } from "./infrastructure/socket/SocketServer";
 dotenv.config();
 
 const app = express(); 
-
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowed = ["http://localhost:5173"];
+      const allowed = ["http://localhost:5173", "thunder-client://"];
+
+      // allow undefined origins (Thunder, Postman, curl, server-to-server)
+      if (!origin) return callback(null, true);
+
+      const hostname = new URL(origin).hostname;
 
       if (
-        origin &&
-        (allowed.includes(origin) ||
-          /\.trycloudflare\.com$/.test(new URL(origin).hostname))
+        allowed.includes(origin) ||
+        /\.trycloudflare\.com$/.test(hostname)
       ) {
         callback(null, true);
       } else {
@@ -37,7 +40,6 @@ app.use(
     credentials: true,
   })
 );
-
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
