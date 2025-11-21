@@ -105,6 +105,10 @@ export const updateTaskSchema = z.object({
 });
 
 
+export const addEmployeeSchema = z.object({
+  employeeId: z.string().min(1, "Employee is required"),
+});
+
 /* ============================================================
    PROJECTS MODULE
 ============================================================ */

@@ -65,7 +65,8 @@ export const PROJECT_ROUTES = {
   ASSINGED_STORY_TO_SPRINT:'/api/project/assing-to-sprint',
   GET_ISSSUES_FOR_EMPLOYEE:'/api/project/issues',
   UPDATE_ISSUE:'/api/project/update-issue',
-  DELETE_ISSUE:(issueId:string)=>`/api/project/delete-issue/${issueId}`
+  DELETE_ISSUE:(issueId:string)=>`/api/project/delete-issue/${issueId}`,
+
 }
 
 // Leave routes 
