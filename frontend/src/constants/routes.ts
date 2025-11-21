@@ -64,7 +64,8 @@ export const PROJECT_ROUTES = {
   Add_EMPLOYEE_TO_PROJECT:'/api/project/add-employee-project',
   ASSINGED_STORY_TO_SPRINT:'/api/project/assing-to-sprint',
   GET_ISSSUES_FOR_EMPLOYEE:'/api/project/issues',
-  UPDATE_ISSUE:'/api/project/update-issue'
+  UPDATE_ISSUE:'/api/project/update-issue',
+  DELETE_ISSUE:(issueId:string)=>`/api/project/delete-issue/${issueId}`
 }
 
 // Leave routes 

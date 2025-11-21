@@ -9,7 +9,7 @@ export class ProjectLevelEmployeeAllocationUseCase
 {
   constructor(
     private _managerRepo: IManagerRepository,
-    private _employeeRepo: IEmployeeRepository,
+    private _employeeRepo: IEmployeeRepository
   ) {}
 
   async execute(
@@ -30,6 +30,10 @@ export class ProjectLevelEmployeeAllocationUseCase
       throw new AppError("No employees found in this department", 404);
     }
 
+   
+
+
+
     const allocations: ProjectLevelEmployeeAllocationDTO = {
       departmentId,
       employee: employees.map((emp) => ({
@@ -40,5 +44,5 @@ export class ProjectLevelEmployeeAllocationUseCase
     };
 
     return [allocations];
-  }
+  } 
 }

@@ -84,3 +84,9 @@ export const getIssuesForEmployee = () =>
 export const updateIssue=(data: Record<string, unknown>)=>{
   handleRequest(api.put(PROJECT_ROUTES.UPDATE_ISSUE,data))
 }
+
+
+export const deleteIssue=(issueId:string)=>{
+  handleRequest(api.delete(PROJECT_ROUTES.DELETE_ISSUE(issueId)))
+}
+

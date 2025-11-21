@@ -27,13 +27,13 @@ app.use(
       if (!origin) return callback(null, true);
 
       const hostname = new URL(origin).hostname;
-
+  
       if (
         allowed.includes(origin) ||
         /\.trycloudflare\.com$/.test(hostname)
-      ) {
+      ) { 
         callback(null, true);
-      } else {
+      } else { 
         callback(new Error("Not allowed by CORS"));
       }
     },
