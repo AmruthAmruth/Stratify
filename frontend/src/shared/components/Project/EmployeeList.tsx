@@ -118,10 +118,7 @@ const EmployeeList: React.FC<Props> = ({
 
   return (
     <div className="mt-4">
-      {/* DEBUG: Show projectId on screen */}
-      <div className="text-xs text-gray-500 mb-2">
-        Debug - Project ID: {projectId ?? "UNDEFINED"}
-      </div>
+   
 
       <TableFilterBar
         searchTerm={searchTerm}
