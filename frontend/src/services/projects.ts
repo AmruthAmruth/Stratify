@@ -92,3 +92,9 @@ export const deleteIssue=(issueId:string)=>{
 
 
 
+
+export const removeEmployeeInProject=(data:Record<string,unknown>)=>{
+  console.log("Yes, I'm Working");
+  
+      handleRequest(api.post(PROJECT_ROUTES.REMOVE_EMPLOYEE_TO_PROJECT,data))
+}

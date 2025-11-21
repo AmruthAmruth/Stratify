@@ -66,7 +66,7 @@ export const PROJECT_ROUTES = {
   GET_ISSSUES_FOR_EMPLOYEE:'/api/project/issues',
   UPDATE_ISSUE:'/api/project/update-issue',
   DELETE_ISSUE:(issueId:string)=>`/api/project/delete-issue/${issueId}`,
-
+REMOVE_EMPLOYEE_TO_PROJECT:'/api/project/remove-emp'
 }
 
 // Leave routes 

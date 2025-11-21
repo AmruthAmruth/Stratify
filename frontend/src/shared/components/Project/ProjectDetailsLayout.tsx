@@ -281,6 +281,7 @@
         <ProjectSection title="Assigned Employees">
           <EmployeeList
             employees={project.assinedEmployee ?? []}
+            projectId={project.id}
             onRemove={(emp) => console.log("Remove employee:", emp)}
           />
         </ProjectSection>

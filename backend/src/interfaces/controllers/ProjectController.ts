@@ -215,9 +215,10 @@ export class ProjectController {
 
 
   removeEmployeeInProject=async(req:AuthRequest,res:Response):Promise<void>=>{
-    const {projectId,empoyeeId}=req.body
-
-   await this._removeEmployeeInProjectUseCase.execute(projectId,empoyeeId)
+    const {projectId,employeeId}=req.body
+   console.log(req.body);
+   
+   await this._removeEmployeeInProjectUseCase.execute(projectId,employeeId)
 
     res.status(StatusCodes.OK).json({message:"Employee Removed Successfully from project!"})
   }
