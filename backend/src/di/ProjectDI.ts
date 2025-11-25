@@ -31,6 +31,7 @@ import { GetIssueForEmployeeUseCase } from "../application/use-cases/project/Get
 import { RemoveEmployeeInProjectUseCase } from "../application/use-cases/project/RemoveEmployeeInProjectUseCase";
 import { UpdateIssueUseCase } from "../application/use-cases/project/UpdateIssueUseCase";
 import { DeleteIssueUseCase } from "../application/use-cases/project/DeleteIssueUseCase";
+import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const projectDI = () => {
   const companyRepo = new companyRepository();
@@ -44,6 +45,7 @@ export const projectDI = () => {
   const issueRepo = new IssueRepository();
   const subTaskRepo = new SubTaskRepository();
   const sprintRepo = new SprintRepository();
+  const notificationRepo = new NotificationRepository();
 
   const createProjectUseCase = new CreateProjectUseCase(
     projectRepo,
@@ -83,6 +85,7 @@ export const projectDI = () => {
     projectRepo,
     issueRepo,
     employeeRepo,
+    notificationRepo
   );
   const createSubTaskUseCase = new CreateSubTaskUseCase(issueRepo, subTaskRepo);
   const createSprentUseCase = new CreateSprintUseCase(projectRepo, sprintRepo);
@@ -98,6 +101,7 @@ export const projectDI = () => {
   const addEmployeeProjectUseCase = new AddEmployeeProjectUseCase(
     projectRepo,
     employeeRepo,
+    notificationRepo
   );
 
   const getProjectDetailsUseCase = new GetProjectDetailsUseCase(

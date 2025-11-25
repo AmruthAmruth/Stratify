@@ -3,12 +3,16 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { IAddEmployeeProjectUseCase } from "../../interfaces/project/IAddEmployeeProjectUseCase";
+import { Notification } from "../../../domain/entities/Notification";
+import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 
 export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
     private _employeeRepo: IEmployeeRepository,
-  ) {}
+    private _notificationRepo: INotificationRepository
+  ) { }
 
   async execute(projectId: string, employeeId: string): Promise<void> {
     const project = await this._projectRepo.findById(projectId);
@@ -33,8 +37,17 @@ export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
       ? [...project.teamMemberIds, employeeId]
       : [employeeId];
 
-     
-
     await this._projectRepo.update(project);
+
+    // Notify employee about being added to project
+    const notification = new Notification(
+      employee.id!,
+      employee.role,
+      "Added to Project",
+      `🚀 You've been added to project: ${project.name}`,
+      "success"
+    );
+    NotificationEmitter.emit(notification);
+    await this._notificationRepo.create(notification);
   }
 }

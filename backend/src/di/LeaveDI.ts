@@ -14,9 +14,14 @@ export const leaveDI = () => {
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();
   const emailService = new EmailService();
- const notificationRepo=new NotificationRepository()
+  const notificationRepo = new NotificationRepository()
 
-  const createLeaveUseCase = new CreateLeaveUseCase(leaveRepo, employeeRepo);
+  const createLeaveUseCase = new CreateLeaveUseCase(
+    leaveRepo,
+    employeeRepo,
+    notificationRepo,
+    managerRepo
+  );
   const getEmployeeLeaveUseCase = new GetEmployeeLeaveUseCase(leaveRepo);
   const getDepartmentLeaveUseCase = new GetDepartmentLeaveUseCase(
     leaveRepo,

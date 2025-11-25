@@ -7,12 +7,18 @@ import { CreateLeaveDTO } from "../../dto/leave/CreateLeaveDTO";
 import { ICreateLeaveUseCase } from "../../interfaces/leave/ICreateLeaveUseCase";
 import { LEAVE_POLICY } from "../../../shared/constants/leavePolicy";
 import { LeaveMapper } from "../../mappers/LeaveMapper";
+import { Notification } from "../../../domain/entities/Notification";
+import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
+import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 
 export class CreateLeaveUseCase implements ICreateLeaveUseCase {
   constructor(
     private _leaveRepo: ILeaveRepository,
     private _employeeRepo: IEmployeeRepository,
-  ) {}
+    private _notificationRepo: INotificationRepository,
+    private _managerRepo: IManagerRepository
+  ) { }
 
   async execute(leaveDTO: CreateLeaveDTO): Promise<Leave> {
     const employee = await this._employeeRepo.findById(leaveDTO.employeeId);
@@ -93,6 +99,24 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
       leaveType
     );
 
-    return await this._leaveRepo.create(leave);
+    const createdLeave = await this._leaveRepo.create(leave);
+
+    // Notify manager about new leave request
+    if (employee.managerId) {
+      const manager = await this._managerRepo.findById(employee.managerId);
+      if (manager) {
+        const notification = new Notification(
+          manager.id!,
+          manager.role,
+          "New Leave Request",
+          `📋 ${employee.name} has requested ${leaveType} leave from ${start.toLocaleDateString()} to ${end.toLocaleDateString()} (${days} days)`,
+          "info"
+        );
+        NotificationEmitter.emit(notification);
+        await this._notificationRepo.create(notification);
+      }
+    }
+
+    return createdLeave;
   }
 }
