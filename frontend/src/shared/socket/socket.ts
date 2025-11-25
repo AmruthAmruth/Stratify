@@ -33,3 +33,30 @@ export const disconnectSocket = () => {
     socket = null;
   }
 };
+
+// Group chat helpers
+export const joinGroupRoom = (groupId: string) => {
+  if (socket) {
+    socket.emit("join-group", groupId);
+    console.log(`Joined group room: ${groupId}`);
+  }
+};
+
+export const leaveGroupRoom = (groupId: string) => {
+  if (socket) {
+    socket.emit("leave-group", groupId);
+    console.log(`Left group room: ${groupId}`);
+  }
+};
+
+export const sendGroupTyping = (groupId: string, senderId: string) => {
+  if (socket) {
+    socket.emit("group-typing", { groupId, senderId });
+  }
+};
+
+export const sendStopGroupTyping = (groupId: string, senderId: string) => {
+  if (socket) {
+    socket.emit("stop-group-typing", { groupId, senderId });
+  }
+};

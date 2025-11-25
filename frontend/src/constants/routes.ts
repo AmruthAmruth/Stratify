@@ -1,6 +1,6 @@
 // Auth routes
 export const AUTH_ROUTES = {
-  SUPER_ADMIN_LOGIN: "api/auth/super-admin-login", 
+  SUPER_ADMIN_LOGIN: "api/auth/super-admin-login",
   COMPANY_REGISTER: "/api/auth/register",
   COMPANY_VERIFY_OTP: "/api/auth/verify-otp",
   COMPANY_LOGIN: "/api/auth/login",
@@ -51,22 +51,22 @@ export const PROJECT_ROUTES = {
   DEPARTMENT_PROJECTS: "/api/project/department-projects",
   PROJECT_DETAILS: (id: string) => `/api/project/project/${id}`,
   CREATE_PROJECT: "/api/project/create-project",
-  UPDATE_PROJECT:"/api/project/project",
+  UPDATE_PROJECT: "/api/project/project",
   CREATE_SUB_TASK: "/api/project/create-sub-task",
   CREATE_SPRINT: "/api/project/create-sprint",
   ASSIGN_TO_SPRINT: "/api/project/assigned-to-sprint",
-  PROJECT_LEVEL_ALLOCATION:"/api/project/projectlevel-allocated-employee",
-  DELETE_PROJECT: (id: string) =>`/api/project/project/${id}`,
-  CREATE_ISSUE:"/api/project/create-issue",
+  PROJECT_LEVEL_ALLOCATION: "/api/project/projectlevel-allocated-employee",
+  DELETE_PROJECT: (id: string) => `/api/project/project/${id}`,
+  CREATE_ISSUE: "/api/project/create-issue",
   GET_EMPLOYEE_UNDER_PROJECT: (id: string) => `/api/project/issuelevel-allcated-employee/${id}`,
-  GET_DEPARTMENT_EMPLOYEES:"/api/project/projectlevel-allocated-employee",
-  GET_EMPLOYEE_NOT_IN_PROJECT: (id: string) =>`/api/project/employee-out-project/${id}`,
-  Add_EMPLOYEE_TO_PROJECT:'/api/project/add-employee-project',
-  ASSINGED_STORY_TO_SPRINT:'/api/project/assing-to-sprint',
-  GET_ISSSUES_FOR_EMPLOYEE:'/api/project/issues',
-  UPDATE_ISSUE:'/api/project/update-issue',
-  DELETE_ISSUE:(issueId:string)=>`/api/project/delete-issue/${issueId}`,
-REMOVE_EMPLOYEE_TO_PROJECT:'/api/project/remove-emp'
+  GET_DEPARTMENT_EMPLOYEES: "/api/project/projectlevel-allocated-employee",
+  GET_EMPLOYEE_NOT_IN_PROJECT: (id: string) => `/api/project/employee-out-project/${id}`,
+  Add_EMPLOYEE_TO_PROJECT: '/api/project/add-employee-project',
+  ASSINGED_STORY_TO_SPRINT: '/api/project/assing-to-sprint',
+  GET_ISSSUES_FOR_EMPLOYEE: '/api/project/issues',
+  UPDATE_ISSUE: '/api/project/update-issue',
+  DELETE_ISSUE: (issueId: string) => `/api/project/delete-issue/${issueId}`,
+  REMOVE_EMPLOYEE_TO_PROJECT: '/api/project/remove-emp'
 }
 
 // Leave routes 
@@ -78,27 +78,36 @@ export const LEAVE_ROUTES = {
 };
 
 
-export const NOTIFICATION_ROUTES={
-  GET_NOTIFICATIONS:"/api/notification",
-  TOGGLE_STATUS_UPDATE:"/api/notification/update-status",
-  DELETE_NOTIFICATION:"/api/notification/delete-notification",
-  DELETE_ALL_NOTIFICATION:"/api/notification/delete-all-notification",
-  READ_ALL_NOTIFICATION:"/api/notification/read-all"
+export const NOTIFICATION_ROUTES = {
+  GET_NOTIFICATIONS: "/api/notification",
+  TOGGLE_STATUS_UPDATE: "/api/notification/update-status",
+  DELETE_NOTIFICATION: "/api/notification/delete-notification",
+  DELETE_ALL_NOTIFICATION: "/api/notification/delete-all-notification",
+  READ_ALL_NOTIFICATION: "/api/notification/read-all"
 }
 
 
-export const MEETING_ROUTES={
-  CREATE_MEETING:"/api/meeting",
-  GENARATE_TOKEN:"/api/meeting/token",
-  JOING_MEETING:'/api/meeting/join',
-  CLOSE_MEETING:'/api/meeting/close',
-  GET_MEETINGS_BY_CREATOR:"/api/meeting",
-  GET_MEETINGS_FOR_EMPLOYEE:'/api/meeting/meetings',
+export const MEETING_ROUTES = {
+  CREATE_MEETING: "/api/meeting",
+  GENARATE_TOKEN: "/api/meeting/token",
+  JOING_MEETING: '/api/meeting/join',
+  CLOSE_MEETING: '/api/meeting/close',
+  GET_MEETINGS_BY_CREATOR: "/api/meeting",
+  GET_MEETINGS_FOR_EMPLOYEE: '/api/meeting/meetings',
 }
 
 
-export const CHAT_ROUTES={
-  SENT_MESSAGE:'/api/chat/send',
-  TEAM_MEMEBER_LIST:'/api/chat/team',
-   CHAT_HISTROY_ROUTES:'/api/chat/history',
+export const CHAT_ROUTES = {
+  SENT_MESSAGE: '/api/chat/send',
+  TEAM_MEMEBER_LIST: '/api/chat/team',
+  CHAT_HISTROY_ROUTES: '/api/chat/history',
+}
+
+export const GROUP_CHAT_ROUTES = {
+  CREATE_GROUP: '/api/group-chat/create',
+  SEND_MESSAGE: '/api/group-chat/send',
+  GET_MESSAGES: (groupId: string) => `/api/group-chat/${groupId}/messages`,
+  MY_GROUPS: '/api/group-chat/my-groups',
+  ADD_MEMBER: (groupId: string) => `/api/group-chat/${groupId}/members`,
+  REMOVE_MEMBER: (groupId: string, memberId: string) => `/api/group-chat/${groupId}/members/${memberId}`,
 }

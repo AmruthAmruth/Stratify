@@ -3,6 +3,7 @@ import ProjectPage from "@/features/common/ProjectPage";
 import { CreateMeeting } from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ManagerChatPage from "@/features/manager/ManagerChatPage";
+import ManagerGroupChatPage from "@/features/manager/ManagerGroupChatPage";
 import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
 import { ManagerMeeting } from "@/features/manager/ManagerMeeting";
 import ManagerProjects from "@/features/manager/ManagerProjects";
@@ -39,7 +40,7 @@ const managerRoutes: RouteObject[] = [
     path: "/notification",
     element: <Notification />,
   },
-    {
+  {
     path: "/meetings",
     element: <ManagerMeeting />,
   },
@@ -47,7 +48,11 @@ const managerRoutes: RouteObject[] = [
     path: "/chat",
     element: <ManagerChatPage />,
   },
-  
+  {
+    path: "/group-chat",
+    element: <ManagerGroupChatPage />,
+  },
+
 
 ];
 

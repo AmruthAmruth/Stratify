@@ -35,7 +35,7 @@ export const initSocket = (server: HttpServer) => {
 
       socket.emit("message-sent", {
         receiverId,
-          senderId,
+        senderId,
         message,
         createdAt: new Date().toISOString(),
       });
@@ -52,6 +52,38 @@ export const initSocket = (server: HttpServer) => {
       if (receiverSocketId) io.to(receiverSocketId).emit("stop-typing", { senderId });
     });
 
+
+    // ---------- GROUP CHAT ----------
+    socket.on("join-group", (groupId: string) => {
+      socket.join(groupId);
+      console.log(`👥 Socket ${socket.id} joined group ${groupId}`);
+    });
+
+    socket.on("leave-group", (groupId: string) => {
+      socket.leave(groupId);
+      console.log(`👋 Socket ${socket.id} left group ${groupId}`);
+    });
+
+    socket.on("send-group-message", (data) => {
+      const { groupId, senderId, message } = data;
+      console.log(`💬 Group message from ${senderId} to group ${groupId}: ${message}`);
+
+      // Broadcast to all members in the group room
+      io.to(groupId).emit("receive-group-message", {
+        groupId,
+        senderId,
+        message,
+        createdAt: new Date().toISOString(),
+      });
+    });
+
+    socket.on("group-typing", ({ senderId, groupId }) => {
+      socket.to(groupId).emit("group-typing", { senderId, groupId });
+    });
+
+    socket.on("stop-group-typing", ({ senderId, groupId }) => {
+      socket.to(groupId).emit("stop-group-typing", { senderId, groupId });
+    });
 
 
     // ---------- NOTIFICATION ----------
@@ -92,4 +124,55 @@ export const emitChatMessage = (
     io.to(socketId).emit("receive-message", messageData);
     console.log(`💌 Sent chat message to ${receiverId}`);
   }
+};
+
+// Group chat emitters
+export const emitGroupMessage = (
+  io: Server,
+  groupId: string,
+  messageData: { senderId: string; message: string; createdAt: string; senderName: string }
+) => {
+  io.to(groupId).emit("receive-group-message", {
+    groupId,
+    ...messageData,
+  });
+  console.log(`💬 Sent group message to group ${groupId}`);
+};
+
+export const emitGroupTyping = (
+  io: Server,
+  groupId: string,
+  senderId: string
+) => {
+  io.to(groupId).emit("group-typing", { senderId, groupId });
+};
+
+export const emitGroupMemberJoined = (
+  io: Server,
+  groupId: string,
+  userId: string,
+  userName: string
+) => {
+  io.to(groupId).emit("group-member-joined", {
+    groupId,
+    userId,
+    userName,
+    timestamp: new Date().toISOString(),
+  });
+  console.log(`👤 User ${userName} joined group ${groupId}`);
+};
+
+export const emitGroupMemberLeft = (
+  io: Server,
+  groupId: string,
+  userId: string,
+  userName: string
+) => {
+  io.to(groupId).emit("group-member-left", {
+    groupId,
+    userId,
+    userName,
+    timestamp: new Date().toISOString(),
+  });
+  console.log(`👋 User ${userName} left group ${groupId}`);
 };

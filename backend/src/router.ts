@@ -9,6 +9,7 @@ import leaveRouter from "./interfaces/routes/LeaveRoues";
 import notificationRouter from "./interfaces/routes/NotificationRoutes";
 import meetingRouter from "./interfaces/routes/MeetingRoutes";
 import chatRouter from "./interfaces/routes/ChatRoutes";
+import groupChatRouter from "./interfaces/routes/GroupChatRoutes";
 
 const router = Router();
 
@@ -19,7 +20,8 @@ router.use("/employee", employeeRouter);
 router.use("/subscription", subscriptionRouter);
 router.use("/project", projectRouter);
 router.use("/leave", leaveRouter);
-router.use("/notification",notificationRouter);
-router.use("/meeting",meetingRouter)
-router.use('/chat',chatRouter)
+router.use("/notification", notificationRouter);
+router.use("/meeting", meetingRouter)
+router.use('/chat', chatRouter)
+router.use('/group-chat', groupChatRouter)
 export default router;

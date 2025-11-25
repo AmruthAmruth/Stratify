@@ -10,7 +10,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Payments", path: "/payments", icon: "CreditCard" },
     { label: "Notification", path: "/notification", icon: "Bell" },
   ],
-  company: [  
+  company: [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
     { label: "Departments", path: "/department", icon: "Building" },
     { label: "Projects", path: "/projects", icon: "FolderTree" },
@@ -22,25 +22,27 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Subscription", path: "/subscription", icon: "FileText" },
     { label: "My Profile", path: "/my-profile", icon: "User" },
   ],
-  manager: [ 
-    { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" }, 
+  manager: [
+    { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
     { label: "My Team", path: "/team", icon: "Users" },
     { label: "Projects", path: "/projects", icon: "FolderTree" },
     { label: "Meetings", path: "/meetings", icon: "Video" },
     { label: "Leave Status", path: "/leave-status", icon: "CheckCircle" },
     { label: "Message", path: "/chat", icon: "MessageSquare" },
+    { label: "Group Chat", path: "/group-chat", icon: "Users2" },
     { label: "Department", path: "/department", icon: "Building" },
     { label: "Attendance", path: "/attendance", icon: "Clock" },
     { label: "Notification", path: "/notification", icon: "Bell" },
     { label: "My Profile", path: "/profile", icon: "User" },
   ],
-  employee: [  
+  employee: [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
     { label: "My Tasks", path: "/my-task", icon: "ClipboardList" },
     { label: "Project", path: "/project", icon: "FolderTree" },
     { label: "Leave Status", path: "/leave-status", icon: "CheckCircle" },
     { label: "Meetings", path: "/meetings", icon: "Video" },
     { label: "Message", path: "/message", icon: "MessageSquare" },
+    { label: "Group Chat", path: "/group-chat", icon: "Users2" },
     { label: "Notification", path: "/notification", icon: "Bell" },
     { label: "My Profile", path: "/my-profile", icon: "User" },
   ],
