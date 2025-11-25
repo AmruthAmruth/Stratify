@@ -8,7 +8,7 @@ import { RootState } from "@/store";
 const NotificationListener = () => {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
-  const userId = useSelector((state: RootState) => state.auth?.user?.id || "");
+  const userId = useSelector((state: RootState) => state.auth.userId);
 
   useEffect(() => {
     if (!userId) return;

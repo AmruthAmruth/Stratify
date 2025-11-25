@@ -27,7 +27,7 @@ const NotificationBoard = () => {
     const fetchNotifications = async () => {
       try {
         setIsLoading(true);
-        const data = await getNotification();
+        const data: any = await getNotification();
         if (data?.response?.length) {
           const apiNotifications = data.response.map((n: any) => ({
             ...n,
@@ -64,8 +64,14 @@ const NotificationBoard = () => {
       }
     };
 
-    fetchNotifications();
-  }, [dispatch]); // Removed notifications from deps to prevent infinite loop
+    // Only fetch if we don't have notifications yet (first load)
+    // App.tsx already loads notifications on login
+    if (notifications.length === 0) {
+      fetchNotifications();
+    } else {
+      setIsLoading(false);
+    }
+  }, []); // Empty deps - only run once on mount
 
   const handleToggleRead = async (id: string) => {
     const notification = notifications.find(n => n.id === id);
