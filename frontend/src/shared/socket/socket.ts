@@ -11,8 +11,7 @@ export const connectSocket = (userId: string) => {
       transports: ["websocket"],
       withCredentials: true,
     });
-    console.log("Connedted User",userId);
-    
+    console.log("Connected User", userId);
 
     socket.on("connect", () => {
       console.log("Socket connected:", socket.id);

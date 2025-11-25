@@ -1,20 +1,18 @@
-// src/shared/components/Navbar/Navbar.tsx
-import React, { useEffect } from 'react';
-import { Bell } from 'lucide-react'; 
+import React from 'react';
+import { Bell } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
-import { connectSocket, getSocket } from '@/shared/socket/socket';
 import { RootState } from '@/store';
-import { addNotification } from '@/store/slices/notificationSlice';
 
 const Navbar = ({ role, userId }: { role: string; userId: string }) => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
+  // Just read from Redux - NotificationListener handles socket updates
   const notifications = useSelector((state: RootState) => state.notification.notifications);
   const unreadCount = notifications.filter(n => !n.isRead).length;
 
@@ -26,28 +24,12 @@ const Navbar = ({ role, userId }: { role: string; userId: string }) => {
       enqueueSnackbar(error?.message || "Logout failed!", { variant: "error" });
     } finally {
       dispatch(clearCredentials());
-      localStorage.clear(); 
+      localStorage.clear();
       navigate("/");
     }
   };
 
-  useEffect(() => {
-    let socket = getSocket();
-
-    if (!socket) {
-      socket = connectSocket(userId);
-    }
-
-    const handleNewNotification = (data: any) => {
-      dispatch(addNotification(data)); // updates Redux in real time
-    };
-
-    socket.on("new-notification", handleNewNotification);
-
-    return () => {
-      socket.off("new-notification", handleNewNotification);
-    };
-  }, [dispatch, userId]);
+  // REMOVED: The useEffect with socket listener - NotificationListener handles this globally
 
   return (
     <header className="w-full bg-white shadow px-6 py-6 flex justify-between items-center border-b border-[#dfdcef]">
@@ -81,3 +63,4 @@ const Navbar = ({ role, userId }: { role: string; userId: string }) => {
 };
 
 export default Navbar;
+

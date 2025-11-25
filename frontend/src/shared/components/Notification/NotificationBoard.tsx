@@ -29,11 +29,32 @@ const NotificationBoard = () => {
         setIsLoading(true);
         const data = await getNotification();
         if (data?.response?.length) {
-          const sorted = data.response.sort(
+          const apiNotifications = data.response.map((n: any) => ({
+            ...n,
+            id: n.id || n._id, // Normalize ID field
+          }));
+
+          // Merge API data with existing socket notifications
+          const existingIds = new Set(notifications.map(n => n.id));
+          const newFromApi = apiNotifications.filter(
+            (n: any) => !existingIds.has(n.id)
+          );
+
+          // Combine and sort all notifications
+          const merged = [...notifications, ...newFromApi].sort(
             (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           );
-          dispatch(setNotifications(sorted));
-        } else {
+
+          // Remove duplicates (keep first occurrence)
+          const uniqueMap = new Map();
+          merged.forEach(n => {
+            if (!uniqueMap.has(n.id)) {
+              uniqueMap.set(n.id, n);
+            }
+          });
+
+          dispatch(setNotifications(Array.from(uniqueMap.values())));
+        } else if (notifications.length === 0) {
           dispatch(setNotifications([]));
         }
       } catch (err) {
@@ -44,7 +65,7 @@ const NotificationBoard = () => {
     };
 
     fetchNotifications();
-  }, [dispatch]);
+  }, [dispatch]); // Removed notifications from deps to prevent infinite loop
 
   const handleToggleRead = async (id: string) => {
     const notification = notifications.find(n => n.id === id);
@@ -55,7 +76,7 @@ const NotificationBoard = () => {
     try {
       await toggleStatusUpdate(id);
     } catch {
-      dispatch(updateNotification(notification)); // revert on error
+      dispatch(updateNotification(notification));
     }
   };
 

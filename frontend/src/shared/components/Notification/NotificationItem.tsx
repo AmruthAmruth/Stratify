@@ -56,7 +56,10 @@ const NotificationItem: React.FC<Props> = ({
       <div className="flex items-center gap-2 flex-shrink-0">
         {/* Mark as read/unread */}
         <button
-          onClick={() => onMarkRead?.(notification.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent content click
+            onMarkRead?.(notification.id);
+          }}
           className="p-2 hover:bg-[#dfdcef] rounded-full transition-colors duration-200"
           title={notification.isRead ? "Mark as Unread" : "Mark as Read"}
         >
@@ -69,7 +72,10 @@ const NotificationItem: React.FC<Props> = ({
 
         {/* Delete */}
         <button
-          onClick={() => onDelete?.(notification.id)}
+          onClick={(e) => {
+            e.stopPropagation(); // Prevent content click
+            onDelete?.(notification.id);
+          }}
           className="p-2 hover:bg-red-50 rounded-full transition-colors duration-200 group"
           title="Delete Notification"
         >
