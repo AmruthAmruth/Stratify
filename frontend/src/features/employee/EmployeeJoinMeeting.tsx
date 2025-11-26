@@ -37,7 +37,10 @@ export const EmployeeJoinMeeting: React.FC = () => {
       id: meeting.id,
       title: meeting.title,
       status: meeting.status,
-      createdAt: new Date(meeting.createdAt).toLocaleString(),
+      createdAt: meeting.createdAt,
+      scheduledDate: meeting.scheduledDate,
+      isRecurring: meeting.isRecurring,
+      projectId: meeting.projectId,
       roomId: meeting.roomId,
     }));
 
@@ -54,6 +57,55 @@ export const EmployeeJoinMeeting: React.FC = () => {
     return <VideoCall roomId={roomId} userName={userName} />;
   }
 
+  const renderCell = (row: any, key: string) => {
+    if (key === "createdAt" || key === "scheduledDate") {
+      const date = row[key] ? new Date(row[key]) : null;
+      return date ? date.toLocaleString("en-GB", {
+        day: "2-digit",
+        month: "short",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+      }) : "-";
+    }
+
+    if (key === "type") {
+      return (
+        <div className="flex gap-1 flex-wrap">
+          {row.isRecurring && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+              Recurring
+            </span>
+          )}
+          {row.projectId && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+              Project
+            </span>
+          )}
+          {!row.isRecurring && !row.projectId && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+              General
+            </span>
+          )}
+        </div>
+      );
+    }
+
+    if (key === "status") {
+      const color =
+        row.status === "open"
+          ? "bg-green-100 text-green-700"
+          : "bg-red-100 text-red-700";
+      return (
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
+          {row.status}
+        </span>
+      );
+    }
+
+    return row[key] || ""; // Handle null/undefined
+  };
+
   return (
     <div className="bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
       <div className="mb-8">
@@ -66,6 +118,8 @@ export const EmployeeJoinMeeting: React.FC = () => {
       <Table
         columns={[
           { key: "title", label: "Meeting Title" },
+          { key: "type", label: "Type" },
+          { key: "scheduledDate", label: "Scheduled Time" },
           { key: "status", label: "Status" },
           { key: "createdAt", label: "Created At" },
         ]}
@@ -73,10 +127,11 @@ export const EmployeeJoinMeeting: React.FC = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
+        renderCell={renderCell}
         actions={[
           {
             label: "Join",
-            type: "custom",
+            type: "custom" as const,
             onClick: (row) => handleJoinMeeting(row.roomId),
           },
         ]}

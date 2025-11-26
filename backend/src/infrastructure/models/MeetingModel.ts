@@ -5,6 +5,9 @@ export interface MeetingDocument extends Document {
   creatorId: Types.ObjectId;
   title: string;
   status: "open" | "closed";
+  projectId?: Types.ObjectId;
+  isRecurring: boolean;
+  scheduledDate?: Date;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -29,9 +32,26 @@ const MeetingSchema = new Schema<MeetingDocument>(
       enum: ["open", "closed"],
       default: "open",
     },
+    projectId: {
+      type: Schema.Types.ObjectId,
+      ref: "Project",
+      required: false,
+    },
+    isRecurring: {
+      type: Boolean,
+      default: false,
+    },
+    scheduledDate: {
+      type: Date,
+      required: false,
+    },
   },
   { timestamps: true }
 );
+
+// Indexes for efficient queries
+MeetingSchema.index({ projectId: 1, scheduledDate: 1 });
+MeetingSchema.index({ scheduledDate: 1, status: 1 });
 
 export const MeetingModel = mongoose.model<MeetingDocument>(
   "Meeting",

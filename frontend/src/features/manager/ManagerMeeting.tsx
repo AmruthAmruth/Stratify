@@ -20,7 +20,7 @@ export const ManagerMeeting: React.FC = () => {
   const fetchMeetings = async () => {
     try {
       const data = await getMeetingsByCreator();
-      setMeetings(data);
+      setMeetings(Array.isArray(data) ? data : []);
     } catch (error: any) {
       console.error("Error fetching meetings:", error);
       enqueueSnackbar("Failed to fetch meetings", { variant: "error" });
@@ -44,7 +44,7 @@ export const ManagerMeeting: React.FC = () => {
       enqueueSnackbar("Meeting created successfully!", { variant: "success" });
     } catch (error: any) {
       console.error("Error creating meeting:", error);
-      enqueueSnackbar( error.message || "Failed to create meeting", { variant: "error" });
+      enqueueSnackbar(error.message || "Failed to create meeting", { variant: "error" });
     }
   };
 
@@ -77,19 +77,44 @@ export const ManagerMeeting: React.FC = () => {
   // Table Columns
   const columns = [
     { key: "title", label: "Meeting Title" },
+    { key: "type", label: "Type" },
+    { key: "scheduledDate", label: "Scheduled Time" },
     { key: "status", label: "Status" },
     { key: "createdAt", label: "Created At" },
   ];
 
   const renderCell = (row: any, key: string) => {
-    if (key === "createdAt") {
-      return new Date(row.createdAt).toLocaleString("en-GB", {
+    if (key === "createdAt" || key === "scheduledDate") {
+      const date = row[key] ? new Date(row[key]) : null;
+      return date ? date.toLocaleString("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      });
+      }) : "-";
+    }
+
+    if (key === "type") {
+      return (
+        <div className="flex gap-1 flex-wrap">
+          {row.isRecurring && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-700">
+              Recurring
+            </span>
+          )}
+          {row.projectId && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-700">
+              Project
+            </span>
+          )}
+          {!row.isRecurring && !row.projectId && (
+            <span className="px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
+              General
+            </span>
+          )}
+        </div>
+      );
     }
 
     if (key === "status") {
@@ -104,11 +129,11 @@ export const ManagerMeeting: React.FC = () => {
       );
     }
 
-    return row[key];
+    return row[key] || ""; // Handle null/undefined
   };
 
   // Table Actions (Join + Close)
-  const actions = [
+  const actions: { label: string; type: "approve" | "delete"; onClick: (row: any) => void; show: (row: any) => boolean }[] = [
     {
       label: "Join",
       type: "approve",
@@ -117,7 +142,7 @@ export const ManagerMeeting: React.FC = () => {
     },
     {
       label: "Close",
-      type: "reject",
+      type: "delete",
       onClick: (row: any) => handleCloseMeeting(row.roomId),
       show: (row: any) => row.status === "open", // Only show close for open meetings
     },

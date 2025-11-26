@@ -4,15 +4,15 @@ import { authMiddleware } from '../middleware/AuthMiddleware';
 import { asyncHandler } from '../middleware/AsyncHandler';
 
 
-const meetingRouter=express.Router();
+const meetingRouter = express.Router();
 const controller = meetingDI()
 
-meetingRouter.post('/',authMiddleware(["manager"]),asyncHandler(controller.createMeeting))
+meetingRouter.post('/', authMiddleware(["manager"]), asyncHandler(controller.createMeeting))
 meetingRouter.post("/token", authMiddleware(["manager", "employee"]), asyncHandler(controller.genarateToken));
-meetingRouter.post('/join/:roomId', asyncHandler(controller.joinMeeting));
+meetingRouter.post('/join/:roomId', authMiddleware(["manager", "employee"]), asyncHandler(controller.joinMeeting));
 meetingRouter.post('/close/:roomId', asyncHandler(controller.closeMeeting));
-meetingRouter.get('/',authMiddleware(["manager"]),asyncHandler(controller.getMeetingsByCreator))
-meetingRouter.get('/meetings',authMiddleware(["employee"]),asyncHandler(controller.getMeetingForEmployee))
+meetingRouter.get('/', authMiddleware(["manager"]), asyncHandler(controller.getMeetingsByCreator))
+meetingRouter.get('/meetings', authMiddleware(["employee"]), asyncHandler(controller.getMeetingForEmployee))
 
 
 export default meetingRouter

@@ -33,6 +33,7 @@ import { UpdateIssueUseCase } from "../application/use-cases/project/UpdateIssue
 import { DeleteIssueUseCase } from "../application/use-cases/project/DeleteIssueUseCase";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
+
 export const projectDI = () => {
   const companyRepo = new companyRepository();
   const projectRepo = new ProjectRepository();
@@ -47,13 +48,15 @@ export const projectDI = () => {
   const sprintRepo = new SprintRepository();
   const notificationRepo = new NotificationRepository();
 
+  // Create recurring meetings use case
   const createProjectUseCase = new CreateProjectUseCase(
     projectRepo,
     companyRepo,
     managerRepo,
     departmentRepo,
-    employeeRepo,
+    employeeRepo
   );
+
   const createUserStoryUseCase = new CreateUserStoryUseCase(
     userStoryRepo,
     backlogRepo,

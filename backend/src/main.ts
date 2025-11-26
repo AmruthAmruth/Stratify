@@ -12,12 +12,12 @@ import http from "http";
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
 import { initSocket } from "./infrastructure/socket/SocketServer";
-  
+
 
 
 dotenv.config();
 
-const app = express(); 
+const app = express();
 app.use(
   cors({
     origin: (origin, callback) => {
@@ -27,13 +27,13 @@ app.use(
       if (!origin) return callback(null, true);
 
       const hostname = new URL(origin).hostname;
-  
+
       if (
         allowed.includes(origin) ||
         /\.trycloudflare\.com$/.test(hostname)
-      ) { 
+      ) {
         callback(null, true);
-      } else { 
+      } else {
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -66,18 +66,25 @@ connectDB()
   .then(() => console.log(" MongoDB Connected"))
   .catch((err) => console.error(" MongoDB connection failed:", err));
 
-  
+
 app.use("/api", router);
 
 app.use(errorMiddleware);
 
 
 const server = http.createServer(app);
-const io=initSocket(server)
-export {io}
+const io = initSocket(server)
+import { SocketService } from "./shared/services/SocketService";
+SocketService.setIO(io);
+
+// Initialize Scheduler
+import { MeetingScheduler } from "./infrastructure/scheduler/MeetingScheduler";
+const meetingScheduler = new MeetingScheduler();
+meetingScheduler.start();
+
+export { io }
 
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
   console.log(` Server running on http://localhost:${PORT}`);
 });
- 

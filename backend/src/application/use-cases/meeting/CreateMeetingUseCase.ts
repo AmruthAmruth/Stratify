@@ -15,13 +15,13 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
     private _notificationRepo: INotificationRepository,
     private _employeeRepo: IEmployeeRepository,
     private _managerRepo: IManagerRepository
-  ) {}
+  ) { }
 
   async execute(creatorId: string, title: string): Promise<Meeting> {
-    
 
-    const existingMeeting=await this._meetingRepo.findByTitle(title);
-    if(existingMeeting){
+
+    const existingMeeting = await this._meetingRepo.findByTitle(title);
+    if (existingMeeting) {
       throw new AppError(`A meeting with the title "${title}" already exists.`)
     }
 
@@ -32,6 +32,9 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
       creatorId,
       title,
       "open",
+      undefined, // projectId - not set for manual meetings
+      false, // isRecurring - manual meetings are not recurring
+      undefined, // scheduledDate - not set for manual meetings
       new Date()
     );
 
@@ -45,14 +48,14 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
 
     for (const emp of employees) {
       const notification = new Notification(
-      
+
         emp.id!,
         emp.role,
         "New Meeting Scheduled",
         `📅 A new meeting "${title}" has been created by ${manager.name}. Please check your meeting section for details.`,
         "info",
       );
-       NotificationEmitter.emit(notification);
+      NotificationEmitter.emit(notification);
       await this._notificationRepo.create(notification);
     }
 

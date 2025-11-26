@@ -4,10 +4,12 @@ import { GenerateMeetingTokenUseCase } from "../application/use-cases/meeting/Ge
 import { GetMeetingForEmployeeUseCase } from "../application/use-cases/meeting/GetMeetingForEmployeeUseCase";
 import { GetMeetingsByCreatorUseCase } from "../application/use-cases/meeting/GetMeetingsByCreatorUseCase";
 import { JoinMeetingUseCase } from "../application/use-cases/meeting/JoinMeetingUseCase";
+
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { MeetingRepository } from "../infrastructure/repositories/MeetingRepository";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
+import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
 import { ZegoTokenService } from "../infrastructure/services/zego/ZegoTokenService";
 import { MeetingController } from "../interfaces/controllers/MeetingController";
 
@@ -21,29 +23,40 @@ export const meetingDI = () => {
     ZEGO_SERVER_SECRET
   );
 
-  const employeeRepository=new EmployeeRepository()
-  const notificationRepository=new NotificationRepository()
-  const managerRepository=new ManagerRepository()
+  const employeeRepository = new EmployeeRepository();
+  const notificationRepository = new NotificationRepository();
+  const managerRepository = new ManagerRepository();
+  const projectRepository = new ProjectRepository();
 
+  const createMeetingUseCase = new CreateMeetingUseCase(
+    meetingRepository,
+    notificationRepository,
+    employeeRepository,
+    managerRepository
+  );
 
-  const createMeetingUseCase = new CreateMeetingUseCase(meetingRepository,notificationRepository,employeeRepository,managerRepository);
   const generateMeetingTokenUseCase = new GenerateMeetingTokenUseCase(
     meetingRepository,
     zegoTokenService
   );
 
-  const joinMeetingUseCase=new JoinMeetingUseCase(meetingRepository);
-  const closeMeetinguseCase=new CloseMeetingUseCase(meetingRepository)
-  const getMeetingsByCreatorUseCase=new GetMeetingsByCreatorUseCase(meetingRepository)
-  const getMeetingForEmployeeUseCase = new GetMeetingForEmployeeUseCase(meetingRepository,employeeRepository)
+  const joinMeetingUseCase = new JoinMeetingUseCase(meetingRepository, projectRepository);
+  const closeMeetinguseCase = new CloseMeetingUseCase(meetingRepository);
+  const getMeetingsByCreatorUseCase = new GetMeetingsByCreatorUseCase(meetingRepository);
+  const getMeetingForEmployeeUseCase = new GetMeetingForEmployeeUseCase(
+    meetingRepository,
+    employeeRepository,
+    projectRepository
+  );
 
-
-  return  new MeetingController(
+  return new MeetingController(
     createMeetingUseCase,
     generateMeetingTokenUseCase,
     joinMeetingUseCase,
     closeMeetinguseCase,
     getMeetingsByCreatorUseCase,
     getMeetingForEmployeeUseCase
-  )
+  );
 };
+
+

@@ -17,3 +17,4 @@ export class Project {
     public updatedAt?: Date,
   ) {}
 }
+

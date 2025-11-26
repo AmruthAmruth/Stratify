@@ -20,26 +20,50 @@ export class MeetingRepository implements IMeetingRepository {
   }
 
 
- async findMeetingByCreatorId(creatorId: string): Promise<Meeting[]> {
-  const docs = await MeetingModel.find({ creatorId: creatorId,status:"open"});
-  return docs.map(doc => this.toDomain(doc));
-}
+  async findMeetingByCreatorId(creatorId: string): Promise<Meeting[]> {
+    const docs = await MeetingModel.find({ creatorId: creatorId, status: "open" });
+    return docs.map(doc => this.toDomain(doc));
+  }
 
-async findByTitle(title: string): Promise<boolean> {
-  const doc = await MeetingModel.findOne({ title: { $regex: `^${title}$`, $options: "i" } });
-  return !!doc
-}
+  async findByTitle(title: string): Promise<boolean> {
+    const doc = await MeetingModel.findOne({ title: { $regex: `^${title}$`, $options: "i" } });
+    return !!doc
+  }
 
-  
+  async findByProjectId(projectId: string): Promise<Meeting[]> {
+    const docs = await MeetingModel.find({ projectId });
+    return docs.map(doc => this.toDomain(doc));
+  }
+
+  async findByProjectAndDate(projectId: string, date: Date): Promise<Meeting | null> {
+    const startOfDay = new Date(date);
+    startOfDay.setHours(0, 0, 0, 0);
+
+    const endOfDay = new Date(date);
+    endOfDay.setHours(23, 59, 59, 999);
+
+    const doc = await MeetingModel.findOne({
+      projectId,
+      scheduledDate: { $gte: startOfDay, $lte: endOfDay }
+    });
+
+    if (!doc) return null;
+    return this.toDomain(doc);
+  }
+
+
   private toDomain(doc: MeetingDocument): Meeting {
     const obj = doc.toObject();
-    return {
-      id: obj._id.toString(),
-      roomId: obj.roomId,
-      creatorId: obj.creatorId.toString(),
-      title: obj.title,
-      status: obj.status,
-      createdAt: obj.createdAt
-    };
+    return new Meeting(
+      obj._id.toString(),
+      obj.roomId,
+      obj.creatorId.toString(),
+      obj.title,
+      obj.status,
+      obj.projectId?.toString(),
+      obj.isRecurring || false,
+      obj.scheduledDate,
+      obj.createdAt
+    );
   }
 }

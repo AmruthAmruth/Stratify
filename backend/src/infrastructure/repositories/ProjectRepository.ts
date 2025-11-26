@@ -142,7 +142,28 @@ export class ProjectRepository implements IProjectRepository {
   }
 
 
-  
+  async findByTeamMemberId(employeeId: string): Promise<Project[]> {
+    const docs = await ProjectModel.find({
+      teamMemberIds: new Types.ObjectId(employeeId),
+    });
 
- 
+    return ProjectMapper.toEntities(docs);
+  }
+
+  async findActiveProjects(): Promise<Project[]> {
+    const now = new Date();
+    // Find projects that are either "Active" OR ("Planned" but start date is today/past and end date is future)
+    // Actually, simpler logic: Status is Active OR (StartDate <= Now <= EndDate)
+    // But usually status should be the source of truth. Let's stick to Status = Active for now, 
+    // or if the user wants auto-activation, that's a different feature.
+    // The requirement implies we want meetings for projects that are "ongoing".
+    // Let's query for projects where startDate <= now <= endDate.
+
+    const projects = await ProjectModel.find({
+      startDate: { $lte: now },
+      endDate: { $gte: now }
+    });
+
+    return ProjectMapper.toEntities(projects);
+  }
 }

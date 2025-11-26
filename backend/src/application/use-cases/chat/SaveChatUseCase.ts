@@ -20,7 +20,7 @@ export class SaveChatUseCase implements ISaveChatUseCase {
       senderId,
       receiverId,
       message,
-      false, // isRead
+      false, 
       new Date()
     );
     return await this._chatRepo.save(chat);

@@ -7,7 +7,6 @@ export class GetUnreadCountsUseCase implements IGetUnreadCountsUseCase {
     async execute(userId: string): Promise<Record<string, number>> {
         const unreadMap = await this._chatRepository.getUnreadCounts(userId);
 
-        // Convert Map to plain object for JSON serialization
         const unreadCounts: Record<string, number> = {};
         unreadMap.forEach((count, senderId) => {
             unreadCounts[senderId] = count;
