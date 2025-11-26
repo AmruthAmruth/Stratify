@@ -65,29 +65,29 @@ export const planFormFields = [
 
 
 export const rejectionFormFields = [
-    {
-      name: "reason",
-      label: "Rejection Reason",
-      type: "textarea",
-      placeholder: "Please provide a reason for rejection...",
-    }
-  ];
+  {
+    name: "reason",
+    label: "Rejection Reason",
+    type: "textarea",
+    placeholder: "Please provide a reason for rejection...",
+  }
+];
 
 
-export const createLeaveFields=[
+export const createLeaveFields = [
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
+  { name: "type", label: "Status", type: "select", options: ["Casual", "Sick", "Earned"] },
+  { name: "reason", label: "Reason", type: "text" },
 ]
 
 
 
 
-export const createRejectLeaveFields=[
+export const createRejectLeaveFields = [
   { name: "reason", label: "Reason For Rejection", type: "text" },
- 
-  
+
+
 ]
 
 
@@ -100,7 +100,7 @@ export const createProjectFields = [
   { name: "description", label: "Description", type: "textarea" },
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  {  name: "status",  label: "Status",  type: "select", options: ["Planned", "Active", "Completed", "Archived"] },
+  { name: "status", label: "Status", type: "select", options: ["Planned", "Active", "Completed", "Archived"] },
   // { 
   //   name: "teamMemberIds", label: "Team Members", type: "multiselect",  options: []  // 🔹 fill with user list dynamically
   // }
@@ -117,17 +117,17 @@ export const createIssueFields = [
   { name: "description", label: "Description", type: "textarea" },
   { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "textarea" },
   { name: "estimatedHours", label: "Estimated Hours", type: "number" },
-  { 
-    name: "type", 
-    label: "Issue Type", 
-    type: "select", 
-    options: ["User Story", "Bug"] 
+  {
+    name: "type",
+    label: "Issue Type",
+    type: "select",
+    options: ["User Story", "Bug"]
   },
-  { 
-    name: "priority", 
-    label: "Priority", 
-    type: "select", 
-    options: ["Low", "Medium", "High"] 
+  {
+    name: "priority",
+    label: "Priority",
+    type: "select",
+    options: ["Low", "Medium", "High"]
   }
 ];
 
@@ -164,11 +164,11 @@ export const createSprintFields = [
   { name: "goal", label: "Goal", type: "text" },
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  { 
-    name: "status", 
-    label: "Status", 
-    type: "select", 
-    options: ["Planned", "Active", "Completed"] 
+  {
+    name: "status",
+    label: "Status",
+    type: "select",
+    options: ["Planned", "Active", "Completed"]
   },
 ];
 
@@ -197,19 +197,19 @@ export const createSubTaskFields = [
 
 
 
-export const updateTaskFields=[
+export const updateSubTaskFields = [
+  { name: "heading", label: "Task Title", type: "text" },
+  { name: "description", label: "Description", type: "textarea" },
+  { name: "hours", label: "Estimated Hours", type: "number" },
+  { name: "status", label: "Status", type: "select", options: ["To Do", "In Progress", "Done"] },
+];
+
+
+
+export const updateSprintFields = [
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
-]
-
-
-
-export const updateSprintFields=[
-  { name: "startDate", label: "Start Date", type: "date" },
-  { name: "endDate", label: "End Date", type: "date" },
-  {  name: "type",  label: "Status",  type: "select", options: ["Casual", "Sick", "Earned"] },
- { name: "reason", label: "Reason", type: "text" },
+  { name: "type", label: "Status", type: "select", options: ["Casual", "Sick", "Earned"] },
+  { name: "reason", label: "Reason", type: "text" },
 ]
 

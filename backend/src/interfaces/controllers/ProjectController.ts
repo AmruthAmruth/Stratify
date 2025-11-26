@@ -22,6 +22,10 @@ import { IGetIssueForEmployeeUseCase } from "../../application/interfaces/projec
 import { IRemoveEmployeeInProjectUseCase } from "../../application/interfaces/project/IRemoveEmployeeINProjectUseCase";
 import { IUpdateIssueUseCase } from "../../application/interfaces/project/IUpdateIssueUseCase";
 import { IDeleteIssueUseCase } from "../../application/interfaces/project/IDeleteIssueUseCase";
+import { IUpdateSprintUseCase } from "../../application/interfaces/project/IUpdateSprintUseCase";
+import { IDeleteSprintUseCase } from "../../application/interfaces/project/IDeleteSprintUseCase";
+import { IUpdateSubTaskUseCase } from "../../application/interfaces/project/IUpdateSubTaskUseCase";
+import { IDeleteSubTaskUseCase } from "../../application/interfaces/project/IDeleteSubTaskUseCase";
 
 export class ProjectController {
   constructor(
@@ -42,11 +46,15 @@ export class ProjectController {
     private _deleteProjectUseCase: IDeleteProjectUseCase,
     private _updateProjectUseCase: IUpdateProjectUseCase,
     private _getEmployeeNotInProjectUseCase: IGetEmployeeNotInProjectUseCase,
-    private _getIssueForEmployeeUseCase:IGetIssueForEmployeeUseCase,
-    private _removeEmployeeInProjectUseCase:IRemoveEmployeeInProjectUseCase,
-    private _updateIssueUseCase:IUpdateIssueUseCase,
-    private _deleteIssueUseCase:IDeleteIssueUseCase
-  ) {}
+    private _getIssueForEmployeeUseCase: IGetIssueForEmployeeUseCase,
+    private _removeEmployeeInProjectUseCase: IRemoveEmployeeInProjectUseCase,
+    private _updateIssueUseCase: IUpdateIssueUseCase,
+    private _deleteIssueUseCase: IDeleteIssueUseCase,
+    private _updateSprintUseCase: IUpdateSprintUseCase,
+    private _deleteSprintUseCase: IDeleteSprintUseCase,
+    private _updateSubTaskUseCase: IUpdateSubTaskUseCase,
+    private _deleteSubTaskUseCase: IDeleteSubTaskUseCase
+  ) { }
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
     const createdBy = req.userId;
@@ -75,7 +83,7 @@ export class ProjectController {
       .json({ message: "Backlog created successfully", response });
   };
 
- 
+
 
   createTask = async (req: Request, res: Response): Promise<void> => {
     const response = await this._createTaskUseCase.execute(req.body);
@@ -207,37 +215,59 @@ export class ProjectController {
 
 
 
-  getIssueForEmployee=async(req:AuthRequest,res:Response):Promise<void>=>{
-    const userId=req.userId;
+  getIssueForEmployee = async (req: AuthRequest, res: Response): Promise<void> => {
+    const userId = req.userId;
     const resposne = await this._getIssueForEmployeeUseCase.execute(userId!)
     res.status(StatusCodes.OK).json(resposne)
   }
 
 
-  removeEmployeeInProject=async(req:AuthRequest,res:Response):Promise<void>=>{
-    const {projectId,employeeId}=req.body
-   console.log(req.body);
-   
-   await this._removeEmployeeInProjectUseCase.execute(projectId,employeeId)
+  removeEmployeeInProject = async (req: AuthRequest, res: Response): Promise<void> => {
+    const { projectId, employeeId } = req.body
+    console.log(req.body);
 
-    res.status(StatusCodes.OK).json({message:"Employee Removed Successfully from project!"})
+    await this._removeEmployeeInProjectUseCase.execute(projectId, employeeId)
+
+    res.status(StatusCodes.OK).json({ message: "Employee Removed Successfully from project!" })
   }
 
 
 
 
-  updateIssue=async(req:Request,res:Response):Promise<void>=>{
+  updateIssue = async (req: Request, res: Response): Promise<void> => {
     const response = await this._updateIssueUseCase.execute(req.body)
-    res.status(StatusCodes.OK).json({message:"Updated Issue Successfully!",response})
+    res.status(StatusCodes.OK).json({ message: "Updated Issue Successfully!", response })
   }
 
 
 
-  deleteIssue=async(req:Request,res:Response):Promise<void>=>{
-    const {issueId}=req.params
+  deleteIssue = async (req: Request, res: Response): Promise<void> => {
+    const { issueId } = req.params
     await this._deleteIssueUseCase.execute(issueId!)
-    res.status(StatusCodes.OK).json({message:"Issue Deleted Successfully!"})
+    res.status(StatusCodes.OK).json({ message: "Issue Deleted Successfully!" })
   }
+
+  updateSprint = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._updateSprintUseCase.execute(req.body);
+    res.status(StatusCodes.OK).json({ message: "Sprint Updated Successfully!", response });
+  };
+
+  deleteSprint = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    await this._deleteSprintUseCase.execute(id);
+    res.status(StatusCodes.OK).json({ message: "Sprint Deleted Successfully!" });
+  };
+
+  updateSubTask = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._updateSubTaskUseCase.execute(req.body);
+    res.status(StatusCodes.OK).json({ message: "Subtask Updated Successfully!", response });
+  };
+
+  deleteSubTask = async (req: Request, res: Response): Promise<void> => {
+    const { id } = req.params;
+    await this._deleteSubTaskUseCase.execute(id);
+    res.status(StatusCodes.OK).json({ message: "Subtask Deleted Successfully!" });
+  };
 
 
 }

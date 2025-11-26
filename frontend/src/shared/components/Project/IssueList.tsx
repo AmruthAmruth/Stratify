@@ -1,9 +1,9 @@
 // components/project/IssueList.tsx
 import React, { useState, useRef, useCallback } from "react";
 import { IssueDTO, UserRole } from "./types";
-import { createSubTask, deleteIssue, updateIssue } from "@/services/projects";
-import { createSubTaskFields, updateIssueFields } from "../Forms/formFields";
-import { createSubTaskSchema, updateIssueSchema } from "@/shared/utils/validations";
+import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask } from "@/services/projects";
+import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../Forms/formFields";
+import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
 
@@ -21,8 +21,12 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const [currentIssueId, setCurrentIssueId] = useState<string | null>(null);
   const [currentIssue, setCurrentIssue] = useState<IssueDTO | null>(null);
 
+  const [updateSubTaskModalOpen, setUpdateSubTaskModalOpen] = useState(false);
+  const [currentSubTask, setCurrentSubTask] = useState<any | null>(null);
+
   const formRef = useRef<{ resetForm: () => void }>(null);
   const updateFormRef = useRef<{ resetForm: () => void }>(null);
+  const updateSubTaskFormRef = useRef<{ resetForm: () => void }>(null);
 
   const toggleExpanded = (issueId: string) => {
     setExpandedIssues((prev) => {
@@ -56,6 +60,17 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     updateFormRef.current?.resetForm?.();
     setUpdateIssueModalOpen(false);
     setCurrentIssue(null);
+  }, []);
+
+  const openUpdateSubTaskModal = useCallback((subTask: any) => {
+    setCurrentSubTask(subTask);
+    setUpdateSubTaskModalOpen(true);
+  }, []);
+
+  const closeUpdateSubTaskModal = useCallback(() => {
+    updateSubTaskFormRef.current?.resetForm?.();
+    setUpdateSubTaskModalOpen(false);
+    setCurrentSubTask(null);
   }, []);
 
   // Create Subtask
@@ -100,12 +115,43 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
 
   // DELETE ISSUE (FIXED)
   const handleDeleteIssue = async (issueId: string) => {
+    if (!confirm("Are you sure you want to delete this issue?")) return;
     try {
       await deleteIssue(issueId);
       alert("Issue deleted successfully!");
-      // Optionally refresh parent component or emit callback
+      if (onRefresh) await onRefresh();
     } catch (err: any) {
       alert(`Failed to delete issue: ${err.message || "Unknown error"}`);
+    }
+  };
+
+  // Update Subtask
+  const handleUpdateSubTask = useCallback(
+    async (values: Record<string, any>) => {
+      if (!currentSubTask) return alert("No subtask selected.");
+
+      try {
+        const payload = { ...values, id: currentSubTask.id };
+        await updateTask(payload);
+        alert("Subtask updated successfully!");
+        closeUpdateSubTaskModal();
+        if (onRefresh) await onRefresh();
+      } catch (err: any) {
+        alert(`Update failed: ${err.message || "Unknown error"}`);
+      }
+    },
+    [currentSubTask, closeUpdateSubTaskModal, onRefresh]
+  );
+
+  // Delete Subtask
+  const handleDeleteSubTask = async (subTaskId: string) => {
+    if (!confirm("Are you sure you want to delete this subtask?")) return;
+    try {
+      await deleteSubTask(subTaskId);
+      alert("Subtask deleted successfully!");
+      if (onRefresh) await onRefresh();
+    } catch (err: any) {
+      alert(`Failed to delete subtask: ${err.message || "Unknown error"}`);
     }
   };
 
@@ -144,6 +190,21 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
             initialValues={currentIssue}
             onSubmit={handleUpdateIssue}
             buttonText="Update Issue"
+          />
+        )}
+      </Modal>
+
+      {/* Update Subtask Modal */}
+      <Modal isOpen={updateSubTaskModalOpen} onClose={closeUpdateSubTaskModal} title="Update Subtask">
+        {currentSubTask && (
+          <AuthForm
+            key={currentSubTask.id}
+            ref={updateSubTaskFormRef}
+            fields={updateSubTaskFields}
+            validationSchema={updateSubTaskSchema}
+            initialValues={currentSubTask}
+            onSubmit={handleUpdateSubTask}
+            buttonText="Update Subtask"
           />
         )}
       </Modal>
@@ -262,14 +323,16 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
 
                           {canEdit && (
                             <div className="flex gap-2">
-                              <button className="text-xs border rounded px-3 py-1.5 hover:bg-gray-50">
+                              <button
+                                className="text-xs border rounded px-3 py-1.5 hover:bg-gray-50"
+                                onClick={() => openUpdateSubTaskModal(sub)}
+                              >
                                 Edit
                               </button>
 
-                              {/* FIXED delete subtask */}
                               <button
                                 className="text-xs bg-red-500 text-white rounded px-3 py-1.5 hover:bg-red-600"
-                                onClick={() => handleDeleteIssue(issue.id)}
+                                onClick={() => handleDeleteSubTask(sub.id)}
                               >
                                 Delete
                               </button>

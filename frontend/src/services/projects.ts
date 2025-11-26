@@ -49,11 +49,17 @@ export const createSubTask = (data: Record<string, unknown>) =>
 
 
 
-export const updateSprint = () =>
-  handleRequest(api.get(PROJECT_ROUTES.CREATE_SPRINT));
+export const updateSprint = (data: Record<string, unknown>) =>
+  handleRequest(api.put(PROJECT_ROUTES.UPDATE_SPRINT, data));
 
-export const updateTask = () =>
-  handleRequest(api.get(PROJECT_ROUTES.PROJECT_LEVEL_ALLOCATION));
+export const deleteSprint = (id: string) =>
+  handleRequest(api.delete(PROJECT_ROUTES.DELETE_SPRINT(id)));
+
+export const updateTask = (data: Record<string, unknown>) =>
+  handleRequest(api.put(PROJECT_ROUTES.UPDATE_SUB_TASK, data));
+
+export const deleteSubTask = (id: string) =>
+  handleRequest(api.delete(PROJECT_ROUTES.DELETE_SUB_TASK(id)));
 
 export const assingIssueToSprint = (data: Record<string, unknown>) =>
   handleRequest(api.post(PROJECT_ROUTES.ASSINGED_STORY_TO_SPRINT, data));
@@ -81,20 +87,20 @@ export const getIssuesForEmployee = () =>
   handleRequest(api.get(PROJECT_ROUTES.GET_ISSSUES_FOR_EMPLOYEE));
 
 
-export const updateIssue=(data: Record<string, unknown>)=>{
-  handleRequest(api.put(PROJECT_ROUTES.UPDATE_ISSUE,data))
+export const updateIssue = (data: Record<string, unknown>) => {
+  handleRequest(api.put(PROJECT_ROUTES.UPDATE_ISSUE, data))
 }
 
 
-export const deleteIssue=(issueId:string)=>{
+export const deleteIssue = (issueId: string) => {
   handleRequest(api.delete(PROJECT_ROUTES.DELETE_ISSUE(issueId)))
 }
 
 
 
 
-export const removeEmployeeInProject=(data:Record<string,unknown>)=>{
+export const removeEmployeeInProject = (data: Record<string, unknown>) => {
   console.log("Yes, I'm Working");
-  
-      handleRequest(api.post(PROJECT_ROUTES.REMOVE_EMPLOYEE_TO_PROJECT,data))
+
+  handleRequest(api.post(PROJECT_ROUTES.REMOVE_EMPLOYEE_TO_PROJECT, data))
 }

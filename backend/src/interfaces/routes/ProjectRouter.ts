@@ -23,11 +23,13 @@ projectRouter.put(
 
 projectRouter.delete(
   "/project/:id",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.deleteProject)
 );
 
 projectRouter.get(
   "/project/:id",
+  authMiddleware(["company", "manager", "employee"]),
   asyncHandler(controller.getProjectDetails)
 );
 
@@ -59,33 +61,53 @@ projectRouter.post(
  * ---------------------------------------------------- */
 projectRouter.post(
   "/create-issue",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.createIssue)
 );
 
 projectRouter.put(
   "/update-issue",
+  authMiddleware(["company", "manager", "employee"]),
   asyncHandler(controller.updateIssue)
 );
 
 projectRouter.get(
-  "/issuelevel-allcated-employee/:id",
+  "/issuelevel-allocated-employee/:id",
   asyncHandler(controller.issueLevelEmployeeAllocation)
 );
 
 projectRouter.post(
-  "/assing-to-sprint",
+  "/assign-to-sprint",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.assignIssueToSprint)
 );
 
 
-projectRouter.delete('/delete-issue/:issueId', asyncHandler(controller.deleteIssue))
+projectRouter.delete(
+  "/delete-issue/:issueId",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.deleteIssue)
+);
 
 /* ----------------------------------------------------
  * SUBTASKS
  * ---------------------------------------------------- */
 projectRouter.post(
   "/create-sub-task",
+  authMiddleware(["company", "manager", "employee"]),
   asyncHandler(controller.createSubTask)
+);
+
+projectRouter.put(
+  "/update-sub-task",
+  authMiddleware(["company", "manager", "employee"]),
+  asyncHandler(controller.updateSubTask)
+);
+
+projectRouter.delete(
+  "/delete-sub-task/:id",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.deleteSubTask)
 );
 
 
@@ -94,7 +116,20 @@ projectRouter.post(
  * ---------------------------------------------------- */
 projectRouter.post(
   "/create-sprint",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.createSprint)
+);
+
+projectRouter.put(
+  "/update-sprint",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.updateSprint)
+);
+
+projectRouter.delete(
+  "/delete-sprint/:id",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.deleteSprint)
 );
 
 
@@ -103,11 +138,13 @@ projectRouter.post(
  * ---------------------------------------------------- */
 projectRouter.post(
   "/add-employee-project",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.addEmployeeProject)
 );
 
 projectRouter.post(
   "/remove-emp",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.removeEmployeeInProject)
 );
 
@@ -119,6 +156,7 @@ projectRouter.get(
 
 projectRouter.get(
   "/employee-out-project/:id",
+  authMiddleware(["company", "manager"]),
   asyncHandler(controller.getEmployeesNotInProject)
 );
 

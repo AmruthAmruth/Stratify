@@ -177,8 +177,8 @@ export const createIssueSchema = z.object({
   heading: z.string().min(1, "Heading is required"),
   description: z.string().min(1, "Description is required"),
   acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
-  size: z.string().min(1, "Size is required"),
-  estimatedHours: z.string().min(1, "Estimated Hours is required"),
+  size: z.coerce.number().min(1, "Size must be at least 1"),
+  estimatedHours: z.coerce.number().min(1, "Estimated Hours must be at least 1"),
   type: z.enum(["User Story", "Bug"], {
     errorMap: () => ({ message: "Type must be either User Story or Bug" }),
   }),
@@ -245,4 +245,16 @@ export const createSubTaskSchema = z.object({
   hours: z.coerce.number().min(1, "Hours must be at least 1").optional(),
   status: z.enum(["To Do", "In Progress", "Done"]).optional(),
   assignedToId: z.string().nullable().optional(),
+});
+
+export const updateSubTaskSchema = z.object({
+  heading: z.string().min(1, "Subtask Heading is required"),
+  description: z.string().min(1, "Description is required"),
+  hours: z.coerce.number().min(1, "Hours must be at least 1"),
+  status: z.enum(["To Do", "In Progress", "Done"]),
+});
+
+export const assignIssueToSprintSchema = z.object({
+  issueId: z.string().min(1, "Issue is required"),
+  sprintId: z.string().min(1, "Sprint is required"),
 });

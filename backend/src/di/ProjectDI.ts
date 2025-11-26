@@ -31,6 +31,10 @@ import { GetIssueForEmployeeUseCase } from "../application/use-cases/project/Get
 import { RemoveEmployeeInProjectUseCase } from "../application/use-cases/project/RemoveEmployeeInProjectUseCase";
 import { UpdateIssueUseCase } from "../application/use-cases/project/UpdateIssueUseCase";
 import { DeleteIssueUseCase } from "../application/use-cases/project/DeleteIssueUseCase";
+import { UpdateSprintUseCase } from "../application/use-cases/project/UpdateSprintUseCase";
+import { DeleteSprintUseCase } from "../application/use-cases/project/DeleteSprintUseCase";
+import { UpdateSubTaskUseCase } from "../application/use-cases/project/UpdateSubTaskUseCase";
+import { DeleteSubTaskUseCase } from "../application/use-cases/project/DeleteSubTaskUseCase";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 
@@ -146,6 +150,11 @@ export const projectDI = () => {
 
   const deleteIssueUseCase = new DeleteIssueUseCase(issueRepo)
 
+  const updateSprintUseCase = new UpdateSprintUseCase(sprintRepo);
+  const deleteSprintUseCase = new DeleteSprintUseCase(sprintRepo);
+  const updateSubTaskUseCase = new UpdateSubTaskUseCase(subTaskRepo);
+  const deleteSubTaskUseCase = new DeleteSubTaskUseCase(subTaskRepo);
+
   return new ProjectController(
     createProjectUseCase,
     createUserStoryUseCase,
@@ -167,6 +176,10 @@ export const projectDI = () => {
     getIssueForEmployeeUseCase,
     removeEmployeeInProjectUseCase,
     updateIssueUseCase,
-    deleteIssueUseCase
+    deleteIssueUseCase,
+    updateSprintUseCase,
+    deleteSprintUseCase,
+    updateSubTaskUseCase,
+    deleteSubTaskUseCase
   );
 };
