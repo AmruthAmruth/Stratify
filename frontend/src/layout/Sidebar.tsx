@@ -1,10 +1,12 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store/index";
 import { UserRole } from "./types";
 import { roleMenus } from "./roleMenus";
 import * as Icons from "lucide-react";
+import { getUnreadCounts } from "@/services/chat";
+import { getSocket } from "@/shared/socket/socket";
 
 const getIcon = (iconName: string) => {
   return (Icons as any)[iconName] || Icons.Circle;
@@ -18,7 +20,57 @@ const Sidebar: React.FC = () => {
   const currentPath = location.pathname;
 
   const [isCollapsed, setIsCollapsed] = useState(false);
+  const [totalUnreadCount, setTotalUnreadCount] = useState(0);
+
   const toggleSidebar = () => setIsCollapsed(!isCollapsed);
+
+  // Check if user is currently on chat page
+  const isOnChatPage = currentPath === "/chat" || currentPath === "/message";
+
+  // Fetch unread counts for notification dot
+  useEffect(() => {
+    const fetchUnreadCounts = async () => {
+      try {
+        const unreadData = await getUnreadCounts();
+        const total = Object.values(unreadData).reduce((sum: number, count) => sum + (count as number), 0);
+        setTotalUnreadCount(total);
+      } catch (error) {
+        console.error("Failed to fetch unread counts:", error);
+      }
+    };
+
+    // Fetch immediately
+    fetchUnreadCounts();
+
+    // Refresh when navigating (especially when leaving chat page)
+    if (!isOnChatPage) {
+      fetchUnreadCounts();
+    }
+  }, [currentPath, isOnChatPage]);
+
+  // Listen for new messages via socket to update count in real-time
+  useEffect(() => {
+    const socket = getSocket();
+    if (!socket) return;
+
+    const handleNewMessage = () => {
+      // Only update if not on chat page
+      if (!isOnChatPage) {
+        getUnreadCounts()
+          .then((unreadData) => {
+            const total = Object.values(unreadData).reduce((sum: number, count) => sum + (count as number), 0);
+            setTotalUnreadCount(total);
+          })
+          .catch((error) => console.error("Failed to fetch unread counts:", error));
+      }
+    };
+
+    socket.on("receive-message", handleNewMessage);
+
+    return () => {
+      socket.off("receive-message", handleNewMessage);
+    };
+  }, [isOnChatPage]);
 
   return (
     <>
@@ -72,6 +124,9 @@ const Sidebar: React.FC = () => {
             {menus.map((item) => {
               const IconComponent = getIcon(item.icon);
               const isActive = currentPath === item.path;
+              const isChatMenu = item.path === "/chat" || item.path === "/message" || item.label === "Messages" || item.label === "Message";
+              // Only show notification if NOT on chat page and there are unread messages
+              const hasUnread = isChatMenu && !isOnChatPage && totalUnreadCount > 0;
 
               return (
                 <li key={item.path}>
@@ -93,17 +148,28 @@ const Sidebar: React.FC = () => {
                       <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#009063] rounded-r-full" />
                     )}
 
-                    <IconComponent
-                      className={`
-                        w-5 h-5 transition-colors duration-200 flex-shrink-0
-                        ${isActive ? "text-[#009063]" : "text-gray-500 group-hover:text-[#009063]"}
-                        ${isCollapsed ? "" : "mr-4"}
-                      `}
-                    />
+                    <div className="relative">
+                      <IconComponent
+                        className={`
+                          w-5 h-5 transition-colors duration-200 flex-shrink-0
+                          ${isActive ? "text-[#009063]" : "text-gray-500 group-hover:text-[#009063]"}
+                          ${isCollapsed ? "" : "mr-4"}
+                        `}
+                      />
+                      {/* Red notification dot */}
+                      {hasUnread && (
+                        <span className="absolute -top-1 -right-1 w-2.5 h-2.5 bg-red-500 rounded-full border-2 border-white animate-pulse" />
+                      )}
+                    </div>
 
                     {!isCollapsed && (
                       <>
                         <span className="font-medium tracking-wide flex-1">{item.label}</span>
+                        {hasUnread && (
+                          <span className="bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded-full ml-2">
+                            {totalUnreadCount}
+                          </span>
+                        )}
                         {isActive && (
                           <Icons.ChevronRight className="w-4 h-4 text-[#009063] ml-2" />
                         )}
