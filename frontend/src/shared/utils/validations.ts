@@ -240,9 +240,9 @@ export const createSprintSchema = z.object({
    SUBTASK MODULE
 ============================================================ */
 export const createSubTaskSchema = z.object({
-  issueId: z.string().min(1, "Issue ID is required"),
   heading: z.string().min(1, "Subtask Heading is required"),
   description: z.string().min(1, "Description is required"),
-  status: z.enum(["To Do", "In Progress", "Done", "Blocked"]).optional(),
+  hours: z.coerce.number().min(1, "Hours must be at least 1").optional(),
+  status: z.enum(["To Do", "In Progress", "Done"]).optional(),
   assignedToId: z.string().nullable().optional(),
 });

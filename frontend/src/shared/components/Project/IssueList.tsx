@@ -10,9 +10,10 @@ import AuthForm from "../Forms/DynamicForm";
 interface Props {
   issues: IssueDTO[];
   role: UserRole;
+  onRefresh?: () => Promise<void>;
 }
 
-const IssueList: React.FC<Props> = ({ issues, role }) => {
+const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const canEdit = role === "company" || role === "manager";
   const [expandedIssues, setExpandedIssues] = useState(new Set());
   const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
@@ -61,18 +62,23 @@ const IssueList: React.FC<Props> = ({ issues, role }) => {
   const handleCreateSubtask = useCallback(
     async (values: Record<string, any>) => {
       if (!currentIssueId) return alert("No issue selected.");
-    console.log("Sub task",values);
-    
+      console.log("Sub task", values);
+
       try {
         const payload = { ...values, issueId: currentIssueId };
         await createSubTask(payload);
         alert("Subtask created successfully!");
         closeSubtaskModal();
+
+        // Refresh project data to show the new subtask
+        if (onRefresh) {
+          await onRefresh();
+        }
       } catch (err: any) {
         alert(`Creation failed: ${err.message || "Unknown error"}`);
       }
     },
-    [currentIssueId, closeSubtaskModal]
+    [currentIssueId, closeSubtaskModal, onRefresh]
   );
 
   // Update Issue

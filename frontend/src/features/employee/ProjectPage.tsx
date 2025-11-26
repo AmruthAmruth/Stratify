@@ -9,7 +9,7 @@ export default function ProjectPage() {
 
 
 
-  
+
 
 
 
@@ -168,7 +168,14 @@ export default function ProjectPage() {
 
   return (
     <div className="p-6">
-      <ProjectDetailsLayout project={sampleProject} role={userRole} />
+      <ProjectDetailsLayout
+        project={sampleProject}
+        role={userRole}
+        onRefresh={async () => {
+          // This page uses sample data, so no actual refresh needed
+          // In production, this would fetch real data
+        }}
+      />
     </div>
   );
 }

@@ -7,20 +7,26 @@ const ProjectPage = () => {
   const { id } = useParams();
   const [project, setProject] = useState(null);
 
-  useEffect(() => {
+  const fetchProjectData = async () => {
     if (!id) return;
+    const data = await getProjectDetails(id);
+    console.log("Project Details:", data);
+    setProject(data);
+  };
 
-    getProjectDetails(id).then((data) => {
-      console.log("Project Details:", data);
-      setProject(data); // ← Important
-    });
+  useEffect(() => {
+    fetchProjectData();
   }, [id]);
 
   return (
     <div className="p-6">
       {/* Show loader until project is fetched */}
       {project ? (
-        <ProjectDetailsLayout project={project} role={"manager"} />
+        <ProjectDetailsLayout
+          project={project}
+          role={"manager"}
+          onRefresh={fetchProjectData}
+        />
       ) : (
         <p>Loading...</p>
       )}

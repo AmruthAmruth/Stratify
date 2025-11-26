@@ -28,9 +28,10 @@ import DashboardCard from "../DashboardCards/Cards";
 interface Props {
   project: ProjectDTO;
   role: UserRole;
+  onRefresh?: () => Promise<void>;
 }
 
-const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
+const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => {
   const canManage = role === "company" || role === "manager";
 
   // ────────────────────────────────
@@ -202,7 +203,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
       {/* ─────────────────────────────── */}
       {/* MODALS */}
       {/* ─────────────────────────────── */}
-      
+
       {/* ISSUE MODAL */}
       <Modal
         isOpen={isIssueModalOpen}
@@ -267,35 +268,35 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
 
 
 
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-  <DashboardCard
-    title="Total Backlogs"
-    value={project.backlog.length}
-    subtitle="Issues waiting"
-    badge="Backlog"
-  />
-  <DashboardCard
-    title="Planned Sprints"
-    value={project.plannedSprintCount}
-    subtitle="Upcoming work"
-    trend="up"
-    badge="Planned"
-  />
-  <DashboardCard
-    title="Active Sprints"
-    value={project.activeSprintCount}
-    subtitle="Currently active"
-    trend="up"
-    badge="Active"
-  />
-  <DashboardCard
-    title="Completed Sprints"
-    value={project.completedSprintCount}
-    subtitle="Completed cycles"
-    trend="down"
-    badge="Done"
-  />
-</div>
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <DashboardCard
+          title="Total Backlogs"
+          value={project.backlog.length}
+          subtitle="Issues waiting"
+          badge="Backlog"
+        />
+        <DashboardCard
+          title="Planned Sprints"
+          value={project.plannedSprintCount}
+          subtitle="Upcoming work"
+          trend="up"
+          badge="Planned"
+        />
+        <DashboardCard
+          title="Active Sprints"
+          value={project.activeSprintCount}
+          subtitle="Currently active"
+          trend="up"
+          badge="Active"
+        />
+        <DashboardCard
+          title="Completed Sprints"
+          value={project.completedSprintCount}
+          subtitle="Completed cycles"
+          trend="down"
+          badge="Done"
+        />
+      </div>
 
 
 
@@ -341,11 +342,11 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
             labels={["Planned", "In Progress", "Done"]}
             data={[
               backlog.filter((i) => i.status === "Planned").length +
-                activeSprintIssues.filter((i) => i.status === "Planned").length,
+              activeSprintIssues.filter((i) => i.status === "Planned").length,
               backlog.filter((i) => i.status === "In Progress").length +
-                activeSprintIssues.filter((i) => i.status === "In Progress").length,
+              activeSprintIssues.filter((i) => i.status === "In Progress").length,
               backlog.filter((i) => i.status === "Done").length +
-                activeSprintIssues.filter((i) => i.status === "Done").length,
+              activeSprintIssues.filter((i) => i.status === "Done").length,
             ]}
           />
         </div>
@@ -408,7 +409,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role }) => {
             + Create Issue
           </button>
         )}
-        <IssueList issues={backlog} role={role} />
+        <IssueList issues={backlog} role={role} onRefresh={onRefresh} />
       </ProjectSection>
 
       {/* ACTIVE SPRINTS */}

@@ -78,13 +78,13 @@ projectRouter.post(
 );
 
 
-projectRouter.delete('/delete-issue/:issueId',asyncHandler(controller.deleteIssue))
+projectRouter.delete('/delete-issue/:issueId', asyncHandler(controller.deleteIssue))
 
 /* ----------------------------------------------------
  * SUBTASKS
  * ---------------------------------------------------- */
 projectRouter.post(
-  "/create-subtask",
+  "/create-sub-task",
   asyncHandler(controller.createSubTask)
 );
 
