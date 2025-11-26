@@ -4,6 +4,7 @@ import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { sendTheMessage } from "@/services/chat";
 import { addMessage, clearChat } from "@/store/slices/chatSlice";
+import { formatMessageTime } from "@/utils/dateUtils";
 
 interface ChatBoxProps {
   receiverId: string;
@@ -117,12 +118,23 @@ const ChatBox = ({
                 } animate-in slide-in-from-bottom-2 duration-300 fade-in`}
             >
               <div
-                className={`p-3 px-4 rounded-3xl max-w-[80%] transition-all duration-200 ${msg.senderId === userId
-                  ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
-                  : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
-                  }`}
+                className={`flex flex-col max-w-[80%] transition-all duration-200`}
               >
-                <p className="break-words">{msg.message}</p>
+                <div
+                  className={`p-3 px-4 rounded-3xl ${msg.senderId === userId
+                      ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
+                      : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
+                    }`}
+                >
+                  <p className="break-words">{msg.message}</p>
+                </div>
+                {/* Timestamp */}
+                <span
+                  className={`text-xs text-[#3b3b3b]/50 mt-1 px-2 ${msg.senderId === userId ? "text-right" : "text-left"
+                    }`}
+                >
+                  {formatMessageTime(msg.createdAt)}
+                </span>
               </div>
             </div>
           ))
