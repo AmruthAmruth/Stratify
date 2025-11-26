@@ -16,13 +16,12 @@ export class MeetingScheduler {
             meetingRepo,
             projectRepo,
             notificationRepo
-        );
+        ); 
     }
 
     public start(): void {
         console.log('⏳ Initializing Meeting Scheduler...');
 
-        // Schedule task to run at 00:00 (Midnight) every day
         cron.schedule('0 0 * * *', async () => {
             console.log('⏰ Running Daily Standup Scheduler...');
             try {
