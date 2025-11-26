@@ -18,7 +18,18 @@ chatRouter.get(
     asyncHandler(controller.getTeamForManager)
 );
 
-chatRouter.get('/history/:receiverId',authMiddleware(["manager","employee"]),asyncHandler(controller.getChatHistory))
+chatRouter.get('/history/:receiverId', authMiddleware(["manager", "employee"]), asyncHandler(controller.getChatHistory))
 
+chatRouter.put(
+    '/mark-read/:senderId',
+    authMiddleware(['manager', 'company', 'employee']),
+    asyncHandler(controller.markMessagesAsRead)
+);
+
+chatRouter.get(
+    '/unread-counts',
+    authMiddleware(['manager', 'company', 'employee']),
+    asyncHandler(controller.getUnreadCounts)
+);
 
 export default chatRouter;

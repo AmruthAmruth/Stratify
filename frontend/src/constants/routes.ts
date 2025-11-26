@@ -98,10 +98,12 @@ export const MEETING_ROUTES = {
 
 
 export const CHAT_ROUTES = {
-  SENT_MESSAGE: '/api/chat/send',
-  TEAM_MEMEBER_LIST: '/api/chat/team',
-  CHAT_HISTROY_ROUTES: '/api/chat/history',
-}
+  SENT_MESSAGE: "/api/chat/send",
+  TEAM_MEMEBER_LIST: "/api/chat/team",
+  CHAT_HISTROY_ROUTES: "/api/chat/history",
+  MARK_AS_READ: "/api/chat/mark-read",
+  UNREAD_COUNTS: "/api/chat/unread-counts",
+};
 
 export const GROUP_CHAT_ROUTES = {
   CREATE_GROUP: '/api/group-chat/create',

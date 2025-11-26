@@ -1,14 +1,16 @@
 import { useEffect, useState } from "react";
 import ChatBox from "@/shared/components/Chat/ChatBox";
-import { getChatHistory, getTeamMemeberList } from "@/services/chat";
+import { getChatHistory, getTeamMemeberList, markMessagesAsRead } from "@/services/chat";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
+import { formatChatTime } from "@/utils/dateUtils";
 
 interface Employee {
   id: string;
   name: string;
   lastMessage?: string;
+  lastMessageTime?: string;
   unreadCount?: number;
 }
 
@@ -21,16 +23,24 @@ const ManagerChatPage = () => {
   const userId = useSelector((state: RootState) => state.auth.userId);
   const dispatch = useDispatch();
 
-  // ✅ Fetch team members once
+  // ✅ Fetch team members with enriched data (includes lastMessage, unreadCount, etc.)
   useEffect(() => {
-    getTeamMemeberList()
-      .then((data) => {
-        if (data && Array.isArray(data)) {
-          setEmployees(data.map((emp: Employee) => ({ ...emp, unreadCount: 0 })));
+    const fetchData = async () => {
+      try {
+        const teamData = await getTeamMemeberList();
+
+        if (teamData && Array.isArray(teamData)) {
+          // Backend already returns sorted data with unread counts
+          setEmployees(teamData);
         }
-      })
-      .catch((err) => console.error("Failed to fetch team members:", err))
-      .finally(() => setLoading(false));
+      } catch (err) {
+        console.error("Failed to fetch team members:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchData();
   }, []);
 
   // ✅ Listen for incoming messages via socket
@@ -47,6 +57,7 @@ const ManagerChatPage = () => {
           if (index !== -1) {
             const emp = { ...updated[index] };
             emp.lastMessage = msg.message;
+            emp.lastMessageTime = msg.createdAt;
 
             // Increase unread count only if not selected
             if (!selectedEmployee || selectedEmployee.id !== msg.senderId) {
@@ -68,7 +79,7 @@ const ManagerChatPage = () => {
     };
   }, [userId, selectedEmployee]);
 
-  // ✅ Fetch chat history whenever employee is selected
+  // ✅ Fetch chat history and mark messages as read whenever employee is selected
   useEffect(() => {
     if (!selectedEmployee) return;
     setChatLoading(true);
@@ -79,6 +90,11 @@ const ManagerChatPage = () => {
       })
       .catch((err) => console.error("Failed to load chat history:", err))
       .finally(() => setChatLoading(false));
+
+    // Mark messages as read on backend
+    markMessagesAsRead(selectedEmployee.id).catch((err) =>
+      console.error("Failed to mark messages as read:", err)
+    );
 
     // Reset unread count for this chat
     setEmployees((prev) =>
@@ -108,11 +124,10 @@ const ManagerChatPage = () => {
               <li
                 key={emp.id}
                 onClick={() => setSelectedEmployee(emp)}
-                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${
-                  selectedEmployee?.id === emp.id
-                    ? "bg-[#009063]/10 shadow-sm"
-                    : ""
-                }`}
+                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${selectedEmployee?.id === emp.id
+                  ? "bg-[#009063]/10 shadow-sm"
+                  : ""
+                  }`}
               >
                 {/* Avatar */}
                 <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
@@ -120,10 +135,17 @@ const ManagerChatPage = () => {
                 </div>
 
                 {/* Name + last message */}
-                <div className="flex-1">
-                  <p className="font-medium text-[#3b3b3b]">{emp.name}</p>
+                <div className="flex-1 min-w-0">
+                  <div className="flex items-center justify-between mb-1">
+                    <p className="font-medium text-[#3b3b3b]">{emp.name}</p>
+                    {emp.lastMessageTime && (
+                      <span className="text-xs text-[#3b3b3b]/50 ml-2">
+                        {formatChatTime(emp.lastMessageTime)}
+                      </span>
+                    )}
+                  </div>
                   {emp.lastMessage ? (
-                    <p className="text-sm text-[#3b3b3b]/60 truncate max-w-[160px]">
+                    <p className="text-sm text-[#3b3b3b]/60 truncate">
                       {emp.lastMessage}
                     </p>
                   ) : (
@@ -131,8 +153,8 @@ const ManagerChatPage = () => {
                   )}
                 </div>
 
-                {/* Unread badge */}
-                {emp.unreadCount && emp.unreadCount > 0 && (
+                {/* Unread badge - Only show when there are new messages */}
+                {emp.unreadCount != null && emp.unreadCount > 0 && (
                   <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
                     {emp.unreadCount}
                   </span>

@@ -1,3 +1,4 @@
+import { IGroupMessageDTO } from "../../application/dto/chat/GroupMessageDTO";
 import { GroupMessage } from "../../domain/entities/GroupMessage";
 import { IGroupMessageRepository } from "../../domain/repositories/IGroupMessageRepository";
 import GroupMessageModel from "../models/GroupMessageModel";
@@ -8,7 +9,7 @@ export class GroupMessageRepository implements IGroupMessageRepository {
     return new GroupMessage(doc.id.toString(), doc.groupId, doc.senderId, doc.message, doc.createdAt);
   }
 
-  async getMessages(groupId: string, limit = 100, after?: Date): Promise<any[]> {
+  async getMessages(groupId: string, limit = 100, after?: Date): Promise<IGroupMessageDTO[]> {
     const query: { groupId: string; createdAt?: { $gt: Date } } = { groupId };
     if (after) query.createdAt = { $gt: after };
 
@@ -60,4 +61,4 @@ export class GroupMessageRepository implements IGroupMessageRepository {
       createdAt: m.createdAt
     }));
   }
-}
+} 

@@ -5,19 +5,24 @@ import { ISaveChatUseCase } from "../../interfaces/chat/ISaveChatUseCase";
 
 
 
-export class SaveChatUseCase implements ISaveChatUseCase{
-    constructor(
-    private _chatRepo:IChatRepository
-    ){}
+export class SaveChatUseCase implements ISaveChatUseCase {
+  constructor(
+    private _chatRepo: IChatRepository
+  ) { }
 
-    async execute(senderId: string, receiverId: string, message: string): Promise<Chat> {
-           const chat = new Chat(
-      crypto.randomUUID(),
+  async execute(
+    senderId: string,
+    receiverId: string,
+    message: string
+  ): Promise<Chat> {
+    const chat = new Chat(
+      "",
       senderId,
       receiverId,
       message,
+      false, // isRead
       new Date()
     );
-    return this._chatRepo.save(chat);
-    }
+    return await this._chatRepo.save(chat);
+  }
 }

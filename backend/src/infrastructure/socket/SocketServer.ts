@@ -22,23 +22,27 @@ export const initSocket = (server: HttpServer) => {
       const { senderId, receiverId, message } = data;
       console.log(`💬 Message from ${senderId} to ${receiverId}: ${message}`);
 
-      const receiverSocketId = connectedUsers.get(receiverId);
-
-      if (receiverSocketId) {
-        io.to(receiverSocketId).emit("receive-message", {
-          senderId,
-          receiverId,
-          message,
-          createdAt: new Date().toISOString(),
-        });
-      }
-
-      socket.emit("message-sent", {
-        receiverId,
+      const messageData = {
         senderId,
+        receiverId,
         message,
         createdAt: new Date().toISOString(),
-      });
+      };
+
+      const receiverSocketId = connectedUsers.get(receiverId);
+      const senderSocketId = connectedUsers.get(senderId);
+
+      // Send to receiver
+      if (receiverSocketId) {
+        io.to(receiverSocketId).emit("receive-message", messageData);
+        console.log(`✅ Sent to receiver ${receiverId}`);
+      }
+
+      // Send back to sender for confirmation (so they see it in their chat)
+      if (senderSocketId) {
+        io.to(senderSocketId).emit("receive-message", messageData);
+        console.log(`✅ Sent back to sender ${senderId}`);
+      }
     });
 
 

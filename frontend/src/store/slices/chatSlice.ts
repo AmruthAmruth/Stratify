@@ -4,15 +4,18 @@ export interface IMessage {
   senderId: string;
   receiverId?: string;
   message: string;
+  isRead?: boolean;
   createdAt: string;
 }
 
 interface ChatState {
   messages: IMessage[];
+  unreadCounts: Record<string, number>;
 }
 
 const initialState: ChatState = {
   messages: [],
+  unreadCounts: {},
 };
 
 const chatSlice = createSlice({
@@ -25,8 +28,17 @@ const chatSlice = createSlice({
     clearChat: (state) => {
       state.messages = [];
     },
+    setUnreadCounts: (state, action: PayloadAction<Record<string, number>>) => {
+      state.unreadCounts = action.payload;
+    },
+    updateUnreadCount: (state, action: PayloadAction<{ senderId: string; count: number }>) => {
+      state.unreadCounts[action.payload.senderId] = action.payload.count;
+    },
+    clearUnreadCount: (state, action: PayloadAction<string>) => {
+      delete state.unreadCounts[action.payload];
+    },
   },
 });
 
-export const { addMessage, clearChat } = chatSlice.actions;
+export const { addMessage, clearChat, setUnreadCounts, updateUnreadCount, clearUnreadCount } = chatSlice.actions;
 export default chatSlice.reducer;

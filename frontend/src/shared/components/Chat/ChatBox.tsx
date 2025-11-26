@@ -30,26 +30,33 @@ const ChatBox = ({
     }
   }, [receiverId, dispatch, initialMessages]);
 
-  // ✅ Listen for incoming socket messages (fixed duplicate issue)
+  // ✅ Listen for incoming socket messages
   useEffect(() => {
     const socket = getSocket();
     if (!socket) return;
 
-    // 🔥 Important fix: clear any previous listener before adding a new one
-    socket.off("receive-message");
-
     const handleReceiveMessage = (msg: any) => {
-      // Only add if this message belongs to this chat
-      if (
+      console.log("📨 ChatBox received message:", msg);
+      console.log("Current chat - userId:", userId, "receiverId:", receiverId);
+
+      // Check if this message belongs to the current conversation
+      const isMessageForThisChat =
         (msg.senderId === receiverId && msg.receiverId === userId) ||
-        (msg.senderId === userId && msg.receiverId === receiverId)
-      ) {
+        (msg.senderId === userId && msg.receiverId === receiverId);
+
+      console.log("Is message for this chat?", isMessageForThisChat);
+
+      if (isMessageForThisChat) {
+        console.log("✅ Adding message to ChatBox");
         dispatch(addMessage(msg));
+      } else {
+        console.log("❌ Message not for this chat, ignoring");
       }
     };
 
     socket.on("receive-message", handleReceiveMessage);
 
+    // Only remove THIS specific listener on cleanup
     return () => {
       socket.off("receive-message", handleReceiveMessage);
     };
@@ -72,10 +79,10 @@ const ChatBox = ({
       createdAt: new Date().toISOString(),
     };
 
-    // Emit to socket + save in DB + update UI instantly
+    // Emit to socket and save in DB
+    // Socket listener will add it to Redux when "receive-message" event comes back
     socket.emit("send-message", msg);
     sendTheMessage(msg);
-    dispatch(addMessage(msg));
     setMessage("");
   };
 
@@ -106,16 +113,14 @@ const ChatBox = ({
           filteredMessages.map((msg, index) => (
             <div
               key={`${msg.senderId}-${msg.createdAt}-${index}`}
-              className={`flex ${
-                msg.senderId === userId ? "justify-end" : "justify-start"
-              } animate-in slide-in-from-bottom-2 duration-300 fade-in`}
+              className={`flex ${msg.senderId === userId ? "justify-end" : "justify-start"
+                } animate-in slide-in-from-bottom-2 duration-300 fade-in`}
             >
               <div
-                className={`p-3 px-4 rounded-3xl max-w-[80%] transition-all duration-200 ${
-                  msg.senderId === userId
-                    ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
-                    : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
-                }`}
+                className={`p-3 px-4 rounded-3xl max-w-[80%] transition-all duration-200 ${msg.senderId === userId
+                  ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
+                  : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
+                  }`}
               >
                 <p className="break-words">{msg.message}</p>
               </div>
