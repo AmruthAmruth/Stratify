@@ -106,6 +106,15 @@ export const createProjectFields = [
   // }
 ];
 
+export const updateProjectFields = [
+  { name: "name", label: "Project Name", type: "text" },
+  { name: "key", label: "Project Key", type: "text" },
+  { name: "description", label: "Description", type: "textarea" },
+  { name: "startDate", label: "Start Date", type: "date" },
+  { name: "endDate", label: "End Date", type: "date" },
+  { name: "status", label: "Status", type: "select", options: ["Planned", "Active", "Completed", "Archived"] },
+];
+
 
 
 

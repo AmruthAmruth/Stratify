@@ -30,7 +30,6 @@ export class GroupChatController {
             return;
         }
 
-        // Add creator to members if not already included
         const allMembers = members.includes(userId) ? members : [...members, userId];
 
         const group = await this._createGroupUseCase.execute(name, allMembers);
@@ -55,7 +54,6 @@ export class GroupChatController {
             return;
         }
 
-        // Verify user is a member of the group
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
             res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
@@ -75,7 +73,6 @@ export class GroupChatController {
             message
         );
 
-        // Emit to all group members via socket with sender name
         GroupChatEmitter.emitMessage(
             groupId,
             senderId,
@@ -100,7 +97,6 @@ export class GroupChatController {
         const { groupId } = req.params;
         const { limit, after } = req.query;
 
-        // Verify user is a member of the group
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
             res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
@@ -167,7 +163,7 @@ export class GroupChatController {
 
         const updatedGroup = await this._groupRepository.addMember(groupId, newMemberId);
 
-        // Emit member joined event
+        
         GroupChatEmitter.emitMemberJoined(
             groupId,
             newMemberId,
@@ -190,7 +186,6 @@ export class GroupChatController {
         const { groupId, memberId } = req.params;
         const { memberName } = req.body;
 
-        // Verify user is a member of the group
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
             res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
@@ -206,7 +201,6 @@ export class GroupChatController {
 
         const updatedGroup = await this._groupRepository.removeMember(groupId, memberId);
 
-        // Emit member left event
         GroupChatEmitter.emitMemberLeft(
             groupId,
             memberId,

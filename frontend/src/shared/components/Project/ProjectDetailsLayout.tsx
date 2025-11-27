@@ -19,12 +19,12 @@ import {
   updateProjectSchema,
 } from "@/shared/utils/validations";
 import {
-  addEmployeeProject, // Changed from addEmployeetoProject
+  addEmployeeProject, // Changed from addEmployeetoProject 
   createIssue,
   createSprint,
-  getEmployeesNotInProject,
+  getEmployeesNotInProject,   
   updateProject,
-  assingIssueToSprint,
+  assignIssueToSprint,
   updateIssue,
 } from "@/services/projects";
 import ReusableChart from "../Chart/ReusableChart";
@@ -74,10 +74,18 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   const activeSprints = project.activeSprints ?? [];
   const plannedSprints = project.plannedSprints ?? [];
   const completedSprints = project.completedSprints ?? [];
-  const assignedEmployees = project.assignedEmployee ?? project.assinedEmployee ?? [];
+  const assignedEmployees = project.assignedEmployee ?? [];
 
   // Get all issues from active sprints
   const activeSprintIssues = activeSprints.flatMap((s) => s.issues ?? []);
+
+  // Get all issues across backlog and all sprints
+  const allSprintIssues = [
+    ...activeSprintIssues,
+    ...plannedSprints.flatMap((s) => s.issues ?? []),
+    ...completedSprints.flatMap((s) => s.issues ?? []),
+  ];
+  const allIssues = [...backlog, ...allSprintIssues];
 
   // ────────────────────────────────
   // FORM SUBMIT HANDLERS
@@ -114,6 +122,8 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       enqueueSnackbar("Employee assigned successfully!", { variant: "success" });
       employeeFormRef.current?.resetForm();
       setIsEmployeeModalOpen(false);
+      // Refetch available employees
+      getEmployeesNotInProject(project.id).then(setEmployeeList);
       if (onRefresh) await onRefresh();
     } catch (error: any) {
       console.error(error);
@@ -144,21 +154,14 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         return;
       }
 
-      // Update the issue with the assigned employee
+      // Update the issue with the assigned employee (only changed fields)
       await updateIssue({
         id: values.issueId,
-        heading: selectedIssue.heading,
-        description: selectedIssue.description,
-        acceptanceCriteria: selectedIssue.acceptanceCriteria,
-        size: selectedIssue.size,
-        estimatedHours: selectedIssue.estimatedHours,
-        type: selectedIssue.type,
-        priority: selectedIssue.priority,
         assignedTo: values.employeeId,
       });
 
       // Then assign the issue to the sprint
-      await assingIssueToSprint({
+      await assignIssueToSprint({
         issueId: values.issueId,
         sprintId: values.sprintId,
       });
@@ -240,13 +243,25 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* --- ADMIN BUTTONS --- */}
       {canManage && (
         <div className="flex flex-wrap gap-3 mt-4">
-          <button onClick={() => setIsEditProjectModalOpen(true)} className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90">
+          <button 
+            onClick={() => setIsUpdateProjectModalOpen(true)} 
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            aria-label="Edit project details"
+          >
             Edit Project
           </button>
-          <button onClick={() => setIsEmployeeModalOpen(true)} className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90">
+          <button 
+            onClick={() => setIsEmployeeModalOpen(true)} 
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            aria-label="Add employee to project"
+          >
             Add Employee
           </button>
-          <button onClick={() => setIsAssignSprintModalOpen(true)} className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90">
+          <button 
+            onClick={() => setIsAssignSprintModalOpen(true)} 
+            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            aria-label="Assign issue to sprint and employee"
+          >
             Assign Issue to Sprint
           </button>
         </div>
@@ -265,11 +280,18 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         <AuthForm ref={employeeFormRef} fields={addEmployeeFields} validationSchema={addEmployeeSchema} onSubmit={handleSubmitEmployee} buttonText="Assign Employee" />
       </Modal>
 
-      <Modal isOpen={isEditProjectModalOpen} onClose={() => setIsEditProjectModalOpen(false)} title="Update Project">
-        <AuthForm ref={editProjectFormRef} fields={createProjectFields} validationSchema={createProjectSchema} initialValues={project} onSubmit={handleSubmitEditProject} buttonText="Update Project" />
+      <Modal isOpen={isUpdateProjectModalOpen} onClose={() => setIsUpdateProjectModalOpen(false)} title="Update Project">
+        <AuthForm 
+          ref={updateProjectFormRef} 
+          fields={updateProjectFields} 
+          validationSchema={updateProjectSchema} 
+          initialValues={project} 
+          onSubmit={handleSubmitUpdateProject} 
+          buttonText="Update Project" 
+        />
       </Modal>
 
-      <Modal isOpen={isAssignSprintModalOpen} onClose={() => setIsAssignSprintModalOpen(false)} title="Assign Issue to Sprint">
+      <Modal isOpen={isAssignSprintModalOpen} onClose={() => setIsAssignSprintModalOpen(false)} title="Assign Issue to Sprint & Employee">
         <AuthForm ref={assignSprintFormRef} fields={assignIssueToSprintFields} validationSchema={assignIssueToSprintSchema} onSubmit={handleSubmitAssignSprint} buttonText="Assign to Sprint" />
       </Modal>
 
@@ -286,9 +308,9 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* ──────────────────────────────── */}
       {/* CHARTS */}
       {/* ──────────────────────────────── */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {/* Sprint Status Summary */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="doughnut"
             title="Sprint Overview"
@@ -302,67 +324,66 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Issue Type Distribution */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="pie"
-            title="Backlog Issue Types"
+            title="All Issue Types"
             labels={["User Story", "Bug"]}
             data={[
-              backlog.filter((i) => i.type === "User Story").length,
-              backlog.filter((i) => i.type === "Bug").length,
+              allIssues.filter((i) => i.type === "User Story").length,
+              allIssues.filter((i) => i.type === "Bug").length,
             ]}
           />
         </div>
 
         {/* Issue Status Overview */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="pie"
             title="Issue Status Overview"
             labels={["Planned", "In Progress", "Done"]}
             data={[
-              backlog.filter((i) => i.status === "Planned").length + activeSprintIssues.filter((i) => i.status === "Planned").length,
-              backlog.filter((i) => i.status === "In Progress").length + activeSprintIssues.filter((i) => i.status === "In Progress").length,
-              backlog.filter((i) => i.status === "Done").length + activeSprintIssues.filter((i) => i.status === "Done").length,
+              allIssues.filter((i) => i.status === "Planned").length,
+              allIssues.filter((i) => i.status === "In Progress").length,
+              allIssues.filter((i) => i.status === "Done").length,
             ]}
           />
         </div>
 
         {/* Priority Distribution */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="bar"
             title="Priority Breakdown"
             labels={["High", "Medium", "Low"]}
             data={[
-              backlog.filter((i) => i.priority === "High").length,
-              backlog.filter((i) => i.priority === "Medium").length,
-              backlog.filter((i) => i.priority === "Low").length,
+              allIssues.filter((i) => i.priority === "High").length,
+              allIssues.filter((i) => i.priority === "Medium").length,
+              allIssues.filter((i) => i.priority === "Low").length,
             ]}
           />
         </div>
 
         {/* Assigned Employee Workload */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="line"
             title="Employee Workload"
             labels={assignedEmployees.map((emp) => emp.name)}
             data={assignedEmployees.map(
               (emp) =>
-                backlog.filter((i) => i.assignedTo === emp.id).length +
-                activeSprintIssues.filter((i) => i.assignedTo === emp.id).length
+                allIssues.filter((i) => i.assignedTo === emp.id).length
             )}
           />
         </div>
 
         {/* Hours Estimation Chart */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="bar"
-            title="Estimated Hours (Backlog)"
-            labels={backlog.map((i) => i.heading)}
-            data={backlog.map((i) => i.estimatedHours ?? 0)}
+            title="Estimated Hours (All Issues)"
+            labels={allIssues.map((i) => (i.heading.length > 20 ? `${i.heading.slice(0, 20)}...` : i.heading))}
+            data={allIssues.map((i) => i.estimatedHours ?? 0)}
           />
         </div>
       </div>
@@ -374,7 +395,11 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* BACKLOG */}
       <ProjectSection title="Backlog Items">
         {canManage && (
-          <button onClick={() => setIsIssueModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded mb-3">
+          <button 
+            onClick={() => setIsIssueModalOpen(true)} 
+            className="bg-blue-600 text-white px-4 py-2 rounded mb-3"
+            aria-label="Create new issue"
+          >
             + Create Issue
           </button>
         )}
@@ -384,7 +409,11 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* ACTIVE SPRINTS */}
       <ProjectSection title="Active Sprints">
         {canManage && (
-          <button onClick={() => setIsSprintModalOpen(true)} className="bg-green-600 text-white px-4 py-2 rounded mb-3">
+          <button 
+            onClick={() => setIsSprintModalOpen(true)} 
+            className="bg-green-600 text-white px-4 py-2 rounded mb-3"
+            aria-label="Create new sprint"
+          >
             + Create Sprint
           </button>
         )}
@@ -405,9 +434,6 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       <ProjectSection title="Assigned Employees">
         <EmployeeList employees={assignedEmployees} projectId={project.id} onRemove={(emp) => console.log("Remove employee:", emp)} />
       </ProjectSection>
-
-
-
     </div>
   );
 };

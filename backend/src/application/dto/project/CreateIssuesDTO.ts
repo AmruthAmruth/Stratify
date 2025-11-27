@@ -11,6 +11,14 @@ export interface CreateIssuesDTO {
 }
 
 
-export interface UpdateIssueDTO extends CreateIssuesDTO {
+export interface UpdateIssueDTO {
   id: string;
+  heading?: string;
+  description?: string;
+  acceptanceCriteria?: string;
+  size?: number;
+  estimatedHours?: number;
+  type?: "User Story" | "Bug";
+  priority?: "Low" | "Medium" | "High";
+  assignedTo?: string | null;
 }

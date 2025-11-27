@@ -19,7 +19,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
     private _subTaskRepo: ISubtaskRepository,
     private _sprintRepo: ISprintRepository,
     private _employeeRepo: IEmployeeRepository
-  ) {}
+  ) { }
 
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
     const project = await this._projectRepo.findById(projectId);
@@ -105,21 +105,21 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
     // ---------------------------------------------------------
     const assignedEmployees: EmployeeDTO[] = [];
 
-if (project.teamMemberIds && project.teamMemberIds.length > 0) {
-  const employees = await Promise.all(
-    project.teamMemberIds.map((id) => this._employeeRepo.findById(id))
-  );
+    if (project.teamMemberIds && project.teamMemberIds.length > 0) {
+      const employees = await Promise.all(
+        project.teamMemberIds.map((id) => this._employeeRepo.findById(id))
+      );
 
-  employees.forEach((emp) => {
-    if (emp) {
-      assignedEmployees.push({
-        id: emp.id!,
-        name: emp.name,
-        position: emp.position,
+      employees.forEach((emp) => {
+        if (emp) {
+          assignedEmployees.push({
+            id: emp.id!,
+            name: emp.name,
+            position: emp.position,
+          });
+        }
       });
     }
-  });
-}
 
     // ---------------------------------------------------------
     // 4. Final DTO
@@ -141,7 +141,7 @@ if (project.teamMemberIds && project.teamMemberIds.length > 0) {
       plannedSprints,
       completedSprints,
 
-      assinedEmployee: assignedEmployees, // <<< ADDED EMPLOYEE DATA
+      assignedEmployee: assignedEmployees, // <<< ADDED EMPLOYEE DATA
 
       activeSprintCount: activeSprints.length,
       plannedSprintCount: plannedSprints.length,

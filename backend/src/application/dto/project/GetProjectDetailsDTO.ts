@@ -14,7 +14,7 @@ export interface ProjectDetailsDTO {
   activeSprints: SprintWithIssuesDTO[];
   plannedSprints: SprintWithIssuesDTO[];
   completedSprints: SprintWithIssuesDTO[];
-  assinedEmployee:EmployeeDTO[]
+  assignedEmployee: EmployeeDTO[];
   activeSprintCount: number;
   plannedSprintCount: number;
   completedSprintCount: number;
@@ -54,8 +54,8 @@ export interface SubTaskDTO {
   assignedToId?: string | null;
 }
 
-export interface EmployeeDTO{
-  id:string;
-  name:string;
-  position:string;
+export interface EmployeeDTO {
+  id: string;
+  name: string;
+  position: string;
 }
