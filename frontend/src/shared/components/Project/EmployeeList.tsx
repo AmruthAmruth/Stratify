@@ -4,6 +4,8 @@ import Table from "../Table/Table";
 import { EmployeeDTO } from "./types";
 import TableFilterBar from "../FilterBar/TableFilterBar";
 import { removeEmployeeInProject } from "@/services/projects";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   employees: EmployeeDTO[];
@@ -11,16 +13,23 @@ interface Props {
   onRemoveSuccess?: () => void;
 }
 
-const EmployeeList: React.FC<Props> = ({ 
-  employees = [], 
+const EmployeeList: React.FC<Props> = ({
+  employees = [],
   projectId,
-  onRemoveSuccess 
+  onRemoveSuccess
 }) => {
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState<string>("");
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [filterValue, setFilterValue] = useState<string>("");
   const [isRemoving, setIsRemoving] = useState<string | null>(null);
+
+  // Confirmation dialog state
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    employeeName: string;
+    employeeId: string;
+  }>({ isOpen: false, employeeName: "", employeeId: "" });
 
   // DEBUG: Log projectId when component mounts or projectId changes
   useEffect(() => {
@@ -60,7 +69,7 @@ const EmployeeList: React.FC<Props> = ({
     { key: "position", label: "Position" },
   ];
 
-  const handleRemoveEmployee = async (employee: EmployeeDTO) => {
+  const handleRemoveEmployee = (employee: EmployeeDTO) => {
     // DEBUG: Log all values before API call
     console.log("=== REMOVE EMPLOYEE DEBUG ===");
     console.log("Employee object:", employee);
@@ -68,40 +77,40 @@ const EmployeeList: React.FC<Props> = ({
     console.log("Project ID:", projectId);
     console.log("============================");
 
-    if (!projectId) {
-      alert("Error: Project ID is undefined. Please check console for details.");
+    if (!projectId || !employee.id) {
+      console.error("Missing required IDs");
       return;
     }
 
-    if (!employee.id) {
-      alert("Error: Employee ID is undefined. Please check console for details.");
-      return;
-    }
+    setConfirmDialog({
+      isOpen: true,
+      employeeName: employee.name,
+      employeeId: employee.id,
+    });
+  };
 
-    const confirmRemove = window.confirm(
-      `Are you sure you want to remove ${employee.name} from this project?`
-    );
-    
-    if (!confirmRemove) return;
+  const confirmRemoveEmployee = async () => {
+    const { employeeId, employeeName } = confirmDialog;
+    setConfirmDialog({ isOpen: false, employeeName: "", employeeId: "" });
 
     try {
-      setIsRemoving(employee.id);
-      
+      setIsRemoving(employeeId);
+
       await removeEmployeeInProject({
-        employeeId: employee.id,
+        employeeId: employeeId,
         projectId: projectId,
       });
 
-      alert(`${employee.name} has been removed from the project.`);
+      enqueueSnackbar(`${employeeName} has been removed from the project`, { variant: "success" });
       onRemoveSuccess?.();
-      
+
     } catch (error: any) {
       console.error("Failed to remove employee:", error);
       const message =
         error?.response?.data?.message ||
         error?.message ||
         "Failed to remove employee. Please try again.";
-      alert(message);
+      enqueueSnackbar(message, { variant: "error" });
     } finally {
       setIsRemoving(null);
     }
@@ -118,7 +127,17 @@ const EmployeeList: React.FC<Props> = ({
 
   return (
     <div className="mt-4">
-   
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title="Remove Employee"
+        message={`Are you sure you want to remove ${confirmDialog.employeeName} from this project? All their assigned issues will be unassigned.`}
+        onConfirm={confirmRemoveEmployee}
+        onCancel={() => setConfirmDialog({ isOpen: false, employeeName: "", employeeId: "" })}
+        confirmText="Remove"
+        cancelText="Cancel"
+      />
+
 
       <TableFilterBar
         searchTerm={searchTerm}
@@ -149,7 +168,7 @@ const EmployeeList: React.FC<Props> = ({
         data={filteredEmployees}
         currentPage={1}
         totalPages={1}
-        onPageChange={() => {}}
+        onPageChange={() => { }}
         actions={actions}
         renderCell={(row, key) => row[key]}
       />

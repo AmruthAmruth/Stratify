@@ -144,7 +144,12 @@ export const projectDI = () => {
 
 
 
-  const removeEmployeeInProjectUseCase = new RemoveEmployeeInProjectUseCase(projectRepo)
+  const removeEmployeeInProjectUseCase = new RemoveEmployeeInProjectUseCase(
+    projectRepo,
+    issueRepo,
+    employeeRepo,
+    notificationRepo
+  )
 
   const updateIssueUseCase = new UpdateIssueUseCase(issueRepo)
 

@@ -1,6 +1,6 @@
 // components/project/ProjectDetailsLayout.tsx
 import React, { useState, useRef, useEffect } from "react";
-import { ProjectDTO, UserRole } from "./types";
+import { ProjectDetailsDTO, UserRole } from "./types";
 import ProjectHeader from "./ProjectHeader";
 import ProjectSection from "./ProjectSection";
 import IssueList from "./IssueList";
@@ -10,16 +10,16 @@ import EmployeeList from "./EmployeeList";
 import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
 // Form schemas + other forms
-import { createIssueFields, createSprintFields, createProjectFields } from "../Forms/formFields";
+import { createIssueFields, createSprintFields, updateProjectFields } from "../Forms/formFields";
 import {
   addEmployeeSchema,
   createIssueSchema,
   createSprintSchema,
   assignIssueToSprintSchema,
-  createProjectSchema,
+  updateProjectSchema,
 } from "@/shared/utils/validations";
 import {
-  addEmployeetoProject,
+  addEmployeeProject, // Changed from addEmployeetoProject
   createIssue,
   createSprint,
   getEmployeesNotInProject,
@@ -29,9 +29,10 @@ import {
 } from "@/services/projects";
 import ReusableChart from "../Chart/ReusableChart";
 import DashboardCard from "../DashboardCards/Cards";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
-  project: ProjectDTO;
+  project: ProjectDetailsDTO; // Changed from ProjectDTO
   role: UserRole;
   onRefresh?: () => Promise<void>;
 }
@@ -45,14 +46,14 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   const [isIssueModalOpen, setIsIssueModalOpen] = useState(false);
   const [isSprintModalOpen, setIsSprintModalOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
-  const [isEditProjectModalOpen, setIsEditProjectModalOpen] = useState(false);
+  const [isUpdateProjectModalOpen, setIsUpdateProjectModalOpen] = useState(false); // Changed from isEditProjectModalOpen
   const [isAssignSprintModalOpen, setIsAssignSprintModalOpen] = useState(false);
 
   // Refs for AuthForm Reset
   const issueFormRef = useRef<{ resetForm: () => void }>(null);
   const sprintFormRef = useRef<{ resetForm: () => void }>(null);
   const employeeFormRef = useRef<{ resetForm: () => void }>(null);
-  const editProjectFormRef = useRef<{ resetForm: () => void }>(null);
+  const updateProjectFormRef = useRef<{ resetForm: () => void }>(null); // Changed from editProjectFormRef
   const assignSprintFormRef = useRef<{ resetForm: () => void }>(null);
 
   // ────────────────────────────────
@@ -84,87 +85,91 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   const handleSubmitIssue = async (values: Record<string, any>) => {
     try {
       await createIssue({ ...values, projectId: project.id });
-      alert("Issue created successfully!");
+      enqueueSnackbar("Issue created successfully!", { variant: "success" });
       issueFormRef.current?.resetForm();
       setIsIssueModalOpen(false);
-    } catch (err) {
+      if (onRefresh) await onRefresh();
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to create issue");
+      enqueueSnackbar(err.message || "Failed to create issue", { variant: "error" });
     }
   };
 
   const handleSubmitSprint = async (values: Record<string, any>) => {
     try {
       await createSprint({ ...values, projectId: project.id });
-      alert("Sprint created successfully!");
+      enqueueSnackbar("Sprint created successfully!", { variant: "success" });
       sprintFormRef.current?.resetForm();
       setIsSprintModalOpen(false);
-    } catch (err) {
+      if (onRefresh) await onRefresh();
+    } catch (err: any) {
       console.error(err);
-      alert("Failed to create sprint");
+      enqueueSnackbar(err.message || "Failed to create sprint", { variant: "error" });
     }
   };
 
   const handleSubmitEmployee = async (values: Record<string, any>) => {
     try {
-      await addEmployeetoProject({ projectId: project.id, employeeId: values.employeeId });
-      alert("Employee assigned successfully!");
+      await addEmployeeProject({ projectId: project.id, employeeId: values.employeeId }); // Changed function name
+      enqueueSnackbar("Employee assigned successfully!", { variant: "success" });
       employeeFormRef.current?.resetForm();
       setIsEmployeeModalOpen(false);
-    } catch (error) {
+      if (onRefresh) await onRefresh();
+    } catch (error: any) {
       console.error(error);
-      alert("Failed to assign employee");
+      enqueueSnackbar(error.message || "Failed to assign employee", { variant: "error" });
     }
   };
 
-  const handleSubmitEditProject = async (values: Record<string, any>) => {
+  const handleSubmitUpdateProject = async (values: Record<string, any>) => { // Changed function name
     try {
       const updatedData = { ...values, departmentId: project.departmentId, id: project.id };
       await updateProject(updatedData);
-      alert("Project updated successfully! 🎉");
-      editProjectFormRef.current?.resetForm();
-      setIsEditProjectModalOpen(false);
+      enqueueSnackbar("Project updated successfully! 🎉", { variant: "success" });
+      updateProjectFormRef.current?.resetForm(); // Changed ref
+      setIsUpdateProjectModalOpen(false); // Changed modal state
       if (onRefresh) await onRefresh();
     } catch (error: any) {
       console.error("Failed to update project:", error);
       const message = error?.response?.data?.message || error?.message || "Something went wrong.";
-      alert(`Update failed: ${message}`);
+      enqueueSnackbar(`Update failed: ${message} `, { variant: "error" });
     }
   };
 
   const handleSubmitAssignSprint = async (values: Record<string, any>) => {
     try {
-      const { issueId, employeeId, sprintId } = values;
-
-      // First, get the issue details to preserve other fields
-      const issueToUpdate = backlog.find(issue => issue.id === issueId);
-      if (!issueToUpdate) {
-        throw new Error("Issue not found");
+      const selectedIssue = backlog.find((issue) => issue.id === values.issueId);
+      if (!selectedIssue) {
+        enqueueSnackbar("Issue not found", { variant: "error" });
+        return;
       }
 
       // Update the issue with the assigned employee
       await updateIssue({
-        id: issueId,
-        heading: issueToUpdate.heading,
-        description: issueToUpdate.description,
-        acceptanceCriteria: issueToUpdate.acceptanceCriteria,
-        size: issueToUpdate.size,
-        estimatedHours: issueToUpdate.estimatedHours,
-        type: issueToUpdate.type,
-        priority: issueToUpdate.priority,
-        assignedTo: employeeId,
+        id: values.issueId,
+        heading: selectedIssue.heading,
+        description: selectedIssue.description,
+        acceptanceCriteria: selectedIssue.acceptanceCriteria,
+        size: selectedIssue.size,
+        estimatedHours: selectedIssue.estimatedHours,
+        type: selectedIssue.type,
+        priority: selectedIssue.priority,
+        assignedTo: values.employeeId,
       });
 
       // Then assign the issue to the sprint
-      await assingIssueToSprint({ issueId, sprintId });
+      await assingIssueToSprint({
+        issueId: values.issueId,
+        sprintId: values.sprintId,
+      });
 
-      alert("Issue assigned to sprint successfully!");
+      enqueueSnackbar("Issue assigned to sprint successfully!", { variant: "success" });
       assignSprintFormRef.current?.resetForm();
       setIsAssignSprintModalOpen(false);
       if (onRefresh) await onRefresh();
     } catch (err: any) {
       console.error(err);
-      alert(`Failed to assign issue: ${err.message || "Unknown error"}`);
+      enqueueSnackbar(err.message || "Failed to assign issue", { variant: "error" });
     }
   };
 
@@ -178,7 +183,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       type: "select",
       placeholder: "Choose employee",
       options: employeeList.map((emp) => ({
-        label: `${emp.name} — ${emp.position}`,
+        label: `${emp.name} — ${emp.position} `,
         value: emp.employeeId,
       })),
     },
@@ -201,7 +206,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       type: "select",
       placeholder: "Choose employee",
       options: assignedEmployees.map((emp) => ({
-        label: `${emp.name} — ${emp.position}`,
+        label: `${emp.name} — ${emp.position} `,
         value: emp.id,
       })),
     },

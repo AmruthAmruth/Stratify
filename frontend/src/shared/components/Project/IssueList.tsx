@@ -6,6 +6,8 @@ import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../
 import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
+import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
+import { enqueueSnackbar } from "notistack";
 
 interface Props {
   issues: IssueDTO[];
@@ -23,6 +25,14 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
 
   const [updateSubTaskModalOpen, setUpdateSubTaskModalOpen] = useState(false);
   const [currentSubTask, setCurrentSubTask] = useState<any | null>(null);
+
+  // Confirmation dialog states
+  const [confirmDialog, setConfirmDialog] = useState<{
+    isOpen: boolean;
+    title: string;
+    message: string;
+    onConfirm: () => void;
+  }>({ isOpen: false, title: "", message: "", onConfirm: () => { } });
 
   const formRef = useRef<{ resetForm: () => void }>(null);
   const updateFormRef = useRef<{ resetForm: () => void }>(null);
@@ -76,21 +86,19 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   // Create Subtask
   const handleCreateSubtask = useCallback(
     async (values: Record<string, any>) => {
-      if (!currentIssueId) return alert("No issue selected.");
-      console.log("Sub task", values);
+      if (!currentIssueId) {
+        enqueueSnackbar("No issue selected", { variant: "error" });
+        return;
+      }
 
       try {
         const payload = { ...values, issueId: currentIssueId };
         await createSubTask(payload);
-        alert("Subtask created successfully!");
+        enqueueSnackbar("Subtask created successfully!", { variant: "success" });
         closeSubtaskModal();
-
-        // Refresh project data to show the new subtask
-        if (onRefresh) {
-          await onRefresh();
-        }
+        if (onRefresh) await onRefresh();
       } catch (err: any) {
-        alert(`Creation failed: ${err.message || "Unknown error"}`);
+        enqueueSnackbar(err.message || "Failed to create subtask", { variant: "error" });
       }
     },
     [currentIssueId, closeSubtaskModal, onRefresh]
@@ -99,60 +107,81 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   // Update Issue
   const handleUpdateIssue = useCallback(
     async (values: Record<string, any>) => {
-      if (!currentIssue) return alert("No issue selected.");
+      if (!currentIssue) {
+        enqueueSnackbar("No issue selected", { variant: "error" });
+        return;
+      }
 
       try {
         const payload = { ...values, id: currentIssue.id };
         await updateIssue(payload);
-        alert("Issue updated successfully!");
+        enqueueSnackbar("Issue updated successfully!", { variant: "success" });
         closeUpdateIssueModal();
+        if (onRefresh) await onRefresh();
       } catch (err: any) {
-        alert(`Update failed: ${err.message || "Unknown error"}`);
+        enqueueSnackbar(err.message || "Failed to update issue", { variant: "error" });
       }
     },
-    [currentIssue, closeUpdateIssueModal]
+    [currentIssue, closeUpdateIssueModal, onRefresh]
   );
 
-  // DELETE ISSUE (FIXED)
-  const handleDeleteIssue = async (issueId: string) => {
-    if (!confirm("Are you sure you want to delete this issue?")) return;
-    try {
-      await deleteIssue(issueId);
-      alert("Issue deleted successfully!");
-      if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      alert(`Failed to delete issue: ${err.message || "Unknown error"}`);
-    }
+  // DELETE ISSUE
+  const handleDeleteIssue = (issueId: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Issue",
+      message: "Are you sure you want to delete this issue? This action cannot be undone.",
+      onConfirm: async () => {
+        setConfirmDialog({ ...confirmDialog, isOpen: false });
+        try {
+          await deleteIssue(issueId);
+          enqueueSnackbar("Issue deleted successfully!", { variant: "success" });
+          if (onRefresh) await onRefresh();
+        } catch (err: any) {
+          enqueueSnackbar(err.message || "Failed to delete issue", { variant: "error" });
+        }
+      },
+    });
   };
 
   // Update Subtask
   const handleUpdateSubTask = useCallback(
     async (values: Record<string, any>) => {
-      if (!currentSubTask) return alert("No subtask selected.");
+      if (!currentSubTask) {
+        enqueueSnackbar("No subtask selected", { variant: "error" });
+        return;
+      }
 
       try {
         const payload = { ...values, id: currentSubTask.id };
         await updateTask(payload);
-        alert("Subtask updated successfully!");
+        enqueueSnackbar("Subtask updated successfully!", { variant: "success" });
         closeUpdateSubTaskModal();
         if (onRefresh) await onRefresh();
       } catch (err: any) {
-        alert(`Update failed: ${err.message || "Unknown error"}`);
+        enqueueSnackbar(err.message || "Failed to update subtask", { variant: "error" });
       }
     },
     [currentSubTask, closeUpdateSubTaskModal, onRefresh]
   );
 
   // Delete Subtask
-  const handleDeleteSubTask = async (subTaskId: string) => {
-    if (!confirm("Are you sure you want to delete this subtask?")) return;
-    try {
-      await deleteSubTask(subTaskId);
-      alert("Subtask deleted successfully!");
-      if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      alert(`Failed to delete subtask: ${err.message || "Unknown error"}`);
-    }
+  const handleDeleteSubTask = (subTaskId: string) => {
+    setConfirmDialog({
+      isOpen: true,
+      title: "Delete Subtask",
+      message: "Are you sure you want to delete this subtask? This action cannot be undone.",
+      onConfirm: async () => {
+        setConfirmDialog({ ...confirmDialog, isOpen: false });
+        try {
+          await deleteSubTask(subTaskId);
+          enqueueSnackbar("Subtask deleted successfully!", { variant: "success" });
+          if (onRefresh) await onRefresh();
+        } catch (err: any) {
+          enqueueSnackbar(err.message || "Failed to delete subtask", { variant: "error" });
+        }
+      },
+    });
   };
 
   if (!issues.length) {
@@ -165,6 +194,16 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
 
   return (
     <div className="space-y-8">
+      {/* Confirmation Dialog */}
+      <ConfirmDialog
+        isOpen={confirmDialog.isOpen}
+        title={confirmDialog.title}
+        message={confirmDialog.message}
+        onConfirm={confirmDialog.onConfirm}
+        onCancel={() => setConfirmDialog({ ...confirmDialog, isOpen: false })}
+        confirmText="Delete"
+        cancelText="Cancel"
+      />
 
       {/* Create Subtask Modal */}
       <Modal isOpen={isSubtaskModalOpen} onClose={closeSubtaskModal} title="Create Subtask">
