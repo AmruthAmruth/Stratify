@@ -256,5 +256,6 @@ export const updateSubTaskSchema = z.object({
 
 export const assignIssueToSprintSchema = z.object({
   issueId: z.string().min(1, "Issue is required"),
+  employeeId: z.string().min(1, "Employee is required"),
   sprintId: z.string().min(1, "Sprint is required"),
 });

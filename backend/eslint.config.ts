@@ -4,9 +4,9 @@ import tseslint from "typescript-eslint";
 
 export default tseslint.config(
   {
-    ignores: ["eslint.config.ts"], 
+    // Add verification_script.ts here
+    ignores: ["eslint.config.ts", "verification_script.ts"],
   },
-
 
   {
     files: ["**/*.{js,mjs,cjs}"],
@@ -21,15 +21,15 @@ export default tseslint.config(
     },
   },
 
-
   ...tseslint.configs.recommended,
 
-  
   {
     files: ["**/*.{ts,mts,cts}"],
     languageOptions: {
       parser: tseslint.parser,
-      parserOptions: { project: "./tsconfig.json" },
+      parserOptions: {
+        project: "./tsconfig.json",
+      },
       globals: {
         ...globals.node,
       },

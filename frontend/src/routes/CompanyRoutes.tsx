@@ -6,11 +6,12 @@ import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
 import Notification from "@/features/company/Notoification";
+import StratifyDashboard from "@/features/company/CompanyDashBoard";
 
 const adminRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <h1>Admin Dashboard</h1>,
+    element: <StratifyDashboard/>,
   },
   {
     path: "companies",

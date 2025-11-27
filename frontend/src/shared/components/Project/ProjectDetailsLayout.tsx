@@ -25,6 +25,7 @@ import {
   getEmployeesNotInProject,
   updateProject,
   assingIssueToSprint,
+  updateIssue,
 } from "@/services/projects";
 import ReusableChart from "../Chart/ReusableChart";
 import DashboardCard from "../DashboardCards/Cards";
@@ -133,7 +134,30 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
 
   const handleSubmitAssignSprint = async (values: Record<string, any>) => {
     try {
-      await assingIssueToSprint(values);
+      const { issueId, employeeId, sprintId } = values;
+
+      // First, get the issue details to preserve other fields
+      const issueToUpdate = backlog.find(issue => issue.id === issueId);
+      if (!issueToUpdate) {
+        throw new Error("Issue not found");
+      }
+
+      // Update the issue with the assigned employee
+      await updateIssue({
+        id: issueId,
+        heading: issueToUpdate.heading,
+        description: issueToUpdate.description,
+        acceptanceCriteria: issueToUpdate.acceptanceCriteria,
+        size: issueToUpdate.size,
+        estimatedHours: issueToUpdate.estimatedHours,
+        type: issueToUpdate.type,
+        priority: issueToUpdate.priority,
+        assignedTo: employeeId,
+      });
+
+      // Then assign the issue to the sprint
+      await assingIssueToSprint({ issueId, sprintId });
+
       alert("Issue assigned to sprint successfully!");
       assignSprintFormRef.current?.resetForm();
       setIsAssignSprintModalOpen(false);
@@ -169,6 +193,16 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       options: backlog.map((issue) => ({
         label: `${issue.heading} (${issue.priority})`,
         value: issue.id,
+      })),
+    },
+    {
+      name: "employeeId",
+      label: "Assign to Employee",
+      type: "select",
+      placeholder: "Choose employee",
+      options: assignedEmployees.map((emp) => ({
+        label: `${emp.name} — ${emp.position}`,
+        value: emp.id,
       })),
     },
     {
@@ -234,138 +268,138 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         <AuthForm ref={assignSprintFormRef} fields={assignIssueToSprintFields} validationSchema={assignIssueToSprintSchema} onSubmit={handleSubmitAssignSprint} buttonText="Assign to Sprint" />
       </Modal>
 
-{/* ──────────────────────────────── */}
-{/* DASHBOARD CARDS */}
-{/* ──────────────────────────────── */}
-<div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
-  <DashboardCard title="Total Backlogs" value={project.backlog.length} subtitle="Issues waiting" badge="Backlog" />
-  <DashboardCard title="Planned Sprints" value={project.plannedSprintCount} subtitle="Upcoming work" trend="up" badge="Planned" />
-  <DashboardCard title="Active Sprints" value={project.activeSprintCount} subtitle="Currently active" trend="up" badge="Active" />
-  <DashboardCard title="Completed Sprints" value={project.completedSprintCount} subtitle="Completed cycles" trend="down" badge="Done" />
-</div>
+      {/* ──────────────────────────────── */}
+      {/* DASHBOARD CARDS */}
+      {/* ──────────────────────────────── */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mt-8">
+        <DashboardCard title="Total Backlogs" value={project.backlog.length} subtitle="Issues waiting" badge="Backlog" />
+        <DashboardCard title="Planned Sprints" value={project.plannedSprintCount} subtitle="Upcoming work" trend="up" badge="Planned" />
+        <DashboardCard title="Active Sprints" value={project.activeSprintCount} subtitle="Currently active" trend="up" badge="Active" />
+        <DashboardCard title="Completed Sprints" value={project.completedSprintCount} subtitle="Completed cycles" trend="down" badge="Done" />
+      </div>
 
-{/* ──────────────────────────────── */}
-{/* CHARTS */}
-{/* ──────────────────────────────── */}
-<div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
-  {/* Sprint Status Summary */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
-    <ReusableChart
-      type="doughnut"
-      title="Sprint Overview"
-      labels={["Planned", "Active", "Completed"]}
-      data={[
-        project.plannedSprintCount ?? 0,
-        project.activeSprintCount ?? 0,
-        project.completedSprintCount ?? 0,
-      ]}
-    />
-  </div>
+      {/* ──────────────────────────────── */}
+      {/* CHARTS */}
+      {/* ──────────────────────────────── */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-10">
+        {/* Sprint Status Summary */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+          <ReusableChart
+            type="doughnut"
+            title="Sprint Overview"
+            labels={["Planned", "Active", "Completed"]}
+            data={[
+              project.plannedSprintCount ?? 0,
+              project.activeSprintCount ?? 0,
+              project.completedSprintCount ?? 0,
+            ]}
+          />
+        </div>
 
-  {/* Issue Type Distribution */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
-    <ReusableChart
-      type="pie"
-      title="Backlog Issue Types"
-      labels={["User Story", "Bug"]}
-      data={[
-        backlog.filter((i) => i.type === "User Story").length,
-        backlog.filter((i) => i.type === "Bug").length,
-      ]}
-    />
-  </div>
+        {/* Issue Type Distribution */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+          <ReusableChart
+            type="pie"
+            title="Backlog Issue Types"
+            labels={["User Story", "Bug"]}
+            data={[
+              backlog.filter((i) => i.type === "User Story").length,
+              backlog.filter((i) => i.type === "Bug").length,
+            ]}
+          />
+        </div>
 
-  {/* Issue Status Overview */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
-    <ReusableChart
-      type="pie"
-      title="Issue Status Overview"
-      labels={["Planned", "In Progress", "Done"]}
-      data={[
-        backlog.filter((i) => i.status === "Planned").length + activeSprintIssues.filter((i) => i.status === "Planned").length,
-        backlog.filter((i) => i.status === "In Progress").length + activeSprintIssues.filter((i) => i.status === "In Progress").length,
-        backlog.filter((i) => i.status === "Done").length + activeSprintIssues.filter((i) => i.status === "Done").length,
-      ]}
-    />
-  </div>
+        {/* Issue Status Overview */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[500px]">
+          <ReusableChart
+            type="pie"
+            title="Issue Status Overview"
+            labels={["Planned", "In Progress", "Done"]}
+            data={[
+              backlog.filter((i) => i.status === "Planned").length + activeSprintIssues.filter((i) => i.status === "Planned").length,
+              backlog.filter((i) => i.status === "In Progress").length + activeSprintIssues.filter((i) => i.status === "In Progress").length,
+              backlog.filter((i) => i.status === "Done").length + activeSprintIssues.filter((i) => i.status === "Done").length,
+            ]}
+          />
+        </div>
 
-  {/* Priority Distribution */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
-    <ReusableChart
-      type="bar"
-      title="Priority Breakdown"
-      labels={["High", "Medium", "Low"]}
-      data={[
-        backlog.filter((i) => i.priority === "High").length,
-        backlog.filter((i) => i.priority === "Medium").length,
-        backlog.filter((i) => i.priority === "Low").length,
-      ]}
-    />
-  </div>
+        {/* Priority Distribution */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+          <ReusableChart
+            type="bar"
+            title="Priority Breakdown"
+            labels={["High", "Medium", "Low"]}
+            data={[
+              backlog.filter((i) => i.priority === "High").length,
+              backlog.filter((i) => i.priority === "Medium").length,
+              backlog.filter((i) => i.priority === "Low").length,
+            ]}
+          />
+        </div>
 
-  {/* Assigned Employee Workload */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
-    <ReusableChart
-      type="line"
-      title="Employee Workload"
-      labels={assignedEmployees.map((emp) => emp.name)}
-      data={assignedEmployees.map(
-        (emp) =>
-          backlog.filter((i) => i.assignedTo === emp.id).length +
-          activeSprintIssues.filter((i) => i.assignedTo === emp.id).length
-      )}
-    />
-  </div>
+        {/* Assigned Employee Workload */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+          <ReusableChart
+            type="line"
+            title="Employee Workload"
+            labels={assignedEmployees.map((emp) => emp.name)}
+            data={assignedEmployees.map(
+              (emp) =>
+                backlog.filter((i) => i.assignedTo === emp.id).length +
+                activeSprintIssues.filter((i) => i.assignedTo === emp.id).length
+            )}
+          />
+        </div>
 
-  {/* Hours Estimation Chart */}
-  <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
-    <ReusableChart
-      type="bar"
-      title="Estimated Hours (Backlog)"
-      labels={backlog.map((i) => i.heading)}
-      data={backlog.map((i) => i.estimatedHours ?? 0)}
-    />
-  </div>
-</div>
+        {/* Hours Estimation Chart */}
+        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-[500px] h-[300px]">
+          <ReusableChart
+            type="bar"
+            title="Estimated Hours (Backlog)"
+            labels={backlog.map((i) => i.heading)}
+            data={backlog.map((i) => i.estimatedHours ?? 0)}
+          />
+        </div>
+      </div>
 
-{/* ──────────────────────────────── */}
-{/* SECTIONS */}
-{/* ──────────────────────────────── */}
+      {/* ──────────────────────────────── */}
+      {/* SECTIONS */}
+      {/* ──────────────────────────────── */}
 
-{/* BACKLOG */}
-<ProjectSection title="Backlog Items">
-  {canManage && (
-    <button onClick={() => setIsIssueModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded mb-3">
-      + Create Issue
-    </button>
-  )}
-  <IssueList issues={backlog} role={role} onRefresh={onRefresh} />
-</ProjectSection>
+      {/* BACKLOG */}
+      <ProjectSection title="Backlog Items">
+        {canManage && (
+          <button onClick={() => setIsIssueModalOpen(true)} className="bg-blue-600 text-white px-4 py-2 rounded mb-3">
+            + Create Issue
+          </button>
+        )}
+        <IssueList issues={backlog} role={role} onRefresh={onRefresh} />
+      </ProjectSection>
 
-{/* ACTIVE SPRINTS */}
-<ProjectSection title="Active Sprints">
-  {canManage && (
-    <button onClick={() => setIsSprintModalOpen(true)} className="bg-green-600 text-white px-4 py-2 rounded mb-3">
-      + Create Sprint
-    </button>
-  )}
-  <SprintList sprints={activeSprints} role={role} />
-</ProjectSection>
+      {/* ACTIVE SPRINTS */}
+      <ProjectSection title="Active Sprints">
+        {canManage && (
+          <button onClick={() => setIsSprintModalOpen(true)} className="bg-green-600 text-white px-4 py-2 rounded mb-3">
+            + Create Sprint
+          </button>
+        )}
+        <SprintList sprints={activeSprints} role={role} />
+      </ProjectSection>
 
-{/* PLANNED */}
-<ProjectSection title="Planned Sprints">
-  <SprintList sprints={plannedSprints} role={role} />
-</ProjectSection>
+      {/* PLANNED */}
+      <ProjectSection title="Planned Sprints">
+        <SprintList sprints={plannedSprints} role={role} />
+      </ProjectSection>
 
-{/* COMPLETED */}
-<ProjectSection title="Completed Sprints">
-  <SprintList sprints={completedSprints} role={role} />
-</ProjectSection>
+      {/* COMPLETED */}
+      <ProjectSection title="Completed Sprints">
+        <SprintList sprints={completedSprints} role={role} />
+      </ProjectSection>
 
-{/* EMPLOYEES */}
-<ProjectSection title="Assigned Employees">
-  <EmployeeList employees={assignedEmployees} projectId={project.id} onRemove={(emp) => console.log("Remove employee:", emp)} />
-</ProjectSection>
+      {/* EMPLOYEES */}
+      <ProjectSection title="Assigned Employees">
+        <EmployeeList employees={assignedEmployees} projectId={project.id} onRemove={(emp) => console.log("Remove employee:", emp)} />
+      </ProjectSection>
 
 
 

@@ -4,7 +4,7 @@ import { Building2, Users, FolderKanban, CheckCircle, Clock, AlertCircle, Chevro
 // Stratify Signature Dashboard — redesigned with palette:
 // bg: #fbfbfb | text: #3b3b3b | accent: #009063 | lilac: #dfdcef
 
-export default function ContactPage() {
+export default function StratifyDashboard() {
   const [activeTab, setActiveTab] = useState('overview');
 
   const projects = [
@@ -32,40 +32,13 @@ export default function ContactPage() {
 
   return (
     <div
-      className="w-full min-h-screen p-8"
+      className="w-full min-h-screen p-2"
       style={{ backgroundColor: '#fbfbfb', color: '#3b3b3b', WebkitFontSmoothing: 'antialiased' }}
     >
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-8xl mx-auto">
 
-        {/* Header */}
-        <header className="bg-white rounded-2xl shadow-[0_6px_18px_rgba(45,55,72,0.06)] border" style={{ borderColor: 'rgba(223,220,239,0.7)' }}>
-          <div className="p-6 flex items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#008f58,#00a36a)' }}>
-                <Building2 className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold" style={{ color: '#3b3b3b' }}>Stratify</h1>
-                <p className="text-sm mt-0.5" style={{ color: '#6b6b6b' }}>Company Dashboard • Where clarity lives</p>
-              </div>
-            </div>
-
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-3 rounded-xl bg-[rgba(223,220,239,0.45)] p-2">
-                <button className="p-2 rounded-lg hover:bg-white transition-shadow" aria-label="Search">
-                  <Search className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                </button>
-                <button className="p-2 rounded-lg relative hover:bg-white transition-shadow" aria-label="Notifications">
-                  <Bell className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                  <span className="absolute -top-0.5 -right-0.5 inline-block w-2.5 h-2.5 rounded-full" style={{ background: '#ff4242' }} />
-                </button>
-                <button className="p-2 rounded-lg hover:bg-white transition-shadow" aria-label="Settings">
-                  <Settings className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                </button>
-              </div>
-            </div>
-          </div>
-        </header>
+      
+        
 
         {/* Stats Overview */}
         <section className="grid grid-cols-4 gap-4 mt-6">
