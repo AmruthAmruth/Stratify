@@ -37,4 +37,7 @@ export interface ILeaveRepository {
     start: Date,
     end: Date,
   ): Promise<Leave[]>;
+
+
+
 }

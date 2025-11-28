@@ -32,9 +32,9 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
       creatorId,
       title,
       "open",
-      undefined, // projectId - not set for manual meetings
-      false, // isRecurring - manual meetings are not recurring
-      undefined, // scheduledDate - not set for manual meetings
+      undefined, 
+      false, 
+      undefined, 
       new Date()
     );
 

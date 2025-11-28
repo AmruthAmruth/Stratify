@@ -18,19 +18,19 @@ export class RemoveEmployeeInProjectUseCase implements IRemoveEmployeeInProjectU
 
     async execute(projectId: string, employeeId: string): Promise<void> {
 
-        // 1. Get the project
+        
         const project = await this._projectRepo.findById(projectId);
         if (!project) {
             throw new AppError("Project not found", StatusCodes.NOT_FOUND);
         }
 
-        // 2. Verify employee exists
+        
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
             throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
         }
 
-        // 3. Check if employee is actually in the project
+        
         const isInProject = project.teamMemberIds?.includes(employeeId);
         if (!isInProject) {
             throw new AppError(
@@ -38,28 +38,23 @@ export class RemoveEmployeeInProjectUseCase implements IRemoveEmployeeInProjectU
                 StatusCodes.BAD_REQUEST
             );
         }
-
-        // 4. Find all issues assigned to this employee in this project
+        
         const allProjectIssues = await this._issueRepo.findByProjectId(projectId);
         const employeeIssues = allProjectIssues.filter(
             (issue) => issue.assignedTo === employeeId
         );
 
-        // 5. Unassign all issues from this employee
         for (const issue of employeeIssues) {
             issue.assignedTo = null;
             await this._issueRepo.update(issue);
         }
 
-        // 6. Remove employee from teamMemberIds
         project.teamMemberIds = (project.teamMemberIds || []).filter(
             (id) => id !== employeeId
         );
 
-        // 7. Save the updated project
         await this._projectRepo.update(project);
 
-        // 8. Notify the removed employee
         const employeeNotification = new Notification(
             employee.id!,
             employee.role,
@@ -70,7 +65,6 @@ export class RemoveEmployeeInProjectUseCase implements IRemoveEmployeeInProjectU
         NotificationEmitter.emit(employeeNotification);
         await this._notificationRepo.create(employeeNotification);
 
-        // 9. If there were assigned issues, notify the project manager
         if (employeeIssues.length > 0 && project.projectLeadId) {
             const manager = await this._employeeRepo.findById(project.projectLeadId);
             if (manager) {

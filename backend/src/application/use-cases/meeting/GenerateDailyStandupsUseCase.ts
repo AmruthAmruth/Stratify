@@ -23,7 +23,7 @@ export class GenerateDailyStandupsUseCase {
         }
 
         const today = new Date();
-        today.setHours(10, 0, 0, 0); // Set to 10:00 AM today
+        today.setHours(10, 0, 0, 0); 
 
         const dateStr = today.toLocaleDateString('en-US', {
             month: 'short',
@@ -34,12 +34,12 @@ export class GenerateDailyStandupsUseCase {
         let meetingsCreated = 0;
 
         for (const project of activeProjects) {
-            // Double check date range just in case repository logic is loose
+           
             const start = new Date(project.startDate);
             const end = new Date(project.endDate);
             const now = new Date();
 
-            // Reset times for accurate date comparison
+           
             start.setHours(0, 0, 0, 0);
             end.setHours(23, 59, 59, 999);
             now.setHours(0, 0, 0, 0);
@@ -48,11 +48,7 @@ export class GenerateDailyStandupsUseCase {
                 continue;
             }
 
-            // Check if meeting already exists for this project and date (to avoid duplicates if cron runs twice)
-            // Ideally we should have a method findByProjectAndDate, but for now we trust the flow or simple check
-            // Since we don't have a specific query for "meeting on date X for project Y", we'll just create it.
-            // A more robust system would check for existence.
-            // Let's assume for MVP we just create.
+         
 
             const meeting = new Meeting(
                 undefined,
@@ -69,7 +65,6 @@ export class GenerateDailyStandupsUseCase {
             await this._meetingRepo.create(meeting);
             meetingsCreated++;
 
-            // Notify team members
             if (project.teamMemberIds && project.teamMemberIds.length > 0) {
                 for (const memberId of project.teamMemberIds) {
                     const notification = new Notification(

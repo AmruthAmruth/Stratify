@@ -127,8 +127,12 @@ export class ProjectController {
       .json({ message: "Issue Created Successfully", response });
   };
 
-  createSubTask = async (req: Request, res: Response): Promise<void> => {
-    const response = await this._createSubTaskUseCase.execute(req.body);
+  createSubTask = async (req: AuthRequest, res: Response): Promise<void> => {
+    const response = await this._createSubTaskUseCase.execute(
+      req.body,
+      req.userId,
+      req.role
+    );
     res
       .status(StatusCodes.CREATED)
       .json({ message: "Task Created Successfully", response });

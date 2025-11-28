@@ -31,6 +31,6 @@ export class MeetingScheduler {
             }
         });
 
-        console.log('✅ Meeting Scheduler is running (00:00 Daily).');
+        console.log('✅ Meeting Scheduler is running (12:00 Daily).');
     }
 }

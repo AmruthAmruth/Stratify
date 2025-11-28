@@ -40,4 +40,4 @@ export class GroupRepository implements IGroupRepository {
     const docs = await GroupModel.find({ members: userId }).lean();
     return docs.map((d) => new Group(d._id.toString(), d.name, d.members, d.createdAt, d.updatedAt));
   }
-}
+}  

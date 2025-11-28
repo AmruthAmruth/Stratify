@@ -114,32 +114,14 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 
     emitNotification(io, department.managerId!, "New Project is Created!");
 
-    // Generate recurring meeting ONLY if the project starts today
     try {
       const today = new Date();
       const startDate = new Date(projectDTO.startDate);
 
-      // Reset times to compare just the dates
       today.setHours(0, 0, 0, 0);
       startDate.setHours(0, 0, 0, 0);
 
-      if (today.getTime() === startDate.getTime()) {
-        // We can reuse the logic or just manually create one meeting here.
-        // Since we don't want to inject the whole GenerateDailyStandupsUseCase (circular deps potentially or just overkill),
-        // let's just create one meeting here manually using the meeting repo we don't have injected yet?
-        // Wait, CreateProjectUseCase doesn't have MeetingRepo injected.
-        // It has IGenerateProjectRecurringMeetingsUseCase injected.
-        // I should probably change the injected use case to IGenerateDailyStandupsUseCase but that is for ALL projects.
-        // Let's just NOT generate it here for now to keep it simple, OR
-        // better: The user asked "each day meeting will created on that day".
-        // If I create a project today, the cron for today (midnight) has already passed.
-        // So I SHOULD create one for today.
-        // But I don't have MeetingRepo here.
-        // I will leave this empty for now and rely on the scheduler for "tomorrow".
-        // If strictly needed, I would need to inject MeetingRepo.
-        // Let's just log for now.
-        console.log("ℹ️ Project created. Daily meetings will start generating from the next scheduled run.");
-      }
+      
     } catch (error) {
       console.error("Failed to handle meeting generation:", error);
     }

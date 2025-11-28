@@ -1,10 +1,4 @@
-/**
- * verification_script.ts
- *
- * Purpose:
- * Run the GenerateDailyStandupsUseCase manually to verify
- * that cron, repositories, notification flow, and logic work correctly.
- */
+
 
 import mongoose from "mongoose";
 import dotenv from "dotenv";
@@ -36,7 +30,6 @@ async function main() {
     await mongoose.connect(mongoUri);
     console.log("✅ Connected to DB\n");
 
-    // Mock SocketService to avoid using real socket.io instance
     SocketService.setIO({
       to: (id: string) => ({
         emit: (event: string, payload: any) => {

@@ -29,9 +29,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
 
     console.log("Project", project);
 
-    // ---------------------------------------------------------
-    // 1. Fetch ISSUES + SUBTASKS
-    // ---------------------------------------------------------
+    
     const issues = await this._issueRepo.findByProjectId(projectId);
     const sprints = await this._sprintRepo.findByProjectId(projectId);
 
@@ -65,9 +63,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
 
     const backlogIssues = issuesWithSubtasks.filter((i) => !i.sprintId);
 
-    // ---------------------------------------------------------
-    // 2. Categorize Sprints
-    // ---------------------------------------------------------
+    
     const activeSprints: SprintWithIssuesDTO[] = [];
     const plannedSprints: SprintWithIssuesDTO[] = [];
     const completedSprints: SprintWithIssuesDTO[] = [];
@@ -99,10 +95,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
     });
 
-    // ---------------------------------------------------------
-    // 3. Fetch TEAM MEMBERS (Assigned Employees)
-    // project.teamMemberIds = ["id1", "id2", ...]
-    // ---------------------------------------------------------
+    
     const assignedEmployees: EmployeeDTO[] = [];
 
     if (project.teamMemberIds && project.teamMemberIds.length > 0) {
@@ -121,9 +114,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       });
     }
 
-    // ---------------------------------------------------------
-    // 4. Final DTO
-    // ---------------------------------------------------------
+    
     const projectDetails: ProjectDetailsDTO = {
       id: project.id!,
       name: project.name,
@@ -141,7 +132,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       plannedSprints,
       completedSprints,
 
-      assignedEmployee: assignedEmployees, // <<< ADDED EMPLOYEE DATA
+      assignedEmployee: assignedEmployees, 
 
       activeSprintCount: activeSprints.length,
       plannedSprintCount: plannedSprints.length,

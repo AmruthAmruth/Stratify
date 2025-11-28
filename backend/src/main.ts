@@ -77,7 +77,6 @@ const io = initSocket(server)
 import { SocketService } from "./shared/services/SocketService";
 SocketService.setIO(io);
 
-// Initialize Scheduler
 import { MeetingScheduler } from "./infrastructure/scheduler/MeetingScheduler";
 const meetingScheduler = new MeetingScheduler();
 meetingScheduler.start();
