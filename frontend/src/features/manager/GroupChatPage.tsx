@@ -9,7 +9,7 @@ import GroupChatBox from "@/shared/components/Chat/GroupChatBox";
 import CreateGroupModal from "@/shared/components/Chat/CreateGroupModal";
 import { IGroup } from "@/store/slices/groupChatSlice";
 
-const EmployeeGroupChatPage = () => {
+const GroupChatPage = () => {
     const [loading, setLoading] = useState(true);
     const [chatLoading, setChatLoading] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
@@ -169,4 +169,4 @@ const EmployeeGroupChatPage = () => {
     );
 };
 
-export default EmployeeGroupChatPage;
+export default GroupChatPage;

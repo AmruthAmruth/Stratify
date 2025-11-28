@@ -100,7 +100,7 @@ const SNACKBAR_OPTIONS = {
 // MAIN COMPONENT
 // ============================================================================
 
-const ManagerProjects: React.FC = () => {
+const Projects: React.FC = () => {
   const navigate = useNavigate();
 
   // ============================================================================
@@ -223,8 +223,8 @@ const ManagerProjects: React.FC = () => {
   // ============================================================================
 
   const handleUpdateProject = async (formValues: CreateProjectFormValues) => {
-    console.log("Form values",formValues);
-    
+    console.log("Form values", formValues);
+
     if (!editingProject || !departmentId) return;
 
     setSubmitLoading(true);
@@ -421,17 +421,17 @@ const ManagerProjects: React.FC = () => {
   };
 
   console.log("Edit project ", editingProject);
-  
+
   const initialFormValues = editingProject
     ? {
-        name: editingProject.projectName,
-        key: editingProject.key,
-        description: editingProject.projectDescription,
-        startDate: formatDateForInput(editingProject.startDate),
-        endDate: formatDateForInput(editingProject.endDate),
-        status: editingProject.status as "Planned" | "Active" | "Completed" | "Archived",
-        teamMemberIds: editingProject.teamMemberIds || [],
-      }
+      name: editingProject.projectName,
+      key: editingProject.key,
+      description: editingProject.projectDescription,
+      startDate: formatDateForInput(editingProject.startDate),
+      endDate: formatDateForInput(editingProject.endDate),
+      status: editingProject.status as "Planned" | "Active" | "Completed" | "Archived",
+      teamMemberIds: editingProject.teamMemberIds || [],
+    }
     : undefined;
 
   // ============================================================================
@@ -552,9 +552,9 @@ const ManagerProjects: React.FC = () => {
 
       {/* Create/Edit Project Modal */}
       {isProjectModalOpen && (
-        <Modal 
-          isOpen={isProjectModalOpen} 
-          onClose={closeModal} 
+        <Modal
+          isOpen={isProjectModalOpen}
+          onClose={closeModal}
           title={editingProject ? "Edit Project" : "Create Project"}
         >
           <div className="space-y-4">
@@ -566,8 +566,8 @@ const ManagerProjects: React.FC = () => {
                 onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
                 buttonText={editingProject ? "Update Project" : "Create Project"}
                 disabled={submitLoading}
-                formRef={formRef} 
-                initialValues={initialFormValues}   
+                formRef={formRef}
+                initialValues={initialFormValues}
               />
             </div>
 
@@ -598,4 +598,4 @@ const ManagerProjects: React.FC = () => {
   );
 };
 
-export default ManagerProjects;
+export default Projects;

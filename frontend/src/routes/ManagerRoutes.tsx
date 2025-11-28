@@ -1,12 +1,11 @@
 import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
 import ProjectPage from "@/features/common/ProjectPage";
-import { CreateMeeting } from "@/features/manager/CreateMeeting";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
-import ManagerChatPage from "@/features/manager/ManagerChatPage";
-import ManagerGroupChatPage from "@/features/manager/ManagerGroupChatPage";
-import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetials";
-import { ManagerMeeting } from "@/features/manager/ManagerMeeting";
-import ManagerProjects from "@/features/manager/ManagerProjects";
+import ChatPage from "@/features/manager/ChatPage";
+import GroupChatPage from "@/features/manager/GroupChatPage";
+import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetails";
+import Meeting from "@/features/manager/Meeting";
+import Projects from "@/features/manager/Projects";
 import Notification from "@/features/manager/Notification";
 import type { RouteObject } from "react-router-dom";
 
@@ -19,14 +18,13 @@ const managerRoutes: RouteObject[] = [
     path: "companies",
     element: <h1>Companies</h1>,
   },
-
   {
     path: "department",
     element: <ManagerDepartmentDetails />,
   },
   {
     path: "projects",
-    element: <ManagerProjects />,
+    element: <Projects />,
   },
   {
     path: "project/:id",
@@ -42,18 +40,16 @@ const managerRoutes: RouteObject[] = [
   },
   {
     path: "/meetings",
-    element: <ManagerMeeting />,
+    element: <Meeting />,
   },
   {
     path: "/chat",
-    element: <ManagerChatPage />,
+    element: <ChatPage />,
   },
   {
     path: "/group-chat",
-    element: <ManagerGroupChatPage />,
+    element: <GroupChatPage />,
   },
-
-
 ];
 
 export default managerRoutes;

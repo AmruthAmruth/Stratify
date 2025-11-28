@@ -14,7 +14,7 @@ interface Employee {
   unreadCount?: number;
 }
 
-const ManagerChatPage = () => {
+const ChatPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
   const [chatHistory, setChatHistory] = useState<any[]>([]);
@@ -201,4 +201,4 @@ const ManagerChatPage = () => {
   );
 };
 
-export default ManagerChatPage;
+export default ChatPage;

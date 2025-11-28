@@ -4,7 +4,7 @@ import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskReposit
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { CreateSubTaskDTO } from "../../dto/project/CreateSubTaskDTO";
 import { ICreateSubTaskUseCase } from "../../interfaces/project/ICreateSubTaskUseCase";
-
+    
 export class CreateSubTaskUseCase implements ICreateSubTaskUseCase {
   constructor(
     private _issueRepo: IIssueRepository,

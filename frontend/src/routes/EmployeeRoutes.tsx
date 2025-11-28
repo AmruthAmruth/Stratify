@@ -1,7 +1,6 @@
-
-import EmployeeChatPage from "@/features/employee/EmployeeChatPage";
-import EmployeeGroupChatPage from "@/features/employee/EmployeeGroupChatPage";
-import { EmployeeJoinMeeting } from "@/features/employee/EmployeeJoinMeeting";
+import ChatPage from "@/features/employee/ChatPage";
+import GroupChatPage from "@/features/employee/GroupChatPage";
+import JoinMeeting from "@/features/employee/JoinMeeting";
 import Leave from "@/features/employee/Leave";
 import Notification from "@/features/employee/Notification";
 import ProjectPage from "@/features/employee/ProjectPage";
@@ -11,7 +10,7 @@ import type { RouteObject } from "react-router";
 const teamRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <h1>Team Dahsboard</h1>
+    element: <h1>Team Dashboard</h1>
   },
   {
     path: "leave-status",
@@ -27,15 +26,15 @@ const teamRoutes: RouteObject[] = [
   },
   {
     path: "/meetings",
-    element: <EmployeeJoinMeeting />,
+    element: <JoinMeeting />,
   },
   {
     path: "/message",
-    element: <EmployeeChatPage />,
+    element: <ChatPage />,
   },
   {
     path: "/group-chat",
-    element: <EmployeeGroupChatPage />,
+    element: <GroupChatPage />,
   },
   {
     path: "/project",

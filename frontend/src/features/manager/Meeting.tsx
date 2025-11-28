@@ -6,7 +6,7 @@ import { VideoCall } from "@/shared/components/Meetings/VideoCall";
 import Table from "@/shared/components/Table/Table";
 import { useSnackbar } from "notistack";
 
-export const ManagerMeeting: React.FC = () => {
+const Meeting: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [title, setTitle] = useState("");
@@ -193,4 +193,4 @@ export const ManagerMeeting: React.FC = () => {
   );
 };
 
-export default ManagerMeeting;
+export default Meeting;

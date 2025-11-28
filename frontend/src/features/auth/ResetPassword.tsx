@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { updatePassword } from "@/services/authApi";
-import { Navbar } from "../genaral/Navbar";
+import { Navbar } from "../general/Navbar";
 import { Shield, Lock, Eye, EyeOff } from "lucide-react";
 
 const ResetPassword: React.FC = () => {

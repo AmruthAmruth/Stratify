@@ -14,7 +14,7 @@ interface Member {
   unreadCount?: number;
 }
 
-const EmployeeChatPage = () => {
+const ChatPage = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
   const [chatHistory, setChatHistory] = useState<any[]>([]);
@@ -198,4 +198,4 @@ const EmployeeChatPage = () => {
   );
 };
 
-export default EmployeeChatPage;
+export default ChatPage;

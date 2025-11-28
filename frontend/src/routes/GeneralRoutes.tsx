@@ -1,18 +1,18 @@
 import type { RouteObject } from "react-router-dom";
-import Homepage from "../features/genaral/Homepage";
+import Homepage from "../features/general/Homepage";
 import LoginForm from "../features/auth/Login";
 import RegisterForm from "../features/auth/Register";
 import SuperAdminLogin from "@/features/auth/SuperAdminLogin";
 import ForgotPassword from "../features/auth/ForgotPassword";
-import AboutPage from "@/features/genaral/About";
-import ContactPage from "@/features/genaral/Contact";
+import AboutPage from "@/features/general/About";
+import ContactPage from "@/features/general/Contact";
 import OTPPage from "@/shared/OTP/OTPPage";
 import ResetPassword from "@/features/auth/ResetPassword";
 import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
-import CompanyPendingApproval from "@/features/genaral/CompanyPendingApproval";
-import SubscriptionPlans from "@/features/genaral/SubscriptionPurchase";
-import ProjectDetails from "@/features/genaral/ProjectDetails";
-const genaralRoutes: RouteObject[] = [
+import CompanyPendingApproval from "@/features/general/CompanyPendingApproval";
+import SubscriptionPlans from "@/features/general/SubscriptionPurchase";
+import ProjectDetails from "@/features/general/ProjectDetails";
+const generalRoutes: RouteObject[] = [
   {
     path: "",
     element: <Homepage />,
@@ -69,9 +69,9 @@ const genaralRoutes: RouteObject[] = [
     path: "project-details",
     element: <ProjectDetails />,
   },
- 
-  
-  
+
+
+
 ];
 
-export default genaralRoutes;
+export default generalRoutes;

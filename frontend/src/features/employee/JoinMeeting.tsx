@@ -6,7 +6,7 @@ import Table from "@/shared/components/Table/Table";
 import { RootState } from "@/store";
 import { enqueueSnackbar } from "notistack";
 
-export const EmployeeJoinMeeting: React.FC = () => {
+const JoinMeeting: React.FC = () => {
   const [meetings, setMeetings] = useState<any[]>([]);
   const [joined, setJoined] = useState(false);
   const [roomId, setRoomId] = useState("");
@@ -139,3 +139,5 @@ export const EmployeeJoinMeeting: React.FC = () => {
     </div>
   );
 };
+
+export default JoinMeeting;

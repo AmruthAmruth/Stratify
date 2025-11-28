@@ -10,7 +10,7 @@ import { planFormFields } from "@/shared/components/Forms/formFields";
 import {
   listSubscriptionPlan,
 } from "@/services/company";
-import { createSubscription, updateSubscription, deleteSubscription } from "@/services/Plans";
+import { createSubscription, updateSubscription, deleteSubscription } from "@/services/plans";
 import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
 
 interface Plan {
@@ -175,6 +175,6 @@ const ManagePlans: React.FC = () => {
       />
     </div>
   );
-}; 
+};
 
 export default ManagePlans;

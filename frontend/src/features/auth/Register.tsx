@@ -9,7 +9,7 @@ import { companyRegistration } from "@/services/authApi"
 import { useSnackbar } from "notistack"
 import { useNavigate } from "react-router-dom"
 import { Loader2, Building2 } from "lucide-react"
-import { Navbar } from "../genaral/Navbar"
+import { Navbar } from "../general/Navbar"
 
 const Register: React.FC = () => {
   const navigate = useNavigate()
@@ -46,8 +46,8 @@ const Register: React.FC = () => {
 
   return (
     <>
-      <Navbar  />
-      <div className="min-h-screen mt-10 flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#f7f9fc",paddingTop: "80px" }}>
+      <Navbar />
+      <div className="min-h-screen mt-10 flex items-center justify-center px-4 sm:px-6 lg:px-8" style={{ backgroundColor: "#f7f9fc", paddingTop: "80px" }}>
         <div
           className="w-full p-8 rounded-2xl shadow-xl relative overflow-hidden max-w-7xl"
           style={{
@@ -92,11 +92,10 @@ const Register: React.FC = () => {
                 </span>
               )
             }
-            buttonClassName={`w-full font-semibold py-4 rounded-xl transition-all duration-300 transform ${
-              loading
+            buttonClassName={`w-full font-semibold py-4 rounded-xl transition-all duration-300 transform ${loading
                 ? "bg-gray-400 cursor-not-allowed scale-95"
                 : "bg-[#009063] text-white hover:scale-[1.02] active:scale-[0.98]"
-            }`}
+              }`}
             disabled={loading}
           />
 
