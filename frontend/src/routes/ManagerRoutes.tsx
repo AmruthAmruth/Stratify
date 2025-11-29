@@ -8,11 +8,12 @@ import Meeting from "@/features/manager/Meeting";
 import Projects from "@/features/manager/Projects";
 import Notification from "@/features/manager/Notification";
 import type { RouteObject } from "react-router-dom";
+import Dashboard from "@/features/manager/Dashboard";
 
 const managerRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <h1 className="text-black">Manager</h1>,
+    element: <Dashboard/>,
   },
   {
     path: "companies",
@@ -50,6 +51,7 @@ const managerRoutes: RouteObject[] = [
     path: "/group-chat",
     element: <GroupChatPage />,
   },
+  
 ];
 
 export default managerRoutes;
