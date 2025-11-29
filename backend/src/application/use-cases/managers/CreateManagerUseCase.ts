@@ -1,4 +1,3 @@
-import { Manager } from "../../../domain/entities/Manager";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
@@ -11,6 +10,8 @@ import {
 import { CreateManagerDTO } from "../../dto/managers/CreateManagerDTO";
 import { ICreateManagerUseCase } from "../../interfaces/managers/ICreateManagerUseCase";
 import { managerWelcomeTemplate } from "../../../shared/templates/ManagerWelcomeTemplate";
+import { ManagerMapper } from "../../mappers/ManagerMapper";
+import { Manager } from "../../../domain/entities/Manager";
 
 export class CreateManagerUseCase implements ICreateManagerUseCase {
   constructor(
@@ -18,8 +19,8 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
     private _emailService: IEmailService,
-    
-  ) {}
+
+  ) { }
 
   async execute(managerDto: CreateManagerDTO): Promise<Manager> {
     const company = await this._companyRepo.findById(managerDto.companyId);
@@ -50,21 +51,7 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
     const tempPassword = await generateRandomPassword();
     const hashedPassword = await hashPassword(tempPassword);
 
-    const manager = new Manager(
-      undefined,
-      managerDto.name,
-      managerDto.email,
-      managerDto.phone,
-      hashedPassword,
-      "manager",
-      managerDto.position,
-      managerDto.joiningDate,
-      managerDto.gender,
-      managerDto.dob,
-      managerDto.companyId,
-      managerDto.departmentId,
-      managerDto.profileImage,
-    );
+    const manager = ManagerMapper.toDomain(managerDto, hashedPassword);
 
     const createdManager = await this._managerRepo.create(manager);
 

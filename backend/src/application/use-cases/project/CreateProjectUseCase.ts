@@ -1,4 +1,3 @@
-import { Project } from "../../../domain/entities/Project";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
@@ -11,6 +10,8 @@ import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { ICreateProjectUseCase } from "../../interfaces/project/ICreateProjectUseCase";
+import { ProjectMapper } from "../../mappers/ProjectMapper";
+import { Project } from "../../../domain/entities/Project";
 
 
 export class CreateProjectUseCase implements ICreateProjectUseCase {
@@ -90,24 +91,11 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       "Team member"
     );
 
-    const now = new Date();
-
-    const project = new Project(
-      undefined,
-      projectDTO.name,
-      projectDTO.key,
-      projectDTO.description ?? "",
-      projectDTO.startDate,
-      projectDTO.endDate,
-      projectDTO.status ?? "Planned",
-      projectDTO.departmentId,
-      department.managerId ?? projectDTO.createdBy,
-      projectDTO.createdBy,
-      createdByModel,
+    const project = ProjectMapper.toDomain(
+      projectDTO,
       companyId,
-      projectDTO.teamMemberIds ?? [],
-      now,
-      now
+      createdByModel,
+      department.managerId ?? projectDTO.createdBy
     );
 
     const createdProject = await this._projectRepo.create(project);
@@ -121,7 +109,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
       today.setHours(0, 0, 0, 0);
       startDate.setHours(0, 0, 0, 0);
 
-      
+
     } catch (error) {
       console.error("Failed to handle meeting generation:", error);
     }

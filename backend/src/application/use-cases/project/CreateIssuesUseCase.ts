@@ -1,4 +1,3 @@
-import { Issue } from "../../../domain/entities/Issue";
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
@@ -6,9 +5,11 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { CreateIssuesDTO } from "../../dto/project/CreateIssuesDTO";
 import { ICreateIssueUseCase } from "../../interfaces/project/ICreateIssueUseCase";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
-import { Notification } from "../../../domain/entities/Notification";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
+import { IssueMapper } from "../../mappers/IssueMapper";
+import { Issue } from "../../../domain/entities/Issue";
+import { NotificationMapper } from "../../mappers/NotificationMapper";
 
 export class CreateIssueUseCase implements ICreateIssueUseCase {
   constructor(
@@ -53,20 +54,7 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
       }
     }
 
-    const issue = new Issue(
-      undefined,
-      issueDTO.heading,
-      issueDTO.description,
-      issueDTO.acceptanceCriteria,
-      issueDTO.size,
-      issueDTO.estimatedHours,
-      issueDTO.type,
-      "Planned",
-      issueDTO.priority,
-      issueDTO.projectId,
-      null,
-      issueDTO.assignedTo || null,
-    );
+    const issue = IssueMapper.toDomain(issueDTO);
 
     const createdIssue = await this._issueRepo.create(issue);
 
@@ -74,13 +62,13 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
     if (issueDTO.assignedTo) {
       const employee = await this._employeeRepo.findById(issueDTO.assignedTo);
       if (employee) {
-        const notification = new Notification(
-          employee.id!,
-          employee.role,
-          "New Task Assigned",
-          `📌 You have been assigned a new task: "${issueDTO.heading}" in project ${project.name}`,
-          "info"
-        );
+        const notification = NotificationMapper.toDomain({
+          userId: employee.id!,
+          role: employee.role.charAt(0).toUpperCase() + employee.role.slice(1) as "Company" | "Manager" | "Employee",
+          title: "New Task Assigned",
+          message: `📌 You have been assigned a new task: "${issueDTO.heading}" in project ${project.name}`,
+          type: "info"
+        });
         NotificationEmitter.emit(notification);
         await this._notificationRepo.create(notification);
       }

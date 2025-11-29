@@ -1,5 +1,3 @@
-import { Meeting } from "../../../domain/entities/Meeting";
-import { Notification } from "../../../domain/entities/Notification";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
@@ -8,6 +6,9 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { ICreateMeetingUseCase } from "../../interfaces/meeting/ICreateMeetingUseCase";
 import { randomUUID } from "crypto";
+import { MeetingMapper } from "../../mappers/MeetingMapper";
+import { Meeting } from "../../../domain/entities/Meeting";
+import { NotificationMapper } from "../../mappers/NotificationMapper";
 
 export class CreateMeetingUseCase implements ICreateMeetingUseCase {
   constructor(
@@ -25,18 +26,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
       throw new AppError(`A meeting with the title "${title}" already exists.`)
     }
 
-
-    const meeting = new Meeting(
-      undefined,
-      randomUUID(),
-      creatorId,
-      title,
-      "open",
-      undefined, 
-      false, 
-      undefined, 
-      new Date()
-    );
+    const meeting = MeetingMapper.toDomain(creatorId, title, randomUUID());
 
     const createdMeeting = await this._meetingRepo.create(meeting);
 
@@ -47,14 +37,13 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
     if (!employees || employees.length === 0) return createdMeeting;
 
     for (const emp of employees) {
-      const notification = new Notification(
-
-        emp.id!,
-        emp.role,
-        "New Meeting Scheduled",
-        `📅 A new meeting "${title}" has been created by ${manager.name}. Please check your meeting section for details.`,
-        "info",
-      );
+      const notification = NotificationMapper.toDomain({
+        userId: emp.id!,
+        role: emp.role.charAt(0).toUpperCase() + emp.role.slice(1) as "Company" | "Manager" | "Employee",
+        title: "New Meeting Scheduled",
+        message: `📅 A new meeting "${title}" has been created by ${manager.name}. Please check your meeting section for details.`,
+        type: "info"
+      });
       NotificationEmitter.emit(notification);
       await this._notificationRepo.create(notification);
     }

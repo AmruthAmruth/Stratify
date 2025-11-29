@@ -1,16 +1,17 @@
-import { Sprint } from "../../../domain/entities/Sprint";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateSprintDTO } from "../../dto/project/CreateSprintDTO";
 import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseCase";
+import { SprintMapper } from "../../mappers/SprintMapper";
+import { Sprint } from "../../../domain/entities/Sprint";
 
 export class CreateSprintUseCase implements ICreateSprintUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
     private _sprintRepo: ISprintRepository,
-  ) {}
+  ) { }
 
   async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
     const project = await this._projectRepo.findById(sprintDTO.projectId);
@@ -50,15 +51,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
       );
     }
 
-    const newSprint = new Sprint(
-      undefined,
-      sprintDTO.name,
-      sprintDTO.goal,
-      sprintStart,
-      sprintEnd,
-      sprintDTO.projectId,
-      sprintDTO.status ?? "Planned",
-    );
+    const newSprint = SprintMapper.toDomain(sprintDTO);
 
     return await this._sprintRepo.create(newSprint);
   }

@@ -1,10 +1,11 @@
-import { SubTask } from "../../../domain/entities/SubTask";
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { CreateSubTaskDTO } from "../../dto/project/CreateSubTaskDTO";
 import { ICreateSubTaskUseCase } from "../../interfaces/project/ICreateSubTaskUseCase";
-    
+import { SubTaskMapper } from "../../mappers/SubTaskMapper";
+import { SubTask } from "../../../domain/entities/SubTask";
+
 export class CreateSubTaskUseCase implements ICreateSubTaskUseCase {
   constructor(
     private _issueRepo: IIssueRepository,
@@ -35,21 +36,7 @@ export class CreateSubTaskUseCase implements ICreateSubTaskUseCase {
     if (isDuplicate)
       throw new AppError("Subtask with the same heading already exists", 400);
 
-
-
-
-    const subtask = new SubTask(
-      undefined,
-      subtaskDTO.issueId,
-      subtaskDTO.heading,
-      subtaskDTO.description,
-      subtaskDTO.hours,
-      subtaskDTO.status || "To Do",
-      subtaskDTO.assignedToId || null,
-    );
-
-
-
+    const subtask = SubTaskMapper.toDomain(subtaskDTO);
 
     const createdSubTask = await this._subTaskRepo.create(subtask);
 
