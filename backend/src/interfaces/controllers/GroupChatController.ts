@@ -1,6 +1,7 @@
 import { Response } from "express";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { ICreateGroupUseCase } from "../../application/interfaces/chat/ICreateGroupUseCase";
 import { ISendGroupMessageUseCase } from "../../application/interfaces/chat/ISendGroupMessageUseCase";
 import { IGetGroupMessagesUseCase } from "../../application/interfaces/chat/IGetGroupMessagesUseCase";
@@ -18,14 +19,14 @@ export class GroupChatController {
     createGroup = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
         const { name, members } = req.body;
         if (!name || !members || !Array.isArray(members)) {
             res.status(StatusCodes.BAD_REQUEST).json({
-                message: "name and members array are required"
+                message: Messages.GROUP_NAME_AND_MEMBERS_REQUIRED
             });
             return;
         }
@@ -34,7 +35,7 @@ export class GroupChatController {
 
         const group = await this._createGroupUseCase.execute(name, allMembers);
         res.status(StatusCodes.CREATED).json({
-            message: "Group created successfully",
+            message: Messages.GROUP_CREATED,
             group
         });
     };
@@ -42,7 +43,7 @@ export class GroupChatController {
     sendGroupMessage = async (req: AuthRequest, res: Response): Promise<void> => {
         const senderId = req.userId;
         if (!senderId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -56,13 +57,13 @@ export class GroupChatController {
 
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
+            res.status(StatusCodes.NOT_FOUND).json({ message: Messages.GROUP_NOT_FOUND });
             return;
         }
 
         if (!group.members.includes(senderId)) {
             res.status(StatusCodes.FORBIDDEN).json({
-                message: "You are not a member of this group"
+                message: Messages.NOT_GROUP_MEMBER
             });
             return;
         }
@@ -82,7 +83,7 @@ export class GroupChatController {
         );
 
         res.status(StatusCodes.OK).json({
-            message: "Group message sent successfully",
+            message: Messages.GROUP_MESSAGE_SENT,
             savedMessage
         });
     };
@@ -90,7 +91,7 @@ export class GroupChatController {
     getGroupMessages = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -99,13 +100,13 @@ export class GroupChatController {
 
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
+            res.status(StatusCodes.NOT_FOUND).json({ message: Messages.GROUP_NOT_FOUND });
             return;
         }
 
         if (!group.members.includes(userId)) {
             res.status(StatusCodes.FORBIDDEN).json({
-                message: "You are not a member of this group"
+                message: Messages.NOT_GROUP_MEMBER
             });
             return;
         }
@@ -150,20 +151,20 @@ export class GroupChatController {
         // Verify user is a member of the group
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
+            res.status(StatusCodes.NOT_FOUND).json({ message: Messages.GROUP_NOT_FOUND });
             return;
         }
 
         if (!group.members.includes(userId)) {
             res.status(StatusCodes.FORBIDDEN).json({
-                message: "You are not a member of this group"
+                message: Messages.NOT_GROUP_MEMBER
             });
             return;
         }
 
         const updatedGroup = await this._groupRepository.addMember(groupId, newMemberId);
 
-        
+
         GroupChatEmitter.emitMemberJoined(
             groupId,
             newMemberId,
@@ -171,7 +172,7 @@ export class GroupChatController {
         );
 
         res.status(StatusCodes.OK).json({
-            message: "Member added successfully",
+            message: Messages.MEMBER_ADDED_TO_GROUP,
             group: updatedGroup
         });
     };
@@ -208,7 +209,7 @@ export class GroupChatController {
         );
 
         res.status(StatusCodes.OK).json({
-            message: "Member removed successfully",
+            message: Messages.MEMBER_REMOVED_FROM_GROUP,
             group: updatedGroup
         });
     };

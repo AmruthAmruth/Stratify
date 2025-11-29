@@ -3,6 +3,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { ApproveLeaveDTO } from "../../dto/leave/ApproveLeaveDTO";
 import { IApproveLeaveUseCase } from "../../interfaces/leave/IApproveLeaveUseCase";
 import { leaveStatusTemplate } from "../../../shared/templates/leaveStatusTemplate";
@@ -16,21 +17,21 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     private _employeeRepo: IEmployeeRepository,
     private _emailService: IEmailService,
     private _notificationRepo: INotificationRepository
-  ) {}
+  ) { }
 
   async execute(leaveDTO: ApproveLeaveDTO): Promise<string> {
     const { leaveId, status, reason } = leaveDTO;
 
     if (status !== "Approved" && status !== "Rejected") {
       throw new AppError(
-        "Invalid status. Must be 'Approved' or 'Rejected'.",
+        Messages.INVALID_LEAVE_STATUS,
         StatusCodes.BAD_REQUEST
       );
     }
 
     const leave = await this._leaveRepo.findById(leaveId);
     if (!leave) {
-      throw new AppError("Leave not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.LEAVE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     // if (leave.status !== "Pending") {
@@ -41,7 +42,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
     // }
     if (status === "Rejected" && (!reason || reason.trim() === "")) {
       throw new AppError(
-        "Reason is required when rejecting a leave",
+        Messages.REASON_REQUIRED_FOR_REJECTION,
         StatusCodes.BAD_REQUEST
       );
     }
@@ -55,7 +56,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
 
     const employee = await this._employeeRepo.findById(leave.employeeId);
     if (!employee) {
-      throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const html = leaveStatusTemplate(
@@ -82,7 +83,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       message,
       type
     );
- NotificationEmitter.emit(notification);
+    NotificationEmitter.emit(notification);
     await this._notificationRepo.create(notification);
 
     await this._emailService.sendEmail(
@@ -91,8 +92,7 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       html
     );
 
-    return `Leave has been ${status.toLowerCase()} successfully${
-      status === "Rejected" ? ` with reason: ${reason}` : ""
-    }.`;
+    return `Leave has been ${status.toLowerCase()} successfully${status === "Rejected" ? ` with reason: ${reason}` : ""
+      }.`;
   }
 }

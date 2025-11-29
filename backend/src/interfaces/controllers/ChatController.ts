@@ -2,6 +2,7 @@ import { Response } from "express";
 import { ChatEmitter } from "../../shared/events/ChatEmitter";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { IGetTeamForChatUseCase } from "../../application/interfaces/chat/IGetTeamForChatUseCase";
 import { ISaveChatUseCase } from "../../application/interfaces/chat/ISaveChatUseCase";
 import { IGetChatUseCase } from "../../application/interfaces/chat/IGetChatUseCase";
@@ -22,14 +23,14 @@ export class ChatController {
     sentMessage = async (req: AuthRequest, res: Response): Promise<void> => {
         const senderId = req.userId;
         if (!senderId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
         console.log(req.body);
 
         const { receiverId, message } = req.body;
         if (!receiverId || !message) {
-            res.status(StatusCodes.BAD_REQUEST).json({ message: "receiverId and message are required" });
+            res.status(StatusCodes.BAD_REQUEST).json({ message: Messages.RECEIVER_ID_AND_MESSAGE_REQUIRED });
             return;
         }
         const savedChat = await this._saveChatUseCase.execute(
@@ -40,14 +41,14 @@ export class ChatController {
 
 
         ChatEmitter.emitMessage(receiverId, senderId, message);
-        res.status(StatusCodes.OK).json({ message: "Message sent successfully", savedChat });
+        res.status(StatusCodes.OK).json({ message: Messages.MESSAGE_SENT, savedChat });
     }
 
 
     getTeamForManager = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -68,22 +69,22 @@ export class ChatController {
         try {
             const userId = req.userId;
             if (!userId) {
-                res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+                res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
                 return;
             }
 
             const { senderId } = req.params;
             if (!senderId) {
-                res.status(StatusCodes.BAD_REQUEST).json({ message: "senderId is required" });
+                res.status(StatusCodes.BAD_REQUEST).json({ message: Messages.SENDER_ID_REQUIRED });
                 return;
             }
 
             await this._markMessagesAsReadUseCase.execute(userId, senderId);
-            res.status(StatusCodes.OK).json({ message: "Messages marked as read" });
+            res.status(StatusCodes.OK).json({ message: Messages.MESSAGES_MARKED_AS_READ });
         } catch (error) {
             console.error("Error marking messages as read:", error);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: "Failed to mark messages as read",
+                message: Messages.FAILED_TO_MARK_AS_READ,
                 error: error instanceof Error ? error.message : "Unknown error"
             });
         }
@@ -93,7 +94,7 @@ export class ChatController {
         try {
             const userId = req.userId;
             if (!userId) {
-                res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+                res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
                 return;
             }
 
@@ -102,7 +103,7 @@ export class ChatController {
         } catch (error) {
             console.error("Error getting unread counts:", error);
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: "Failed to get unread counts",
+                message: Messages.FAILED_TO_GET_UNREAD_COUNTS,
                 error: error instanceof Error ? error.message : "Unknown error"
             });
         }

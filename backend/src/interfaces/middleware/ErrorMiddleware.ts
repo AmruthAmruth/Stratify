@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { Messages } from "../../shared/constants/messages";
 
 export class AppError extends Error {
   statusCode: number;
@@ -29,7 +30,7 @@ export const errorMiddleware = (
   } else {
     res.status(500).json({
       status: "error",
-      message: "Internal Server Error",
+      message: Messages.SERVER_ERROR,
     });
   }
 };

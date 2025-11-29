@@ -40,11 +40,11 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
       department = await this._departmentRepo.findById(managerDto.departmentId);
 
       if (!department || department.companyId !== managerDto.companyId) {
-        throw new Error("Department Not Found");
+        throw new Error(Messages.DEPARTMENT_NOT_FOUND);
       }
 
       if (department.managerId) {
-        throw new Error("Department Already Have a Manager");
+        throw new Error(Messages.DEPARTMENT_HAS_MANAGER);
       }
     }
 

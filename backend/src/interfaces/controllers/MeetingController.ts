@@ -5,6 +5,7 @@ import { IGetMeetingsForEmployeeUseCase } from "../../application/interfaces/mee
 import { IGetMeetingsByCreatorUseCase } from "../../application/interfaces/meeting/IGetMeetingsByCreatorUseCase";
 import { IJoinMeetingUseCase } from "../../application/interfaces/meeting/IJoinMeetingUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { Response, Request } from "express";
 
@@ -23,14 +24,14 @@ export class MeetingController {
     const userId = req.userId;
     const { title } = req.body
     const response = await this._createMeetingUseCase.execute(userId!, title);
-    res.status(StatusCodes.OK).json({ message: "Meeting Created Successfully!", response })
+    res.status(StatusCodes.OK).json({ message: Messages.MEETING_CREATED, response })
   }
 
   genarateToken = async (req: AuthRequest, res: Response): Promise<void> => {
     const { roomId, userName } = req.body;
     const userId = req.userId;
     const token = await this._generateMeetingTokenUseCase.execute(roomId, userId!, userName)
-    res.status(StatusCodes.CREATED).json({ message: "Token Generated Successfully", token })
+    res.status(StatusCodes.CREATED).json({ message: Messages.TOKEN_GENERATED, token })
   }
 
   joinMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -43,7 +44,7 @@ export class MeetingController {
   closeMeeting = async (req: Request, res: Response): Promise<void> => {
     const { roomId } = req.params;
     await this._closeMeetingUseCase.execute(roomId);
-    res.status(StatusCodes.OK).json({ message: "Meeting Closed Successfully" })
+    res.status(StatusCodes.OK).json({ message: Messages.MEETING_CLOSED })
   }
 
 

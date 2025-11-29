@@ -5,6 +5,7 @@ import { IGetDepartmentLeaveUseCase } from "../../application/interfaces/leave/I
 import { IApproveLeaveUseCase } from "../../application/interfaces/leave/IApproveLeaveUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class LeaveController {
   constructor(
@@ -12,7 +13,7 @@ export class LeaveController {
     private _getEmployeeLeaveUseCase: IGetEmployeeLeaveUseCase,
     private _getDepartmentLeaveUseCase: IGetDepartmentLeaveUseCase,
     private _approveLeaveUseCase: IApproveLeaveUseCase,
-  ) {}
+  ) { }
 
   createLeave = async (req: AuthRequest, res: Response): Promise<void> => {
     const employeeId = req.userId;
@@ -20,7 +21,7 @@ export class LeaveController {
     const response = await this._createLeaveUseCase.execute(leaveDTO);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Leave created successfully", response });
+      .json({ message: Messages.LEAVE_CREATED, response });
   };
 
   getEmployeeLeaves = async (

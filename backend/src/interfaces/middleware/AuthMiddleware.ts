@@ -31,7 +31,7 @@ export const authMiddleware = (
       ) as JwtPayload;
 
       if (allowedRoles.length && !allowedRoles.includes(decoded.role)) {
-        return next({ status: 403, message: "Forbidden" });
+        return next({ status: 403, message: Messages.ACCESS_DENIED });
       }
 
       req.role = decoded.role;

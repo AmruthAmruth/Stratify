@@ -25,8 +25,8 @@ export class CompanyLoginUseCase {
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
     private _subscriptionRepository: ISubscriptionRepository,
-    private _notificationRepository:INotificationRepository
-  ) {}
+    private _notificationRepository: INotificationRepository
+  ) { }
 
   async execute(
     data: LoginDTO,
@@ -45,7 +45,7 @@ export class CompanyLoginUseCase {
     if (user instanceof Company) {
       if (user.status === "pending" || user.status === "rejected") {
         throw new AppError(
-          "Your account is still pending approval by Stratify Team.",
+          Messages.ACCOUNT_PENDING_APPROVAL,
           403,
         );
       }
@@ -56,7 +56,7 @@ export class CompanyLoginUseCase {
 
       if (!subscription || !["trial", "active"].includes(subscription.status)) {
         throw new AppError(
-          "Your subscription is not active. Please subscribe to continue.",
+          Messages.SUBSCRIPTION_INACTIVE,
           402,
           { companyId: user.id! },
         );
@@ -67,7 +67,7 @@ export class CompanyLoginUseCase {
     const notification = new Notification(
       user.id!,
       user.role,
-      "Login successful",
+      Messages.LOGIN_SUCCESS,
       `Welcome back ${user.name}! you are successfully logged in`,
       "success"
     )

@@ -4,6 +4,7 @@ import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subs
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { CreatePlanSchema } from "../../application/validators/CreatePlan";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { ICreatePlanUseCase } from "../../application/interfaces/subscriptions/ICreatePlanUseCase";
 import { IUpdatePlanUseCase } from "../../application/interfaces/subscriptions/IUpdatePlanUseCase";
 import { IDeletePlanUseCase } from "../../application/interfaces/subscriptions/IDeletePlanUseCase";
@@ -17,7 +18,7 @@ export class SubscriptionController {
     private _updatePlanUseCase: IUpdatePlanUseCase,
     private _deletePlanUseCase: IDeletePlanUseCase,
     private _listCompanisPlanUseCase: ListCompanyPurchasedPlanUseCase,
-  ) {}
+  ) { }
 
   listPlans = async (_req: Request, res: Response): Promise<void> => {
     const response = await this._listSubscriptionPlansUseCase.execute();
@@ -44,7 +45,7 @@ export class SubscriptionController {
       companyId,
     );
     res.status(StatusCodes.CREATED).json({
-      message: "Subscription purchased successfully",
+      message: Messages.SUBSCRIPTION_PURCHASED,
       subscription,
     });
   };
@@ -61,7 +62,7 @@ export class SubscriptionController {
         signature,
       );
     res.status(StatusCodes.OK).json({
-      message: "Payment verified & subscription activated",
+      message: Messages.PAYMENT_VERIFIED,
       subscription,
     });
   };
@@ -76,7 +77,7 @@ export class SubscriptionController {
       companyId,
     );
     res.status(StatusCodes.CREATED).json({
-      message: "Subscription purchased successfully",
+      message: Messages.SUBSCRIPTION_PURCHASED,
       subscription,
     });
   };
@@ -95,7 +96,7 @@ export class SubscriptionController {
         signature,
       );
     res.status(StatusCodes.OK).json({
-      message: "Payment verified & subscription activated",
+      message: Messages.PAYMENT_VERIFIED,
       subscription,
     });
   };
@@ -108,13 +109,13 @@ export class SubscriptionController {
       amount,
       durationInMonths,
     });
-    res.json({ message: "Plan created successfully", plan: createdPlan });
+    res.json({ message: Messages.PLAN_CREATED, plan: createdPlan });
   };
 
   deletePlan = async (req: Request, res: Response) => {
     const { plan } = req.body;
     await this._deletePlanUseCase.execute(plan);
-    res.status(StatusCodes.OK).json({ message: "Deleted Plan Successfully" });
+    res.status(StatusCodes.OK).json({ message: Messages.PLAN_DELETED });
   };
 
   updatePlan = async (req: Request, res: Response) => {
@@ -125,7 +126,7 @@ export class SubscriptionController {
       amount,
       durationInMonths,
     );
-    res.status(StatusCodes.OK).json({ message: "Updated Plan Successfully" });
+    res.status(StatusCodes.OK).json({ message: Messages.PLAN_UPDATED });
   };
 
   listPurchasedPlan = async (_req: Request, res: Response) => {

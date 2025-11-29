@@ -26,7 +26,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
     private readonly _managerRepo: IManagerRepository,
     private readonly _emailService: IEmailService,
     private readonly _notificationRepo: INotificationRepository
-  ) {}
+  ) { }
 
   async execute(
     employeeDto: CreateEmployeeDTO,
@@ -39,33 +39,33 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       companyId = creator.id!;
     } else {
       creator = await this._managerRepo.findById(creatorId);
-      if (!creator) throw new Error("Invalid creator ID");
+      if (!creator) throw new Error(Messages.INVALID_CREATOR_ID);
       companyId = creator.companyId;
     }
 
-    
+
     const company = await this._companyRepo.findById(companyId);
     if (!company) throw new Error(Messages.COMPANY_NOT_FOUND);
 
-    
+
     const existingEmployee = await this._employeeRepo.findByEmail(employeeDto.email);
     if (existingEmployee) throw new Error(Messages.EMAIL_ALREADY_EXISTS);
 
-    
+
     const department = await this._departmentRepo.findById(employeeDto.departmentId);
     if (!department || department.companyId !== companyId) {
-      throw new Error("Department not found");
+      throw new Error(Messages.DEPARTMENT_NOT_FOUND);
     }
 
-    
+
     if (
       creator instanceof Manager &&
       creator.departmentId !== employeeDto.departmentId
     ) {
-      throw new Error("Manager can only add employees in their own department");
+      throw new Error(Messages.MANAGER_DEPARTMENT_RESTRICTION);
     }
 
-    
+
     const tempPassword = await generateRandomPassword();
     const hashedPassword = await hashPassword(tempPassword);
     const managerIdToAssign = department.managerId
@@ -81,7 +81,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
 
     const createdEmployee = await this._employeeRepo.create(employee);
 
-    
+
     const html = employeeWelcomeTemplate(
       createdEmployee.name,
       company.name,
@@ -96,9 +96,9 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       html
     );
 
-    
+
     const employeeNotification = new Notification(
-      
+
       createdEmployee.id!,
       "employee",
       "Welcome to the team!",
@@ -107,12 +107,12 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
     );
     await this._notificationRepo.create(employeeNotification);
 
-    
+
     if (creator instanceof Company && department.managerId) {
       const manager = await this._managerRepo.findById(department.managerId);
       if (manager) {
         const managerNotification = new Notification(
-         
+
           manager.id!,
           manager.role,
           "New Employee Added",
@@ -125,4 +125,3 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
     return createdEmployee;
   }
 }
- 

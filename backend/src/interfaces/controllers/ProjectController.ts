@@ -7,6 +7,7 @@ import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/proje
 import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { ICreateIssueUseCase } from "../../application/interfaces/project/ICreateIssueUseCase";
 import { ICreateSubTaskUseCase } from "../../application/interfaces/project/ICreateSubTaskUseCase";
 import { ICreateSprintUseCase } from "../../application/interfaces/project/ICreateSprintUseCase";
@@ -62,7 +63,7 @@ export class ProjectController {
     const response = await this._createProjectUseCase.execute(projectDTO);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Project created successfully", response });
+      .json({ message: Messages.PROJECT_CREATED, response });
   };
 
   createUserStory = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -71,7 +72,7 @@ export class ProjectController {
     const response = await this._createUserStoryUseCase.execute(userStoryDTO);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "User story created successfully", response });
+      .json({ message: Messages.USER_STORY_CREATED, response });
   };
 
   createBacklog = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -80,7 +81,7 @@ export class ProjectController {
     const response = await this._createBacklogUseCase.execute(backlogDTO);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Backlog created successfully", response });
+      .json({ message: Messages.BACKLOG_CREATED, response });
   };
 
 
@@ -89,7 +90,7 @@ export class ProjectController {
     const response = await this._createTaskUseCase.execute(req.body);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Task created successfully", response });
+      .json({ message: Messages.TASK_CREATED, response });
   };
 
   getProjectsByCompany = async (
@@ -124,7 +125,7 @@ export class ProjectController {
     const response = await this._createIssueUseCase.execute(req.body);
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Issue Created Successfully", response });
+      .json({ message: Messages.ISSUE_CREATED, response });
   };
 
   createSubTask = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -135,14 +136,14 @@ export class ProjectController {
     );
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Task Created Successfully", response });
+      .json({ message: Messages.SUBTASK_CREATED, response });
   };
 
   createSprint = async (req: Request, res: Response): Promise<void> => {
     const response = await this._createSprentUseCase.execute(req.body);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Sprint Created Successfully!", response });
+      .json({ message: Messages.SPRINT_CREATED, response });
   };
 
   assignIssueToSprint = async (req: Request, res: Response): Promise<void> => {
@@ -153,7 +154,7 @@ export class ProjectController {
     );
     res
       .status(StatusCodes.OK)
-      .json({ message: "Assine Issue to Sprint", response });
+      .json({ message: Messages.ISSUE_ASSIGNED_TO_SPRINT, response });
   };
 
   projectLevelEmployeeAllocation = async (
@@ -184,7 +185,7 @@ export class ProjectController {
     );
     res
       .status(StatusCodes.OK)
-      .json({ message: "Added Employee to the Project" });
+      .json({ message: Messages.EMPLOYEE_ADDED_TO_PROJECT });
   };
 
   deleteProject = async (req: Request, res: Response): Promise<void> => {
@@ -193,7 +194,7 @@ export class ProjectController {
     await this._deleteProjectUseCase.execute(id);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Project Deleted Successfully!" });
+      .json({ message: Messages.PROJECT_DELETED });
   };
 
   updateProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -204,7 +205,7 @@ export class ProjectController {
     });
     res
       .status(StatusCodes.OK)
-      .json({ message: "Updated the project successfully!", response });
+      .json({ message: Messages.PROJECT_UPDATED, response });
   };
 
   getEmployeesNotInProject = async (
@@ -232,7 +233,7 @@ export class ProjectController {
 
     await this._removeEmployeeInProjectUseCase.execute(projectId, employeeId)
 
-    res.status(StatusCodes.OK).json({ message: "Employee Removed Successfully from project!" })
+    res.status(StatusCodes.OK).json({ message: Messages.EMPLOYEE_REMOVED_FROM_PROJECT })
   }
 
 
@@ -240,7 +241,7 @@ export class ProjectController {
 
   updateIssue = async (req: Request, res: Response): Promise<void> => {
     const response = await this._updateIssueUseCase.execute(req.body)
-    res.status(StatusCodes.OK).json({ message: "Updated Issue Successfully!", response })
+    res.status(StatusCodes.OK).json({ message: Messages.ISSUE_UPDATED, response })
   }
 
 
@@ -248,29 +249,29 @@ export class ProjectController {
   deleteIssue = async (req: Request, res: Response): Promise<void> => {
     const { issueId } = req.params
     await this._deleteIssueUseCase.execute(issueId!)
-    res.status(StatusCodes.OK).json({ message: "Issue Deleted Successfully!" })
+    res.status(StatusCodes.OK).json({ message: Messages.ISSUE_DELETED })
   }
 
   updateSprint = async (req: Request, res: Response): Promise<void> => {
     const response = await this._updateSprintUseCase.execute(req.body);
-    res.status(StatusCodes.OK).json({ message: "Sprint Updated Successfully!", response });
+    res.status(StatusCodes.OK).json({ message: Messages.SPRINT_UPDATED, response });
   };
 
   deleteSprint = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     await this._deleteSprintUseCase.execute(id);
-    res.status(StatusCodes.OK).json({ message: "Sprint Deleted Successfully!" });
+    res.status(StatusCodes.OK).json({ message: Messages.SPRINT_DELETED });
   };
 
   updateSubTask = async (req: Request, res: Response): Promise<void> => {
     const response = await this._updateSubTaskUseCase.execute(req.body);
-    res.status(StatusCodes.OK).json({ message: "Subtask Updated Successfully!", response });
+    res.status(StatusCodes.OK).json({ message: Messages.SUBTASK_UPDATED, response });
   };
 
   deleteSubTask = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
     await this._deleteSubTaskUseCase.execute(id);
-    res.status(StatusCodes.OK).json({ message: "Subtask Deleted Successfully!" });
+    res.status(StatusCodes.OK).json({ message: Messages.SUBTASK_DELETED });
   };
 
 

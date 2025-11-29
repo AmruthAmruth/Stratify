@@ -7,6 +7,7 @@ import { IGetManagerDepartmentsUseCase } from "../../application/interfaces/depa
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { DepartmentDetailsSchema } from "../../application/validators/CreateDepartment";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class DepartmentController {
   constructor(
@@ -15,7 +16,7 @@ export class DepartmentController {
     private _getDepartmentDetailsUseCase: IGetCompanyDepartmentDetailsUseCase,
     private _getUnassignedDepartmentsUseCase: IGetUnassignedDepartments,
     private _getManagerDepartmentsUseCase: IGetManagerDepartmentsUseCase,
-  ) {}
+  ) { }
 
   createDepartment = async (req: AuthRequest, res: Response): Promise<void> => {
     const result = DepartmentDetailsSchema.safeParse(req.body);
@@ -37,7 +38,7 @@ export class DepartmentController {
     });
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Department created successfully", response });
+      .json({ message: Messages.DEPARTMENT_CREATED, response });
   };
 
   getCompanyDepartments = async (

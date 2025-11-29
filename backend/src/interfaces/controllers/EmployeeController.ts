@@ -6,13 +6,14 @@ import { AuthRequest } from "../middleware/AuthMiddleware";
 import { CreateManagerSchema } from "../../application/validators/CreateManager";
 import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class EmployeeController {
   constructor(
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
-  ) {}
+  ) { }
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
     const result = CreateManagerSchema.safeParse(req.body);
@@ -34,7 +35,7 @@ export class EmployeeController {
     });
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Manager created successfully", response });
+      .json({ message: Messages.MANAGER_CREATED, response });
   };
 
   createEmployee = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -59,7 +60,7 @@ export class EmployeeController {
 
     res
       .status(StatusCodes.CREATED)
-      .json({ message: "Employee created successfully", response });
+      .json({ message: Messages.EMPLOYEE_CREATED, response });
   };
 
   getUnassignedManagers = async (

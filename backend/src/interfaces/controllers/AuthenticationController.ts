@@ -8,7 +8,7 @@ import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/au
 import { IResetPasswordUseCase } from "../../application/interfaces/authentication/IResetPasswordOTPUseCase";
 import {
   LoginDTO,
-  LoginSchema,  
+  LoginSchema,
 } from "../../application/validators/LoginValidator";
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
@@ -31,7 +31,7 @@ export class AuthenticationController {
     private _resetPasswordUseCase: IResetPasswordUseCase,
     private _superAdminLoginUseCase: ILoginUseCase,
     private _refreshTokenUseCase: IRefreashTokenUseCase,
-  ) {}
+  ) { }
 
   refresh = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
@@ -131,7 +131,7 @@ export class AuthenticationController {
 
   logout = async (_req: Request, res: Response): Promise<void> => {
     res.clearCookie("refreshToken", CookieConfig);
-    res.status(StatusCodes.OK).json({ message: "Logout successful" });
+    res.status(StatusCodes.OK).json({ message: Messages.LOGOUT_SUCCESS });
   };
 
   forgotPassword = async (req: Request, res: Response): Promise<void> => {

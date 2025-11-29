@@ -15,7 +15,7 @@ export class SubTaskMapper {
         );
     }
 
-    static toResponse(subTask: SubTask) {
+    static toResponse(subTask: SubTask) { 
         return {
             id: subTask.id,
             issueId: subTask.issueId,

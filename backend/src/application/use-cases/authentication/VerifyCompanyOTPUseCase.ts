@@ -16,7 +16,7 @@ export class VerifyCompanyOTPUseCase {
     private _companyRepo: ICompanyRepository,
     private _tempRegRepo: ITempRegistrationRepository,
     private _createTrialSubscriptionUseCase: ICreateTrialSubscriptionUseCase,
-  ) {}
+  ) { }
 
   async execute(
     email: string,
@@ -30,12 +30,12 @@ export class VerifyCompanyOTPUseCase {
     if (storedOtp.expiresAt < new Date()) throw new Error(Messages.OTP_EXPIRED);
 
     const companyData = await this._tempRegRepo.findByEmail(email);
-    if (!companyData) throw new Error("Registration data expired");
+    if (!companyData) throw new Error(Messages.REGISTRATION_DATA_EXPIRED);
 
     console.log("Company Data :", companyData);
 
     if (!companyData.password)
-      throw new Error("Password is missing in temporary registration data");
+      throw new Error(Messages.PASSWORD_MISSING);
 
     const createdCompany = await this._companyRepo.create(
       new Company(

@@ -6,6 +6,7 @@ import { IUnapproveCompany } from "../../application/interfaces/company/IUnappro
 import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company/IGetCompanyMembersUseCase";
 import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 
 export class CompanyController {
@@ -16,7 +17,7 @@ export class CompanyController {
     private _unapproveCompanyUseCase: IUnapproveCompany,
     private _getCompanyMembersUseCase: IGetCompanyMemebersUseCase,
     private _getTeamMemberProfileUseCase: IGetProfileUseCase,
-  ) {}
+  ) { }
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
     const { id } = req.params;
@@ -44,7 +45,7 @@ export class CompanyController {
     await this._approveCompanyUseCase.execute(companyId);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Company approved successfully" });
+      .json({ message: Messages.COMPANY_APPROVED });
   };
 
   unapproveCompany = async (req: Request, res: Response): Promise<void> => {
@@ -52,7 +53,7 @@ export class CompanyController {
     await this._unapproveCompanyUseCase.execute(companyId, reason);
     res
       .status(StatusCodes.OK)
-      .json({ message: "Company unapproved successfully" });
+      .json({ message: Messages.COMPANY_UNAPPROVED });
   };
 
   getCompanyMembers = async (

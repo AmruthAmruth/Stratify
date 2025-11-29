@@ -1,6 +1,7 @@
-import { Response,Request } from "express";
+import { Response, Request } from "express";
 import { ICreateNotificationUseCase } from "../../application/interfaces/notification/ICreateNotificationUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { IGetNotificationUseCase } from "../../application/interfaces/notification/IGetNotificationUseCase";
 import { IToggleReadStatusUseCase } from "../../application/interfaces/notification/IToggleReadStatusUseCase";
@@ -9,57 +10,57 @@ import { IDeleteAllNotificationsUseCase } from "../../application/interfaces/not
 import { IReadAllNotificationUseCase } from "../../application/interfaces/notification/IReadAllNotificaionUseCase";
 
 
-export class NotificationController{
-         constructor(
-            private _createNotificationUseCase:ICreateNotificationUseCase,
-            private _getNotificationUseCase:IGetNotificationUseCase,
-            private _toggleReadStatusUseCase:IToggleReadStatusUseCase,
-            private _deleteNotificationUseCase:IDeleteNotificationUseCase,
-            private _deleteAllNotificationUseCase:IDeleteAllNotificationsUseCase,
-            private _readAllNotificaionUseCase:IReadAllNotificationUseCase
-         ){}
-        
-         createNotification=async(req:AuthRequest,res:Response):Promise<void>=>{
-            const userId = req.userId;
-            const role=req.role
-            
-            const notificationDTO ={...req.body,userId,role}
-            const response = await this._createNotificationUseCase.execute(notificationDTO)
-         
-            res.status(StatusCodes.CREATED).json({message:"Notification Created Successfully!",response})
+export class NotificationController {
+   constructor(
+      private _createNotificationUseCase: ICreateNotificationUseCase,
+      private _getNotificationUseCase: IGetNotificationUseCase,
+      private _toggleReadStatusUseCase: IToggleReadStatusUseCase,
+      private _deleteNotificationUseCase: IDeleteNotificationUseCase,
+      private _deleteAllNotificationUseCase: IDeleteAllNotificationsUseCase,
+      private _readAllNotificaionUseCase: IReadAllNotificationUseCase
+   ) { }
 
-         }
+   createNotification = async (req: AuthRequest, res: Response): Promise<void> => {
+      const userId = req.userId;
+      const role = req.role
 
-   getNotificationByUserId=async(req:AuthRequest,res:Response):Promise<void>=>{
+      const notificationDTO = { ...req.body, userId, role }
+      const response = await this._createNotificationUseCase.execute(notificationDTO)
+
+      res.status(StatusCodes.CREATED).json({ message: Messages.NOTIFICATION_CREATED, response })
+
+   }
+
+   getNotificationByUserId = async (req: AuthRequest, res: Response): Promise<void> => {
       const userId = req.userId;
       const response = await this._getNotificationUseCase.execute(userId!)
-      res.status(StatusCodes.OK).json({message:"All Notification",response})
+      res.status(StatusCodes.OK).json({ message: Messages.ALL_NOTIFICATIONS, response })
    }
 
 
-   toggleReadStatus=async(req:Request,res:Response):Promise<void>=>{
-      const {id}=req.body
-      
+   toggleReadStatus = async (req: Request, res: Response): Promise<void> => {
+      const { id } = req.body
+
       await this._toggleReadStatusUseCase.execute(id!)
-      res.status(StatusCodes.OK).json({message:"Notification Status updated"})
+      res.status(StatusCodes.OK).json({ message: Messages.NOTIFICATION_STATUS_UPDATED })
    }
 
-   deleteNotification=async(req:Request,res:Response):Promise<void>=>{
-      const id=req.params.id;
+   deleteNotification = async (req: Request, res: Response): Promise<void> => {
+      const id = req.params.id;
       console.log(id);
-      
+
       await this._deleteNotificationUseCase.execute(id);
-      res.status(StatusCodes.OK).json({message:"Deleted Notification"})
+      res.status(StatusCodes.OK).json({ message: Messages.NOTIFICATION_DELETED })
    }
 
-   deleteAllNotificatins=async(req:AuthRequest,res:Response):Promise<void>=>{
-      const userId=req.userId
+   deleteAllNotificatins = async (req: AuthRequest, res: Response): Promise<void> => {
+      const userId = req.userId
       await this._deleteAllNotificationUseCase.execute(userId!)
-      res.status(StatusCodes.OK).json({message:"Delete all notifications"})
+      res.status(StatusCodes.OK).json({ message: Messages.ALL_NOTIFICATIONS_DELETED })
    }
 
-   readAllNotification=async(req:AuthRequest,_res:Response):Promise<void>=>{
-      const userId=req.userId;
+   readAllNotification = async (req: AuthRequest, _res: Response): Promise<void> => {
+      const userId = req.userId;
       await this._readAllNotificaionUseCase.execute(userId!)
    }
 

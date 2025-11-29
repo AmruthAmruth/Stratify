@@ -4,6 +4,7 @@ import { IMeetingRepository } from "../../../domain/repositories/IMeetingReposit
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
+import { Messages } from "../../../shared/constants/messages";
 import { ICreateMeetingUseCase } from "../../interfaces/meeting/ICreateMeetingUseCase";
 import { randomUUID } from "crypto";
 import { MeetingMapper } from "../../mappers/MeetingMapper";
@@ -31,7 +32,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
     const createdMeeting = await this._meetingRepo.create(meeting);
 
     const manager = await this._managerRepo.findById(creatorId);
-    if (!manager) throw new Error("Manager not found");
+    if (!manager) throw new Error(Messages.MANAGER_NOT_FOUND);
 
     const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
     if (!employees || employees.length === 0) return createdMeeting;
