@@ -29,7 +29,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
 
     console.log("Project", project);
 
-    
+
     const issues = await this._issueRepo.findByProjectId(projectId);
     const sprints = await this._sprintRepo.findByProjectId(projectId);
 
@@ -43,7 +43,6 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
           description: issue.description,
           acceptanceCriteria: issue.acceptanceCriteria,
           size: issue.size,
-          estimatedHours: issue.estimatedHours,
           type: issue.type,
           status: issue.status,
           priority: issue.priority,
@@ -63,7 +62,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
 
     const backlogIssues = issuesWithSubtasks.filter((i) => !i.sprintId);
 
-    
+
     const activeSprints: SprintWithIssuesDTO[] = [];
     const plannedSprints: SprintWithIssuesDTO[] = [];
     const completedSprints: SprintWithIssuesDTO[] = [];
@@ -95,7 +94,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       }
     });
 
-    
+
     const assignedEmployees: EmployeeDTO[] = [];
 
     if (project.teamMemberIds && project.teamMemberIds.length > 0) {
@@ -114,7 +113,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       });
     }
 
-    
+
     const projectDetails: ProjectDetailsDTO = {
       id: project.id!,
       name: project.name,
@@ -132,7 +131,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
       plannedSprints,
       completedSprints,
 
-      assignedEmployee: assignedEmployees, 
+      assignedEmployee: assignedEmployees,
 
       activeSprintCount: activeSprints.length,
       plannedSprintCount: plannedSprints.length,

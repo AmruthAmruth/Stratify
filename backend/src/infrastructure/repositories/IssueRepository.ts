@@ -11,7 +11,6 @@ export class IssueRepository implements IIssueRepository {
       description: issue.description,
       acceptanceCriteria: issue.acceptanceCriteria,
       size: issue.size,
-      estimatedHours: issue.estimatedHours,
       type: issue.type,
       status: issue.status,
       priority: issue.priority,
@@ -35,7 +34,6 @@ export class IssueRepository implements IIssueRepository {
         description: issue.description,
         acceptanceCriteria: issue.acceptanceCriteria,
         size: issue.size,
-        estimatedHours: issue.estimatedHours,
         type: issue.type,
         status: issue.status,
         priority: issue.priority,
@@ -97,10 +95,10 @@ export class IssueRepository implements IIssueRepository {
 
 
   async findByUserId(userId: string): Promise<Issue[]> {
-  const docs = await IssueModel.find({
-    assignedTo: new mongoose.Types.ObjectId(userId),
-  });
+    const docs = await IssueModel.find({
+      assignedTo: new mongoose.Types.ObjectId(userId),
+    });
 
-  return IssueMapper.toEntities(docs);
-}
+    return IssueMapper.toEntities(docs);
+  }
 }

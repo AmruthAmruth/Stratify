@@ -36,7 +36,6 @@ export interface IssueDTO {
   description: string;
   acceptanceCriteria: string;
   size: number;
-  estimatedHours: number;
   type: "User Story" | "Bug";
   status: "Planned" | "In Progress" | "Done" | "Blocked";
   priority: "Low" | "Medium" | "High";

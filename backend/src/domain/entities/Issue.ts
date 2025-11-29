@@ -5,7 +5,6 @@ export class Issue {
     public description: string,
     public acceptanceCriteria: string,
     public size: number,
-    public estimatedHours: number,
     public type: "User Story" | "Bug",
     public status: "Planned" | "In Progress" | "Done" | "Blocked",
     public priority: "Low" | "Medium" | "High",
@@ -14,7 +13,7 @@ export class Issue {
     public assignedTo?: string | null,
     public createdAt: Date = new Date(),
     public updatedAt: Date = new Date(),
-  ) {}
+  ) { }
 
   updateStatus(newStatus: "Planned" | "In Progress" | "Done" | "Blocked") {
     this.status = newStatus;

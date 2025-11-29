@@ -193,7 +193,6 @@ export const createIssueSchema = z.object({
   description: z.string().min(1, "Description is required"),
   acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
   size: z.coerce.number().min(1, "Size must be at least 1"),
-  estimatedHours: z.coerce.number().min(1, "Estimated Hours must be at least 1"),
   type: z.enum(["User Story", "Bug"], {
     errorMap: () => ({ message: "Type must be either User Story or Bug" }),
   }),
@@ -205,24 +204,6 @@ export const createIssueSchema = z.object({
 
 
 export const updateIssueSchema = z.object({
-  heading: z.string().min(1, "Heading is required"),
-  description: z.string().min(1, "Description is required"),
-  acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
-
-  size: z.number({
-    required_error: "Size is required",
-    invalid_type_error: "Size must be a number",
-  }),
-
-  estimatedHours: z.number({
-    required_error: "Estimated Hours is required",
-    invalid_type_error: "Estimated Hours must be a number",
-  }),
-
-  type: z.enum(["User Story", "Bug"], {
-    errorMap: () => ({ message: "Type must be either User Story or Bug" }),
-  }),
-
   priority: z.enum(["Low", "Medium", "High"], {
     errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
   }),

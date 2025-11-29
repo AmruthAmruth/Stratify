@@ -5,7 +5,6 @@ export interface IssueDocument extends Document {
   description: string;
   acceptanceCriteria: string;
   size: number;
-  estimatedHours: number;
   type: "User Story" | "Bug";
   status: "Planned" | "In Progress" | "Done" | "Blocked";
   priority: "Low" | "Medium" | "High";
@@ -22,7 +21,6 @@ const IssueSchema = new Schema<IssueDocument>(
     description: { type: String, required: true },
     acceptanceCriteria: { type: String, required: true },
     size: { type: Number, required: true },
-    estimatedHours: { type: Number, required: true },
     type: { type: String, enum: ["User Story", "Bug"], required: true },
     status: {
       type: String,

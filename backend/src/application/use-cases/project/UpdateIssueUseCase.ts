@@ -22,15 +22,14 @@ export class UpdateIssueUseCase implements IUpdateIssueUseCase {
       issueDTO.description ?? existingIssue.description,
       issueDTO.acceptanceCriteria ?? existingIssue.acceptanceCriteria,
       issueDTO.size ?? existingIssue.size,
-      issueDTO.estimatedHours ?? existingIssue.estimatedHours,
       issueDTO.type ?? existingIssue.type,
       existingIssue.status,
       issueDTO.priority ?? existingIssue.priority,
       existingIssue.projectId,
-      existingIssue.sprintId ?? null,
+      existingIssue.sprintId,
       issueDTO.assignedTo !== undefined ? issueDTO.assignedTo : existingIssue.assignedTo,
       existingIssue.createdAt,
-      new Date()
+      new Date(),
     );
 
     const savedIssue = await this._issueRepo.update(updatedIssue);

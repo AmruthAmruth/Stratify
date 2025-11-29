@@ -22,7 +22,6 @@ export interface IssueDTO {
   description: string;
   acceptanceCriteria: string;
   size: number;
-  estimatedHours: number;
   type: string;
   status: string;
   priority: string;

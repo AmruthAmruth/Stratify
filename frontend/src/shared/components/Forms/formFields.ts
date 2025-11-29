@@ -125,7 +125,6 @@ export const createIssueFields = [
   { name: "size", label: "Size", type: "number" },
   { name: "description", label: "Description", type: "textarea" },
   { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "textarea" },
-  { name: "estimatedHours", label: "Estimated Hours", type: "number" },
   {
     name: "type",
     label: "Issue Type",
@@ -147,7 +146,6 @@ export const updateIssueFields = [
   { name: "size", label: "Size", type: "number" },
   { name: "description", label: "Description", type: "textarea" },
   { name: "acceptanceCriteria", label: "Acceptance Criteria", type: "textarea" },
-  { name: "estimatedHours", label: "Estimated Hours", type: "number" },
 
   {
     name: "type",
