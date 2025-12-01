@@ -1,17 +1,18 @@
 // Updated CollapsibleSection.tsx
 import React, { useState } from "react";
+import ReusableChart from "../Chart/ReusableChart";
 
-const CollapsibleSection = ({ 
-  title, 
-  icon, 
-  iconBgColor, 
-  iconColor, 
-  data, 
-  type, 
-  expandedItem, 
-  setExpandedItem, 
-  getStatusColor, 
-  getPriorityColor, 
+const CollapsibleSection = ({
+  title,
+  icon,
+  iconBgColor,
+  iconColor,
+  data,
+  type,
+  expandedItem,
+  setExpandedItem,
+  getStatusColor,
+  getPriorityColor,
   getTypeColor,
   onAssignIssue
 }) => {
@@ -52,11 +53,11 @@ const CollapsibleSection = ({
                         </span>
                         <h4 className="text-lg font-bold text-[#3b3b3b]">{item.heading}</h4>
                       </div>
-                      
+
                       <p className="text-[#3b3b3b] text-sm leading-relaxed mb-3 opacity-80">
                         {item.description}
                       </p>
-                      
+
                       <div className="flex flex-wrap items-center gap-4">
                         <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(item.status)}`}>
                           {item.status}
@@ -80,11 +81,10 @@ const CollapsibleSection = ({
                     </div>
                     <div className="ml-4">
                       <div
-                        className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${
-                          isExpanded
-                            ? "bg-[#009063] text-white transform rotate-180"
-                            : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
-                        }`}
+                        className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${isExpanded
+                          ? "bg-[#009063] text-white transform rotate-180"
+                          : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
+                          }`}
                       >
                         <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                           <path
@@ -138,9 +138,9 @@ const CollapsibleSection = ({
                         {item.status}
                       </span>
                     </div>
-                    
+
                     <h4 className="text-xl font-bold text-[#3b3b3b] mb-3">{item.goal}</h4>
-                    
+
                     <p className="text-[#3b3b3b] text-sm leading-relaxed mb-3 opacity-80">
                       {new Date(item.startDate).toLocaleDateString("en-US", {
                         month: "short",
@@ -153,7 +153,7 @@ const CollapsibleSection = ({
                         year: "numeric",
                       })}
                     </p>
-                    
+
                     <div className="flex items-center space-x-6">
                       <span className="text-sm font-semibold text-[#009063]">
                         {item.issues.length} {item.issues.length === 1 ? "Issue" : "Issues"}
@@ -162,11 +162,10 @@ const CollapsibleSection = ({
                   </div>
                   <div className="ml-4">
                     <div
-                      className={`w-12 h-12 rounded flex items-center justify-center transition-all duration-300 ${
-                        isExpanded
-                          ? "bg-[#009063] text-white transform rotate-180"
-                          : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
-                      }`}
+                      className={`w-12 h-12 rounded flex items-center justify-center transition-all duration-300 ${isExpanded
+                        ? "bg-[#009063] text-white transform rotate-180"
+                        : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
+                        }`}
                     >
                       <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 20 20">
                         <path
@@ -190,6 +189,83 @@ const CollapsibleSection = ({
                       </button>
                     )}
                   </div>
+
+                  {/* Sprint Analytics Dashboard */}
+                  {item.issues && item.issues.length > 0 && (
+                    <div className="mb-8">
+                      <h5 className="text-lg font-bold text-[#3b3b3b] mb-4 flex items-center">
+                        <svg className="w-5 h-5 text-[#009063] mr-2" fill="currentColor" viewBox="0 0 20 20">
+                          <path d="M2 11a1 1 0 011-1h2a1 1 0 011 1v5a1 1 0 01-1 1H3a1 1 0 01-1-1v-5zM8 7a1 1 0 011-1h2a1 1 0 011 1v9a1 1 0 01-1 1H9a1 1 0 01-1-1V7zM14 4a1 1 0 011-1h2a1 1 0 011 1v12a1 1 0 01-1 1h-2a1 1 0 01-1-1V4z" />
+                        </svg>
+                        Sprint Analytics
+                      </h5>
+
+                      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        {/* Drilldown Chart - Issue Breakdown by Status */}
+                        <div className="p-4 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm h-[300px]">
+                          <ReusableChart
+                            type="bar"
+                            title="Issue Breakdown"
+                            labels={["Planned", "In Progress", "Done", "Blocked"]}
+                            data={[
+                              item.issues.filter((i) => i.status === "Planned").length,
+                              item.issues.filter((i) => i.status === "In Progress").length,
+                              item.issues.filter((i) => i.status === "Done").length,
+                              item.issues.filter((i) => i.status === "Blocked").length,
+                            ]}
+                            backgroundColors={["#dfdcef", "#FFB84D", "#009063", "#FF6B6B"]}
+                          />
+                        </div>
+
+                        {/* Burndown Chart - Subtask Hours */}
+                        <div className="p-4 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm h-[300px]">
+                          <ReusableChart
+                            type="line"
+                            title="Burndown (Subtask Hours)"
+                            labels={(() => {
+                              const totalSubtaskHours = item.issues.reduce((sum, issue) =>
+                                sum + (issue.subTasks?.reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              );
+                              const completedHours = item.issues.reduce((sum, issue) =>
+                                sum + (issue.subTasks?.filter(st => st.status === "Done")
+                                  .reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              );
+                              const remainingHours = totalSubtaskHours - completedHours;
+                              return ["Total Hours", "Completed", "Remaining"];
+                            })()}
+                            data={(() => {
+                              const totalSubtaskHours = item.issues.reduce((sum, issue) =>
+                                sum + (issue.subTasks?.reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              );
+                              const completedHours = item.issues.reduce((sum, issue) =>
+                                sum + (issue.subTasks?.filter(st => st.status === "Done")
+                                  .reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              );
+                              const remainingHours = totalSubtaskHours - completedHours;
+                              return [totalSubtaskHours, completedHours, remainingHours];
+                            })()}
+                            backgroundColors={["#3b3b3b", "#009063", "#FFB84D"]}
+                          />
+                        </div>
+
+                        {/* Velocity Chart - Completion Rate */}
+                        <div className="p-4 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm h-[300px]">
+                          <ReusableChart
+                            type="doughnut"
+                            title="Velocity (Completion %)"
+                            labels={["Completed", "In Progress", "Pending"]}
+                            data={[
+                              item.issues.filter((i) => i.status === "Done").length,
+                              item.issues.filter((i) => i.status === "In Progress").length,
+                              item.issues.filter((i) => i.status === "Planned" || i.status === "Blocked").length,
+                            ]}
+                            backgroundColors={["#009063", "#FFB84D", "#dfdcef"]}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
                   {item.issues.length > 0 ? (
                     item.issues.map((issue) => {
                       const issueId = issue.id || issue._id;
@@ -244,11 +320,10 @@ const CollapsibleSection = ({
                               </div>
                               <div className="ml-4">
                                 <div
-                                  className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${
-                                    isIssueExpanded
-                                      ? "bg-[#009063] text-white transform rotate-180"
-                                      : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
-                                  }`}
+                                  className={`w-10 h-10 rounded flex items-center justify-center transition-all duration-300 ${isIssueExpanded
+                                    ? "bg-[#009063] text-white transform rotate-180"
+                                    : "bg-[#dfdcef] text-[#3b3b3b] hover:bg-[#d0cce3]"
+                                    }`}
                                 >
                                   <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                                     <path
@@ -266,14 +341,14 @@ const CollapsibleSection = ({
                                 <h6 className="text-sm font-semibold text-[#3b3b3b] mb-2">Acceptance Criteria</h6>
                                 <p className="text-sm text-[#3b3b3b] opacity-80 leading-relaxed">{issue.acceptanceCriteria}</p>
                               </div>
-                              
+
                               <h6 className="text-lg font-bold text-[#3b3b3b] flex items-center mb-4">
                                 <svg className="w-5 h-5 text-[#009063] mr-2" fill="currentColor" viewBox="0 0 20 20">
                                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                                 </svg>
                                 SubTasks
                               </h6>
-                              
+
                               <div className="grid gap-4">
                                 {issue.subTasks && issue.subTasks.length > 0 ? (
                                   issue.subTasks.map((task) => (
@@ -294,7 +369,7 @@ const CollapsibleSection = ({
                                           {task.status}
                                         </span>
                                       </div>
-                                      
+
                                       <div className="flex flex-wrap items-center gap-4 text-sm text-[#3b3b3b]">
                                         {task.assignedToId && (
                                           <div className="flex items-center space-x-2">
@@ -304,7 +379,7 @@ const CollapsibleSection = ({
                                             <span className="font-medium">Assigned to: {task.assignedToId}</span>
                                           </div>
                                         )}
-                                        
+
                                         {task.hours && (
                                           <div className="flex items-center space-x-2">
                                             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -351,7 +426,7 @@ const CollapsibleSection = ({
           );
         })}
       </div>
-    </div>  
+    </div>
   );
 };
 

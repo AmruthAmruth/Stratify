@@ -1,209 +1,169 @@
-import React, { useState } from 'react';
-import { Building2, Users, FolderKanban, CheckCircle, Clock, AlertCircle, ChevronRight, Search, Bell, Settings, BarChart3, Target, Zap } from 'lucide-react';
-
-// Stratify Signature Dashboard — redesigned with palette:
-// bg: #fbfbfb | text: #3b3b3b | accent: #009063 | lilac: #dfdcef
+import React from 'react';
+import { CheckCircle, Clock, Calendar, TrendingUp, Users, FileText, MessageSquare, Mail } from 'lucide-react';
 
 export default function ContactPage() {
-  const [activeTab, setActiveTab] = useState('overview');
-
-  const projects = [
-    { id: 1, name: 'Q1 Product Launch', owner: 'Sarah Chen', dept: 'Engineering', status: 'on-track', progress: 75, team: 8 },
-    { id: 2, name: 'Brand Redesign', owner: 'Mike Peters', dept: 'Marketing', status: 'at-risk', progress: 45, team: 5 },
-    { id: 3, name: 'Sales Automation', owner: 'Lisa Wong', dept: 'Sales', status: 'on-track', progress: 60, team: 4 },
-    { id: 4, name: 'Infrastructure Upgrade', owner: 'David Kim', dept: 'Operations', status: 'completed', progress: 100, team: 6 }
-  ];
-
-  const departments = [
-    { name: 'Engineering', lead: 'Sarah Chen', members: 24, active: 12, color: 'lilac' },
-    { name: 'Marketing', lead: 'Mike Peters', members: 15, active: 8, color: 'lilac' },
-    { name: 'Sales', lead: 'Lisa Wong', members: 18, active: 9, color: 'lilac' },
-    { name: 'Operations', lead: 'David Kim', members: 12, active: 7, color: 'lilac' }
-  ];
-
-  const getStatusColor = (status) => {
-    switch(status) {
-      case 'on-track': return { text: '#046c47', bg: 'rgba(0,144,99,0.06)', border: 'rgba(0,144,99,0.12)' };
-      case 'at-risk': return { text: '#b45309', bg: 'rgba(190,110,0,0.06)', border: 'rgba(190,110,0,0.12)' };
-      case 'completed': return { text: '#134e8a', bg: 'rgba(13,90,165,0.06)', border: 'rgba(13,90,165,0.12)' };
-      default: return { text: '#3b3b3b', bg: 'rgba(59,59,59,0.03)', border: 'rgba(59,59,59,0.06)' };
-    }
-  };
-
   return (
-    <div
-      className="w-full min-h-screen p-8"
-      style={{ backgroundColor: '#fbfbfb', color: '#3b3b3b', WebkitFontSmoothing: 'antialiased' }}
-    >
-      <div className="max-w-7xl mx-auto">
-
+    <div className="w-full h-screen bg-gradient-to-br from-blue-50 to-indigo-50 flex items-center justify-center p-15">
+      <div className="w-full max-w-6xl">
         {/* Header */}
-        <header className="bg-white rounded-2xl shadow-[0_6px_18px_rgba(45,55,72,0.06)] border" style={{ borderColor: 'rgba(223,220,239,0.7)' }}>
-          <div className="p-6 flex items-center justify-between gap-6">
-            <div className="flex items-center gap-4">
-              <div className="w-14 h-14 rounded-xl flex items-center justify-center" style={{ background: 'linear-gradient(135deg,#008f58,#00a36a)' }}>
-                <Building2 className="w-7 h-7 text-white" />
-              </div>
-              <div>
-                <h1 className="text-2xl font-semibold" style={{ color: '#3b3b3b' }}>Stratify</h1>
-                <p className="text-sm mt-0.5" style={{ color: '#6b6b6b' }}>Company Dashboard • Where clarity lives</p>
-              </div>
-            </div>
+        <div className="text-center mb-12">
+          <h1 className="text-5xl font-bold text-gray-800 mb-4">
+            Make Your Work <span className="text-indigo-600">Visible</span>
+          </h1>
+          <p className="text-xl text-gray-600">
+            "My manager doesn't see the work I do" → <span className="line-through text-gray-400">"Hidden in emails & chats"</span>
+          </p>
+          <p className="text-2xl font-semibold text-green-600 mt-2">
+            ✓ Now Every Contribution is Recognizable
+          </p>
+        </div>
 
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-3 rounded-xl bg-[rgba(223,220,239,0.45)] p-2">
-                <button className="p-2 rounded-lg hover:bg-white transition-shadow" aria-label="Search">
-                  <Search className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                </button>
-                <button className="p-2 rounded-lg relative hover:bg-white transition-shadow" aria-label="Notifications">
-                  <Bell className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                  <span className="absolute -top-0.5 -right-0.5 inline-block w-2.5 h-2.5 rounded-full" style={{ background: '#ff4242' }} />
-                </button>
-                <button className="p-2 rounded-lg hover:bg-white transition-shadow" aria-label="Settings">
-                  <Settings className="w-5 h-5" style={{ color: '#3b3b3b' }} />
-                </button>
+        {/* Main Split Section */}
+        <div className="grid grid-cols-2 gap-8 mb-12">
+          {/* Left Side - Hidden Work */}
+          <div className="bg-gray-800 rounded-2xl p-8 relative overflow-hidden">
+            <div className="absolute top-0 left-0 w-full h-full opacity-10">
+              <Mail className="absolute top-4 left-8 w-12 h-12 text-white" />
+              <MessageSquare className="absolute top-20 right-12 w-10 h-10 text-white" />
+              <FileText className="absolute bottom-16 left-16 w-14 h-14 text-white" />
+              <Mail className="absolute bottom-8 right-8 w-8 h-8 text-white" />
+            </div>
+            
+            <h3 className="text-2xl font-bold text-gray-300 mb-4">Before Stratify</h3>
+            <p className="text-gray-400 text-lg mb-6">Work scattered across platforms</p>
+            
+            <div className="space-y-4">
+              <div className="bg-gray-700 bg-opacity-50 p-4 rounded-lg">
+                <p className="text-gray-300">📧 Email threads</p>
+              </div>
+              <div className="bg-gray-700 bg-opacity-50 p-4 rounded-lg">
+                <p className="text-gray-300">💬 Lost in chats</p>
+              </div>
+              <div className="bg-gray-700 bg-opacity-50 p-4 rounded-lg">
+                <p className="text-gray-300">📊 Google Sheets chaos</p>
+              </div>
+              <div className="bg-gray-700 bg-opacity-50 p-4 rounded-lg">
+                <p className="text-gray-300">❓ Invisible effort</p>
               </div>
             </div>
           </div>
-        </header>
 
-        {/* Stats Overview */}
-        <section className="grid grid-cols-4 gap-4 mt-6">
-          <StatCard icon={<FolderKanban className="w-5 h-5" />} title="Active Projects" value="24" delta="+12%" deltaColor="#009063" />
-          <StatCard icon={<Users className="w-5 h-5" />} title="Team Members" value="69" delta="+8%" deltaColor="#009063" />
-          <StatCard icon={<Target className="w-5 h-5" />} title="Completion Rate" value="89%" delta="On track" deltaColor="#009063" />
-          <StatCard icon={<Zap className="w-5 h-5" />} title="Visibility" value="100%" delta="Real-time" deltaColor="#6b6b6b" />
-        </section>
-
-        {/* Main Grid */}
-        <main className="grid grid-cols-3 gap-6 mt-6">
-
-          {/* Projects */}
-          <section className="col-span-2 bg-white rounded-2xl border p-6 shadow-sm" style={{ borderColor: 'rgba(223,220,239,0.7)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Active Projects</h2>
-              <button className="text-sm font-medium inline-flex items-center gap-2" style={{ color: '#009063' }}>
-                View All <ChevronRight className="w-4 h-4" />
-              </button>
-            </div>
-
+          {/* Right Side - Visible Work with Stratify */}
+          <div className="bg-white rounded-2xl p-8 shadow-2xl">
+            <h3 className="text-2xl font-bold text-indigo-600 mb-4">With Stratify</h3>
+            <p className="text-gray-600 text-lg mb-6">Everything visible, every contribution counts</p>
+            
             <div className="space-y-4">
-              {projects.map(project => {
-                const status = getStatusColor(project.status);
-                return (
-                  <article key={project.id} className="border rounded-xl p-4 hover:shadow-md transition-shadow" style={{ borderColor: 'rgba(223,220,239,0.55)' }}>
-                    <div className="flex items-start justify-between gap-4 mb-3">
-                      <div className="flex-1">
-                        <h3 className="font-semibold text-slate-800 mb-1">{project.name}</h3>
-                        <div className="flex items-center gap-3 text-sm">
-                          <span style={{ color: '#6b6b6b' }}>Owner: <span className="font-medium" style={{ color: '#3b3b3b' }}>{project.owner}</span></span>
-                          <span className="text-slate-300">•</span>
-                          <span className="px-2 py-0.5 rounded-full text-xs font-medium border" style={{ borderColor: 'rgba(223,220,239,0.7)', backgroundColor: '#fff' }}>{project.dept}</span>
-                        </div>
-                      </div>
-
-                      <span className="px-3 py-1 rounded-lg text-xs font-medium border" style={{ color: status.text, backgroundColor: status.bg, borderColor: status.border }}>
-                        {project.status === 'on-track' && '✓ On Track'}
-                        {project.status === 'at-risk' && '⚠ At Risk'}
-                        {project.status === 'completed' && '✓ Completed'}
-                      </span>
-                    </div>
-
-                    <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
-                        <span style={{ color: '#6b6b6b' }}>Progress</span>
-                        <span className="font-medium" style={{ color: '#3b3b3b' }}>{project.progress}%</span>
-                      </div>
-
-                      <div className="w-full bg-[rgba(59,59,59,0.03)] rounded-full h-2">
-                        <div
-                          className={`h-2 rounded-full transition-all`}
-                          style={{
-                            width: `${project.progress}%`,
-                            background: project.status === 'completed' ? '#134e8a' : (project.status === 'on-track' ? '#009063' : '#d97706')
-                          }}
-                        />
-                      </div>
-
-                      <div className="flex items-center gap-2 text-xs" style={{ color: '#6b6b6b', marginTop: 8 }}>
-                        <Users className="w-3 h-3" />
-                        <span>{project.team} team members</span>
-                      </div>
-                    </div>
-                  </article>
-                );
-              })}
-            </div>
-          </section>
-
-          {/* Departments */}
-          <aside className="bg-white rounded-2xl border p-6 shadow-sm" style={{ borderColor: 'rgba(223,220,239,0.7)' }}>
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-lg font-semibold">Departments</h2>
-              <BarChart3 className="w-5 h-5" style={{ color: '#6b6b6b' }} />
-            </div>
-
-            <div className="space-y-4">
-              {departments.map((dept, idx) => (
-                <div key={idx} className="border rounded-xl p-4 hover:shadow-md transition-shadow" style={{ borderColor: 'rgba(223,220,239,0.55)' }}>
-                  <div className="flex items-center gap-3 mb-3">
-                    <div className="w-10 h-10 rounded-lg flex items-center justify-center font-bold" style={{ backgroundColor: '#dfdcef', color: '#3b3b3b' }}>{dept.name[0]}</div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-slate-800 text-sm">{dept.name}</h3>
-                      <p className="text-xs" style={{ color: '#6b6b6b' }}>Lead: {dept.lead}</p>
+              {/* Task Tracking */}
+              <div className="border-l-4 border-green-500 bg-green-50 p-4 rounded-r-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-600" />
+                    <div>
+                      <p className="font-semibold text-gray-800">Tasks Completed Today</p>
+                      <p className="text-sm text-gray-600">8 of 10 tasks</p>
                     </div>
                   </div>
-
-                  <div className="flex items-center justify-between text-sm pt-3 border-t" style={{ borderColor: 'rgba(59,59,59,0.03)' }}>
-                    <div className="flex items-center gap-1" style={{ color: '#6b6b6b' }}>
-                      <Users className="w-3 h-3" />
-                      <span className="text-xs">{dept.members} members</span>
-                    </div>
-                    <div className="flex items-center gap-1" style={{ color: '#009063' }}>
-                      <CheckCircle className="w-3 h-3" />
-                      <span className="text-xs font-medium">{dept.active} active</span>
-                    </div>
-                  </div>
+                  <div className="text-2xl font-bold text-green-600">80%</div>
                 </div>
-              ))}
-            </div>
-
-            {/* Clear Ownership Badge */}
-            <div className="mt-6 p-4 rounded-xl border" style={{ borderColor: 'rgba(0,144,99,0.14)', background: 'linear-gradient(90deg, rgba(0,144,99,0.03), rgba(13,90,165,0.02))' }}>
-              <div className="flex items-center gap-2 mb-2">
-                <CheckCircle className="w-5 h-5" style={{ color: '#009063' }} />
-                <span className="font-semibold text-sm">Clear Ownership</span>
               </div>
-              <p className="text-xs" style={{ color: '#6b6b6b' }}>
-                Every project has a defined owner. Every department has clear routing. Zero confusion.
-              </p>
+
+              {/* Check-in/out */}
+              <div className="border-l-4 border-blue-500 bg-blue-50 p-4 rounded-r-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Clock className="w-6 h-6 text-blue-600" />
+                    <div>
+                      <p className="font-semibold text-gray-800">Check-in Status</p>
+                      <p className="text-sm text-gray-600">Active since 9:00 AM</p>
+                    </div>
+                  </div>
+                  <span className="bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                    Checked In
+                  </span>
+                </div>
+              </div>
+
+              {/* Leave Approval */}
+              <div className="border-l-4 border-purple-500 bg-purple-50 p-4 rounded-r-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <Calendar className="w-6 h-6 text-purple-600" />
+                    <div>
+                      <p className="font-semibold text-gray-800">Leave Request</p>
+                      <p className="text-sm text-gray-600">Approved instantly</p>
+                    </div>
+                  </div>
+                  <CheckCircle className="w-8 h-8 text-green-500" />
+                </div>
+              </div>
+
+              {/* Productivity Analytics */}
+              <div className="border-l-4 border-orange-500 bg-orange-50 p-4 rounded-r-lg">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <TrendingUp className="w-6 h-6 text-orange-600" />
+                    <div>
+                      <p className="font-semibold text-gray-800">Productivity Score</p>
+                      <p className="text-sm text-gray-600">↑ 15% this week</p>
+                    </div>
+                  </div>
+                  <div className="text-2xl font-bold text-orange-600">92</div>
+                </div>
+              </div>
             </div>
-          </aside>
+          </div>
+        </div>
 
-        </main>
+        {/* Features Row */}
+        <div className="bg-white rounded-2xl shadow-xl p-8">
+          <h3 className="text-center text-2xl font-bold text-gray-800 mb-6">
+            One Platform. Complete Visibility.
+          </h3>
+          <div className="grid grid-cols-5 gap-6">
+            <div className="text-center">
+              <div className="w-16 h-16 bg-indigo-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <CheckCircle className="w-8 h-8 text-indigo-600" />
+              </div>
+              <p className="font-semibold text-gray-700">Task Tracking</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Clock className="w-8 h-8 text-blue-600" />
+              </div>
+              <p className="font-semibold text-gray-700">Check-in/out</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Calendar className="w-8 h-8 text-purple-600" />
+              </div>
+              <p className="font-semibold text-gray-700">Leave Approvals</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <TrendingUp className="w-8 h-8 text-orange-600" />
+              </div>
+              <p className="font-semibold text-gray-700">Analytics</p>
+            </div>
+            <div className="text-center">
+              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                <Users className="w-8 h-8 text-green-600" />
+              </div>
+              <p className="font-semibold text-gray-700">Central Hub</p>
+            </div>
+          </div>
+        </div>
 
-        {/* Bottom Tagline */}
-        <footer className="mt-6 text-center">
-          <p className="text-sm" style={{ color: '#6b6b6b' }}>
-            <span className="font-semibold" style={{ color: '#3b3b3b' }}>One source of truth.</span> Real-time visibility. No endless meetings.
+        {/* Footer */}
+        <div className="text-center mt-8">
+          <p className="text-xl font-semibold text-gray-700">
+            When work becomes visible, contribution becomes recognizable.
           </p>
-        </footer>
+          <p className="text-lg text-indigo-600 mt-2 font-medium">
+            Powered by Stratify
+          </p>
+        </div>
       </div>
-    </div>
-  );
-}
-
-
-// Small presentational sub-component for stats
-function StatCard({ icon, title, value, delta, deltaColor }){
-  return (
-    <div className="bg-white rounded-xl p-5 border" style={{ borderColor: 'rgba(223,220,239,0.65)' }}>
-      <div className="flex items-center justify-between mb-3">
-        <div className="p-2 rounded-lg bg-[rgba(223,220,239,0.45)]">{icon}</div>
-        <span className="text-xs font-medium" style={{ color: deltaColor }}>{delta}</span>
-      </div>
-      <div className="text-2xl font-semibold" style={{ color: '#3b3b3b' }}>{value}</div>
-      <div className="text-sm" style={{ color: '#6b6b6b' }}>{title}</div>
     </div>
   );
 }
