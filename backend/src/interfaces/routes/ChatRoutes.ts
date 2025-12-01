@@ -2,6 +2,8 @@ import express from 'express';
 import { authMiddleware } from '../middleware/AuthMiddleware';
 import { asyncHandler } from '../middleware/AsyncHandler';
 import { ChatDI } from '../../di/ChatDI';
+import { chatMediaUpload } from '../../infrastructure/services/CloudinaryService';
+
 const chatRouter = express.Router();
 const controller = ChatDI();
 
@@ -9,6 +11,7 @@ const controller = ChatDI();
 chatRouter.post(
     '/send',
     authMiddleware(['manager', 'company', 'employee']),
+    chatMediaUpload.single('file'),
     asyncHandler(controller.sentMessage)
 );
 

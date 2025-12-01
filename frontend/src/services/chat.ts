@@ -14,8 +14,24 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
   }
 };
 
-export const sendTheMessage = (data: Record<string, unknown>) =>
-  handleRequest(api.post(CHAT_ROUTES.SENT_MESSAGE, data));
+export const sendTheMessage = (data: Record<string, unknown>, file?: File) => {
+  if (file) {
+    // Use FormData for file upload
+    const formData = new FormData();
+    formData.append('receiverId', data.receiverId as string);
+    formData.append('message', data.message as string || '');
+    formData.append('file', file);
+
+    return handleRequest(api.post(CHAT_ROUTES.SENT_MESSAGE, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data',
+      },
+    }));
+  }
+
+  // Text-only message
+  return handleRequest(api.post(CHAT_ROUTES.SENT_MESSAGE, data));
+};
 
 export const getTeamMemeberList = () => handleRequest(api.get(CHAT_ROUTES.TEAM_MEMEBER_LIST))
 

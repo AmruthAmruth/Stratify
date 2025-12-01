@@ -48,9 +48,9 @@ export class GroupChatController {
         }
 
         const { groupId, message, senderName } = req.body;
-        if (!groupId || !message) {
+        if (!groupId) {
             res.status(StatusCodes.BAD_REQUEST).json({
-                message: "groupId and message are required"
+                message: "groupId is required"
             });
             return;
         }
@@ -68,18 +68,57 @@ export class GroupChatController {
             return;
         }
 
+        // Extract file metadata if file was uploaded
+        const file = req.file as Express.Multer.File | undefined;
+        let messageType: string | undefined;
+        let fileUrl: string | undefined;
+        let fileName: string | undefined;
+        let fileSize: number | undefined;
+        let mimeType: string | undefined;
+
+        if (file) {
+            // File uploaded via Cloudinary
+            fileUrl = (file as { path: string }).path;
+            fileName = file.originalname;
+            fileSize = file.size;
+            mimeType = file.mimetype;
+
+            // Determine message type based on mime type
+            if (file.mimetype.startsWith('image/')) {
+                messageType = 'image';
+            } else if (file.mimetype.startsWith('video/')) {
+                messageType = 'video';
+            } else if (file.mimetype.startsWith('audio/')) {
+                messageType = 'audio';
+            } else {
+                messageType = 'document';
+            }
+        } else {
+            messageType = 'text';
+        }
+
         const savedMessage = await this._sendGroupMessageUseCase.execute(
             groupId,
             senderId,
-            message
+            message || "",
+            messageType,
+            fileUrl,
+            fileName,
+            fileSize,
+            mimeType
         );
 
         GroupChatEmitter.emitMessage(
             groupId,
             senderId,
-            message,
+            message || "",
             savedMessage.createdAt.toISOString(),
-            senderName || "Unknown User"
+            senderName || "Unknown User",
+            messageType,
+            fileUrl,
+            fileName,
+            fileSize,
+            mimeType
         );
 
         res.status(StatusCodes.OK).json({

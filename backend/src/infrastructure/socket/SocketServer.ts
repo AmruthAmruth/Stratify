@@ -121,7 +121,15 @@ export const emitNotification = (io: Server, userId: string, notification: unkno
 export const emitChatMessage = (
   io: Server,
   receiverId: string,
-  messageData: { senderId: string; message: string }
+  messageData: {
+    senderId: string;
+    message: string;
+    messageType?: string;
+    fileUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
+  }
 ) => {
   const socketId = connectedUsers.get(receiverId);
   if (socketId) {
@@ -134,7 +142,17 @@ export const emitChatMessage = (
 export const emitGroupMessage = (
   io: Server,
   groupId: string,
-  messageData: { senderId: string; message: string; createdAt: string; senderName: string }
+  messageData: {
+    senderId: string;
+    message: string;
+    createdAt: string;
+    senderName: string;
+    messageType?: string;
+    fileUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
+  }
 ) => {
   io.to(groupId).emit("receive-group-message", {
     groupId,

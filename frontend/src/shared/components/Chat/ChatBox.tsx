@@ -5,6 +5,8 @@ import { getSocket } from "@/shared/socket/socket";
 import { sendTheMessage } from "@/services/chat";
 import { addMessage, clearChat } from "@/store/slices/chatSlice";
 import { formatMessageTime } from "@/utils/dateUtils";
+import { Paperclip, X } from "lucide-react";
+import MediaMessage from "./MediaMessage";
 
 interface ChatBoxProps {
   receiverId: string;
@@ -18,7 +20,11 @@ const ChatBox = ({
   loading = false,
 }: ChatBoxProps) => {
   const [message, setMessage] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [filePreview, setFilePreview] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
   const messages = useSelector((state: RootState) => state.chat.messages);
   const userId = useSelector((state: RootState) => state.auth.userId);
   const dispatch = useDispatch();
@@ -69,22 +75,63 @@ const ChatBox = ({
   }, [messages]);
 
   // ✅ Send message
-  const sendMessage = () => {
+  const sendMessage = async () => {
     const socket = getSocket();
-    if (!socket || !message.trim()) return;
+    if (!socket || (!message.trim() && !selectedFile)) return;
 
-    const msg = {
-      senderId: userId,
-      receiverId,
-      message,
-      createdAt: new Date().toISOString(),
-    };
+    setIsUploading(true);
+    try {
+      const msg = {
+        senderId: userId,
+        receiverId,
+        message: message.trim(),
+        createdAt: new Date().toISOString(),
+      };
 
-    // Emit to socket and save in DB
-    // Socket listener will add it to Redux when "receive-message" event comes back
-    socket.emit("send-message", msg);
-    sendTheMessage(msg);
-    setMessage("");
+      // Emit to socket and save in DB
+      socket.emit("send-message", msg);
+      await sendTheMessage(msg, selectedFile || undefined);
+
+      setMessage("");
+      setSelectedFile(null);
+      setFilePreview(null);
+    } catch (error) {
+      console.error("Failed to send message:", error);
+    } finally {
+      setIsUploading(false);
+    }
+  };
+
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    // Validate file size (50MB max)
+    if (file.size > 50 * 1024 * 1024) {
+      alert("File size must be less than 50MB");
+      return;
+    }
+
+    setSelectedFile(file);
+
+    // Generate preview for images
+    if (file.type.startsWith("image/")) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setFilePreview(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    } else {
+      setFilePreview(null);
+    }
+  };
+
+  const cancelFileSelection = () => {
+    setSelectedFile(null);
+    setFilePreview(null);
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
   };
 
   // ✅ Filter messages for current conversation only
@@ -122,11 +169,21 @@ const ChatBox = ({
               >
                 <div
                   className={`p-3 px-4 rounded-3xl ${msg.senderId === userId
-                      ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
-                      : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
+                    ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
+                    : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
                     }`}
                 >
-                  <p className="break-words">{msg.message}</p>
+                  <MediaMessage
+                    messageType={msg.messageType}
+                    fileUrl={msg.fileUrl}
+                    fileName={msg.fileName}
+                    fileSize={msg.fileSize}
+                    mimeType={msg.mimeType}
+                    message={msg.message}
+                  />
+                  {(!msg.messageType || msg.messageType === "text") && (
+                    <p className="break-words">{msg.message}</p>
+                  )}
                 </div>
                 {/* Timestamp */}
                 <span
@@ -147,21 +204,63 @@ const ChatBox = ({
       </div>
 
       {/* Message Input */}
-      <div className="flex gap-2 p-4 border-t border-[#dfdcef] bg-[#fbfbfb]">
-        <input
-          value={message}
-          onChange={(e) => setMessage(e.target.value)}
-          onKeyDown={(e) => e.key === "Enter" && sendMessage()}
-          placeholder="Type a message..."
-          className="flex-1 border border-[#dfdcef] rounded-2xl px-4 py-3 outline-none text-[#3b3b3b] bg-white placeholder:text-[#3b3b3b]/40 transition-all duration-200 focus:border-[#009063]/50 focus:shadow-sm"
-        />
-        <button
-          onClick={sendMessage}
-          disabled={!message.trim()}
-          className="bg-[#009063] hover:bg-[#009063]/90 disabled:bg-[#009063]/50 text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105"
-        >
-          Send
-        </button>
+      <div className="border-t border-[#dfdcef] bg-[#fbfbfb] p-4 space-y-2">
+        {/* File Preview */}
+        {selectedFile && (
+          <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-[#dfdcef]">
+            {filePreview ? (
+              <img src={filePreview} alt="Preview" className="w-16 h-16 object-cover rounded" />
+            ) : (
+              <div className="w-16 h-16 bg-gray-100 rounded flex items-center justify-center">
+                <Paperclip className="w-6 h-6 text-gray-400" />
+              </div>
+            )}
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium truncate">{selectedFile.name}</p>
+              <p className="text-xs text-gray-500">
+                {(selectedFile.size / 1024 / 1024).toFixed(2)} MB
+              </p>
+            </div>
+            <button
+              onClick={cancelFileSelection}
+              className="p-1 hover:bg-gray-100 rounded-full transition-colors"
+            >
+              <X className="w-4 h-4" />
+            </button>
+          </div>
+        )}
+
+        <div className="flex gap-2">
+          <input
+            ref={fileInputRef}
+            type="file"
+            onChange={handleFileSelect}
+            className="hidden"
+            accept="image/*,video/*,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/vnd.ms-excel,application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+          />
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            disabled={isUploading}
+            className="flex-shrink-0 p-3 border border-[#dfdcef] rounded-2xl hover:bg-[#009063]/10 hover:border-[#009063]/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            <Paperclip className="w-5 h-5 text-[#009063]" />
+          </button>
+          <input
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && !isUploading && sendMessage()}
+            placeholder="Type a message..."
+            disabled={isUploading}
+            className="flex-1 border border-[#dfdcef] rounded-2xl px-4 py-3 outline-none text-[#3b3b3b] bg-white placeholder:text-[#3b3b3b]/40 transition-all duration-200 focus:border-[#009063]/50 focus:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+          />
+          <button
+            onClick={sendMessage}
+            disabled={(!message.trim() && !selectedFile) || isUploading}
+            className="bg-[#009063] hover:bg-[#009063]/90 disabled:bg-[#009063]/50 text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:cursor-not-allowed disabled:transform-none"
+          >
+            {isUploading ? "Sending..." : "Send"}
+          </button>
+        </div>
       </div>
     </div>
   );

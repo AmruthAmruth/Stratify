@@ -12,10 +12,25 @@ export class GroupChatEmitter {
         senderId: string,
         message: string,
         createdAt: string,
-        senderName: string
+        senderName: string,
+        messageType?: string,
+        fileUrl?: string,
+        fileName?: string,
+        fileSize?: number,
+        mimeType?: string
     ) {
-        emitGroupMessage(io, groupId, { senderId, message, createdAt, senderName });
-     }
+        emitGroupMessage(io, groupId, {
+            senderId,
+            message,
+            createdAt,
+            senderName,
+            messageType,
+            fileUrl,
+            fileName,
+            fileSize,
+            mimeType
+        });
+    }
 
     static emitTyping(groupId: string, senderId: string) {
         emitGroupTyping(io, groupId, senderId);

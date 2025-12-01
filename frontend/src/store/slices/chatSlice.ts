@@ -5,6 +5,11 @@ export interface IMessage {
   receiverId?: string;
   message: string;
   isRead?: boolean;
+  messageType?: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
   createdAt: string;
 }
 

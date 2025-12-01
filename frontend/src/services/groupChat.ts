@@ -17,8 +17,27 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
 export const createGroup = (data: { name: string; members: string[] }) =>
     handleRequest(api.post(GROUP_CHAT_ROUTES.CREATE_GROUP, data));
 
-export const sendGroupMessage = (data: { groupId: string; message: string; senderName?: string }) =>
-    handleRequest(api.post(GROUP_CHAT_ROUTES.SEND_MESSAGE, data));
+export const sendGroupMessage = (data: { groupId: string; message: string; senderName?: string }, file?: File) => {
+    if (file) {
+        // Use FormData for file upload
+        const formData = new FormData();
+        formData.append('groupId', data.groupId);
+        formData.append('message', data.message || '');
+        if (data.senderName) {
+            formData.append('senderName', data.senderName);
+        }
+        formData.append('file', file);
+
+        return handleRequest(api.post(GROUP_CHAT_ROUTES.SEND_MESSAGE, formData, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+            },
+        }));
+    }
+
+    // Text-only message
+    return handleRequest(api.post(GROUP_CHAT_ROUTES.SEND_MESSAGE, data));
+};
 
 export const getGroupMessages = (groupId: string, limit?: number, after?: string) =>
     handleRequest(

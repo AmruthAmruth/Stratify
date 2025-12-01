@@ -13,15 +13,25 @@ export class SaveChatUseCase implements ISaveChatUseCase {
   async execute(
     senderId: string,
     receiverId: string,
-    message: string
+    message: string,
+    messageType?: string,
+    fileUrl?: string,
+    fileName?: string,
+    fileSize?: number,
+    mimeType?: string
   ): Promise<Chat> {
     const chat = new Chat(
       "",
       senderId,
       receiverId,
       message,
-      false, 
-      new Date()
+      false,
+      new Date(),
+      messageType,
+      fileUrl,
+      fileName,
+      fileSize,
+      mimeType
     );
     return await this._chatRepo.save(chat);
   }

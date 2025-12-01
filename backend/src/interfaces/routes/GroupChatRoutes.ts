@@ -2,6 +2,7 @@ import express from "express";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { GroupChatDI } from "../../di/GroupChatDI";
+import { chatMediaUpload } from "../../infrastructure/services/CloudinaryService";
 
 const groupChatRouter = express.Router();
 const controller = GroupChatDI();
@@ -17,6 +18,7 @@ groupChatRouter.post(
 groupChatRouter.post(
     "/send",
     authMiddleware(["manager", "company", "employee"]),
+    chatMediaUpload.single('file'),
     asyncHandler(controller.sendGroupMessage)
 );
 

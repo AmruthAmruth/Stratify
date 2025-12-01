@@ -29,18 +29,53 @@ export class ChatController {
         console.log(req.body);
 
         const { receiverId, message } = req.body;
-        if (!receiverId || !message) {
-            res.status(StatusCodes.BAD_REQUEST).json({ message: Messages.RECEIVER_ID_AND_MESSAGE_REQUIRED });
+        if (!receiverId) {
+            res.status(StatusCodes.BAD_REQUEST).json({ message: "Receiver ID is required" });
             return;
         }
+
+        // Extract file metadata if file was uploaded
+        const file = req.file as Express.Multer.File | undefined;
+        let messageType: string | undefined;
+        let fileUrl: string | undefined;
+        let fileName: string | undefined;
+        let fileSize: number | undefined;
+        let mimeType: string | undefined;
+
+        if (file) {
+            // File uploaded via Cloudinary
+            fileUrl = (file as { path: string }).path;
+            fileName = file.originalname;
+            fileSize = file.size;
+            mimeType = file.mimetype;
+
+            // Determine message type based on mime type
+            if (file.mimetype.startsWith('image/')) {
+                messageType = 'image';
+            } else if (file.mimetype.startsWith('video/')) {
+                messageType = 'video';
+            } else if (file.mimetype.startsWith('audio/')) {
+                messageType = 'audio';
+            } else {
+                messageType = 'document';
+            }
+        } else {
+            messageType = 'text';
+        }
+
         const savedChat = await this._saveChatUseCase.execute(
             senderId,
             receiverId,
-            message,
+            message || "",
+            messageType,
+            fileUrl,
+            fileName,
+            fileSize,
+            mimeType
         );
 
 
-        ChatEmitter.emitMessage(receiverId, senderId, message);
+        ChatEmitter.emitMessage(receiverId, senderId, message || "", messageType, fileUrl, fileName, fileSize, mimeType);
         res.status(StatusCodes.OK).json({ message: Messages.MESSAGE_SENT, savedChat });
     }
 

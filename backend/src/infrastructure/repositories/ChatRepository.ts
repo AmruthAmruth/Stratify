@@ -12,7 +12,12 @@ export class ChatRepository implements IChatRepository {
       created.receiverId,
       created.message,
       created.isRead,
-      created.createdAt
+      created.createdAt,
+      created.messageType,
+      created.fileUrl,
+      created.fileName,
+      created.fileSize,
+      created.mimeType
     );
   }
 
@@ -25,7 +30,19 @@ export class ChatRepository implements IChatRepository {
     }).sort({ createdAt: 1 });
 
     return chats.map(
-      (c) => new Chat(c.id, c.senderId, c.receiverId, c.message, c.isRead, c.createdAt)
+      (c) => new Chat(
+        c.id,
+        c.senderId,
+        c.receiverId,
+        c.message,
+        c.isRead,
+        c.createdAt,
+        c.messageType,
+        c.fileUrl,
+        c.fileName,
+        c.fileSize,
+        c.mimeType
+      )
     );
   }
 
@@ -87,7 +104,12 @@ export class ChatRepository implements IChatRepository {
           msg.receiverId,
           msg.message,
           msg.isRead,
-          msg.createdAt
+          msg.createdAt,
+          msg.messageType,
+          msg.fileUrl,
+          msg.fileName,
+          msg.fileSize,
+          msg.mimeType
         )
       );
     });
