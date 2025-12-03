@@ -10,6 +10,7 @@ import notificationRouter from "./interfaces/routes/NotificationRoutes";
 import meetingRouter from "./interfaces/routes/MeetingRoutes";
 import chatRouter from "./interfaces/routes/ChatRoutes";
 import groupChatRouter from "./interfaces/routes/GroupChatRoutes";
+import managerRouter from "./interfaces/routes/ManagerRoutes";
 
 const router = Router();
 
@@ -24,4 +25,5 @@ router.use("/notification", notificationRouter);
 router.use("/meeting", meetingRouter)
 router.use('/chat', chatRouter)
 router.use('/group-chat', groupChatRouter)
+router.use('/manager', managerRouter)
 export default router;

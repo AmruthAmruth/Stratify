@@ -1,0 +1,82 @@
+import { Response } from "express";
+import { AuthRequest } from "../middleware/AuthMiddleware";
+import { IGetManagerProfileUseCase } from "../../application/interfaces/managers/IGetManagerProfileUseCase";
+import { IUpdateManagerProfileUseCase } from "../../application/interfaces/managers/IUpdateManagerProfileUseCase";
+import { IChangeManagerPasswordUseCase } from "../../application/interfaces/managers/IChangeManagerPasswordUseCase";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+
+export class ManagerController {
+    constructor(
+        private getManagerProfileUseCase: IGetManagerProfileUseCase,
+        private updateManagerProfileUseCase: IUpdateManagerProfileUseCase,
+        private changeManagerPasswordUseCase: IChangeManagerPasswordUseCase
+    ) { }
+
+    getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const managerId = req.userId!;
+            const manager = await this.getManagerProfileUseCase.execute(managerId);
+            res.status(StatusCodes.OK).json({ manager });
+        } catch (error: unknown) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: error instanceof Error ? error.message : "Failed to fetch profile",
+            });
+        }
+    };
+
+    updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const managerId = req.userId!;
+            const data = req.body;
+
+            // Handle profile image if uploaded
+            if (req.file) {
+                data.profileImage = `/uploads/${req.file.filename}`;
+            }
+
+            const manager = await this.updateManagerProfileUseCase.execute(managerId, data);
+            res.status(StatusCodes.OK).json({
+                message: "Profile updated successfully",
+                manager,
+            });
+        } catch (error: unknown) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: error instanceof Error ? error.message : "Failed to update profile",
+            });
+        }
+    };
+
+    changePassword = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const managerId = req.userId!;
+            const { currentPassword, newPassword } = req.body;
+
+            if (!currentPassword || !newPassword) {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    message: "Current password and new password are required",
+                });
+                return;
+            }
+
+            await this.changeManagerPasswordUseCase.execute(
+                managerId,
+                currentPassword,
+                newPassword
+            );
+
+            res.status(StatusCodes.OK).json({
+                message: "Password changed successfully",
+            });
+        } catch (error: unknown) {
+            if (error instanceof Error && error.message === "Current password is incorrect") {
+                res.status(StatusCodes.BAD_REQUEST).json({
+                    message: error.message,
+                });
+            } else {
+                res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                    message: error instanceof Error ? error.message : "Failed to change password",
+                });
+            }
+        }
+    };
+}

@@ -9,6 +9,7 @@ import Projects from "@/features/manager/Projects";
 import Notification from "@/features/manager/Notification";
 import type { RouteObject } from "react-router-dom";
 import Dashboard from "@/features/manager/Dashboard";
+import Profile from "@/features/manager/Profile";
 
 const managerRoutes: RouteObject[] = [
   {
@@ -50,6 +51,10 @@ const managerRoutes: RouteObject[] = [
   {
     path: "/group-chat",
     element: <GroupChatPage />,
+  },
+   {
+    path: "/profile",
+    element: <Profile />,
   },
   
 ];

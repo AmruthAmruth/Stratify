@@ -117,3 +117,10 @@ export const GROUP_CHAT_ROUTES = {
   ADD_MEMBER: (groupId: string) => `/api/group-chat/${groupId}/members`,
   REMOVE_MEMBER: (groupId: string, memberId: string) => `/api/group-chat/${groupId}/members/${memberId}`,
 }
+
+// Manager routes
+export const MANAGER_ROUTES = {
+  GET_PROFILE: '/api/manager/profile',
+  UPDATE_PROFILE: '/api/manager/profile',
+  CHANGE_PASSWORD: '/api/manager/change-password',
+};

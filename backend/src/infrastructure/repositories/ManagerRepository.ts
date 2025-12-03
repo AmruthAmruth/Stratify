@@ -3,6 +3,7 @@ import { Manager } from "../../domain/entities/Manager";
 import { IManagerRepository } from "../../domain/repositories/IManagerRepository";
 import { ManagerModel } from "../models/ManagerModel";
 import { ManagerMapper } from "../mappers/ManagerMapper";
+import { ManagerWithDepartment } from "../../application/interfaces/managers/types";
 
 export class ManagerRepository implements IManagerRepository {
   async create(manager: Manager): Promise<Manager> {
@@ -60,5 +61,31 @@ export class ManagerRepository implements IManagerRepository {
   async findByCompanyId(companyId: string): Promise<Manager[]> {
     const docs = await ManagerModel.find({ companyId }).exec();
     return ManagerMapper.toEntities(docs);
+  }
+
+  async update(id: string, data: Partial<Manager>): Promise<Manager | null> {
+    const updateData: Record<string, unknown> = {};
+    if (data.name) updateData.name = data.name;
+    if (data.email) updateData.email = data.email;
+    if (data.phone) updateData.phone = data.phone;
+    if (data.dob) updateData.dob = data.dob;
+    if (data.profileImage) updateData.profileImage = data.profileImage;
+
+    const doc = await ManagerModel.findByIdAndUpdate(
+      id,
+      { $set: updateData },
+      { new: true }
+    ).exec();
+
+    if (!doc) return null;
+    return ManagerMapper.toEntity(doc);
+  }
+
+  async findByIdWithDepartment(id: string): Promise<ManagerWithDepartment | null> {
+    const doc = await ManagerModel.findById(id)
+      .populate('departmentId', 'name')
+      .exec();
+    if (!doc) return null;
+    return doc as unknown as ManagerWithDepartment;
   }
 }

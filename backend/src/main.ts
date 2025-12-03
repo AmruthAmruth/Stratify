@@ -66,6 +66,8 @@ connectDB()
   .then(() => console.log(" MongoDB Connected"))
   .catch((err) => console.error(" MongoDB connection failed:", err));
 
+// Serve static files from uploads directory
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use("/api", router);
 

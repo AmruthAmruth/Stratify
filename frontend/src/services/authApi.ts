@@ -53,3 +53,26 @@ export const forgotPasswordVerifyOTP = (data: { email: string; otp: string }) =>
 
 export const updatePassword = (data: { email: string; password: string }) =>
   handleRequest(api.post(AUTH_ROUTES.RESET_PASSWORD, data));
+
+// Manager Profile APIs
+export const getManagerProfile = () =>
+  handleRequest(api.get('/api/manager/profile'));
+
+export const updateManagerProfile = (data: Record<string, unknown>) => {
+  const formData = new FormData();
+  for (const key in data) {
+    if (key === 'profileImage' && data.profileImage instanceof File) {
+      formData.append('profileImage', data.profileImage);
+    } else if (data[key] !== null && data[key] !== undefined) {
+      formData.append(key, String(data[key]));
+    }
+  }
+  return handleRequest(
+    api.put('/api/manager/profile', formData, {
+      headers: { 'Content-Type': 'multipart/form-data' },
+    })
+  );
+};
+
+export const changeManagerPassword = (data: { currentPassword: string; newPassword: string }) =>
+  handleRequest(api.post('/api/manager/change-password', data));
