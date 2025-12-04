@@ -2,11 +2,13 @@ import Department from "@/features/company/Department";
 import CompanyDepartmentDetails from "@/features/company/DepartmentDetailsPage";
 import ProfilePage from "@/features/company/ProfilePage";
 import Projects from "@/features/company/CompanyProjects";
+import CompanyProjectDetailsPage from "@/features/company/CompanyProjectDetailsPage";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
 import type { RouteObject } from "react-router";
 import Notification from "@/features/company/Notification";
 import StratifyDashboard from "@/features/company/CompanyDashboard";
+import ProjectPage from "@/features/employee/ProjectPage";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -42,9 +44,14 @@ const adminRoutes: RouteObject[] = [
     element: <Projects />,
   },
   {
+    path: "project/:id",
+    element: <ProjectPage />,
+  },
+  {
     path: "notification",
     element: <Notification />,
   }
 ];
 
 export default adminRoutes;
+
