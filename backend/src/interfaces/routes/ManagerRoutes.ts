@@ -62,4 +62,17 @@ managerRouter.post(
     asyncHandler(controller.changePassword)
 );
 
+// Team management routes
+managerRouter.get(
+    "/team/employees",
+    authMiddleware(["manager"]),
+    asyncHandler(controller.getDepartmentEmployees)
+);
+
+managerRouter.get(
+    "/team/analytics",
+    authMiddleware(["manager"]),
+    asyncHandler(controller.getTeamAnalytics)
+);
+
 export default managerRouter;

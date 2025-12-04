@@ -3,13 +3,17 @@ import { AuthRequest } from "../middleware/AuthMiddleware";
 import { IGetManagerProfileUseCase } from "../../application/interfaces/managers/IGetManagerProfileUseCase";
 import { IUpdateManagerProfileUseCase } from "../../application/interfaces/managers/IUpdateManagerProfileUseCase";
 import { IChangeManagerPasswordUseCase } from "../../application/interfaces/managers/IChangeManagerPasswordUseCase";
+import { IGetDepartmentEmployeesUseCase } from "../../application/interfaces/managers/IGetDepartmentEmployeesUseCase";
+import { IGetTeamAnalyticsUseCase } from "../../application/interfaces/managers/IGetTeamAnalyticsUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 
 export class ManagerController {
     constructor(
         private getManagerProfileUseCase: IGetManagerProfileUseCase,
         private updateManagerProfileUseCase: IUpdateManagerProfileUseCase,
-        private changeManagerPasswordUseCase: IChangeManagerPasswordUseCase
+        private changeManagerPasswordUseCase: IChangeManagerPasswordUseCase,
+        private getDepartmentEmployeesUseCase: IGetDepartmentEmployeesUseCase,
+        private getTeamAnalyticsUseCase: IGetTeamAnalyticsUseCase
     ) { }
 
     getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -77,6 +81,30 @@ export class ManagerController {
                     message: error instanceof Error ? error.message : "Failed to change password",
                 });
             }
+        }
+    };
+
+    getDepartmentEmployees = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const managerId = req.userId!;
+            const employees = await this.getDepartmentEmployeesUseCase.execute(managerId);
+            res.status(StatusCodes.OK).json({ employees });
+        } catch (error: unknown) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: error instanceof Error ? error.message : "Failed to fetch department employees",
+            });
+        }
+    };
+
+    getTeamAnalytics = async (req: AuthRequest, res: Response): Promise<void> => {
+        try {
+            const managerId = req.userId!;
+            const analytics = await this.getTeamAnalyticsUseCase.execute(managerId);
+            res.status(StatusCodes.OK).json({ analytics });
+        } catch (error: unknown) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: error instanceof Error ? error.message : "Failed to fetch team analytics",
+            });
         }
     };
 }

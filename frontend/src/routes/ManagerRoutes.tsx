@@ -7,6 +7,7 @@ import ManagerDepartmentDetails from "@/features/manager/ManagerDepartmentDetail
 import Meeting from "@/features/manager/Meeting";
 import Projects from "@/features/manager/Projects";
 import Notification from "@/features/manager/Notification";
+import MyTeam from "@/features/manager/MyTeam";
 import type { RouteObject } from "react-router-dom";
 import Dashboard from "@/features/manager/Dashboard";
 import Profile from "@/features/manager/Profile";
@@ -14,7 +15,7 @@ import Profile from "@/features/manager/Profile";
 const managerRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <Dashboard/>,
+    element: <Dashboard />,
   },
   {
     path: "companies",
@@ -23,6 +24,10 @@ const managerRoutes: RouteObject[] = [
   {
     path: "department",
     element: <ManagerDepartmentDetails />,
+  },
+  {
+    path: "/team",
+    element: <MyTeam />,
   },
   {
     path: "projects",
@@ -52,11 +57,11 @@ const managerRoutes: RouteObject[] = [
     path: "/group-chat",
     element: <GroupChatPage />,
   },
-   {
+  {
     path: "/profile",
     element: <Profile />,
   },
-  
+
 ];
 
 export default managerRoutes;
