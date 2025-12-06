@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
+import { useSearchParams } from "react-router-dom";
 
 interface TeamMember {
     id: string;
@@ -15,6 +16,7 @@ interface TeamMember {
 }
 
 const ChatPage = () => {
+    const [searchParams, setSearchParams] = useSearchParams();
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
     const [chatHistory, setChatHistory] = useState<any[]>([]);
@@ -30,6 +32,15 @@ const ChatPage = () => {
 
                 if (teamData && Array.isArray(teamData)) {
                     setTeamMembers(teamData);
+
+                    // ✅ Restore selected chat from URL if exists
+                    const chatId = searchParams.get('chat');
+                    if (chatId) {
+                        const member = teamData.find((m: TeamMember) => m.id === chatId);
+                        if (member) {
+                            setSelectedMember(member);
+                        }
+                    }
                 }
             } catch (err) {
                 console.error("Failed to fetch team members:", err);
@@ -39,7 +50,7 @@ const ChatPage = () => {
         };
 
         fetchData();
-    }, []);
+    }, [searchParams]);
 
     // ✅ Listen for incoming messages via socket
     useEffect(() => {
@@ -83,7 +94,8 @@ const ChatPage = () => {
 
         getChatHistory(selectedMember.id)
             .then((data) => {
-                setChatHistory(Array.isArray(data) ? data : []);
+                console.log("Chat history loaded:", data);
+                setChatHistory(data || []);
             })
             .catch((err) => console.error("Failed to load chat history:", err))
             .finally(() => setChatLoading(false));
@@ -100,6 +112,12 @@ const ChatPage = () => {
             )
         );
     }, [selectedMember]);
+
+    // ✅ Handle member selection with URL update
+    const handleSelectMember = (member: TeamMember) => {
+        setSelectedMember(member);
+        setSearchParams({ chat: member.id });
+    };
 
     return (
         <div className="flex h-screen bg-[#fbfbfb] text-[#3b3b3b]">
@@ -121,7 +139,7 @@ const ChatPage = () => {
                         {teamMembers.map((member) => (
                             <li
                                 key={member.id}
-                                onClick={() => setSelectedMember(member)}
+                                onClick={() => handleSelectMember(member)}
                                 className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${selectedMember?.id === member.id
                                     ? "bg-[#009063]/10 shadow-sm"
                                     : ""

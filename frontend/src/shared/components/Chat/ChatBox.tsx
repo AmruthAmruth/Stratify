@@ -32,10 +32,19 @@ const ChatBox = ({
   // ✅ Reset chat when new receiver is selected and load initial messages
   useEffect(() => {
     dispatch(clearChat());
+    console.log("Loading initial messages for receiverId:", receiverId, "Messages:", initialMessages);
     if (initialMessages && initialMessages.length > 0) {
       initialMessages.forEach((msg) => dispatch(addMessage(msg)));
     }
-  }, [receiverId, dispatch, initialMessages]);
+  }, [receiverId, dispatch]); // Removed initialMessages from deps to prevent unnecessary clearing
+
+  // ✅ Update messages when initialMessages changes (without clearing)
+  useEffect(() => {
+    if (initialMessages && initialMessages.length > 0 && messages.length === 0) {
+      console.log("Updating messages from initialMessages:", initialMessages);
+      initialMessages.forEach((msg) => dispatch(addMessage(msg)));
+    }
+  }, [initialMessages, dispatch, messages.length]);
 
   // ✅ Listen for incoming socket messages
   useEffect(() => {
@@ -54,8 +63,24 @@ const ChatBox = ({
       console.log("Is message for this chat?", isMessageForThisChat);
 
       if (isMessageForThisChat) {
-        console.log("✅ Adding message to ChatBox");
-        dispatch(addMessage(msg));
+        // Check if message already exists in store (to prevent duplicates)
+        // Match by: exact same sender, receiver, message content, and timestamp within 2 seconds
+        const messageExists = messages.some((m) => {
+          const isSameSender = m.senderId === msg.senderId;
+          const isSameReceiver = m.receiverId === msg.receiverId;
+          const isSameMessage = m.message === msg.message;
+          const timeDiff = Math.abs(new Date(m.createdAt).getTime() - new Date(msg.createdAt).getTime());
+          const isWithinTimeWindow = timeDiff < 2000; // 2 seconds
+
+          return isSameSender && isSameReceiver && isSameMessage && isWithinTimeWindow;
+        });
+
+        if (!messageExists) {
+          console.log("✅ Adding message to ChatBox");
+          dispatch(addMessage(msg));
+        } else {
+          console.log("⚠️ Message already exists, skipping duplicate");
+        }
       } else {
         console.log("❌ Message not for this chat, ignoring");
       }
@@ -67,7 +92,7 @@ const ChatBox = ({
     return () => {
       socket.off("receive-message", handleReceiveMessage);
     };
-  }, [receiverId, userId, dispatch]);
+  }, [receiverId, userId, dispatch, messages]);
 
   // ✅ Auto-scroll to latest message
   useEffect(() => {
@@ -77,20 +102,38 @@ const ChatBox = ({
   // ✅ Send message
   const sendMessage = async () => {
     const socket = getSocket();
-    if (!socket || (!message.trim() && !selectedFile)) return;
+    if (!socket || (!message.trim() && !selectedFile) || !userId) return;
 
     setIsUploading(true);
     try {
+      // Create temporary ID for the message
+      const tempId = `temp-${Date.now()}-${Math.random()}`;
+
       const msg = {
+        id: tempId,
         senderId: userId,
         receiverId,
         message: message.trim(),
         createdAt: new Date().toISOString(),
+        messageType: selectedFile ?
+          (selectedFile.type.startsWith('image/') ? 'image' :
+            selectedFile.type.startsWith('video/') ? 'video' :
+              selectedFile.type.startsWith('audio/') ? 'audio' : 'document') : 'text',
       };
+
+      // Immediately add message to Redux store for instant UI update
+      dispatch(addMessage(msg));
 
       // Emit to socket and save in DB
       socket.emit("send-message", msg);
-      await sendTheMessage(msg, selectedFile || undefined);
+      const savedMessage = await sendTheMessage(msg, selectedFile || undefined);
+
+      // Remove temp message and add the real one with database ID
+      if (savedMessage && savedMessage.savedChat) {
+        // The saved message will have the real database ID
+        // We'll replace the temp message when we receive it via socket or from the response
+        console.log("Message saved to database:", savedMessage.savedChat);
+      }
 
       setMessage("");
       setSelectedFile(null);

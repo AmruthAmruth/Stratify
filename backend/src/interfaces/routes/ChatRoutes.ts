@@ -21,7 +21,7 @@ chatRouter.get(
     asyncHandler(controller.getTeamForManager)
 );
 
-chatRouter.get('/history/:receiverId', authMiddleware(["manager", "employee"]), asyncHandler(controller.getChatHistory))
+chatRouter.get('/history/:receiverId', authMiddleware(["manager", "company", "employee"]), asyncHandler(controller.getChatHistory))
 
 chatRouter.put(
     '/mark-read/:senderId',

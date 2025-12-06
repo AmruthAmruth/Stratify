@@ -40,13 +40,26 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
       const manager = await this._managerRepo.findById(userId);
 
       if (manager) {
+        // Fetch employees in manager's department
         const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
+
+        // Fetch the company
+        const company = await this._companyRepo.findById(manager.companyId);
+
         teamMembers = employees
           .filter(emp => emp.id && emp.id !== userId)
           .map(emp => ({
             id: emp.id!,
             name: emp.name,
           }));
+
+        // Add company to the team list
+        if (company && company.id) {
+          teamMembers.push({
+            id: company.id,
+            name: company.name,
+          });
+        }
       } else {
         // User is an employee
         const employee = await this._employeeRepo.findById(userId);
@@ -56,6 +69,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
 
         const departmentEmployees = await this._employeeRepo.findByDepartmentId(employee.departmentId!);
         const employeeManager = await this._managerRepo.findById(employee.managerId!);
+        const company = await this._companyRepo.findById(employee.companyId);
 
         teamMembers = departmentEmployees
           .filter(emp => emp.id && emp.id !== userId)
@@ -73,6 +87,14 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
               name: employeeManager.name,
             });
           }
+        }
+
+        // Add company to the list
+        if (company && company.id) {
+          teamMembers.push({
+            id: company.id,
+            name: company.name,
+          });
         }
       }
     }
