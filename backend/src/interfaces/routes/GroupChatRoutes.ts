@@ -29,6 +29,20 @@ groupChatRouter.get(
     asyncHandler(controller.getGroupMessages)
 );
 
+// Get department groups for company (auto-created per department)
+groupChatRouter.get(
+    "/department-groups",
+    authMiddleware(["company"]),
+    asyncHandler(controller.getDepartmentGroupsForCompany)
+);
+
+// Get my department group for manager/employee
+groupChatRouter.get(
+    "/my-department-group",
+    authMiddleware(["manager", "employee"]),
+    asyncHandler(controller.getMyDepartmentGroup)
+);
+
 // Get all groups for the authenticated user
 groupChatRouter.get(
     "/my-groups",

@@ -7,13 +7,17 @@ import { ISendGroupMessageUseCase } from "../../application/interfaces/chat/ISen
 import { IGetGroupMessagesUseCase } from "../../application/interfaces/chat/IGetGroupMessagesUseCase";
 import { IGroupRepository } from "../../domain/repositories/IGroupRepository";
 import { GroupChatEmitter } from "../../shared/events/GroupChatEmitter";
+import { IGetDepartmentGroupsForCompanyUseCase } from "../../application/interfaces/chat/IGetDepartmentGroupsForCompanyUseCase";
+import { IGetMyDepartmentGroupUseCase } from "../../application/interfaces/chat/IGetMyDepartmentGroupUseCase";
 
 export class GroupChatController {
     constructor(
         private _createGroupUseCase: ICreateGroupUseCase,
         private _sendGroupMessageUseCase: ISendGroupMessageUseCase,
         private _getGroupMessagesUseCase: IGetGroupMessagesUseCase,
-        private _groupRepository: IGroupRepository
+        private _groupRepository: IGroupRepository,
+        private _getDepartmentGroupsForCompanyUseCase?: IGetDepartmentGroupsForCompanyUseCase,
+        private _getMyDepartmentGroupUseCase?: IGetMyDepartmentGroupUseCase
     ) { }
 
     createGroup = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -251,5 +255,50 @@ export class GroupChatController {
             message: Messages.MEMBER_REMOVED_FROM_GROUP,
             group: updatedGroup
         });
+    };
+
+    getDepartmentGroupsForCompany = async (req: AuthRequest, res: Response): Promise<void> => {
+        const userId = req.userId;
+        if (!userId) {
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
+            return;
+        }
+
+        if (!this._getDepartmentGroupsForCompanyUseCase) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: "Department groups feature not available"
+            });
+            return;
+        }
+
+        const groups = await this._getDepartmentGroupsForCompanyUseCase.execute(userId);
+        res.status(StatusCodes.OK).json(groups);
+    };
+
+    getMyDepartmentGroup = async (req: AuthRequest, res: Response): Promise<void> => {
+        const userId = req.userId;
+        const userRole = req.role as "manager" | "employee";
+
+        if (!userId) {
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
+            return;
+        }
+
+        if (!userRole || (userRole !== "manager" && userRole !== "employee")) {
+            res.status(StatusCodes.FORBIDDEN).json({
+                message: "This endpoint is only for managers and employees"
+            });
+            return;
+        }
+
+        if (!this._getMyDepartmentGroupUseCase) {
+            res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: "Department group feature not available"
+            });
+            return;
+        }
+
+        const group = await this._getMyDepartmentGroupUseCase.execute(userId, userRole);
+        res.status(StatusCodes.OK).json(group);
     };
 }

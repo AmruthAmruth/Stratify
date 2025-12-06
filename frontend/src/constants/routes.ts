@@ -117,6 +117,8 @@ export const GROUP_CHAT_ROUTES = {
   MY_GROUPS: '/api/group-chat/my-groups',
   ADD_MEMBER: (groupId: string) => `/api/group-chat/${groupId}/members`,
   REMOVE_MEMBER: (groupId: string, memberId: string) => `/api/group-chat/${groupId}/members/${memberId}`,
+  DEPARTMENT_GROUPS: '/api/group-chat/department-groups',
+  MY_DEPARTMENT_GROUP: '/api/group-chat/my-department-group',
 }
 
 // Manager routes

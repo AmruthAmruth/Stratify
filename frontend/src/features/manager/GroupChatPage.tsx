@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
-import { getMyGroups, getGroupMessages } from "@/services/groupChat";
+import { getMyGroups, getGroupMessages, getMyDepartmentGroup } from "@/services/groupChat";
 import { getTeamMemeberList } from "@/services/chat";
 import { setGroups, setActiveGroup, setGroupMessages } from "@/store/slices/groupChatSlice";
 import { joinGroupRoom, leaveGroupRoom } from "@/shared/socket/socket";
@@ -14,6 +14,7 @@ const GroupChatPage = () => {
     const [chatLoading, setChatLoading] = useState(false);
     const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
     const [availableMembers, setAvailableMembers] = useState<{ id: string; name: string }[]>([]);
+    const [departmentGroup, setDepartmentGroup] = useState<IGroup | null>(null);
 
     const groups = useSelector((state: RootState) => state.groupChat.groups);
     const activeGroupId = useSelector((state: RootState) => state.groupChat.activeGroupId);
@@ -23,36 +24,53 @@ const GroupChatPage = () => {
 
     const selectedGroup = groups.find((g) => g.id === activeGroupId);
 
-    // Fetch groups on mount
+    // Fetch groups and department group on mount
     useEffect(() => {
         Promise.all([
             getMyGroups(),
-            getTeamMemeberList()
+            getTeamMemeberList(),
+            getMyDepartmentGroup()
         ])
-            .then(([groupsData, membersData]) => {
+            .then(([groupsData, membersData, deptGroup]) => {
                 if (groupsData && Array.isArray(groupsData)) {
                     dispatch(setGroups(groupsData));
                 }
                 if (membersData && Array.isArray(membersData)) {
                     setAvailableMembers(membersData);
                 }
+                // Set department group if exists
+                if (deptGroup) {
+                    const formattedDeptGroup: IGroup = {
+                        id: deptGroup.id,
+                        name: `🏢 ${deptGroup.name}`,
+                        members: deptGroup.members.map((m: any) => m.id),
+                        createdAt: deptGroup.createdAt,
+                    };
+                    setDepartmentGroup(formattedDeptGroup);
+                }
             })
             .catch((err) => console.error("Failed to fetch data:", err))
             .finally(() => setLoading(false));
     }, [dispatch]);
 
-    // Join all group rooms on mount
+    // Join all group rooms on mount (including department group)
     useEffect(() => {
         groups.forEach((group) => {
             joinGroupRoom(group.id);
         });
+        if (departmentGroup) {
+            joinGroupRoom(departmentGroup.id);
+        }
 
         return () => {
             groups.forEach((group) => {
                 leaveGroupRoom(group.id);
             });
+            if (departmentGroup) {
+                leaveGroupRoom(departmentGroup.id);
+            }
         };
-    }, [groups]);
+    }, [groups, departmentGroup]);
 
     // Fetch messages when a group is selected
     useEffect(() => {
@@ -101,42 +119,72 @@ const GroupChatPage = () => {
                     </div>
                 ) : (
                     <ul className="flex-1 overflow-y-auto">
-                        {groups.map((group) => (
-                            <li
-                                key={group.id}
-                                onClick={() => handleSelectGroup(group)}
-                                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${activeGroupId === group.id
-                                    ? "bg-[#009063]/10 shadow-sm"
-                                    : ""
-                                    }`}
-                            >
-                                {/* Group Avatar */}
-                                <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
-                                    {group.name.charAt(0).toUpperCase()}
-                                </div>
-
-                                {/* Group Info */}
-                                <div className="flex-1">
-                                    <p className="font-medium text-[#3b3b3b]">{group.name}</p>
-                                    {group.lastMessage ? (
-                                        <p className="text-sm text-[#3b3b3b]/60 truncate max-w-[160px]">
-                                            {group.lastMessage}
-                                        </p>
-                                    ) : (
+                        {/* Department Group */}
+                        {departmentGroup && (
+                            <>
+                                <li className="px-4 py-2 bg-[#f0f0f0] border-b border-[#dfdcef]">
+                                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide">Department</p>
+                                </li>
+                                <li
+                                    key={departmentGroup.id}
+                                    onClick={() => handleSelectGroup(departmentGroup)}
+                                    className={`relative flex items-center gap-3 p-4 cursor-pointer border-b-2 border-[#009063]/20 transition-all duration-200 hover:bg-[#dfdcef]/30 ${activeGroupId === departmentGroup.id
+                                        ? "bg-[#009063]/10 shadow-sm"
+                                        : ""
+                                        }`}
+                                >
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#009063] to-[#00b377] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                                        🏢
+                                    </div>
+                                    <div className="flex-1">
+                                        <p className="font-medium text-[#3b3b3b]">{departmentGroup.name}</p>
                                         <p className="text-sm text-[#3b3b3b]/60">
-                                            {group.members.length} members
+                                            {departmentGroup.members.length} members
                                         </p>
-                                    )}
-                                </div>
+                                    </div>
+                                </li>
+                            </>
+                        )}
 
-                                {/* Unread Badge */}
-                                {group.unreadCount && group.unreadCount > 0 && (
-                                    <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
-                                        {group.unreadCount}
-                                    </span>
-                                )}
-                            </li>
-                        ))}
+                        {/* Custom Groups */}
+                        {groups.length > 0 && (
+                            <>
+                                <li className="px-4 py-2 bg-[#f0f0f0] border-b border-[#dfdcef] mt-2">
+                                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide">Custom Groups</p>
+                                </li>
+                                {groups.map((group) => (
+                                    <li
+                                        key={group.id}
+                                        onClick={() => handleSelectGroup(group)}
+                                        className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${activeGroupId === group.id
+                                            ? "bg-[#009063]/10 shadow-sm"
+                                            : ""
+                                            }`}
+                                    >
+                                        <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                                            {group.name.charAt(0).toUpperCase()}
+                                        </div>
+                                        <div className="flex-1">
+                                            <p className="font-medium text-[#3b3b3b]">{group.name}</p>
+                                            {group.lastMessage ? (
+                                                <p className="text-sm text-[#3b3b3b]/60 truncate max-w-[160px]">
+                                                    {group.lastMessage}
+                                                </p>
+                                            ) : (
+                                                <p className="text-sm text-[#3b3b3b]/60">
+                                                    {group.members.length} members
+                                                </p>
+                                            )}
+                                        </div>
+                                        {group.unreadCount && group.unreadCount > 0 && (
+                                            <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
+                                                {group.unreadCount}
+                                            </span>
+                                        )}
+                                    </li>
+                                ))}
+                            </>
+                        )}
                     </ul>
                 )}
             </div>

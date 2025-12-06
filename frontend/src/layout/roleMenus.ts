@@ -18,6 +18,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Leave Management", path: "/leave", icon: "CalendarX" },
     { label: "Meetings", path: "/meetings", icon: "Video" },
     { label: "Message", path: "/chat", icon: "MessageSquare" },
+    { label: "Group Chat", path: "/group-chat", icon: "Users2" },
     { label: "Notification", path: "/notification", icon: "Bell" },
     { label: "Subscription", path: "/subscription", icon: "FileText" },
     { label: "My Profile", path: "/my-profile", icon: "User" },

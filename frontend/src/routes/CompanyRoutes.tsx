@@ -10,6 +10,7 @@ import type { RouteObject } from "react-router";
 import Notification from "@/features/company/Notification";
 import StratifyDashboard from "@/features/company/CompanyDashboard";
 import ProjectPage from "@/features/employee/ProjectPage";
+import CompanyGroupChatPage from "@/features/company/CompanyGroupChatPage";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -31,6 +32,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "chat",
     element: <ChatPage />,
+  },
+  {
+    path: "group-chat",
+    element: <CompanyGroupChatPage />,
   },
   {
     path: "subscription",

@@ -54,3 +54,9 @@ export const addMemberToGroup = (groupId: string, data: { newMemberId: string; n
 
 export const removeMemberFromGroup = (groupId: string, memberId: string, data: { memberName: string }) =>
     handleRequest(api.delete(GROUP_CHAT_ROUTES.REMOVE_MEMBER(groupId, memberId), { data }));
+
+export const getDepartmentGroups = () =>
+    handleRequest(api.get(GROUP_CHAT_ROUTES.DEPARTMENT_GROUPS));
+
+export const getMyDepartmentGroup = () =>
+    handleRequest(api.get(GROUP_CHAT_ROUTES.MY_DEPARTMENT_GROUP));
