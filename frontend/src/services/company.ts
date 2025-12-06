@@ -30,7 +30,7 @@ export const createDepartment = (data: Record<string, unknown>) =>
   handleRequest(api.post(COMPANY_ROUTES.CREATE_DEPARTMENT, data));
 
 export const createEmployee = (data: Record<string, unknown>) =>
-  handleRequest(api.post(COMPANY_ROUTES.CREATE_EMPLOYEE, data)); 
+  handleRequest(api.post(COMPANY_ROUTES.CREATE_EMPLOYEE, data));
 
 export const createManager = (data: Record<string, unknown>) =>
   handleRequest(api.post(COMPANY_ROUTES.CREATE_MANAGER, data));
@@ -54,7 +54,7 @@ export const listSubscriptionPlan = () => handleRequest(api.get(COMPANY_ROUTES.S
 
 export const createSubscriptionPlan = (planName: string) =>
   handleRequest(api.post(COMPANY_ROUTES.PURCHASE, { planName }));
-   
+
 export const createSubscriptionPlanForUnauthenticated = (planName: string, companyId: string) =>
   handleRequest(api.post(COMPANY_ROUTES.PURCHASE_UNAUTH, { planName, companyId }));
 
@@ -83,3 +83,7 @@ export const getManagerDepartments = (managerId: string) =>
   handleRequest(api.get(COMPANY_ROUTES.MANAGER_DEPARTMENTS(managerId)));
 
 export const listPurchasedCompany = () => handleRequest(api.get(COMPANY_ROUTES.LIST_PURCHASED_COMPANY));
+
+export const getCompanyAnalytics = () =>
+  handleRequest(api.get(COMPANY_ROUTES.COMPANY_ANALYTICS));
+

@@ -1,4 +1,4 @@
-import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
+import { CompanyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { ProjectRepository } from "../infrastructure/repositories/ProjectRepository";
 import { UserStoryRepository } from "../infrastructure/repositories/UserStoryRepository";
 import { BacklogRepository } from "../infrastructure/repositories/BacklogRepository";
@@ -39,7 +39,7 @@ import { NotificationRepository } from "../infrastructure/repositories/Notificat
 
 
 export const projectDI = () => {
-  const companyRepo = new companyRepository();
+  const companyRepo = new CompanyRepository();
   const projectRepo = new ProjectRepository();
   const userStoryRepo = new UserStoryRepository();
   const backlogRepo = new BacklogRepository();

@@ -5,6 +5,7 @@ import Projects from "@/features/company/CompanyProjects";
 import CompanyProjectDetailsPage from "@/features/company/CompanyProjectDetailsPage";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
 import TeamPage from "@/features/company/TeamPage";
+import ChatPage from "@/features/company/ChatPage";
 import type { RouteObject } from "react-router";
 import Notification from "@/features/company/Notification";
 import StratifyDashboard from "@/features/company/CompanyDashboard";
@@ -26,6 +27,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team",
     element: <TeamPage />,
+  },
+  {
+    path: "chat",
+    element: <ChatPage />,
   },
   {
     path: "subscription",
@@ -54,4 +59,3 @@ const adminRoutes: RouteObject[] = [
 ];
 
 export default adminRoutes;
-

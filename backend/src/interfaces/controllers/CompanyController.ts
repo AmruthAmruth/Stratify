@@ -5,9 +5,11 @@ import { IApproveCompanyUseCase } from "../../application/interfaces/company/IAp
 import { IUnapproveCompany } from "../../application/interfaces/company/IUnapprovedCompanyUseCase";
 import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company/IGetCompanyMembersUseCase";
 import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
+import { IGetCompanyAnalyticsUseCase } from "../../application/interfaces/company/IGetCompanyAnalyticsUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { AuthRequest } from "../middleware/AuthMiddleware";
+
 
 export class CompanyController {
   constructor(
@@ -17,6 +19,7 @@ export class CompanyController {
     private _unapproveCompanyUseCase: IUnapproveCompany,
     private _getCompanyMembersUseCase: IGetCompanyMemebersUseCase,
     private _getTeamMemberProfileUseCase: IGetProfileUseCase,
+    private _getCompanyAnalyticsUseCase: IGetCompanyAnalyticsUseCase,
   ) { }
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
@@ -71,5 +74,14 @@ export class CompanyController {
     res.status(StatusCodes.OK).json({ response });
   };
 
+  getCompanyAnalytics = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const companyId = req.userId!;
+    const analytics = await this._getCompanyAnalyticsUseCase.execute(companyId);
+    res.status(StatusCodes.OK).json(analytics);
+  };
 
 }
+

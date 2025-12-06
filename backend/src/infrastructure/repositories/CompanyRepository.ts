@@ -1,11 +1,10 @@
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
 import { Company } from "../../domain/entities/Company";
 import CompanyModel from "../models/CompanyModel";
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { PaginatedResult } from "../../domain/common/Pagination";
-import { FilterQuery } from "mongoose";
 
-export class companyRepository implements ICompanyRepository {
+export class CompanyRepository implements ICompanyRepository {
   async create(company: Company): Promise<Company> {
     const doc = await CompanyModel.create({
       name: company.name,
@@ -41,7 +40,7 @@ export class companyRepository implements ICompanyRepository {
       doc.password,
       doc.status,
       "company",
-      doc.profileImage,
+      doc.profileImage
     );
   }
 
@@ -65,7 +64,7 @@ export class companyRepository implements ICompanyRepository {
       doc.password,
       doc.status,
       "company",
-      doc.profileImage,
+      doc.profileImage
     );
   }
 
@@ -89,7 +88,7 @@ export class companyRepository implements ICompanyRepository {
       doc.password,
       doc.status,
       "company",
-      doc.profileImage,
+      doc.profileImage
     );
   }
 
@@ -113,7 +112,7 @@ export class companyRepository implements ICompanyRepository {
       doc.password,
       doc.status,
       "company",
-      doc.profileImage,
+      doc.profileImage
     );
   }
 
@@ -133,13 +132,14 @@ export class companyRepository implements ICompanyRepository {
       pageSize = 10,
       cursor,
       filter = {},
-      sort = { createdAt: -1 },
+      sort = { createdAt: -1 }
     } = options;
 
     if (cursor) {
       const typedFilter: FilterQuery<typeof CompanyModel> = filter;
       typedFilter["createdAt"] = { $lt: new Date(cursor) };
       const data = await CompanyModel.find(filter).sort(sort).limit(pageSize);
+
       return {
         data: data.map(
           (doc) =>
@@ -159,12 +159,12 @@ export class companyRepository implements ICompanyRepository {
               doc.password,
               doc.status,
               "company",
-              doc.profileImage,
-            ),
+              doc.profileImage
+            )
         ),
         total: data.length,
         page,
-        pageSize,
+        pageSize
       };
     } else {
       const total = await CompanyModel.countDocuments(filter);
@@ -192,12 +192,12 @@ export class companyRepository implements ICompanyRepository {
               doc.password,
               doc.status,
               "company",
-              doc.profileImage,
-            ),
+              doc.profileImage
+            )
         ),
         total,
         page,
-        pageSize,
+        pageSize
       };
     }
   }
@@ -206,7 +206,7 @@ export class companyRepository implements ICompanyRepository {
     await CompanyModel.findByIdAndUpdate(
       id,
       { status: "approved" },
-      { new: true },
+      { new: true }
     );
   }
 
@@ -214,7 +214,7 @@ export class companyRepository implements ICompanyRepository {
     await CompanyModel.findByIdAndUpdate(
       id,
       { status: "rejected" },
-      { new: true },
+      { new: true }
     );
   }
 }

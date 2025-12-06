@@ -1,4 +1,4 @@
-import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
+import { CompanyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { SubscriptionRepository } from "../infrastructure/repositories/SubscriptionRepository";
 import { PlanPriceRepostory } from "../infrastructure/repositories/PlanPriceRepository";
 import { RazorpayService } from "../infrastructure/services/RazorpayService";
@@ -12,7 +12,7 @@ import { DeletePlanUseCase } from "../application/use-cases/subscriptions/Delete
 import { ListCompanyPurchasedPlanUseCase } from "../application/use-cases/subscriptions/ListCompanyPurchasedPlanUseCase";
 
 export const subscriptionDI = () => {
-  const companyRepo = new companyRepository();
+  const companyRepo = new CompanyRepository();
   const subscriptionRepo = new SubscriptionRepository();
   const planRepo = new PlanPriceRepostory();
   const razorpayService = new RazorpayService();

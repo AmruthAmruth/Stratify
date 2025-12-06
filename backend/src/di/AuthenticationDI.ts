@@ -1,4 +1,4 @@
-import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
+import { CompanyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { OTPRepository } from "../infrastructure/repositories/OTPRepository";
 import { TempRegistrationRepository } from "../infrastructure/repositories/TempRegistrationRepository";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
@@ -21,7 +21,7 @@ import { RefreshTokenUseCase } from "../application/use-cases/authentication/Ref
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const authenticationDI = () => {
-  const companyRepo = new companyRepository();
+  const companyRepo = new CompanyRepository();
   const otpRepo = new OTPRepository();
   const tempRegRepo = new TempRegistrationRepository();
   const employeeRepo = new EmployeeRepository();

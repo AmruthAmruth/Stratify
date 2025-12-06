@@ -1,6 +1,7 @@
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IChatRepository } from "../../../domain/repositories/IChatRepository";
+import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { GetTeamForChatDTO } from "../../dto/chat/GetTeamForManagerDTO";
 import { IGetTeamForChatUseCase } from "../../interfaces/chat/IGetTeamForChatUseCase";
@@ -9,47 +10,69 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
   constructor(
     private _managerRepo: IManagerRepository,
     private _employeeRepo: IEmployeeRepository,
-    private _chatRepo: IChatRepository
+    private _chatRepo: IChatRepository,
+    private _companyRepo: ICompanyRepository
   ) { }
 
   async execute(userId: string): Promise<GetTeamForChatDTO[]> {
-   
-    const manager = await this._managerRepo.findById(userId);
+
+    // Check if user is a company
+    const company = await this._companyRepo.findById(userId);
     let teamMembers: Array<{ id: string; name: string }> = [];
 
-    if (manager) {
-      const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
-      teamMembers = employees
-        .filter(emp => emp.id && emp.id !== userId)
-        .map(emp => ({
-          id: emp.id!,
-          name: emp.name,
-        }));
+    if (company) {
+      // Company user: fetch all managers and employees under this company
+      const [managers, employees] = await Promise.all([
+        this._managerRepo.findByCompanyId(company.id!),
+        this._employeeRepo.findByCompanyId(company.id!)
+      ]);
+
+      teamMembers = [
+        ...managers
+          .filter(m => m.id && m.id !== userId)
+          .map(m => ({ id: m.id!, name: m.name })),
+        ...employees
+          .filter(e => e.id && e.id !== userId)
+          .map(e => ({ id: e.id!, name: e.name }))
+      ];
     } else {
+      // Check if user is a manager
+      const manager = await this._managerRepo.findById(userId);
 
-      const employee = await this._employeeRepo.findById(userId);
-      if (!employee) {
-        throw new AppError("User not found as manager or employee");
-      }
+      if (manager) {
+        const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
+        teamMembers = employees
+          .filter(emp => emp.id && emp.id !== userId)
+          .map(emp => ({
+            id: emp.id!,
+            name: emp.name,
+          }));
+      } else {
+        // User is an employee
+        const employee = await this._employeeRepo.findById(userId);
+        if (!employee) {
+          throw new AppError("User not found as company, manager, or employee");
+        }
 
-      const departmentEmployees = await this._employeeRepo.findByDepartmentId(employee.departmentId!);
-      const employeeManager = await this._managerRepo.findById(employee.managerId!);
+        const departmentEmployees = await this._employeeRepo.findByDepartmentId(employee.departmentId!);
+        const employeeManager = await this._managerRepo.findById(employee.managerId!);
 
-      teamMembers = departmentEmployees
-        .filter(emp => emp.id && emp.id !== userId)
-        .map(emp => ({
-          id: emp.id!,
-          name: emp.name,
-        }));
+        teamMembers = departmentEmployees
+          .filter(emp => emp.id && emp.id !== userId)
+          .map(emp => ({
+            id: emp.id!,
+            name: emp.name,
+          }));
 
-     
-      if (employeeManager && employeeManager.id) {
-        const exists = teamMembers.some(member => member.id === employeeManager.id);
-        if (!exists) {
-          teamMembers.push({
-            id: employeeManager.id,
-            name: employeeManager.name,
-          });
+        // Add manager to the list
+        if (employeeManager && employeeManager.id) {
+          const exists = teamMembers.some(member => member.id === employeeManager.id);
+          if (!exists) {
+            teamMembers.push({
+              id: employeeManager.id,
+              name: employeeManager.name,
+            });
+          }
         }
       }
     }
@@ -58,14 +81,14 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
       return [];
     }
 
-   
+
     const userIds = teamMembers.map(m => m.id);
     const [lastMessagesMap, unreadCountsMap] = await Promise.all([
       this._chatRepo.getLastMessageForUsers(userId, userIds),
       this._chatRepo.getUnreadCounts(userId),
     ]);
 
-    
+
 
     const enrichedTeam: GetTeamForChatDTO[] = teamMembers.map(member => {
       const lastMessage = lastMessagesMap.get(member.id);
@@ -80,7 +103,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
       };
     });
 
-    
+
     enrichedTeam.sort((a, b) => {
       if (a.lastMessageTime && b.lastMessageTime) {
         return b.lastMessageTime.getTime() - a.lastMessageTime.getTime();

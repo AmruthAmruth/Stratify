@@ -1,4 +1,4 @@
-import { companyRepository } from "../infrastructure/repositories/CompanyRepository";
+import { CompanyRepository } from "../infrastructure/repositories/CompanyRepository";
 import { DepartmentRepository } from "../infrastructure/repositories/DepartmentRepository";
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
@@ -12,7 +12,7 @@ import { DepartmentController } from "../interfaces/controllers/DepartmentContro
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 
 export const departmentDI = () => {
-  const companyRepo = new companyRepository();
+  const companyRepo = new CompanyRepository();
   const departmentRepo = new DepartmentRepository();
   const employeeRepo = new EmployeeRepository();
   const managerRepo = new ManagerRepository();

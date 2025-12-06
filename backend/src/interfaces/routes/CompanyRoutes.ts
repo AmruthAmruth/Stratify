@@ -20,6 +20,13 @@ companyRouter.get(
   "/team-member-profile/:id",
   asyncHandler(controller.getTeamMemberProfile),
 );
+
+companyRouter.get(
+  "/company-analytics",
+  authMiddleware(["company"]),
+  asyncHandler(controller.getCompanyAnalytics),
+);
+
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post(
   "/unapprove-company",
@@ -29,18 +36,19 @@ companyRouter.post(
 
 
 
-companyRouter.post("/test",(_req,res)=>{
- const sample = {
+companyRouter.post("/test", (_req, res) => {
+  const sample = {
     title: "Server Test",
-    role:"company",
+    role: "company",
     message: "If you see this, socket works!",
     type: "info",
     userId: "hello",
   };
-  emitNotification(io,sample.userId,sample)
-  res.json({status:"Notificatin is emmited"})
+  emitNotification(io, sample.userId, sample)
+  res.json({ status: "Notificatin is emmited" })
 })
 
 
 
 export default companyRouter;
+

@@ -35,6 +35,7 @@ export const COMPANY_ROUTES = {
   UNAPPROVE_COMPANY: "/api/company/unapprove-company",
   MANAGER_DEPARTMENTS: (id: string) => `/api/department/manager-departments/${id}`,
   LIST_PURCHASED_COMPANY: "/super-admin/list-purchased-company",
+  COMPANY_ANALYTICS: "/api/company/company-analytics",
 };
 
 // Subscription Admin Routes
