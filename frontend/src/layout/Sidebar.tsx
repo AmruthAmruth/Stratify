@@ -1,19 +1,25 @@
 import React, { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store/index";
 import { UserRole } from "./types";
 import { roleMenus } from "./roleMenus";
 import * as Icons from "lucide-react";
 import { getUnreadCounts } from "@/services/chat";
 import { getSocket } from "@/shared/socket/socket";
+import { getCompanyProfile } from "@/services/company";
+import { setCompanyInfo } from "@/store/slices/authSlice";
 
 const getIcon = (iconName: string) => {
   return (Icons as any)[iconName] || Icons.Circle;
 };
 
 const Sidebar: React.FC = () => {
+  const dispatch = useDispatch();
   const role = useSelector((state: RootState) => state.auth.role) as UserRole;
+  const userId = useSelector((state: RootState) => state.auth.userId);
+  const companyName = useSelector((state: RootState) => state.auth.companyName);
+  const companyLogo = useSelector((state: RootState) => state.auth.companyLogo);
   const menus = role ? roleMenus[role] : [];
 
   const location = useLocation();
@@ -26,6 +32,49 @@ const Sidebar: React.FC = () => {
 
   // Check if user is currently on chat page
   const isOnChatPage = currentPath === "/chat" || currentPath === "/message";
+
+  // Fetch company information on mount
+  useEffect(() => {
+    const fetchCompanyInfo = async () => {
+      if (!userId || !role) return;
+
+      try {
+        let companyId = userId;
+
+        // If user is manager or employee, fetch their profile to get companyId
+        if (role === "manager") {
+          const response = await fetch(`/api/manager/profile`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          });
+          const managerData = await response.json();
+          companyId = managerData.companyId;
+        } else if (role === "employee") {
+          const response = await fetch(`/api/employee/profile`, {
+            headers: {
+              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
+            },
+          });
+          const employeeData = await response.json();
+          companyId = employeeData.companyId;
+        }
+
+        // Fetch company details
+        const companyData = await getCompanyProfile(companyId);
+        dispatch(
+          setCompanyInfo({
+            companyName: companyData.name,
+            companyLogo: companyData.profileImage,
+          })
+        );
+      } catch (error) {
+        console.error("Failed to fetch company information:", error);
+      }
+    };
+
+    fetchCompanyInfo();
+  }, [userId, role, dispatch]);
 
   // Fetch unread counts for notification dot
   useEffect(() => {
@@ -72,6 +121,17 @@ const Sidebar: React.FC = () => {
     };
   }, [isOnChatPage]);
 
+  // Get company initial for logo fallback
+  const getCompanyInitial = () => {
+    if (companyName) {
+      return companyName.charAt(0).toUpperCase();
+    }
+    return "S"; // Fallback to Stratify
+  };
+
+  // Display name - company name or fallback to Stratify
+  const displayName = companyName || "Stratify";
+
   return (
     <>
       {/* Mobile overlay */}
@@ -93,15 +153,33 @@ const Sidebar: React.FC = () => {
         <div className="flex items-center justify-between p-6 border-b border-[#dfdcef]">
           {!isCollapsed ? (
             <div className="flex items-center space-x-3">
-              <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center shadow-md">
-                <span className="text-white font-bold text-lg">S</span>
-              </div>
-              <h1 className="text-2xl font-bold text-[#3b3b3b] tracking-tight">Stratify</h1>
+              {companyLogo ? (
+                <img
+                  src={companyLogo}
+                  alt={displayName}
+                  className="w-10 h-10 rounded-xl object-cover shadow-md"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center shadow-md">
+                  <span className="text-white font-bold text-lg">{getCompanyInitial()}</span>
+                </div>
+              )}
+              <h1 className="text-2xl font-bold text-[#3b3b3b] tracking-tight">{displayName}</h1>
             </div>
           ) : (
-            <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center mx-auto shadow-md">
-              <span className="text-white font-bold text-lg">S</span>
-            </div>
+            <>
+              {companyLogo ? (
+                <img
+                  src={companyLogo}
+                  alt={displayName}
+                  className="w-10 h-10 rounded-xl object-cover mx-auto shadow-md"
+                />
+              ) : (
+                <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center mx-auto shadow-md">
+                  <span className="text-white font-bold text-lg">{getCompanyInitial()}</span>
+                </div>
+              )}
+            </>
           )}
         </div>
 
