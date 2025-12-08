@@ -5,6 +5,7 @@
     "lib": ["ES2020"],
     "rootDir": "./src",
     "outDir": "./dist",
+    "baseUrl": "./src",  
     "moduleResolution": "node",
     "resolveJsonModule": true,
     "esModuleInterop": true,

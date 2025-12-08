@@ -1,17 +1,17 @@
 import cron from 'node-cron';
 import { GenerateDailyStandupsUseCase } from '../../application/use-cases/meeting/GenerateDailyStandupsUseCase';
-import { MeetingRepository } from '../repositories/MeetingRepository';
-import { ProjectRepository } from '../repositories/ProjectRepository';
-import { NotificationRepository } from '../repositories/NotificationRepository';
+import { IMeetingRepository } from '../../domain/repositories/IMeetingRepository';
+import { IProjectRepository } from '../../domain/repositories/IProjectRepository';
+import { INotificationRepository } from '../../domain/repositories/INotificationRepository';
 
 export class MeetingScheduler {
     private _generateDailyStandupsUseCase: GenerateDailyStandupsUseCase;
 
-    constructor() {
-        const meetingRepo = new MeetingRepository();
-        const projectRepo = new ProjectRepository();
-        const notificationRepo = new NotificationRepository();
-
+    constructor(
+        meetingRepo: IMeetingRepository,
+        projectRepo: IProjectRepository,
+        notificationRepo: INotificationRepository
+    ) {
         this._generateDailyStandupsUseCase = new GenerateDailyStandupsUseCase(
             meetingRepo,
             projectRepo,
