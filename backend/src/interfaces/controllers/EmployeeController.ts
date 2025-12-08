@@ -7,12 +7,14 @@ import { CreateManagerSchema } from "../../application/validators/CreateManager"
 import { CreateEmployeeSchema } from "../../application/validators/CreateEmployee";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
+import { GetEmployeeDashboardStats } from "../../application/use-cases/employee/GetEmployeeDashboardStats";
 
 export class EmployeeController {
   constructor(
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
+    private _getEmployeeDashboardStats: GetEmployeeDashboardStats
   ) { }
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -74,4 +76,9 @@ export class EmployeeController {
     res.status(StatusCodes.OK).json({ managers });
   };
 
+  getDashboardStats = async (req: AuthRequest, res: Response): Promise<void> => {
+    const employeeId = req.userId!;
+    const stats = await this._getEmployeeDashboardStats.execute(employeeId);
+    res.status(StatusCodes.OK).json(stats);
+  };
 }

@@ -95,10 +95,18 @@ export class IssueRepository implements IIssueRepository {
 
 
   async findByUserId(userId: string): Promise<Issue[]> {
-    const docs = await IssueModel.find({
-      assignedTo: new mongoose.Types.ObjectId(userId),
-    });
-
-    return IssueMapper.toEntities(docs);
+    console.log(`[IssueRepository] findByUserId called with: ${userId}`);
+    try {
+      const objectId = new mongoose.Types.ObjectId(userId);
+      console.log(`[IssueRepository] Converted to ObjectId: ${objectId}`);
+      const docs = await IssueModel.find({
+        assignedTo: objectId,
+      });
+      console.log(`[IssueRepository] Found ${docs.length} docs`);
+      return IssueMapper.toEntities(docs);
+    } catch (error) {
+      console.error(`[IssueRepository] Error in findByUserId:`, error);
+      throw error;
+    }
   }
 }

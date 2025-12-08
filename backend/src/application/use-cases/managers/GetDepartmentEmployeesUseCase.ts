@@ -10,7 +10,7 @@ export class GetDepartmentEmployeesUseCase implements IGetDepartmentEmployeesUse
     ) { }
 
     async execute(managerId: string): Promise<Employee[]> {
-        // Get manager details to find their department
+        
         const manager = await this.managerRepository.findById(managerId);
 
         if (!manager) {
@@ -21,7 +21,6 @@ export class GetDepartmentEmployeesUseCase implements IGetDepartmentEmployeesUse
             throw new Error("Manager is not assigned to any department");
         }
 
-        // Fetch all employees in the manager's department
         const employees = await this.employeeRepository.findByDepartmentId(manager.departmentId);
 
         return employees;

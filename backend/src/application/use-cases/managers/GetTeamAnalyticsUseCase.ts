@@ -13,8 +13,8 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
     ) { }
 
     async execute(managerId: string): Promise<TeamAnalytics> {
-        // Get manager details to find their department
-        const manager = await this.managerRepository.findById(managerId);
+   
+        const manager = await this.managerRepository.findById(managerId);  
 
         if (!manager) {
             throw new Error("Manager not found");
@@ -22,12 +22,12 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
 
         if (!manager.departmentId) {
             throw new Error("Manager is not assigned to any department");
-        }
-
-        // Fetch all employees in the department
+        } 
+ 
+      
         const employees = await this.employeeRepository.findByDepartmentId(manager.departmentId);
 
-        // Get current date range for leave calculation
+       
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);

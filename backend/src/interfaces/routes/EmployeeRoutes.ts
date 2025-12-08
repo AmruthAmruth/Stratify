@@ -22,4 +22,10 @@ employeeRouter.get(
   asyncHandler(controller.getUnassignedManagers),
 );
 
+employeeRouter.get(
+  "/dashboard-stats",
+  authMiddleware(["employee"]),
+  asyncHandler(controller.getDashboardStats),
+);
+
 export default employeeRouter;

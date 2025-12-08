@@ -6,11 +6,12 @@ import Notification from "@/features/employee/Notification";
 import ProjectPage from "@/features/employee/ProjectPage";
 import Task from "@/features/employee/Task";
 import type { RouteObject } from "react-router";
+import EmployeeDashboard from "@/features/employee/Dashboard";
 
 const teamRoutes: RouteObject[] = [
   {
     path: "dashboard",
-    element: <h1>Team Dashboard</h1>
+    element: <EmployeeDashboard />
   },
   {
     path: "leave-status",

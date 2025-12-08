@@ -16,8 +16,6 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
         if (!manager) {
             throw new Error("Manager not found");
         }
-
-        // Get projects from manager's department if available
         let projects: Partial<Project>[] = [];
         let projectsManaged = 0;
         let teamSize = 0;
@@ -27,7 +25,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
                 projects = await this.projectRepository.findByDepartmentId(manager.departmentId._id.toString());
                 projectsManaged = projects.length;
 
-                // Calculate team size (unique employees across all projects)
+                
                 const employeeSet = new Set<string>();
                 projects.forEach((project) => {
                     if (project.teamMemberIds && Array.isArray(project.teamMemberIds)) {
