@@ -43,7 +43,7 @@ export const SUPER_ADMIN_ROUTES = {
   CREATE_PLAN: "/api/subscription/create-plan",
   UPDATE_PLAN: "/api/subscription/update-plan",
   DELETE_PLAN: "/api/subscription/delete-plan",
-
+  DASHBOARD_STATS: "/api/subscription/dashboard-stats",
 };
 
 // Project routes

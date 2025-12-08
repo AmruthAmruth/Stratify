@@ -10,6 +10,7 @@ import { CreatePlanUseCase } from "../application/use-cases/subscriptions/Create
 import { UpdatePlanUseCase } from "../application/use-cases/subscriptions/UpdatePlanUseCase";
 import { DeletePlanUseCase } from "../application/use-cases/subscriptions/DeletePlanUseCase";
 import { ListCompanyPurchasedPlanUseCase } from "../application/use-cases/subscriptions/ListCompanyPurchasedPlanUseCase";
+import { GetSuperAdminDashboardStats } from "../application/use-cases/super-admin/GetSuperAdminDashboardStats";
 
 export const subscriptionDI = () => {
   const companyRepo = new CompanyRepository();
@@ -35,6 +36,10 @@ export const subscriptionDI = () => {
     subscriptionRepo,
     companyRepo,
   );
+  const getSuperAdminDashboardStats = new GetSuperAdminDashboardStats(
+    companyRepo,
+    subscriptionRepo
+  );
 
   return new SubscriptionController(
     purchaseSubscriptionUseCase,
@@ -43,5 +48,6 @@ export const subscriptionDI = () => {
     updatePlanUseCase,
     deletePlanUseCase,
     listCompanyPurchasedPlanUseCase,
+    getSuperAdminDashboardStats
   );
 };

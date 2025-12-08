@@ -9,6 +9,7 @@ import { ICreatePlanUseCase } from "../../application/interfaces/subscriptions/I
 import { IUpdatePlanUseCase } from "../../application/interfaces/subscriptions/IUpdatePlanUseCase";
 import { IDeletePlanUseCase } from "../../application/interfaces/subscriptions/IDeletePlanUseCase";
 import { ListCompanyPurchasedPlanUseCase } from "../../application/use-cases/subscriptions/ListCompanyPurchasedPlanUseCase";
+import { GetSuperAdminDashboardStats } from "../../application/use-cases/super-admin/GetSuperAdminDashboardStats";
 
 export class SubscriptionController {
   constructor(
@@ -18,11 +19,19 @@ export class SubscriptionController {
     private _updatePlanUseCase: IUpdatePlanUseCase,
     private _deletePlanUseCase: IDeletePlanUseCase,
     private _listCompanisPlanUseCase: ListCompanyPurchasedPlanUseCase,
+    private _getSuperAdminDashboardStats: GetSuperAdminDashboardStats
   ) { }
 
   listPlans = async (_req: Request, res: Response): Promise<void> => {
     const response = await this._listSubscriptionPlansUseCase.execute();
     res.status(StatusCodes.OK).json(response);
+  };
+
+  // ... (existing methods)
+
+  getDashboardStats = async (_req: Request, res: Response): Promise<void> => {
+    const stats = await this._getSuperAdminDashboardStats.execute();
+    res.status(StatusCodes.OK).json(stats);
   };
 
   purchasePlan = async (req: AuthRequest, res: Response): Promise<void> => {

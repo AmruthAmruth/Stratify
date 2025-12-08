@@ -23,3 +23,6 @@ export const updateSubscription = (data: Record<string, unknown>) =>
 
 export const deleteSubscription = (plan: string) =>
   handleRequest(api.delete(SUPER_ADMIN_ROUTES.DELETE_PLAN, { data: { plan } }));
+
+export const getSuperAdminDashboardStats = () =>
+  handleRequest(api.get(SUPER_ADMIN_ROUTES.DASHBOARD_STATS));

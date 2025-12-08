@@ -1,37 +1,190 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react';
+import DashboardCard from '@/shared/components/DashboardCards/Cards';
+import ReusableChart from '@/shared/components/Chart/ReusableChart';
+import { getSuperAdminDashboardStats } from '@/services/plans';
+import { BarChart3 } from 'lucide-react';
 
-const SuperAdminDashboard = () => {
-  return (
-     <div className="w-full">
-      <h1 className="text-2xl font-bold mb-4 text-gray-800">Dashboard</h1>
-
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div className="bg-white shadow-md rounded-xl p-6 border">
-          <h2 className="text-lg font-semibold text-gray-700">Total Companies</h2>
-          <p className="text-3xl font-bold mt-2 text-blue-600">12</p>
-        </div>
-
-        <div className="bg-white shadow-md rounded-xl p-6 border">
-          <h2 className="text-lg font-semibold text-gray-700">Active Plans</h2>
-          <p className="text-3xl font-bold mt-2 text-green-600">8</p>
-        </div>
-
-        <div className="bg-white shadow-md rounded-xl p-6 border">
-          <h2 className="text-lg font-semibold text-gray-700">New Messages</h2>
-          <p className="text-3xl font-bold mt-2 text-purple-600">5</p>
-        </div>
-      </div>
-
-      <div className="mt-10">
-        <h2 className="text-xl font-semibold text-gray-800 mb-3">Recent Activity</h2>
-        <ul className="space-y-2">
-          <li className="p-4 bg-gray-100 rounded-md">📝 Company "X" updated their plan.</li>
-          <li className="p-4 bg-gray-100 rounded-md">💬 New message from "ABC Ltd."</li>
-          <li className="p-4 bg-gray-100 rounded-md">🔔 Payment received from "Z Corp".</li>
-        </ul>
-      </div>
-    </div>
-  )
+interface DashboardStats {
+  totalCompanies: number;
+  approvedCompanies: number;
+  pendingCompanies: number;
+  rejectedCompanies: number;
+  activeSubscriptions: number;
+  totalRevenue: number;
+  monthlyRevenue: number;
 }
 
-export default SuperAdminDashboard
+interface ChartData {
+  companiesByStatus: { labels: string[]; data: number[] };
+  subscriptionsByPlan: { labels: string[]; data: number[] };
+  revenueTrend: { labels: string[]; data: number[] };
+}
+
+const SuperAdminDashboard = () => {
+  const [loading, setLoading] = useState(true);
+  const [stats, setStats] = useState<DashboardStats>({
+    totalCompanies: 0,
+    approvedCompanies: 0,
+    pendingCompanies: 0,
+    rejectedCompanies: 0,
+    activeSubscriptions: 0,
+    totalRevenue: 0,
+    monthlyRevenue: 0,
+  });
+
+  const [chartData, setChartData] = useState<ChartData>({
+    companiesByStatus: { labels: [], data: [] },
+    subscriptionsByPlan: { labels: [], data: [] },
+    revenueTrend: { labels: [], data: [] },
+  });
+
+  useEffect(() => {
+    fetchDashboardData();
+  }, []);
+
+  const fetchDashboardData = async () => {
+    try {
+      setLoading(true);
+      const data = await getSuperAdminDashboardStats();
+
+      if (data.stats) {
+        setStats(data.stats);
+      }
+
+      if (data.graphs) {
+        setChartData(data.graphs);
+      }
+    } catch (error) {
+      console.error('Error fetching dashboard data:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+        <div className="text-center">
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
+          <p className="mt-4 text-[#3b3b3b] font-medium">Loading Dashboard...</p>
+        </div>
+      </div>
+    );
+  }
+
+  const hasChartData = (data: number[]) => {
+    return data && data.length > 0 && data.some(value => value > 0);
+  };
+
+  const EmptyChartState = ({ message }: { message: string }) => (
+    <div className="h-64 flex flex-col items-center justify-center text-[#3b3b3b]/50">
+      <BarChart3 className="w-16 h-16 mb-3 opacity-30" />
+      <p className="text-sm font-medium">{message}</p>
+      <p className="text-xs mt-1">Data will appear once available</p>
+    </div>
+  );
+
+  return (
+    <div className="min-h-screen bg-[#fbfbfb] p-6">
+      <div className="mb-8">
+        <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2">Super Admin Dashboard</h1>
+        <p className="text-[#3b3b3b]/70">Overview of platform performance and companies</p>
+      </div>
+
+      {/* Statistics Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+        <DashboardCard
+          title="Total Companies"
+          value={stats.totalCompanies}
+          subtitle="Registered companies"
+          trend="up"
+        />
+        <DashboardCard
+          title="Active Subscriptions"
+          value={stats.activeSubscriptions}
+          subtitle="Currently active plans"
+          trend="up"
+          badge={stats.activeSubscriptions > 0 ? "Healthy" : "Low"}
+        />
+        <DashboardCard
+          title="Total Revenue"
+          value={`$${stats.totalRevenue}`}
+          subtitle="Lifetime revenue"
+          trend="up"
+        />
+        <DashboardCard
+          title="Monthly Revenue"
+          value={`$${stats.monthlyRevenue}`}
+          subtitle="Revenue this month"
+          trend="up"
+        />
+      </div>
+
+      {/* Charts Section */}
+      <div className="mb-8">
+        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-6">Analytics & Insights</h2>
+
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {/* Chart 1: Companies by Status */}
+          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Companies by Status</h3>
+            {hasChartData(chartData.companiesByStatus.data) ? (
+              <div className="h-64 flex items-center justify-center">
+                <ReusableChart
+                  type="doughnut"
+                  labels={chartData.companiesByStatus.labels}
+                  data={chartData.companiesByStatus.data}
+                  backgroundColors={['#009063', '#ffd93d', '#ff6b6b']}
+                />
+              </div>
+            ) : (
+              <EmptyChartState message="No company data available" />
+            )}
+          </div>
+
+          {/* Chart 2: Subscriptions by Plan */}
+          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Subscriptions by Plan</h3>
+            {hasChartData(chartData.subscriptionsByPlan.data) ? (
+              <div className="h-64 flex items-center justify-center">
+                <ReusableChart
+                  type="pie"
+                  labels={chartData.subscriptionsByPlan.labels}
+                  data={chartData.subscriptionsByPlan.data}
+                  backgroundColors={['#6c5ce7', '#0984e3', '#00b894', '#fdcb6e']}
+                />
+              </div>
+            ) : (
+              <EmptyChartState message="No subscription data available" />
+            )}
+          </div>
+
+          {/* Chart 3: Revenue Trend */}
+          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Revenue Trend</h3>
+            {hasChartData(chartData.revenueTrend.data) ? (
+              <div className="h-64">
+                <ReusableChart
+                  type="line"
+                  labels={chartData.revenueTrend.labels}
+                  data={chartData.revenueTrend.data}
+                  backgroundColors={['#009063']}
+                />
+              </div>
+            ) : (
+              <EmptyChartState message="No revenue data available" />
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="mt-8 p-4 bg-white border border-[#dfdcef] rounded-xl">
+        <p className="text-sm text-[#3b3b3b]/70 text-center">
+          Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default SuperAdminDashboard;

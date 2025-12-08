@@ -35,4 +35,10 @@ subscriptionRouter.get(
   "/list-purchased-company",
   asyncHandler(controller.listPurchasedPlan),
 );
+
+subscriptionRouter.get(
+  "/dashboard-stats",
+  asyncHandler(controller.getDashboardStats),
+);
+
 export default subscriptionRouter;
