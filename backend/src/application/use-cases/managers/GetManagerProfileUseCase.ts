@@ -3,6 +3,9 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ManagerProfileResponse } from "../../interfaces/managers/types";
 import { Project } from "../../../domain/entities/Project";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 
 export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
     constructor(
@@ -14,7 +17,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
         const manager = await this.managerRepository.findByIdWithDepartment(managerId);
 
         if (!manager) {
-            throw new Error("Manager not found");
+            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
         let projects: Partial<Project>[] = [];
         let projectsManaged = 0;
@@ -25,7 +28,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
                 projects = await this.projectRepository.findByDepartmentId(manager.departmentId._id.toString());
                 projectsManaged = projects.length;
 
-                
+
                 const employeeSet = new Set<string>();
                 projects.forEach((project) => {
                     if (project.teamMemberIds && Array.isArray(project.teamMemberIds)) {

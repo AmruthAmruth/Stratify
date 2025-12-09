@@ -2,6 +2,9 @@ import { Sprint } from "../../domain/entities/Sprint";
 import { ISprintRepository } from "../../domain/repositories/ISprintRepository";
 import { SprintMapper } from "../mappers/SprintMapper";
 import { SprentModel } from "../models/SprintModel";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class SprintRepository implements ISprintRepository {
   async create(sprint: Sprint): Promise<Sprint> {
@@ -16,7 +19,7 @@ export class SprintRepository implements ISprintRepository {
       { new: true },
     );
 
-    if (!updatedDoc) throw new Error("Sprint not found");
+    if (!updatedDoc) throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
     return SprintMapper.toEntity(updatedDoc);
   }
 

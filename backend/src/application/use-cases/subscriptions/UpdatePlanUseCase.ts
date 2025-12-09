@@ -1,9 +1,11 @@
 import { IPlanPriceRepository } from "../../../domain/repositories/IPlanPriceRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { IUpdatePlanUseCase } from "../../interfaces/subscriptions/IUpdatePlanUseCase";
 
 export class UpdatePlanUseCase implements IUpdatePlanUseCase {
-  constructor(private _planPrice: IPlanPriceRepository) {}
+  constructor(private _planPrice: IPlanPriceRepository) { }
 
   async execute(
     plan: string,
@@ -15,7 +17,7 @@ export class UpdatePlanUseCase implements IUpdatePlanUseCase {
 
 
     if (existingPlan) {
-      throw new AppError(`Plan "${plan}" already exist`);
+      throw new AppError(Messages.PLAN_ALREADY_EXISTS, StatusCodes.CONFLICT);
     }
 
     await this._planPrice.updatePlan(

@@ -2,6 +2,9 @@ import { Subscription } from "../../domain/entities/Subscription";
 import { ISubscriptionRepository } from "../../domain/repositories/ISubscriptionRepository";
 import SubscriptionModel from "../models/SubscriptionModel";
 import { SubscriptionMapper } from "../mappers/SubscriptionMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class SubscriptionRepository implements ISubscriptionRepository {
   async create(subscription: Subscription): Promise<Subscription> {
@@ -38,7 +41,7 @@ export class SubscriptionRepository implements ISubscriptionRepository {
       { new: true },
     );
 
-    if (!updatedDoc) throw new Error("Subscription not found");
+    if (!updatedDoc) throw new AppError(Messages.SUBSCRIPTION_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return SubscriptionMapper.toEntity(updatedDoc);
   }

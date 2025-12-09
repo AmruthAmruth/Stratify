@@ -20,11 +20,11 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
     private readonly _companyRepo: ICompanyRepository,
     private readonly _emailService: IEmailService,
     private readonly _notificationRepo: INotificationRepository
-    
-  ) {}
+
+  ) { }
 
   async execute(data: CreateDepartmentDTO): Promise<Department> {
-    
+
     const company = await this._companyRepo.findById(data.companyId);
     if (!company) {
       throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
@@ -35,7 +35,7 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       data.companyId
     );
     if (existingDepartment) {
-      throw new AppError("Department already exists", StatusCodes.BAD_REQUEST);
+      throw new AppError(Messages.DEPARTMENT_EXISTS, StatusCodes.BAD_REQUEST);
     }
 
     let managerEmail: string | null = null;
@@ -44,12 +44,12 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
     if (data.managerId) {
       const manager = await this._managerRepo.findById(data.managerId);
       if (!manager) {
-        throw new AppError("Manager not found", StatusCodes.NOT_FOUND);
+        throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
       }
 
       if (manager.departmentId) {
         throw new AppError(
-          "Manager is already assigned to another department",
+          Messages.MANAGER_ALREADY_ASSIGNED,
           StatusCodes.BAD_REQUEST
         );
       }

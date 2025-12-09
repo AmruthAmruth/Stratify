@@ -9,6 +9,7 @@ import { LEAVE_POLICY } from "../../../shared/constants/leavePolicy";
 import { LeaveMapper } from "../../mappers/LeaveMapper";
 import { Notification } from "../../../domain/entities/Notification";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
+import { Messages } from "../../../shared/constants/messages";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 
@@ -23,14 +24,14 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
   async execute(leaveDTO: CreateLeaveDTO): Promise<Leave> {
     const employee = await this._employeeRepo.findById(leaveDTO.employeeId);
     if (!employee) {
-      throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const leaveType = leaveDTO.type || "Casual";
     const policy = LEAVE_POLICY[leaveType];
     if (!policy) {
       throw new AppError(
-        `Invalid leave type: ${leaveType}`,
+        Messages.INVALID_LEAVE_TYPE,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -42,7 +43,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
     );
     if (overlappingLeave) {
       throw new AppError(
-        "Leave overlaps with existing leave",
+        Messages.LEAVE_OVERLAP,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -63,7 +64,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
 
       if (usedThisMonth + days > policy.monthlyQuota) {
         throw new AppError(
-          `${leaveType} leave monthly quota exceeded`,
+          Messages.LEAVE_MONTHLY_QUOTA_EXCEEDED,
           StatusCodes.BAD_REQUEST,
         );
       }
@@ -84,7 +85,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
 
       if (usedThisYear + days > policy.annualQuota) {
         throw new AppError(
-          `${leaveType} leave annual quota exceeded`,
+          Messages.LEAVE_ANNUAL_QUOTA_EXCEEDED,
           StatusCodes.BAD_REQUEST,
         );
       }

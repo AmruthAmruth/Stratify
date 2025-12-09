@@ -3,6 +3,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { Messages } from "../../../shared/constants/messages";
 import { ICreateMeetingUseCase } from "../../interfaces/meeting/ICreateMeetingUseCase";
@@ -24,7 +25,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
 
     const existingMeeting = await this._meetingRepo.findByTitle(title);
     if (existingMeeting) {
-      throw new AppError(`A meeting with the title "${title}" already exists.`)
+      throw new AppError(Messages.MEETING_TITLE_EXISTS, StatusCodes.CONFLICT)
     }
 
     const meeting = MeetingMapper.toDomain(creatorId, title, randomUUID());
@@ -32,7 +33,7 @@ export class CreateMeetingUseCase implements ICreateMeetingUseCase {
     const createdMeeting = await this._meetingRepo.create(meeting);
 
     const manager = await this._managerRepo.findById(creatorId);
-    if (!manager) throw new Error(Messages.MANAGER_NOT_FOUND);
+    if (!manager) throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
     if (!employees || employees.length === 0) return createdMeeting;

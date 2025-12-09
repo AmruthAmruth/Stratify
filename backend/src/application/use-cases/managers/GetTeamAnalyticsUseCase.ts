@@ -3,6 +3,9 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 
 export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
     constructor(
@@ -13,43 +16,43 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
     ) { }
 
     async execute(managerId: string): Promise<TeamAnalytics> {
-   
-        const manager = await this.managerRepository.findById(managerId);  
+
+        const manager = await this.managerRepository.findById(managerId);
 
         if (!manager) {
-            throw new Error("Manager not found");
+            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
         if (!manager.departmentId) {
-            throw new Error("Manager is not assigned to any department");
-        } 
- 
-      
+            throw new AppError(Messages.MANAGER_NO_DEPARTMENT, StatusCodes.BAD_REQUEST);
+        }
+
+
         const employees = await this.employeeRepository.findByDepartmentId(manager.departmentId);
 
-       
+
         const now = new Date();
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        
+
         const leaves = await this.leaveRepository.findLeavesByDepartmentAndDateRange(
             manager.departmentId,
             startOfMonth,
             endOfMonth
         );
 
-        
+
         const totalEmployees = employees.length;
 
-        
+
         const employeesOnLeave = leaves.filter(leave => {
             return leave.status === 'Approved' &&
                 new Date(leave.startDate) <= now &&
                 new Date(leave.endDate) >= now;
         }).length;
 
-      
+
         let totalExperience = 0;
         employees.forEach(emp => {
             const joiningDate = new Date(emp.joiningDate);
@@ -58,14 +61,14 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
         });
         const averageExperience = totalEmployees > 0 ? Math.round((totalExperience / totalEmployees) * 10) / 10 : 0;
 
-        
+
         const positionDistribution: { [position: string]: number } = {};
         employees.forEach(emp => {
             const position = emp.position || 'Unknown';
             positionDistribution[position] = (positionDistribution[position] || 0) + 1;
         });
 
-        
+
         const genderDistribution = {
             male: employees.filter(emp => emp.gender === 'male').length,
             female: employees.filter(emp => emp.gender === 'female').length,
@@ -75,14 +78,14 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
         const employeeIdsInProjects = new Set<string>();
         const activeProjectEmployees = new Set<string>();
 
-      
+
         for (const employee of employees) {
             const employeeProjects = await this.projectRepository.findByTeamMemberId(employee.id!);
 
             if (employeeProjects.length > 0) {
                 employeeIdsInProjects.add(employee.id!);
 
-              
+
                 const hasActiveProject = employeeProjects.some(p => {
                     const status = (p.status || '').toLowerCase();
                     return status === 'active';

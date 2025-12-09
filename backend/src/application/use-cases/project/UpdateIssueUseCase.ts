@@ -1,6 +1,8 @@
 import { Issue } from "../../../domain/entities/Issue";
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { UpdateIssueDTO } from "../../dto/project/CreateIssuesDTO";
 import { IUpdateIssueUseCase } from "../../interfaces/project/IUpdateIssueUseCase";
 
@@ -12,7 +14,7 @@ export class UpdateIssueUseCase implements IUpdateIssueUseCase {
 
     const existingIssue = await this._issueRepo.findById(issueDTO.id);
     if (!existingIssue) {
-      throw new AppError("Issue not found", 404);
+      throw new AppError(Messages.ISSUE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
 

@@ -4,6 +4,8 @@ import { IPlanPriceRepository } from "../../../domain/repositories/IPlanPriceRep
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
 import { RazorpayService } from "../../../infrastructure/services/RazorpayService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { generateRandomPassword } from "../../../shared/utils/password";
 import { IPurchaseSubscriptionUseCase } from "../../interfaces/subscriptions/IPurchaseSubscriptionUseCase";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
@@ -11,25 +13,24 @@ import { subscriptionConfirmationTemplate } from "../../../shared/templates/Subs
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 
 export class PurchaseSubscriptionUseCase
-  implements IPurchaseSubscriptionUseCase
-{
+  implements IPurchaseSubscriptionUseCase {
   constructor(
     private _subscriptionRepo: ISubscriptionRepository,
     private _planRepo: IPlanPriceRepository,
     private _razorpay: RazorpayService,
     private _emailService: IEmailService,
     private _companyRepo: ICompanyRepository,
-  ) {}
+  ) { }
 
   async execute(planName: string, companyId: string) {
     const activeSubscription =
       await this._subscriptionRepo.getActiveByCompany(companyId);
     if (activeSubscription) {
-      throw new AppError("Company already has an active subscription");
+      throw new AppError(Messages.COMPANY_HAS_ACTIVE_SUBSCRIPTION, StatusCodes.CONFLICT);
     }
 
     const plan = await this._planRepo.getPlan(planName);
-    if (!plan) throw new AppError("Plan not found");
+    if (!plan) throw new AppError(Messages.PLAN_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const order = await this._razorpay.createOrder(plan.amount);
 
@@ -50,7 +51,7 @@ export class PurchaseSubscriptionUseCase
     signature: string,
   ): Promise<Subscription> {
     const plan = await this._planRepo.getPlan(planName);
-    if (!plan) throw new AppError("Plan not found");
+    if (!plan) throw new AppError(Messages.PLAN_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const expectedSignature = createHmac(
       "sha256",
@@ -60,7 +61,7 @@ export class PurchaseSubscriptionUseCase
       .digest("hex");
 
     if (expectedSignature !== signature) {
-      throw new AppError("Payment verification failed");
+      throw new AppError(Messages.PAYMENT_VERIFICATION_FAILED, StatusCodes.BAD_REQUEST);
     }
 
     const now = new Date();

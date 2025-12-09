@@ -3,6 +3,9 @@ import { Backlog } from "../../domain/entities/Backlog";
 import { IBacklogRepository } from "../../domain/repositories/IBacklogRepository";
 import { BacklogModel } from "../models/BacklogModel";
 import { BacklogMapper } from "../mappers/BacklogMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class BacklogRepository implements IBacklogRepository {
   async create(backlog: Backlog): Promise<Backlog> {
@@ -26,7 +29,7 @@ export class BacklogRepository implements IBacklogRepository {
       { new: true },
     ).exec();
 
-    if (!updated) throw new Error("Backlog not found");
+    if (!updated) throw new AppError(Messages.BACKLOG_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return BacklogMapper.toEntity(updated);
   }

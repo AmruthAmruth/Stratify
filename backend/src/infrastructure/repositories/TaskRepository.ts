@@ -3,6 +3,9 @@ import { Task } from "../../domain/entities/Task";
 import { ITaskRepository } from "../../domain/repositories/ITaskRepository";
 import { TaskModel } from "../models/TaskModel";
 import { TaskMapper } from "../mappers/TaskMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class TaskRepository implements ITaskRepository {
   async create(task: Task): Promise<Task> {
@@ -18,7 +21,7 @@ export class TaskRepository implements ITaskRepository {
       { new: true },
     ).exec();
 
-    if (!updated) throw new Error("Task not found");
+    if (!updated) throw new AppError(Messages.TASK_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return TaskMapper.toEntity(updated);
   }

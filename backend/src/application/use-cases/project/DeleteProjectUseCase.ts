@@ -3,6 +3,8 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
 import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { IDeleteProjectUseCase } from "../../interfaces/project/IDeleteProjectUseCase";
 
 export class DeleteProjectUseCase implements IDeleteProjectUseCase {
@@ -11,14 +13,14 @@ export class DeleteProjectUseCase implements IDeleteProjectUseCase {
     private _issueRepo: IIssueRepository,
     private _subTaskRepo: ISubtaskRepository,
     private _sprintRepo: ISprintRepository,
-  ) {}
+  ) { }
 
   async execute(projectId: string): Promise<void> {
     console.log("Porject id", projectId);
 
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
-      throw new AppError("Project not found", 404);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const sprints = await this._sprintRepo.findByProjectId(projectId);

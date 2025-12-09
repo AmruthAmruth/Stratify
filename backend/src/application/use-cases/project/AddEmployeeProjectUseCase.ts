@@ -2,6 +2,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { IAddEmployeeProjectUseCase } from "../../interfaces/project/IAddEmployeeProjectUseCase";
 import { Notification } from "../../../domain/entities/Notification";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
@@ -17,18 +18,18 @@ export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
   async execute(projectId: string, employeeId: string): Promise<void> {
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const employee = await this._employeeRepo.findById(employeeId);
     if (!employee) {
-      throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const isAlreadyInProject = project.teamMemberIds?.includes(employeeId);
     if (isAlreadyInProject) {
       throw new AppError(
-        "Employee is already part of the project",
+        Messages.EMPLOYEE_ALREADY_IN_PROJECT,
         StatusCodes.BAD_REQUEST,
       );
     }

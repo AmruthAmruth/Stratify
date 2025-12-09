@@ -2,6 +2,9 @@ import { SubTask } from "../../domain/entities/SubTask";
 import { ISubtaskRepository } from "../../domain/repositories/ISubTaskRepository";
 import { SubTaskModel } from "../models/SubTaskModel";
 import { SubTaskMapper } from "../mappers/SubTaskMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class SubTaskRepository implements ISubtaskRepository {
   async create(subtask: SubTask): Promise<SubTask> {
@@ -17,7 +20,7 @@ export class SubTaskRepository implements ISubtaskRepository {
     return SubTaskMapper.toEntity(created);
   }
 
-  
+
 
 
 
@@ -45,7 +48,7 @@ export class SubTaskRepository implements ISubtaskRepository {
       { new: true },
     );
 
-    if (!updated) throw new Error("SubTask not found");
+    if (!updated) throw new AppError(Messages.SUBTASK_NOT_FOUND, StatusCodes.NOT_FOUND);
     return SubTaskMapper.toEntity(updated);
   }
 

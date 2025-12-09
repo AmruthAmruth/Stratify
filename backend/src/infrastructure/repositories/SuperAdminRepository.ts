@@ -1,6 +1,9 @@
 import { ISuperAdminRepository } from "../../domain/repositories/ISuperAdminRepository";
 import { SuperAdmin } from "../../domain/entities/SuperAdmin";
 import SuperAdminModel from "../models/SuperAdminModel";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class SuperAdminRepository implements ISuperAdminRepository {
   async findByEmail(email: string): Promise<SuperAdmin | null> {
@@ -39,7 +42,7 @@ export class SuperAdminRepository implements ISuperAdminRepository {
       { new: true }
     );
 
-    if (!updatedUser) throw new Error("Super Admin not found");
+    if (!updatedUser) throw new AppError(Messages.SUPER_ADMIN_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return new SuperAdmin(
       updatedUser.id.toString(),

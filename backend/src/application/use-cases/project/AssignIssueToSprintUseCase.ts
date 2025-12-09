@@ -3,6 +3,7 @@ import { IssueRepository } from "../../../infrastructure/repositories/IssueRepos
 import { SprintRepository } from "../../../infrastructure/repositories/SprintRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { IAssignIssueToSprintUseCase } from "../../interfaces/project/IAssignIssueToSprintUseCase";
 
 export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
@@ -12,14 +13,14 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
   ) { }
   async execute(issueId: string, sprintId: string): Promise<Issue> {
     const issue = await this._issueRepo.findById(issueId);
-    if (!issue) throw new AppError("Issue not found", StatusCodes.NOT_FOUND);
+    if (!issue) throw new AppError(Messages.ISSUE_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const sprint = await this._sprintRepo.findById(sprintId);
-    if (!sprint) throw new AppError("Sprint not found", StatusCodes.NOT_FOUND);
+    if (!sprint) throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     if (!issue.assignedTo) {
       throw new AppError(
-        "Issue must have an assigned employee before moving to a sprint",
+        Messages.ISSUE_NO_ASSIGNEE,
         StatusCodes.BAD_REQUEST,
       );
     }

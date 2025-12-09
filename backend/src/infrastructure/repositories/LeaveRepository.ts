@@ -3,6 +3,9 @@ import { Leave } from "../../domain/entities/Leave";
 import { ILeaveRepository } from "../../domain/repositories/ILeaveRepository";
 import { LeaveModel } from "../models/LeaveModel";
 import { LeaveMapper } from "../mappers/LeaveMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class LeaveRepository implements ILeaveRepository {
   async create(leave: Leave): Promise<Leave> {
@@ -39,7 +42,7 @@ export class LeaveRepository implements ILeaveRepository {
       { new: true },
     ).exec();
 
-    if (!updated) throw new Error("Leave not found");
+    if (!updated) throw new AppError(Messages.LEAVE_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return LeaveMapper.toEntity(updated);
   }
@@ -174,7 +177,21 @@ export class LeaveRepository implements ILeaveRepository {
 
     return LeaveMapper.toEntities(docs);
   }
+  async findApprovedLeavesByEmployeesInRange(
+    employeeIds: string[],
+    startDate: Date,
+    endDate: Date,
+  ): Promise<Leave[]> {
+    const docs = await LeaveModel.find({
+      employeeId: { $in: employeeIds.map((id) => new Types.ObjectId(id)) },
+      status: "Approved",
+      $or: [
+        { startDate: { $lte: endDate }, endDate: { $gte: startDate } },
+      ],
+    }).exec();
 
+    return LeaveMapper.toEntities(docs);
+  }
 
 
 }

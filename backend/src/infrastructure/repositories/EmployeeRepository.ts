@@ -2,6 +2,7 @@ import { Employee } from "../../domain/entities/Employee";
 import { IEmployeeRepository } from "../../domain/repositories/IEmployeeRepository";
 import { EmployeeModel } from "../models/EmployeeModel";
 import { EmployeeMapper } from "../mappers/EmployeeMapper";
+import { EmployeeWithDepartment } from "../../application/interfaces/employees/types";
 
 export class EmployeeRepository implements IEmployeeRepository {
   async create(employee: Employee): Promise<Employee> {
@@ -67,5 +68,14 @@ export class EmployeeRepository implements IEmployeeRepository {
     return EmployeeMapper.toEntities(docs);
   }
 
-  
+
+  async findByIdWithDepartment(id: string): Promise<EmployeeWithDepartment | null> {
+    const doc = await EmployeeModel.findById(id).populate("departmentId", "name").lean().exec();
+    if (!doc) return null;
+
+    return {
+      ...EmployeeMapper.toEntity(doc as any),
+      departmentId: doc.departmentId as any
+    } as EmployeeWithDepartment;
+  }
 }

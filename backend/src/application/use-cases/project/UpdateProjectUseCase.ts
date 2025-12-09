@@ -6,6 +6,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { UpdateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { IUpdateProjectUseCase } from "../../interfaces/project/IUpdateProjectUseCase";
@@ -17,12 +18,12 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase {
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
     private _employeeRepo: IEmployeeRepository,
-  ) {}
+  ) { }
 
   async execute(projectDTO: UpdateProjectDTO): Promise<Project> {
     const existingProject = await this._projectRepo.findById(projectDTO.id!);
     if (!existingProject) {
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     let creatorExists = false;
@@ -46,18 +47,18 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase {
     }
 
     if (!creatorExists || !companyId || !createdByModel) {
-      throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.CREATOR_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const department = await this._departmentRepo.findById(
       projectDTO.departmentId,
     );
     if (!department) {
-      throw new AppError("Department not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.DEPARTMENT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     if (department.companyId !== companyId) {
-      throw new AppError("Department does not belong to creator company", 400);
+      throw new AppError(Messages.DEPARTMENT_NOT_BELONG_TO_COMPANY, StatusCodes.BAD_REQUEST);
     }
 
     if (projectDTO.name !== existingProject.name) {
@@ -67,7 +68,7 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase {
       );
       if (nameExists && nameExists.id !== projectDTO.id) {
         throw new AppError(
-          "Project name already exists for this company",
+          Messages.PROJECT_NAME_EXISTS,
           StatusCodes.BAD_REQUEST,
         );
       }
@@ -80,7 +81,7 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase {
       );
       if (keyExists && keyExists.id !== projectDTO.id) {
         throw new AppError(
-          "Project key already exists for this company",
+          Messages.PROJECT_KEY_EXISTS,
           StatusCodes.BAD_REQUEST,
         );
       }

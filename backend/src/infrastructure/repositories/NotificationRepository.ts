@@ -1,10 +1,12 @@
 import { Notification } from "../../domain/entities/Notification";
 import { INotificationRepository } from "../../domain/repositories/INotificationRepository";
 import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { NotificationModel } from "../models/NotificationModel";
 
 export class NotificationRepository implements INotificationRepository {
-  
+
   async create(notification: Notification): Promise<Notification> {
     const newNotif = new NotificationModel({
       userId: notification.userId,
@@ -54,7 +56,7 @@ export class NotificationRepository implements INotificationRepository {
     const notification = await NotificationModel.findById(id);
 
     if (!notification) {
-      throw new AppError("Notification not found", 404);
+      throw new AppError(Messages.NOTIFICATION_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     return new Notification(
@@ -76,7 +78,7 @@ export class NotificationRepository implements INotificationRepository {
   async updateReadStatus(id: string): Promise<void> {
     const notification = await NotificationModel.findById(id);
     if (!notification) {
-      throw new AppError("Notification not found", 404);
+      throw new AppError(Messages.NOTIFICATION_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     notification.isRead = !notification.isRead;
@@ -86,7 +88,7 @@ export class NotificationRepository implements INotificationRepository {
   async delete(id: string): Promise<void> {
     const notification = await NotificationModel.findById(id);
     if (!notification) {
-      throw new AppError("Notification not found", 404);
+      throw new AppError(Messages.NOTIFICATION_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     await NotificationModel.findByIdAndDelete(id);
@@ -96,7 +98,7 @@ export class NotificationRepository implements INotificationRepository {
     const result = await NotificationModel.deleteMany({ userId });
 
     if (result.deletedCount === 0) {
-      throw new AppError("No notifications found for this user", 404);
+      throw new AppError(Messages.NO_NOTIFICATIONS_FOUND, StatusCodes.NOT_FOUND);
     }
   }
 

@@ -3,6 +3,9 @@ import { UserStory } from "../../domain/entities/UserStory";
 import { IUserStoryRepository } from "../../domain/repositories/IUserStoryRepository";
 import { UserStoryModel } from "../models/UserStoryModel";
 import { UserStoryMapper } from "../mappers/UserStoryMapper";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class UserStoryRepository implements IUserStoryRepository {
   async create(userStory: UserStory): Promise<UserStory> {
@@ -18,7 +21,7 @@ export class UserStoryRepository implements IUserStoryRepository {
       { new: true },
     ).exec();
 
-    if (!updated) throw new Error("User story not found");
+    if (!updated) throw new AppError(Messages.USER_STORY_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     return UserStoryMapper.toEntity(updated);
   }
@@ -78,7 +81,7 @@ export class UserStoryRepository implements IUserStoryRepository {
       ).exec();
 
       if (!updated)
-        throw new Error(`User story not found with id: ${story.id}`);
+        throw new AppError(Messages.USER_STORY_NOT_FOUND, StatusCodes.NOT_FOUND);
 
       updatedStories.push(UserStoryMapper.toEntity(updated));
     }

@@ -2,6 +2,7 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { CreateSprintDTO } from "../../dto/project/CreateSprintDTO";
 import { ICreateSprintUseCase } from "../../interfaces/project/ICreateSprintUseCase";
 import { SprintMapper } from "../../mappers/SprintMapper";
@@ -16,7 +17,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
   async execute(sprintDTO: CreateSprintDTO): Promise<Sprint> {
     const project = await this._projectRepo.findById(sprintDTO.projectId);
     if (!project) {
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const projectStart = new Date(project.startDate);
@@ -26,14 +27,14 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
 
     if (sprintStart < projectStart || sprintEnd > projectEnd) {
       throw new AppError(
-        `Sprint duration must fall within the project's start (${project.startDate.toDateString()}) and end (${project.endDate.toDateString()}) dates.`,
+        Messages.SPRINT_DURATION_INVALID,
         StatusCodes.BAD_REQUEST,
       );
     }
 
     if (sprintStart > sprintEnd) {
       throw new AppError(
-        "Sprint start date cannot be after sprint end date.",
+        Messages.SPRINT_START_AFTER_END,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -46,7 +47,7 @@ export class CreateSprintUseCase implements ICreateSprintUseCase {
 
     if (overlappingSprint) {
       throw new AppError(
-        `Sprint overlaps with existing sprint "${overlappingSprint.name}".`,
+        Messages.SPRINT_OVERLAP,
         StatusCodes.BAD_REQUEST,
       );
     }

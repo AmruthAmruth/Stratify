@@ -12,6 +12,8 @@ import { ICreateManagerUseCase } from "../../interfaces/managers/ICreateManagerU
 import { managerWelcomeTemplate } from "../../../shared/templates/ManagerWelcomeTemplate";
 import { ManagerMapper } from "../../mappers/ManagerMapper";
 import { Manager } from "../../../domain/entities/Manager";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 
 export class CreateManagerUseCase implements ICreateManagerUseCase {
   constructor(
@@ -25,14 +27,14 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
   async execute(managerDto: CreateManagerDTO): Promise<Manager> {
     const company = await this._companyRepo.findById(managerDto.companyId);
     if (!company) {
-      throw new Error(Messages.COMPANY_NOT_FOUND);
+      throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const existingManager = await this._managerRepo.findByEmail(
       managerDto.email,
     );
     if (existingManager) {
-      throw new Error(Messages.EMAIL_ALREADY_EXISTS);
+      throw new AppError(Messages.EMAIL_ALREADY_EXISTS, StatusCodes.CONFLICT);
     }
 
     let department = null;
@@ -40,11 +42,11 @@ export class CreateManagerUseCase implements ICreateManagerUseCase {
       department = await this._departmentRepo.findById(managerDto.departmentId);
 
       if (!department || department.companyId !== managerDto.companyId) {
-        throw new Error(Messages.DEPARTMENT_NOT_FOUND);
+        throw new AppError(Messages.DEPARTMENT_NOT_FOUND, StatusCodes.NOT_FOUND);
       }
 
       if (department.managerId) {
-        throw new Error(Messages.DEPARTMENT_HAS_MANAGER);
+        throw new AppError(Messages.DEPARTMENT_HAS_MANAGER, StatusCodes.CONFLICT);
       }
     }
 

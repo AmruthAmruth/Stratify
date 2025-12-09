@@ -3,6 +3,8 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import {
     SprintCapacityDTO,
     EmployeeCapacityDTO,
@@ -24,13 +26,13 @@ export class CalculateSprintCapacityUseCase
         // 1. Fetch sprint and validate existence
         const sprint = await this._sprintRepo.findById(sprintId);
         if (!sprint) {
-            throw new AppError("Sprint not found", 404);
+            throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
         // 2. Get project and extract team member IDs
         const project = await this._projectRepo.findById(sprint.projectId);
         if (!project) {
-            throw new AppError("Project not found", 404);
+            throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
         const teamMemberIds = project.teamMemberIds || [];

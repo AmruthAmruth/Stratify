@@ -7,6 +7,7 @@ import { emitNotification } from "../../../infrastructure/socket/SocketServer";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { io } from "../../../main";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateProjectDTO } from "../../dto/project/CreateProjectDTO";
 import { ICreateProjectUseCase } from "../../interfaces/project/ICreateProjectUseCase";
@@ -48,18 +49,18 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     }
 
     if (!creatorExists || !companyId || !createdByModel) {
-      throw new AppError("Creator not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.CREATOR_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const department = await this._departmentRepo.findById(
       projectDTO.departmentId
     );
     if (!department) {
-      throw new AppError("Department not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.DEPARTMENT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     if (department.companyId !== companyId)
-      throw new AppError("Department does not belong to creator company", 400);
+      throw new AppError(Messages.DEPARTMENT_NOT_BELONG_TO_COMPANY, StatusCodes.BAD_REQUEST);
 
     const existingProjectName = await this._projectRepo.findByNameAndCompany(
       projectDTO.name,
@@ -67,7 +68,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
     );
     if (existingProjectName) {
       throw new AppError(
-        "Project name already exists for this company",
+        Messages.PROJECT_NAME_EXISTS,
         StatusCodes.BAD_REQUEST
       );
     }
@@ -79,7 +80,7 @@ export class CreateProjectUseCase implements ICreateProjectUseCase {
 
     if (existingProjectKey) {
       throw new AppError(
-        "Project Key name already exists for this company",
+        Messages.PROJECT_KEY_EXISTS,
         StatusCodes.BAD_REQUEST
       );
     }

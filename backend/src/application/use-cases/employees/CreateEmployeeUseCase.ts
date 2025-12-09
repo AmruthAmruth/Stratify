@@ -9,6 +9,8 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { Messages } from "../../../shared/constants/messages";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import {
   generateRandomPassword,
   hashPassword,
@@ -39,22 +41,22 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       companyId = creator.id!;
     } else {
       creator = await this._managerRepo.findById(creatorId);
-      if (!creator) throw new Error(Messages.INVALID_CREATOR_ID);
+      if (!creator) throw new AppError(Messages.INVALID_CREATOR_ID, StatusCodes.BAD_REQUEST);
       companyId = creator.companyId;
     }
 
 
     const company = await this._companyRepo.findById(companyId);
-    if (!company) throw new Error(Messages.COMPANY_NOT_FOUND);
+    if (!company) throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
 
 
     const existingEmployee = await this._employeeRepo.findByEmail(employeeDto.email);
-    if (existingEmployee) throw new Error(Messages.EMAIL_ALREADY_EXISTS);
+    if (existingEmployee) throw new AppError(Messages.EMAIL_ALREADY_EXISTS, StatusCodes.CONFLICT);
 
 
     const department = await this._departmentRepo.findById(employeeDto.departmentId);
     if (!department || department.companyId !== companyId) {
-      throw new Error(Messages.DEPARTMENT_NOT_FOUND);
+      throw new AppError(Messages.DEPARTMENT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
 
@@ -62,7 +64,7 @@ export class CreateEmployeeUseCase implements ICreateEmployeeUseCase {
       creator instanceof Manager &&
       creator.departmentId !== employeeDto.departmentId
     ) {
-      throw new Error(Messages.MANAGER_DEPARTMENT_RESTRICTION);
+      throw new AppError(Messages.MANAGER_DEPARTMENT_RESTRICTION, StatusCodes.FORBIDDEN);
     }
 
 

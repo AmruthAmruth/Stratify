@@ -1,4 +1,6 @@
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import {
   verifyRefreshToken,
   TokenPayload,
@@ -17,7 +19,7 @@ export class RefreshTokenUseCase {
       const newRefreashToken = generateRefreshToken(payload);
       return { accessToken, refreshToken: newRefreashToken };
     } catch {
-      throw new AppError("Invalid or expired refresh token");
+      throw new AppError(Messages.INVALID_REFRESH_TOKEN, StatusCodes.UNAUTHORIZED);
     }
   }
 }

@@ -2,6 +2,7 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import {
   GetProjectsByDepartmentDTO,
   GetProjectsByDepartmentResponse,
@@ -9,24 +10,23 @@ import {
 import { IGetProjectsByDepartmentUseCase } from "../../interfaces/project/IGetProjectsByDepartmentUseCase";
 
 export class GetProjectsByDepartmentUseCase
-  implements IGetProjectsByDepartmentUseCase
-{
+  implements IGetProjectsByDepartmentUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
     private _managerRepo: IManagerRepository,
-  ) {}
+  ) { }
 
   async execute(managerId: string): Promise<GetProjectsByDepartmentResponse> {
     const manager = await this._managerRepo.findById(managerId);
 
     if (!manager) {
-      throw new AppError("Manager not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const departmentId = manager.departmentId;
     if (!departmentId) {
       throw new AppError(
-        "Manager does not belong to any department",
+        Messages.MANAGER_NO_DEPARTMENT,
         StatusCodes.NOT_FOUND,
       );
     }
@@ -34,7 +34,7 @@ export class GetProjectsByDepartmentUseCase
     const projects = await this._projectRepo.findByDepartmentId(departmentId);
 
     if (!projects || projects.length === 0) {
-      throw new AppError("Projects not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const counts = {
@@ -48,9 +48,9 @@ export class GetProjectsByDepartmentUseCase
     const result: GetProjectsByDepartmentDTO[] = projects.map((project) => {
       const remainingTimeInDays = project.endDate
         ? Math.ceil(
-            (new Date(project.endDate).getTime() - new Date().getTime()) /
-              (1000 * 60 * 60 * 24),
-          )
+          (new Date(project.endDate).getTime() - new Date().getTime()) /
+          (1000 * 60 * 60 * 24),
+        )
         : 0;
 
       const status = project.status ?? "Planned";

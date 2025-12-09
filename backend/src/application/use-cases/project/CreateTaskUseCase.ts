@@ -5,6 +5,7 @@ import { ITaskRepository } from "../../../domain/repositories/ITaskRepository";
 import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { CreateTaskDTO } from "../../dto/project/CreateTaskDTO";
 import { ICreateTaskUseCase } from "../../interfaces/project/ICreateTaskUseCase";
 
@@ -14,18 +15,18 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
     private readonly _userStoryRepo: IUserStoryRepository,
     private readonly _employeeRepo: IEmployeeRepository,
     private readonly _projectRepo: IProjectRepository,
-  ) {}
+  ) { }
 
   async execute(taskDTO: CreateTaskDTO): Promise<Task> {
     const userStory = await this._userStoryRepo.findById(taskDTO.userStoryId);
     if (!userStory)
-      throw new AppError("UserStory not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.USER_STORY_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     if (taskDTO.assignedToId) {
       const employee = await this._employeeRepo.findById(taskDTO.assignedToId);
       if (!employee) {
         throw new AppError(
-          `Assigned user with ID ${taskDTO.assignedToId} does not exist`,
+          Messages.ASSIGNED_USER_NOT_EXIST,
           StatusCodes.NOT_FOUND,
         );
       }
@@ -33,7 +34,7 @@ export class CreateTaskUseCase implements ICreateTaskUseCase {
       const project = await this._projectRepo.findById(userStory.projectId);
       if (employee.companyId !== project?.companyId) {
         throw new AppError(
-          `Assigned user does not belong to the same company as the user story`,
+          Messages.ASSIGNED_USER_NOT_IN_COMPANY,
           StatusCodes.NOT_FOUND,
         );
       }

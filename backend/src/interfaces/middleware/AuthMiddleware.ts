@@ -9,13 +9,13 @@ export interface AuthRequest extends Request {
 
 interface JwtPayload {
   id: string;
-  role: "company" | "manager" | "employee";
+  role: "company" | "manager" | "employee" | "super-admin";
   iat?: number;
   exp?: number;
 }
 
 export const authMiddleware = (
-  allowedRoles: ("company" | "manager" | "employee")[] = [],
+  allowedRoles: ("company" | "manager" | "employee" | "super-admin")[] = [],
 ) => {
   return (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {

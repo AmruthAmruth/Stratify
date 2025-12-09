@@ -5,6 +5,7 @@ import { ISprintRepository } from "../../../domain/repositories/ISprintRepositor
 import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import {
   ProjectDetailsDTO,
   SprintWithIssuesDTO,
@@ -24,7 +25,7 @@ export class GetProjectDetailsUseCase implements IGetProjectDetailsUseCase {
   async execute(projectId: string): Promise<ProjectDetailsDTO> {
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     console.log("Project", project);

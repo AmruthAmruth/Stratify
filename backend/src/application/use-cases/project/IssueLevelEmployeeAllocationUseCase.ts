@@ -2,26 +2,26 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { ProjectLevelEmployeeAllocationDTO } from "../../dto/project/ProjectLavelEmployeeAllocationDTO";
 import { IIssueLevelEmployeeAllocation } from "../../interfaces/project/IIssueLevelEmployeeAllocationUseCase";
 
 export class IssueLevelEmployeeAllocationUseCase
-  implements IIssueLevelEmployeeAllocation
-{
+  implements IIssueLevelEmployeeAllocation {
   constructor(
     private readonly _projectRepo: IProjectRepository,
     private readonly _employeeRepo: IEmployeeRepository,
-  ) {}
+  ) { }
 
   async execute(projectId: string): Promise<ProjectLevelEmployeeAllocationDTO> {
     const project = await this._projectRepo.findById(projectId);
     if (!project) {
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     if (!project.teamMemberIds || project.teamMemberIds.length === 0) {
       throw new AppError(
-        "No team members assigned to this project",
+        Messages.NO_TEAM_MEMBERS_IN_PROJECT,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -31,7 +31,7 @@ export class IssueLevelEmployeeAllocationUseCase
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
           throw new AppError(
-            `Employee not found: ${employeeId}`,
+            Messages.EMPLOYEE_NOT_FOUND,
             StatusCodes.NOT_FOUND,
           );
         }

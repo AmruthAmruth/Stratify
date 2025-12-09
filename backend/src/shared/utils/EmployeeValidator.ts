@@ -1,5 +1,6 @@
 import { IEmployeeRepository } from "../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../constants/statusCodes";
 
 export async function validateEmployees(
   employeeRepo: IEmployeeRepository,
@@ -14,13 +15,13 @@ export async function validateEmployees(
     if (!employee) {
       throw new AppError(
         `${context} with ID ${employeeId} does not exist`,
-        404,
+        StatusCodes.NOT_FOUND,
       );
     }
     if (employee.companyId !== companyId) {
       throw new AppError(
         `${context} with ID ${employeeId} does not belong to the company`,
-        400,
+        StatusCodes.BAD_REQUEST,
       );
     }
   }

@@ -5,6 +5,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { CreateBacklogDTO } from "../../dto/project/CreateBacklogDTO";
 import { ICreateBacklogUseCase } from "../../interfaces/project/ICreateBacklogUseCase";
 
@@ -14,7 +15,7 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
     private _companyRepo: ICompanyRepository,
     private _managerRepo: IManagerRepository,
     private _projectRepo: IProjectRepository,
-  ) {}
+  ) { }
 
   async execute(backlogDTO: CreateBacklogDTO): Promise<Backlog> {
     let creatorExists = false;
@@ -38,17 +39,17 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
     }
 
     if (!creatorExists || !createdByModel || !companyId) {
-      throw new AppError("Creator not found", StatusCodes.BAD_REQUEST);
+      throw new AppError(Messages.CREATOR_NOT_FOUND, StatusCodes.BAD_REQUEST);
     }
 
     const project = await this._projectRepo.findById(backlogDTO.projectId);
     if (!project) {
-      throw new AppError("Project not found", StatusCodes.BAD_REQUEST);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.BAD_REQUEST);
     }
 
     if (project.companyId !== companyId) {
       throw new AppError(
-        "Project does not belong to the creator's company",
+        Messages.PROJECT_NOT_BELONG_TO_COMPANY,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -59,7 +60,7 @@ export class CreateBacklogUseCase implements ICreateBacklogUseCase {
     );
     if (existingBacklog) {
       throw new AppError(
-        "Backlog name already exists in this project",
+        Messages.BACKLOG_NAME_EXISTS,
         StatusCodes.BAD_REQUEST,
       );
     }

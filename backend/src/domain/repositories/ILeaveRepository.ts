@@ -37,7 +37,11 @@ export interface ILeaveRepository {
     start: Date,
     end: Date,
   ): Promise<Leave[]>;
-
+  findApprovedLeavesByEmployeesInRange(
+    employeeIds: string[],
+    startDate: Date,
+    endDate: Date,
+  ): Promise<Leave[]>;
 
 
 }

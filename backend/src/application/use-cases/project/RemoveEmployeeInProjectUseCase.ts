@@ -4,6 +4,7 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { Notification } from "../../../domain/entities/Notification";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { IRemoveEmployeeInProjectUseCase } from "../../interfaces/project/IRemoveEmployeeINProjectUseCase";
@@ -18,27 +19,27 @@ export class RemoveEmployeeInProjectUseCase implements IRemoveEmployeeInProjectU
 
     async execute(projectId: string, employeeId: string): Promise<void> {
 
-        
+
         const project = await this._projectRepo.findById(projectId);
         if (!project) {
-            throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+            throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        
+
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
-            throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
+            throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        
+
         const isInProject = project.teamMemberIds?.includes(employeeId);
         if (!isInProject) {
             throw new AppError(
-                "Employee is not part of this project",
+                Messages.EMPLOYEE_NOT_IN_PROJECT,
                 StatusCodes.BAD_REQUEST
             );
         }
-        
+
         const allProjectIssues = await this._issueRepo.findByProjectId(projectId);
         const employeeIssues = allProjectIssues.filter(
             (issue) => issue.assignedTo === employeeId

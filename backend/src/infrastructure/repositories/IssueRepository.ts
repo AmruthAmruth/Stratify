@@ -3,6 +3,9 @@ import { Issue } from "../../domain/entities/Issue";
 import { IIssueRepository } from "../../domain/repositories/IIssueRepository";
 import { IssueMapper } from "../mappers/IssueMapper";
 import { IssueModel } from "../models/IssueModel";
+import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class IssueRepository implements IIssueRepository {
   async create(issue: Issue): Promise<Issue> {
@@ -48,7 +51,7 @@ export class IssueRepository implements IIssueRepository {
       { new: true },
     );
 
-    if (!updated) throw new Error("Issue not found");
+    if (!updated) throw new AppError(Messages.ISSUE_NOT_FOUND, StatusCodes.NOT_FOUND);
     return IssueMapper.toEntity(updated);
   }
 

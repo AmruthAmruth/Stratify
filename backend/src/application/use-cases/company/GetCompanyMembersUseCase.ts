@@ -2,6 +2,7 @@ import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentR
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import {
   CompanyMembersDTO,
@@ -14,10 +15,10 @@ export class GetCompanyMemebersUseCase implements IGetCompanyMemebersUseCase {
     private _managerRepo: IManagerRepository,
     private _employeeRepo: IEmployeeRepository,
     private _departmentRepo: IDepartmentRepository,
-  ) {}
+  ) { }
   async execute(companyId: string): Promise<CompanyMembersDTO> {
     if (!companyId) {
-      throw new AppError("Company ID is required", StatusCodes.FORBIDDEN);
+      throw new AppError(Messages.COMPANY_ID_REQUIRED, StatusCodes.FORBIDDEN);
     }
 
     const managers = await this._managerRepo.findByCompanyId(companyId);
@@ -27,7 +28,7 @@ export class GetCompanyMemebersUseCase implements IGetCompanyMemebersUseCase {
       (!managers || managers.length === 0) &&
       (!employees || employees.length === 0)
     ) {
-      throw new AppError("No members found for this company", 404);
+      throw new AppError(Messages.NO_MEMBERS_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const getDepartmentName = async (departmentId?: string) => {

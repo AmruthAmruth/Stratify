@@ -2,42 +2,44 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 
 export class GetUserCompanyInfoUseCase {
   constructor(
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository
-  ) {}
+  ) { }
 
   async execute(userId: string, role: string): Promise<{ id: string; name: string; profileImage?: string }> {
     let companyId: string;
 
     if (role === "company") {
-     
+
       companyId = userId;
     } else if (role === "manager") {
-     
+
       const manager = await this._managerRepository.findById(userId);
       if (!manager) {
-        throw new AppError("Manager not found", 404);
+        throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
       }
       companyId = manager.companyId;
     } else if (role === "employee") {
-      
+
       const employee = await this._employeeRepository.findById(userId);
       if (!employee) {
-        throw new AppError("Employee not found", 404);
+        throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
       }
       companyId = employee.companyId;
     } else {
-      throw new AppError("Invalid role", 400);
+      throw new AppError(Messages.INVALID_ROLE, StatusCodes.BAD_REQUEST);
     }
 
-    
+
     const company = await this._companyRepository.findById(companyId);
     if (!company) {
-      throw new AppError("Company not found", 404);
+      throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     return {

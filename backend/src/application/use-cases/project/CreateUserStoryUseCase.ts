@@ -5,6 +5,7 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { IUserStoryRepository } from "../../../domain/repositories/IUserStoryRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { validateEmployees } from "../../../shared/utils/EmployeeValidator";
 import { CreateUserStoryDTO } from "../../dto/project/CreateUserStoryDTO";
 import { ICreateUserStoryUseCase } from "../../interfaces/project/ICreateUserStoryUseCase";
@@ -15,17 +16,17 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
     private _backlogRepo: IBacklogRepository,
     private _projectRepo: IProjectRepository,
     private _employeeRepo: IEmployeeRepository,
-  ) {}
+  ) { }
 
   async execute(userStoryDTO: CreateUserStoryDTO): Promise<UserStory> {
     const backlog = await this._backlogRepo.findById(userStoryDTO.backlogId);
 
     if (!backlog)
-      throw new AppError("Backlog not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.BACKLOG_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     if (backlog.projectId !== userStoryDTO.projectId) {
       throw new AppError(
-        "Backlog does not belong to the given project",
+        Messages.BACKLOG_NOT_BELONG_TO_PROJECT,
         StatusCodes.BAD_REQUEST,
       );
     }
@@ -36,14 +37,14 @@ export class CreateUserStoryUseCase implements ICreateUserStoryUseCase {
     );
     if (existingUserStory) {
       throw new AppError(
-        "Already existing the user story title",
+        Messages.USER_STORY_TITLE_EXISTS,
         StatusCodes.BAD_REQUEST,
       );
     }
 
     const project = await this._projectRepo.findById(userStoryDTO.projectId);
     if (!project)
-      throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     await validateEmployees(
       this._employeeRepo,

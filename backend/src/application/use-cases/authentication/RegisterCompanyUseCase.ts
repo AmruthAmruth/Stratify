@@ -5,6 +5,7 @@ import { ITempRegistrationRepository } from "../../../domain/repositories/ITempR
 import { Company } from "../../../domain/entities/Company";
 import { hashPassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 
 export class RegisterCompanyUseCase {
@@ -12,16 +13,16 @@ export class RegisterCompanyUseCase {
     private _companyRepo: ICompanyRepository,
     private _sendOtpUseCase: SendOtpUseCase,
     private _tempRegRepo: ITempRegistrationRepository,
-  ) {}
+  ) { }
 
   async execute(data: Company): Promise<Date> {
     RegisterCompanySchema.parse(data);
 
     const existing = await this._companyRepo.findByEmail(data.email);
-    if (existing) throw new AppError(Messages.COMPANY_ALREADY_EXISTS);
+    if (existing) throw new AppError(Messages.COMPANY_ALREADY_EXISTS, StatusCodes.CONFLICT);
 
     const existingInMobile = await this._companyRepo.findByPhone(data.phone);
-    if (existingInMobile) throw new AppError(Messages.PHONE_ALREADY_EXISTS);
+    if (existingInMobile) throw new AppError(Messages.PHONE_ALREADY_EXISTS, StatusCodes.CONFLICT);
 
     const hashedPassword = await hashPassword(data.password);
 

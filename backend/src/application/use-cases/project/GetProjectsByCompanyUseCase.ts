@@ -3,6 +3,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import {
   GetProjectsByCompanyDTO,
   GetProjectsByCompanyResponse,
@@ -10,20 +11,19 @@ import {
 import { IGetProjectsByCompanyUseCase } from "../../interfaces/project/IGetProjectsByCompanyUseCase";
 
 export class GetProjectsByCompanyUseCase
-  implements IGetProjectsByCompanyUseCase
-{
+  implements IGetProjectsByCompanyUseCase {
   constructor(
     private _projectRepo: IProjectRepository,
     private _managerRepo: IManagerRepository,
     private _departmentRepo: IDepartmentRepository,
-  ) {}
+  ) { }
 
   async execute(companyId: string): Promise<GetProjectsByCompanyResponse> {
     const projects = await this._projectRepo.findByCompanyId(companyId);
     console.log(projects);
 
     if (!projects || projects.length === 0) {
-      throw new AppError("Projects not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const result: GetProjectsByCompanyDTO[] = await Promise.all(
@@ -40,7 +40,7 @@ export class GetProjectsByCompanyUseCase
         if (project.endDate) {
           remainingTimeInDays = Math.ceil(
             (new Date(project.endDate).getTime() - new Date().getTime()) /
-              (1000 * 60 * 60 * 24),
+            (1000 * 60 * 60 * 24),
           );
         }
 

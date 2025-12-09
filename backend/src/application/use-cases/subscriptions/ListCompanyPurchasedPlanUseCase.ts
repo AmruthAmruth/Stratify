@@ -1,20 +1,22 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { PurchasePlanDTO } from "../../dto/subscriptions/CompanyPurchasedPlanDTO";
 import { IListPurchasedPlanUseCase } from "../../interfaces/subscriptions/IListPurchasedPlanUseCase";
 
-export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCase{
+export class ListCompanyPurchasedPlanUseCase implements IListPurchasedPlanUseCase {
   constructor(
     private _subscriptionRepo: ISubscriptionRepository,
     private _companyRepo: ICompanyRepository,
-  ) {}
+  ) { }
 
   async execute(): Promise<PurchasePlanDTO[]> {
     const plans = await this._subscriptionRepo.listAllPlan();
 
     if (plans.length === 0) {
-      throw new AppError("No purchased plans found", 404);
+      throw new AppError(Messages.NO_PURCHASED_PLANS, StatusCodes.NOT_FOUND);
     }
 
     const purchasedPlans: PurchasePlanDTO[] = [];

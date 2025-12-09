@@ -3,6 +3,7 @@ import { IManagerRepository } from "../../../domain/repositories/IManagerReposit
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import {
   DepartmentLeaveDTO,
   LeaveDTO,
@@ -15,18 +16,18 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
     private _leaveRepo: ILeaveRepository,
     private _managerRepo: IManagerRepository,
     private _employeeRepo: IEmployeeRepository,
-  ) {}
+  ) { }
 
   async execute(managerId: string): Promise<DepartmentLeaveDTO> {
     const manager = await this._managerRepo.findById(managerId);
     if (!manager) {
-      throw new AppError("Manager not found", StatusCodes.NOT_FOUND);
+      throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
     const departmentId = manager.departmentId;
     if (!departmentId) {
       throw new AppError(
-        "Manager does not belong to any department",
+        Messages.MANAGER_NO_DEPARTMENT,
         StatusCodes.NOT_FOUND,
       );
     }

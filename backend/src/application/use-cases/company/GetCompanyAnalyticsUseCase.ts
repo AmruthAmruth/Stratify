@@ -5,6 +5,7 @@ import { IProjectRepository } from "../../../domain/repositories/IProjectReposit
 import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository";
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CompanyAnalyticsDTO } from "../../dto/company/CompanyAnalyticsDTO";
 import { IGetCompanyAnalyticsUseCase } from "../../interfaces/company/IGetCompanyAnalyticsUseCase";
@@ -21,7 +22,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
 
     async execute(companyId: string): Promise<CompanyAnalyticsDTO> {
         if (!companyId) {
-            throw new AppError("Company ID is required", StatusCodes.FORBIDDEN);
+            throw new AppError(Messages.COMPANY_ID_REQUIRED, StatusCodes.FORBIDDEN);
         }
 
         try {
@@ -255,7 +256,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
         } catch (error) {
             console.error("Error fetching company analytics:", error);
             throw new AppError(
-                "Failed to fetch company analytics",
+                Messages.COMPANY_ANALYTICS_FETCH_FAILED,
                 StatusCodes.INTERNAL_SERVER_ERROR
             );
         }

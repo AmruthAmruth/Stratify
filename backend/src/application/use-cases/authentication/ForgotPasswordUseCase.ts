@@ -2,6 +2,7 @@ import { ICompanyRepository } from "../../../domain/repositories/ICompanyReposit
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { SendOtpUseCase } from "./SendOTPUseCase";
 
 import { Company } from "../../../domain/entities/Company";
@@ -17,7 +18,7 @@ export class ForgotPasswordUseCase {
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
     private _sendOtpUseCase: SendOtpUseCase,
-  ) {}
+  ) { }
 
   async execute(email: string): Promise<Date> {
     let user: UserType | null =
@@ -26,7 +27,7 @@ export class ForgotPasswordUseCase {
     if (!user) user = await this._managerRepository.findByEmail(email);
     if (!user) user = await this._employeeRepository.findByEmail(email);
 
-    if (!user) throw new AppError(Messages.EMAIL_NOT_FOUND, 404);
+    if (!user) throw new AppError(Messages.EMAIL_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const expiresAt = await this._sendOtpUseCase.execute(email);
     return expiresAt;

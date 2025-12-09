@@ -2,6 +2,9 @@ import { IUpdateManagerProfileUseCase } from "../../interfaces/managers/IUpdateM
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { UpdateManagerProfileData, UpdateManagerProfileResponse } from "../../interfaces/managers/types";
 import { Manager } from "../../../domain/entities/Manager";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 
 export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase {
     constructor(private managerRepository: IManagerRepository) { }
@@ -10,7 +13,7 @@ export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase
         const manager = await this.managerRepository.findById(managerId);
 
         if (!manager) {
-            throw new Error("Manager not found");
+            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
         const updateData: Partial<Manager> = {};
@@ -23,7 +26,7 @@ export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase
         const updatedManager = await this.managerRepository.update(managerId, updateData);
 
         if (!updatedManager) {
-            throw new Error("Failed to update manager profile");
+            throw new AppError(Messages.MANAGER_UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
         }
 
         return {

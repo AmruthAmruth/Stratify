@@ -3,6 +3,8 @@ import { IProjectRepository } from "../../domain/repositories/IProjectRepository
 import { ProjectModel } from "../models/ProjectModel";
 import { Types } from "mongoose";
 import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
+import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 import { ProjectMapper } from "../mappers/ProjectMapper";
 
 export class ProjectRepository implements IProjectRepository {
@@ -47,13 +49,13 @@ export class ProjectRepository implements IProjectRepository {
       { new: true },
     );
 
-    if (!updated) throw new AppError("Project not found", 404);
+    if (!updated) throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
     return ProjectMapper.toEntity(updated);
   }
 
   async delete(projectId: string): Promise<void> {
     const deleted = await ProjectModel.findByIdAndDelete(projectId);
-    if (!deleted) throw new AppError("Project not found", 404);
+    if (!deleted) throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
   }
 
   async findById(projectId: string): Promise<Project | null> {
@@ -71,7 +73,7 @@ export class ProjectRepository implements IProjectRepository {
     companyId?: string,
   ): Promise<Project | null> {
     if (!name || !companyId) {
-      throw new AppError("Project name or companyId is missing", 400);
+      throw new AppError(Messages.PROJECT_NAME_OR_COMPANY_ID_MISSING, StatusCodes.BAD_REQUEST);
     }
 
     const project = await ProjectModel.findOne({

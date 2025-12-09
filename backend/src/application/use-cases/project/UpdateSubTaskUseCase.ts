@@ -2,6 +2,7 @@ import { SubTask } from "../../../domain/entities/SubTask";
 import { ISubtaskRepository } from "../../../domain/repositories/ISubTaskRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
+import { Messages } from "../../../shared/constants/messages";
 import { UpdateSubTaskDTO } from "../../dto/project/UpdateSubTaskDTO";
 import { IUpdateSubTaskUseCase } from "../../interfaces/project/IUpdateSubTaskUseCase";
 
@@ -11,7 +12,7 @@ export class UpdateSubTaskUseCase implements IUpdateSubTaskUseCase {
     async execute(subtaskDTO: UpdateSubTaskDTO): Promise<SubTask> {
         const existingSubTask = await this._subTaskRepo.findById(subtaskDTO.id);
         if (!existingSubTask) {
-            throw new AppError("Subtask not found", StatusCodes.NOT_FOUND);
+            throw new AppError(Messages.SUBTASK_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
         const updatedSubTask = new SubTask(

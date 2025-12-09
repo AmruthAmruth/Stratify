@@ -6,6 +6,7 @@ import {
 } from "../../../shared/utils/token";
 import { comparePassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 
 import { Company } from "../../../domain/entities/Company";
@@ -37,16 +38,16 @@ export class CompanyLoginUseCase {
 
     if (!user) user = await this._managerRepository.findByEmail(data.email);
     if (!user) user = await this._employeeRepository.findByEmail(data.email);
-    if (!user) throw new AppError(Messages.EMAIL_NOT_FOUND, 404);
+    if (!user) throw new AppError(Messages.EMAIL_NOT_FOUND, StatusCodes.NOT_FOUND);
 
     const isPassword = await comparePassword(data.password, user.password);
-    if (!isPassword) throw new AppError(Messages.LOGIN_FAILED, 401);
+    if (!isPassword) throw new AppError(Messages.LOGIN_FAILED, StatusCodes.UNAUTHORIZED);
 
     if (user instanceof Company) {
       if (user.status === "pending" || user.status === "rejected") {
         throw new AppError(
           Messages.ACCOUNT_PENDING_APPROVAL,
-          403,
+          StatusCodes.FORBIDDEN,
         );
       }
 
@@ -57,7 +58,7 @@ export class CompanyLoginUseCase {
       if (!subscription || !["trial", "active"].includes(subscription.status)) {
         throw new AppError(
           Messages.SUBSCRIPTION_INACTIVE,
-          402,
+          StatusCodes.PAYMENT_REQUIRED,
           { companyId: user.id! },
         );
       }
