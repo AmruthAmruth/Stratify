@@ -19,7 +19,7 @@ import {
   updateProjectSchema,
 } from "@/shared/utils/validations";
 import {
-  addEmployeeProject, // Changed from addEmployeetoProject 
+  addEmployeeProject, 
   createIssue,
   createSprint,
   getEmployeesNotInProject,   

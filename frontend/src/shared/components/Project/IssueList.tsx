@@ -26,7 +26,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const [updateSubTaskModalOpen, setUpdateSubTaskModalOpen] = useState(false);
   const [currentSubTask, setCurrentSubTask] = useState<any | null>(null);
 
-  // Confirmation dialog states
+
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
@@ -54,7 +54,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     setIsSubtaskModalOpen(true);
   }, []);
 
-  // Open update modal
+ 
   const openUpdateIssueModal = useCallback((issue: IssueDTO) => {
     setCurrentIssue(issue);
     setUpdateIssueModalOpen(true);
@@ -83,7 +83,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     setCurrentSubTask(null);
   }, []);
 
-  // Create Subtask
+ 
   const handleCreateSubtask = useCallback(
     async (values: Record<string, any>) => {
       if (!currentIssueId) {
@@ -104,7 +104,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     [currentIssueId, closeSubtaskModal, onRefresh]
   );
 
-  // Update Issue
+ 
   const handleUpdateIssue = useCallback(
     async (values: Record<string, any>) => {
       if (!currentIssue) {
