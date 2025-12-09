@@ -119,6 +119,7 @@ const ChatBox = ({
           (selectedFile.type.startsWith('image/') ? 'image' :
             selectedFile.type.startsWith('video/') ? 'video' :
               selectedFile.type.startsWith('audio/') ? 'audio' : 'document') : 'text',
+        fileUrl: filePreview || undefined,
       };
 
       // Immediately add message to Redux store for instant UI update
