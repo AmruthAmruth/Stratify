@@ -70,4 +70,9 @@ export class SubTaskRepository implements ISubtaskRepository {
   async deleteByIssueId(issueId: string): Promise<void> {
     await SubTaskModel.deleteMany({ issueId });
   }
+
+
+
+
+
 }

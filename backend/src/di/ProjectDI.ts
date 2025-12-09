@@ -52,7 +52,6 @@ export const projectDI = () => {
   const sprintRepo = new SprintRepository();
   const notificationRepo = new NotificationRepository();
 
-  // Create recurring meetings use case
   const createProjectUseCase = new CreateProjectUseCase(
     projectRepo,
     companyRepo,

@@ -16,12 +16,12 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
 
   async execute(userId: string): Promise<GetTeamForChatDTO[]> {
 
-    // Check if user is a company
+    
     const company = await this._companyRepo.findById(userId);
     let teamMembers: Array<{ id: string; name: string }> = [];
 
     if (company) {
-      // Company user: fetch all managers and employees under this company
+     
       const [managers, employees] = await Promise.all([
         this._managerRepo.findByCompanyId(company.id!),
         this._employeeRepo.findByCompanyId(company.id!)
@@ -36,14 +36,14 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
           .map(e => ({ id: e.id!, name: e.name }))
       ];
     } else {
-      // Check if user is a manager
+     
       const manager = await this._managerRepo.findById(userId);
 
       if (manager) {
-        // Fetch employees in manager's department
+       
         const employees = await this._employeeRepo.findByDepartmentId(manager.departmentId!);
 
-        // Fetch the company
+       
         const company = await this._companyRepo.findById(manager.companyId);
 
         teamMembers = employees
@@ -53,7 +53,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
             name: emp.name,
           }));
 
-        // Add company to the team list
+        
         if (company && company.id) {
           teamMembers.push({
             id: company.id,
@@ -61,7 +61,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
           });
         }
       } else {
-        // User is an employee
+        
         const employee = await this._employeeRepo.findById(userId);
         if (!employee) {
           throw new AppError("User not found as company, manager, or employee");
@@ -78,7 +78,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
             name: emp.name,
           }));
 
-        // Add manager to the list
+        
         if (employeeManager && employeeManager.id) {
           const exists = teamMembers.some(member => member.id === employeeManager.id);
           if (!exists) {
@@ -89,7 +89,7 @@ export class GetTeamForChatUseCase implements IGetTeamForChatUseCase {
           }
         }
 
-        // Add company to the list
+      
         if (company && company.id) {
           teamMembers.push({
             id: company.id,

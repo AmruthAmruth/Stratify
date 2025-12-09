@@ -6,6 +6,47 @@ export class SuperAdminRepository implements ISuperAdminRepository {
   async findByEmail(email: string): Promise<SuperAdmin | null> {
     const user = await SuperAdminModel.findOne({ email });
     if (!user) return null;
-    return new SuperAdmin(user.id.toString(), user.email, user.password);
+    return new SuperAdmin(
+      user.id.toString(),
+      user.email,
+      user.password,
+      user.name,
+      user.profileImage
+    );
+  }
+
+  async findById(id: string): Promise<SuperAdmin | null> {
+    const user = await SuperAdminModel.findById(id);
+    if (!user) return null;
+    return new SuperAdmin(
+      user.id.toString(),
+      user.email,
+      user.password,
+      user.name,
+      user.profileImage
+    );
+  }
+
+  async update(superAdmin: SuperAdmin): Promise<SuperAdmin> {
+    const updatedUser = await SuperAdminModel.findByIdAndUpdate(
+      superAdmin.id,
+      {
+        name: superAdmin.name,
+        profileImage: superAdmin.profileImage,
+        email: superAdmin.email,
+        password: superAdmin.password,
+      },
+      { new: true }
+    );
+
+    if (!updatedUser) throw new Error("Super Admin not found");
+
+    return new SuperAdmin(
+      updatedUser.id.toString(),
+      updatedUser.email,
+      updatedUser.password,
+      updatedUser.name,
+      updatedUser.profileImage
+    );
   }
 }

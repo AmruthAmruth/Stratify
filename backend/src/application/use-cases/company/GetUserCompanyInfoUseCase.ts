@@ -14,17 +14,17 @@ export class GetUserCompanyInfoUseCase {
     let companyId: string;
 
     if (role === "company") {
-      // If user is company, userId is the companyId
+     
       companyId = userId;
     } else if (role === "manager") {
-      // Fetch manager to get their companyId
+     
       const manager = await this._managerRepository.findById(userId);
       if (!manager) {
         throw new AppError("Manager not found", 404);
       }
       companyId = manager.companyId;
     } else if (role === "employee") {
-      // Fetch employee to get their companyId
+      
       const employee = await this._employeeRepository.findById(userId);
       if (!employee) {
         throw new AppError("Employee not found", 404);
@@ -34,7 +34,7 @@ export class GetUserCompanyInfoUseCase {
       throw new AppError("Invalid role", 400);
     }
 
-    // Fetch company information
+    
     const company = await this._companyRepository.findById(companyId);
     if (!company) {
       throw new AppError("Company not found", 404);

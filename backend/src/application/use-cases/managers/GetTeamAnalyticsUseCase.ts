@@ -32,24 +32,24 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
         const startOfMonth = new Date(now.getFullYear(), now.getMonth(), 1);
         const endOfMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0);
 
-        // Fetch leaves for the department
+        
         const leaves = await this.leaveRepository.findLeavesByDepartmentAndDateRange(
             manager.departmentId,
             startOfMonth,
             endOfMonth
         );
 
-        // Calculate total employees
+        
         const totalEmployees = employees.length;
 
-        // Calculate employees on leave (Approved leaves that are currently active)
+        
         const employeesOnLeave = leaves.filter(leave => {
             return leave.status === 'Approved' &&
                 new Date(leave.startDate) <= now &&
                 new Date(leave.endDate) >= now;
         }).length;
 
-        // Calculate average experience (years since joining)
+      
         let totalExperience = 0;
         employees.forEach(emp => {
             const joiningDate = new Date(emp.joiningDate);
@@ -58,32 +58,31 @@ export class GetTeamAnalyticsUseCase implements IGetTeamAnalyticsUseCase {
         });
         const averageExperience = totalEmployees > 0 ? Math.round((totalExperience / totalEmployees) * 10) / 10 : 0;
 
-        // Calculate position distribution
+        
         const positionDistribution: { [position: string]: number } = {};
         employees.forEach(emp => {
             const position = emp.position || 'Unknown';
             positionDistribution[position] = (positionDistribution[position] || 0) + 1;
         });
 
-        // Calculate gender distribution
+        
         const genderDistribution = {
             male: employees.filter(emp => emp.gender === 'male').length,
             female: employees.filter(emp => emp.gender === 'female').length,
             other: employees.filter(emp => emp.gender === 'other').length,
         };
 
-        // Calculate project allocation by checking each employee's project assignments
         const employeeIdsInProjects = new Set<string>();
         const activeProjectEmployees = new Set<string>();
 
-        // For each employee, check if they are in any projects
+      
         for (const employee of employees) {
             const employeeProjects = await this.projectRepository.findByTeamMemberId(employee.id!);
 
             if (employeeProjects.length > 0) {
                 employeeIdsInProjects.add(employee.id!);
 
-                // Check if any of their projects are active
+              
                 const hasActiveProject = employeeProjects.some(p => {
                     const status = (p.status || '').toLowerCase();
                     return status === 'active';

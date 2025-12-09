@@ -12,16 +12,15 @@ export class ChangeManagerPasswordUseCase implements IChangeManagerPasswordUseCa
             throw new Error("Manager not found");
         }
 
-        // Verify current password
+     
         const isPasswordValid = await bcrypt.compare(currentPassword, manager.password);
         if (!isPasswordValid) {
             throw new Error("Current password is incorrect");
         }
 
-        // Hash new password
         const hashedPassword = await bcrypt.hash(newPassword, 10);
 
-        // Update password
+        
         await this.managerRepository.updatePassword(manager.email, hashedPassword);
     }
 }

@@ -101,7 +101,6 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
 
     const createdLeave = await this._leaveRepo.create(leave);
 
-    // Notify manager about new leave request
     if (employee.managerId) {
       const manager = await this._managerRepo.findById(employee.managerId);
       if (manager) {

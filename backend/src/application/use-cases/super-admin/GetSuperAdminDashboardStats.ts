@@ -8,7 +8,7 @@ export class GetSuperAdminDashboardStats {
     ) { }
 
     async execute() {
-        // 1. Company Stats
+    
         const totalCompaniesResult = await this.companyRepository.findPaginated({ pageSize: 1, filter: {} });
         const totalCompanies = totalCompaniesResult.total;
 
@@ -21,14 +21,14 @@ export class GetSuperAdminDashboardStats {
         const rejectedCompaniesResult = await this.companyRepository.findPaginated({ pageSize: 1, filter: { status: "rejected" } });
         const rejectedCompanies = rejectedCompaniesResult.total;
 
-        // 2. Subscription Stats
+       
         const allSubscriptions = await this.subscriptionRepository.listAllPlan();
         const activeSubscriptions = allSubscriptions.filter(sub => sub.status === "active" || sub.status === "trial").length;
 
-        // 3. Revenue Stats
+    
         const totalRevenue = allSubscriptions.reduce((acc, sub) => acc + (sub.amount || 0), 0);
 
-        // 4. Monthly Revenue (Simple calculation based on start date)
+       
         const currentMonth = new Date().getMonth();
         const currentYear = new Date().getFullYear();
         const monthlyRevenue = allSubscriptions
@@ -38,14 +38,14 @@ export class GetSuperAdminDashboardStats {
             })
             .reduce((acc, sub) => acc + (sub.amount || 0), 0);
 
-        // 5. Subscriptions by Plan
+      
         const planCounts: Record<string, number> = {};
         allSubscriptions.forEach(sub => {
             const planName = sub.plan || "Unknown";
             planCounts[planName] = (planCounts[planName] || 0) + 1;
         });
 
-        // 6. Revenue Trend (Last 6 Months)
+       
         const revenueTrend: Record<string, number> = {};
         const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
@@ -53,7 +53,7 @@ export class GetSuperAdminDashboardStats {
             const d = new Date();
             d.setMonth(d.getMonth() - i);
             const monthKey = `${monthNames[d.getMonth()]} ${d.getFullYear()}`;
-            revenueTrend[monthKey] = 0; // Initialize
+            revenueTrend[monthKey] = 0;
         }
 
         allSubscriptions.forEach(sub => {

@@ -34,7 +34,6 @@ export class ChatController {
             return;
         }
 
-        // Extract file metadata if file was uploaded
         const file = req.file as Express.Multer.File | undefined;
         let messageType: string | undefined;
         let fileUrl: string | undefined;
@@ -43,13 +42,13 @@ export class ChatController {
         let mimeType: string | undefined;
 
         if (file) {
-            // File uploaded via Cloudinary
+          
             fileUrl = (file as { path: string }).path;
             fileName = file.originalname;
             fileSize = file.size;
             mimeType = file.mimetype;
 
-            // Determine message type based on mime type
+            
             if (file.mimetype.startsWith('image/')) {
                 messageType = 'image';
             } else if (file.mimetype.startsWith('video/')) {

@@ -33,7 +33,7 @@ export class ManagerController {
             const managerId = req.userId!;
             const data = req.body;
 
-            // Handle profile image if uploaded
+            
             if (req.file) {
                 data.profileImage = `/uploads/${req.file.filename}`;
             }
