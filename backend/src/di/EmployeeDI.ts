@@ -10,6 +10,8 @@ import { EmployeeController } from "../interfaces/controllers/EmployeeController
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
 import { GetEmployeeDashboardStats } from "../application/use-cases/employee/GetEmployeeDashboardStats";
 import { IssueRepository } from "../infrastructure/repositories/IssueRepository";
+import { GetEmployeeProfileUseCase } from "../application/use-cases/employees/GetEmployeeProfileUseCase";
+import { UpdateEmployeeProfileUseCase } from "../application/use-cases/employees/UpdateEmployeeProfileUseCase";
 
 export const employeeDI = () => {
   const companyRepo = new CompanyRepository();
@@ -39,11 +41,15 @@ export const employeeDI = () => {
   );
 
   const getEmployeeDashboardStats = new GetEmployeeDashboardStats(issueRepo);
+  const getEmployeeProfileUseCase = new GetEmployeeProfileUseCase(employeeRepo);
+  const updateEmployeeProfileUseCase = new UpdateEmployeeProfileUseCase(employeeRepo);
 
   return new EmployeeController(
     createManagerUseCase,
     createEmployeeUseCase,
     getUnassignedManagersUseCase,
-    getEmployeeDashboardStats
+    getEmployeeDashboardStats,
+    getEmployeeProfileUseCase,
+    updateEmployeeProfileUseCase
   );
 };

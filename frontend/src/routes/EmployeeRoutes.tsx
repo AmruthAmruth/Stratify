@@ -7,6 +7,7 @@ import ProjectPage from "@/features/employee/ProjectPage";
 import Task from "@/features/employee/Task";
 import type { RouteObject } from "react-router";
 import EmployeeDashboard from "@/features/employee/Dashboard";
+import EmployeeProfile from "@/features/employee/EmployeeProfile";
 
 const teamRoutes: RouteObject[] = [
   {
@@ -40,6 +41,10 @@ const teamRoutes: RouteObject[] = [
   {
     path: "/project",
     element: <ProjectPage />,
+  },
+  {
+    path: "/my-profile",
+    element: <EmployeeProfile />,
   },
 ];
 

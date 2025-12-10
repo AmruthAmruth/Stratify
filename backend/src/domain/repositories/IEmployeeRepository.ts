@@ -12,4 +12,5 @@ export interface IEmployeeRepository {
   findByCompanyId(companyId: string): Promise<Employee[]>;
   findById(id: string): Promise<Employee | null>;
   findByIdWithDepartment(id: string): Promise<EmployeeWithDepartment | null>;
+  update(employee: Employee): Promise<Employee>;
 }

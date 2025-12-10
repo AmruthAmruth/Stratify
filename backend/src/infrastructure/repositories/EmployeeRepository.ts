@@ -83,4 +83,32 @@ export class EmployeeRepository implements IEmployeeRepository {
       },
     };
   }
+
+  async update(employee: Employee): Promise<Employee> {
+    const doc = await EmployeeModel.findByIdAndUpdate(
+      employee.id,
+      {
+        name: employee.name,
+        email: employee.email,
+        phone: employee.phone,
+        dob: employee.dob,
+        joiningDate: employee.joiningDate,
+        position: employee.position,
+        password: employee.password,
+        companyId: employee.companyId,
+        departmentId: employee.departmentId,
+        managerId: employee.managerId,
+        profileImage: employee.profileImage,
+        gender: employee.gender,
+        role: employee.role,
+      },
+      { new: true }
+    ).exec();
+
+    if (!doc) {
+      throw new Error("Employee not found");
+    }
+
+    return EmployeeMapper.toEntity(doc);
+  }
 }

@@ -8,13 +8,17 @@ import { CreateEmployeeSchema } from "../../application/validators/CreateEmploye
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { GetEmployeeDashboardStats } from "../../application/use-cases/employee/GetEmployeeDashboardStats";
+import { IGetEmployeeProfileUseCase } from "../../application/interfaces/employees/IGetEmployeeProfileUseCase";
+import { IUpdateEmployeeProfileUseCase } from "../../application/interfaces/employees/IUpdateEmployeeProfileUseCase";
 
 export class EmployeeController {
   constructor(
     private _createManagerUseCase: ICreateManagerUseCase,
     private _createEmployeeUseCase: ICreateEmployeeUseCase,
     private _getUnassignedManagersUseCase: IGetUnassignedManagersUseCase,
-    private _getEmployeeDashboardStats: GetEmployeeDashboardStats
+    private _getEmployeeDashboardStats: GetEmployeeDashboardStats,
+    private _getEmployeeProfileUseCase: IGetEmployeeProfileUseCase,
+    private _updateEmployeeProfileUseCase: IUpdateEmployeeProfileUseCase
   ) { }
 
   createManager = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -80,5 +84,18 @@ export class EmployeeController {
     const employeeId = req.userId!;
     const stats = await this._getEmployeeDashboardStats.execute(employeeId);
     res.status(StatusCodes.OK).json(stats);
+  };
+
+  getProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+    const employeeId = req.userId!;
+    const profile = await this._getEmployeeProfileUseCase.execute(employeeId);
+    res.status(StatusCodes.OK).json(profile);
+  };
+
+  updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+    const employeeId = req.userId!;
+    const data = req.body;
+    const updatedProfile = await this._updateEmployeeProfileUseCase.execute(employeeId, data);
+    res.status(StatusCodes.OK).json(updatedProfile);
   };
 }

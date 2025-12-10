@@ -128,3 +128,8 @@ export const MANAGER_ROUTES = {
   UPDATE_PROFILE: '/api/manager/profile',
   CHANGE_PASSWORD: '/api/manager/change-password',
 };
+
+export const EMPLOYEE_ROUTES = {
+  GET_PROFILE: '/api/employee/profile',
+  UPDATE_PROFILE: '/api/employee/profile',
+};

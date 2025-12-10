@@ -28,4 +28,16 @@ employeeRouter.get(
   asyncHandler(controller.getDashboardStats),
 );
 
+employeeRouter.get(
+  "/profile",
+  authMiddleware(["employee"]),
+  asyncHandler(controller.getProfile),
+);
+
+employeeRouter.put(
+  "/profile",
+  authMiddleware(["employee"]),
+  asyncHandler(controller.updateProfile),
+);
+
 export default employeeRouter;
