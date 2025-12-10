@@ -1,6 +1,6 @@
 // components/project/IssueList.tsx
 import React, { useState, useRef, useCallback } from "react";
-import { IssueDTO, UserRole } from "./types";
+import { IssueDTO, UserRole, EmployeeDTO } from "./types";
 import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask } from "@/services/projects";
 import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../Forms/formFields";
 import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
@@ -13,9 +13,10 @@ interface Props {
   issues: IssueDTO[];
   role: UserRole;
   onRefresh?: () => Promise<void>;
+  employees?: EmployeeDTO[];
 }
 
-const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
+const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
   const canEdit = role === "company" || role === "manager";
   const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
   const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
@@ -31,7 +32,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     title: string;
     message: string;
     onConfirm: () => void;
-  }>({ isOpen: false, title: "", message: "", onConfirm: () => {} });
+  }>({ isOpen: false, title: "", message: "", onConfirm: () => { } });
 
   const formRef = useRef<{ resetForm: () => void }>(null);
   const updateFormRef = useRef<{ resetForm: () => void }>(null);
@@ -270,7 +271,9 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
             >
               <div>
                 <h3 className="text-lg font-semibold">{issue.heading}</h3>
-                <p className="text-xs text-[#3b3b3b]/60 mt-1">{issue.type} • {issue.size} • Est. {issue.estimatedHours}h</p>
+                <p className="text-xs text-[#3b3b3b]/60 mt-1">
+                  {issue.type} • {issue.size} • Est. {issue.estimatedHours}h • Assigned: {employees?.find((e) => e.id === issue.assignedTo)?.name || "Unassigned"}
+                </p>
               </div>
 
               <div className="flex items-center gap-4">
@@ -310,9 +313,12 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
                     <span className="text-xs text-[#3b3b3b]/60">Size</span>
                     <span className="block text-sm font-medium">{issue.size}</span>
                   </div>
+                 
                   <div className="bg-white border rounded-lg p-3">
-                    <span className="text-xs text-[#3b3b3b]/60">Est. Hours</span>
-                    <span className="block text-sm font-medium">{issue.estimatedHours}</span>
+                    <span className="text-xs text-[#3b3b3b]/60">Assigned To</span>
+                    <span className="block text-sm font-medium">
+                      {employees?.find((e) => e.id === issue.assignedTo)?.name || "Unassigned"}
+                    </span>
                   </div>
                 </div>
 

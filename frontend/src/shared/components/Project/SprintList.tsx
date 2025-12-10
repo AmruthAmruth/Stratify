@@ -1,13 +1,14 @@
 import React, { useState } from "react";
-import { SprintDTO, UserRole } from "./types";
+import { SprintDTO, UserRole, EmployeeDTO } from "./types";
 import IssueList from "./IssueList";
 
 interface Props {
   sprints: SprintDTO[];
   role: UserRole;
+  employees?: EmployeeDTO[];
 }
 
-const SprintList: React.FC<Props> = ({ sprints, role }) => {
+const SprintList: React.FC<Props> = ({ sprints, role, employees }) => {
   const [expandedSprints, setExpandedSprints] = useState<Set<string>>(new Set());
 
   if (!sprints.length) {
@@ -114,7 +115,7 @@ const SprintList: React.FC<Props> = ({ sprints, role }) => {
                       <h4 className="text-xl font-black text-[#3b3b3b] mb-4 tracking-tight">
                         Issues
                       </h4>
-                      <IssueList issues={sprint.issues} role={role} />
+                      <IssueList issues={sprint.issues} role={role} employees={employees} />
                     </div>
                   ) : (
                     <div className="mt-6 text-sm text-[#3b3b3b]/60">

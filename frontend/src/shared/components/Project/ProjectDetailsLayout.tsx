@@ -19,10 +19,10 @@ import {
   updateProjectSchema,
 } from "@/shared/utils/validations";
 import {
-  addEmployeeProject, 
+  addEmployeeProject,
   createIssue,
   createSprint,
-  getEmployeesNotInProject,   
+  getEmployeesNotInProject,
   updateProject,
   assignIssueToSprint,
   updateIssue,
@@ -243,22 +243,22 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* --- ADMIN BUTTONS --- */}
       {canManage && (
         <div className="flex flex-wrap gap-3 mt-4">
-          <button 
-            onClick={() => setIsUpdateProjectModalOpen(true)} 
+          <button
+            onClick={() => setIsUpdateProjectModalOpen(true)}
             className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
             aria-label="Edit project details"
           >
             Edit Project
           </button>
-          <button 
-            onClick={() => setIsEmployeeModalOpen(true)} 
+          <button
+            onClick={() => setIsEmployeeModalOpen(true)}
             className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
             aria-label="Add employee to project"
           >
             Add Employee
           </button>
-          <button 
-            onClick={() => setIsAssignSprintModalOpen(true)} 
+          <button
+            onClick={() => setIsAssignSprintModalOpen(true)}
             className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
             aria-label="Assign issue to sprint and employee"
           >
@@ -281,13 +281,13 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       </Modal>
 
       <Modal isOpen={isUpdateProjectModalOpen} onClose={() => setIsUpdateProjectModalOpen(false)} title="Update Project">
-        <AuthForm 
-          ref={updateProjectFormRef} 
-          fields={updateProjectFields} 
-          validationSchema={updateProjectSchema} 
-          initialValues={project} 
-          onSubmit={handleSubmitUpdateProject} 
-          buttonText="Update Project" 
+        <AuthForm
+          ref={updateProjectFormRef}
+          fields={updateProjectFields}
+          validationSchema={updateProjectSchema}
+          initialValues={project}
+          onSubmit={handleSubmitUpdateProject}
+          buttonText="Update Project"
         />
       </Modal>
 
@@ -395,39 +395,39 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* BACKLOG */}
       <ProjectSection title="Backlog Items">
         {canManage && (
-          <button 
-            onClick={() => setIsIssueModalOpen(true)} 
+          <button
+            onClick={() => setIsIssueModalOpen(true)}
             className="bg-blue-600 text-white px-4 py-2 rounded mb-3"
             aria-label="Create new issue"
           >
             + Create Issue
           </button>
         )}
-        <IssueList issues={backlog} role={role} onRefresh={onRefresh} />
+        <IssueList issues={backlog} role={role} onRefresh={onRefresh} employees={assignedEmployees} />
       </ProjectSection>
 
       {/* ACTIVE SPRINTS */}
       <ProjectSection title="Active Sprints">
         {canManage && (
-          <button 
-            onClick={() => setIsSprintModalOpen(true)} 
+          <button
+            onClick={() => setIsSprintModalOpen(true)}
             className="bg-green-600 text-white px-4 py-2 rounded mb-3"
             aria-label="Create new sprint"
           >
             + Create Sprint
           </button>
         )}
-        <SprintList sprints={activeSprints} role={role} />
+        <SprintList sprints={activeSprints} role={role} employees={assignedEmployees} />
       </ProjectSection>
 
       {/* PLANNED */}
       <ProjectSection title="Planned Sprints">
-        <SprintList sprints={plannedSprints} role={role} />
+        <SprintList sprints={plannedSprints} role={role} employees={assignedEmployees} />
       </ProjectSection>
 
       {/* COMPLETED */}
       <ProjectSection title="Completed Sprints">
-        <SprintList sprints={completedSprints} role={role} />
+        <SprintList sprints={completedSprints} role={role} employees={assignedEmployees} />
       </ProjectSection>
 
       {/* EMPLOYEES */}
