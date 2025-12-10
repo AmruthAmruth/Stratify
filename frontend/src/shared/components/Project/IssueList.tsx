@@ -17,7 +17,7 @@ interface Props {
 
 const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const canEdit = role === "company" || role === "manager";
-  const [expandedIssues, setExpandedIssues] = useState(new Set());
+  const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
   const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
   const [updateIssueModalOpen, setUpdateIssueModalOpen] = useState(false);
   const [currentIssueId, setCurrentIssueId] = useState<string | null>(null);
@@ -26,13 +26,12 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const [updateSubTaskModalOpen, setUpdateSubTaskModalOpen] = useState(false);
   const [currentSubTask, setCurrentSubTask] = useState<any | null>(null);
 
-
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
     title: string;
     message: string;
     onConfirm: () => void;
-  }>({ isOpen: false, title: "", message: "", onConfirm: () => { } });
+  }>({ isOpen: false, title: "", message: "", onConfirm: () => {} });
 
   const formRef = useRef<{ resetForm: () => void }>(null);
   const updateFormRef = useRef<{ resetForm: () => void }>(null);
@@ -41,7 +40,8 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   const toggleExpanded = (issueId: string) => {
     setExpandedIssues((prev) => {
       const newSet = new Set(prev);
-      newSet.has(issueId) ? newSet.delete(issueId) : newSet.add(issueId);
+      if (newSet.has(issueId)) newSet.delete(issueId);
+      else newSet.add(issueId);
       return newSet;
     });
   };
@@ -54,7 +54,6 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     setIsSubtaskModalOpen(true);
   }, []);
 
- 
   const openUpdateIssueModal = useCallback((issue: IssueDTO) => {
     setCurrentIssue(issue);
     setUpdateIssueModalOpen(true);
@@ -83,7 +82,6 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     setCurrentSubTask(null);
   }, []);
 
- 
   const handleCreateSubtask = useCallback(
     async (values: Record<string, any>) => {
       if (!currentIssueId) {
@@ -104,7 +102,6 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
     [currentIssueId, closeSubtaskModal, onRefresh]
   );
 
- 
   const handleUpdateIssue = useCallback(
     async (values: Record<string, any>) => {
       if (!currentIssue) {
@@ -193,7 +190,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
   }
 
   return (
-    <div className="space-y-8">
+    <div className="space-y-4">
       {/* Confirmation Dialog */}
       <ConfirmDialog
         isOpen={confirmDialog.isOpen}
@@ -254,139 +251,162 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh }) => {
         const showSubtasks = canEdit || hasSubtasks(issue);
 
         return (
-          <section key={issue.id} className="bg-[#fbfbfb] rounded-2xl border border-[#dfdcef] shadow-sm overflow-hidden">
-            <div className="p-8 space-y-6">
+          <section
+            key={issue.id}
+            className="bg-[#fbfbfb] rounded-2xl border border-[#dfdcef] shadow-sm overflow-hidden"
+          >
+            {/* Compact header (clickable) */}
+            <div
+              role="button"
+              tabIndex={0}
+              onKeyDown={(e) => {
+                if (e.key === "Enter" || e.key === " ") {
+                  e.preventDefault();
+                  toggleExpanded(issue.id);
+                }
+              }}
+              onClick={() => toggleExpanded(issue.id)}
+              className="p-6 flex items-center justify-between gap-4 cursor-pointer"
+            >
+              <div>
+                <h3 className="text-lg font-semibold">{issue.heading}</h3>
+                <p className="text-xs text-[#3b3b3b]/60 mt-1">{issue.type} • {issue.size} • Est. {issue.estimatedHours}h</p>
+              </div>
 
-              {/* Header */}
-              <div className="flex justify-between items-start">
-                <h3 className="text-2xl font-semibold">{issue.heading}</h3>
-                <span className="text-xs font-semibold bg-[#009063] text-white px-3 py-1 rounded-full">
+              <div className="flex items-center gap-4">
+                <span className="text-xs font-semibold bg-[#009063] text-white px-3 py-1 rounded-full capitalize">
                   {issue.priority}
                 </span>
+
+                {/* Chevron */}
+                <svg
+                  className={`w-5 h-5 transform transition-transform duration-200 ${isExpanded ? "rotate-180" : "rotate-0"}`}
+                  viewBox="0 0 20 20"
+                  fill="none"
+                >
+                  <path d="M6 8L10 12L14 8" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
               </div>
-
-              <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
-
-              {/* Details */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="bg-white border rounded-lg p-3">
-                  <span className="text-xs text-[#3b3b3b]/60">Type</span>
-                  <span className="block text-sm font-medium capitalize">{issue.type}</span>
-                </div>
-                <div className="bg-white border rounded-lg p-3">
-                  <span className="text-xs text-[#3b3b3b]/60">Status</span>
-                  <span className="block text-sm font-semibold text-[#009063] capitalize">
-                    {issue.status}
-                  </span>
-                </div>
-                <div className="bg-white border rounded-lg p-3">
-                  <span className="text-xs text-[#3b3b3b]/60">Size</span>
-                  <span className="block text-sm font-medium">{issue.size}</span>
-                </div>
-                <div className="bg-white border rounded-lg p-3">
-                  <span className="text-xs text-[#3b3b3b]/60">Est. Hours</span>
-                  <span className="block text-sm font-medium">{issue.estimatedHours}</span>
-                </div>
-              </div>
-
-              {/* Action Buttons */}
-              {canEdit && (
-                <div className="flex gap-3 pt-2 border-t">
-
-                  <button
-                    className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-gray-50"
-                    onClick={() => openUpdateIssueModal(issue)}
-                  >
-                    Edit Issue
-                  </button>
-
-                  {/* FIXED DELETE BUTTON */}
-                  <button
-                    className="flex-1 text-sm bg-red-500 text-white rounded-lg px-4 py-2.5 hover:bg-red-600"
-                    onClick={() => handleDeleteIssue(issue.id)}
-                  >
-                    Delete Issue
-                  </button>
-
-                </div>
-              )}
             </div>
 
-            {/* Subtasks */}
-            {showSubtasks && (
-              <div className="border-t p-8 pt-6 space-y-4">
+            {/* Expanded content */}
+            {isExpanded && (
+              <div className="p-8 space-y-6 border-t">
+                <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
 
-                <div className="flex justify-between items-center">
-                  <h4 className="text-xl font-semibold">Subtasks</h4>
-
-                  <div className="flex gap-3">
-                    {canEdit && (
-                      <button
-                        className="text-sm bg-[#009063] text-white rounded-lg px-6 py-2.5 hover:bg-[#007a52]"
-                        onClick={() => openSubtaskModal(issue.id)}
-                      >
-                        + Create Subtask
-                      </button>
-                    )}
-
-                    {hasSubtasks(issue) && (
-                      <button
-                        className="text-sm border rounded-lg px-6 py-2.5 hover:bg-gray-50"
-                        onClick={() => toggleExpanded(issue.id)}
-                      >
-                        {isExpanded ? "− Hide" : "+ Show"} Subtasks
-                      </button>
-                    )}
+                {/* Details */}
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                  <div className="bg-white border rounded-lg p-3">
+                    <span className="text-xs text-[#3b3b3b]/60">Type</span>
+                    <span className="block text-sm font-medium capitalize">{issue.type}</span>
+                  </div>
+                  <div className="bg-white border rounded-lg p-3">
+                    <span className="text-xs text-[#3b3b3b]/60">Status</span>
+                    <span className="block text-sm font-semibold text-[#009063] capitalize">
+                      {issue.status}
+                    </span>
+                  </div>
+                  <div className="bg-white border rounded-lg p-3">
+                    <span className="text-xs text-[#3b3b3b]/60">Size</span>
+                    <span className="block text-sm font-medium">{issue.size}</span>
+                  </div>
+                  <div className="bg-white border rounded-lg p-3">
+                    <span className="text-xs text-[#3b3b3b]/60">Est. Hours</span>
+                    <span className="block text-sm font-medium">{issue.estimatedHours}</span>
                   </div>
                 </div>
 
-                {/* Subtask List */}
-                {hasSubtasks(issue) && isExpanded ? (
-                  <div className="space-y-4 pt-4 border-t">
-                    {issue.subTasks!.map((sub) => (
-                      <div key={sub.id} className="bg-white border rounded-lg p-6 space-y-3">
+                {/* Action Buttons */}
+                {canEdit && (
+                  <div className="flex gap-3 pt-2 border-t">
+                    <button
+                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-gray-50"
+                      onClick={() => openUpdateIssueModal(issue)}
+                    >
+                      Edit Issue
+                    </button>
 
-                        <div className="flex justify-between items-start">
-                          <p className="text-lg font-medium">{sub.heading}</p>
-                          <span className="text-xs font-semibold bg-[#009063]/80 text-white px-3 py-1 rounded-full">
-                            {sub.status}
-                          </span>
-                        </div>
-
-                        <p className="text-sm text-[#3b3b3b]/80">{sub.description}</p>
-
-                        <div className="flex justify-between items-center border-t pt-2">
-                          <span className="text-sm text-[#3b3b3b]/70">
-                            Hours: <span className="font-semibold">{sub.hours}</span>
-                          </span>
-
-                          {canEdit && (
-                            <div className="flex gap-2">
-                              <button
-                                className="text-xs border rounded px-3 py-1.5 hover:bg-gray-50"
-                                onClick={() => openUpdateSubTaskModal(sub)}
-                              >
-                                Edit
-                              </button>
-
-                              <button
-                                className="text-xs bg-red-500 text-white rounded px-3 py-1.5 hover:bg-red-600"
-                                onClick={() => handleDeleteSubTask(sub.id)}
-                              >
-                                Delete
-                              </button>
-                            </div>
-                          )}
-
-                        </div>
-
-                      </div>
-                    ))}
+                    <button
+                      className="flex-1 text-sm bg-red-500 text-white rounded-lg px-4 py-2.5 hover:bg-red-600"
+                      onClick={() => handleDeleteIssue(issue.id)}
+                    >
+                      Delete Issue
+                    </button>
                   </div>
-                ) : (
-                  canEdit && <p className="text-sm text-[#3b3b3b]/60 pt-2">No subtasks yet.</p>
                 )}
 
+                {/* Subtasks */}
+                {showSubtasks && (
+                  <div className="pt-6 space-y-4">
+                    <div className="flex justify-between items-center">
+                      <h4 className="text-xl font-semibold">Subtasks</h4>
+
+                      <div className="flex gap-3">
+                        {canEdit && (
+                          <button
+                            className="text-sm bg-[#009063] text-white rounded-lg px-6 py-2.5 hover:bg-[#007a52]"
+                            onClick={() => openSubtaskModal(issue.id)}
+                          >
+                            + Create Subtask
+                          </button>
+                        )}
+
+                        {hasSubtasks(issue) && (
+                          <button
+                            className="text-sm border rounded-lg px-6 py-2.5 hover:bg-gray-50"
+                            onClick={() => toggleExpanded(issue.id)}
+                          >
+                            {isExpanded ? "− Hide" : "+ Show"} Subtasks
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Subtask List */}
+                    {hasSubtasks(issue) ? (
+                      <div className="space-y-4 pt-4 border-t">
+                        {issue.subTasks!.map((sub) => (
+                          <div key={sub.id} className="bg-white border rounded-lg p-6 space-y-3">
+                            <div className="flex justify-between items-start">
+                              <p className="text-lg font-medium">{sub.heading}</p>
+                              <span className="text-xs font-semibold bg-[#009063]/80 text-white px-3 py-1 rounded-full">
+                                {sub.status}
+                              </span>
+                            </div>
+
+                            <p className="text-sm text-[#3b3b3b]/80">{sub.description}</p>
+
+                            <div className="flex justify-between items-center border-t pt-2">
+                              <span className="text-sm text-[#3b3b3b]/70">
+                                Hours: <span className="font-semibold">{sub.hours}</span>
+                              </span>
+
+                              {canEdit && (
+                                <div className="flex gap-2">
+                                  <button
+                                    className="text-xs border rounded px-3 py-1.5 hover:bg-gray-50"
+                                    onClick={() => openUpdateSubTaskModal(sub)}
+                                  >
+                                    Edit
+                                  </button>
+
+                                  <button
+                                    className="text-xs bg-red-500 text-white rounded px-3 py-1.5 hover:bg-red-600"
+                                    onClick={() => handleDeleteSubTask(sub.id)}
+                                  >
+                                    Delete
+                                  </button>
+                                </div>
+                              )}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    ) : (
+                      canEdit && <p className="text-sm text-[#3b3b3b]/60 pt-2">No subtasks yet.</p>
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </section>
