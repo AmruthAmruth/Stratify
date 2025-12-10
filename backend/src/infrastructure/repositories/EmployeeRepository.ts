@@ -70,12 +70,17 @@ export class EmployeeRepository implements IEmployeeRepository {
 
 
   async findByIdWithDepartment(id: string): Promise<EmployeeWithDepartment | null> {
-    const doc = await EmployeeModel.findById(id).populate("departmentId", "name").lean().exec();
+    const doc = await EmployeeModel.findById(id).populate("departmentId", "name").exec();
     if (!doc) return null;
 
+    const department = doc.departmentId as unknown as { _id: string; name: string };
+
     return {
-      ...EmployeeMapper.toEntity(doc as any),
-      departmentId: doc.departmentId as any
-    } as EmployeeWithDepartment;
+      ...EmployeeMapper.toEntity(doc),
+      departmentId: {
+        _id: department._id.toString(),
+        name: department.name,
+      },
+    };
   }
 }

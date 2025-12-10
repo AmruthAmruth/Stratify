@@ -5,7 +5,7 @@ import tseslint from "typescript-eslint";
 export default tseslint.config(
   {
     // Add verification_script.ts here
-    ignores: ["eslint.config.ts", "verification_script.ts"],
+    ignores: ["eslint.config.ts", "verification_script.ts", "dist/**"],
   },
 
   {
