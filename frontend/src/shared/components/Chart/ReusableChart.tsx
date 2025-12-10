@@ -30,7 +30,8 @@ type ChartType = "pie" | "doughnut" | "line" | "bar";
 interface ChartProps {
   type: ChartType;
   labels: string[];
-  data: number[];
+  data?: number[];
+  datasets?: any[];
   title?: string;
   backgroundColors?: string[];
 }
@@ -39,21 +40,22 @@ const ReusableChart: React.FC<ChartProps> = ({
   type,
   labels,
   data,
+  datasets,
   title,
   backgroundColors = [
-    "#009063", 
-    "#dfdcef", 
-    "#3b3b3b",  
+    "#009063",
+    "#dfdcef",
+    "#3b3b3b",
   ],
 }) => {
   const chartData = {
     labels,
-    datasets: [
+    datasets: datasets || [
       {
         label: title || "Dataset",
-        data,
+        data: data || [],
         backgroundColor: backgroundColors,
-        borderColor: "#3b3b3b", 
+        borderColor: "#3b3b3b",
         borderWidth: 1,
       },
     ],
@@ -61,42 +63,42 @@ const ReusableChart: React.FC<ChartProps> = ({
 
   const options = {
     responsive: true,
-    backgroundColor: "#fbfbfb", 
+    backgroundColor: "#fbfbfb",
     plugins: {
       tooltip: {
-        backgroundColor: "#fbfbfb",  
-        titleColor: "#3b3b3b",       
-        bodyColor: "#3b3b3b",        
-        borderColor: "#dfdcef",      
+        backgroundColor: "#fbfbfb",
+        titleColor: "#3b3b3b",
+        bodyColor: "#3b3b3b",
+        borderColor: "#dfdcef",
         borderWidth: 1,
       },
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "#3b3b3b", 
+          color: "#3b3b3b",
         },
       },
       title: {
         display: !!title,
         text: title,
-        color: "#3b3b3b",  
+        color: "#3b3b3b",
       },
     },
     scales: type === "line" || type === "bar" ? {
       x: {
         ticks: {
-          color: "#3b3b3b", 
+          color: "#3b3b3b",
         },
         grid: {
-          color: "#dfdcef",  
+          color: "#dfdcef",
         },
       },
       y: {
         ticks: {
-          color: "#3b3b3b",  
+          color: "#3b3b3b",
         },
         grid: {
-          color: "#dfdcef",  
+          color: "#dfdcef",
         },
       },
     } : undefined,

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { SprintDTO, UserRole, EmployeeDTO } from "./types";
 import IssueList from "./IssueList";
+import ReusableChart from "../Chart/ReusableChart";
 
 interface Props {
   sprints: SprintDTO[];
@@ -41,6 +42,32 @@ const SprintList: React.FC<Props> = ({ sprints, role, employees }) => {
     <div className="space-y-6">
       {sprints.map((sprint) => {
         const isExpanded = expandedSprints.has(sprint.id);
+
+        // Burndown Calculation
+        const start = new Date(sprint.startDate);
+        const end = new Date(sprint.endDate);
+        const totalDays = Math.max(1, Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+        const dateLabels = Array.from({ length: totalDays }, (_, i) => {
+          const d = new Date(start);
+          d.setDate(d.getDate() + i);
+          return d.toLocaleDateString("en-US", { month: "short", day: "numeric" });
+        });
+
+        const totalPoints = sprint.issues?.reduce((acc, i) => acc + (i.size || 0), 0) || 0;
+        const completedPoints = sprint.issues?.filter((i) => i.status === "Done").reduce((acc, i) => acc + (i.size || 0), 0) || 0;
+        const remainingPoints = totalPoints - completedPoints;
+
+        const idealData = dateLabels.map((_, i) => Math.max(0, totalPoints - (totalPoints / (totalDays - 1)) * i));
+
+        const today = new Date();
+        const todayIndex = Math.floor((today.getTime() - start.getTime()) / (1000 * 60 * 60 * 24));
+        const actualData = new Array(totalDays).fill(null);
+        actualData[0] = totalPoints;
+        if (todayIndex > 0 && todayIndex < totalDays) {
+          actualData[todayIndex] = remainingPoints;
+        } else if (todayIndex >= totalDays) {
+          actualData[totalDays - 1] = remainingPoints;
+        }
 
         return (
           <div
@@ -106,6 +133,72 @@ const SprintList: React.FC<Props> = ({ sprints, role, employees }) => {
                       <span className="text-xs text-[#3b3b3b]/60">Status:</span>
                       <span className="text-[#009063] font-bold tracking-wide">{sprint.status}</span>
                     </span>
+                  </div>
+
+                  {/* Analytics Section */}
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+                    {/* Velocity Chart */}
+                    <div className="bg-[#fbfbfb] border border-[#dfdcef] rounded-xl p-4 h-[300px] shadow-sm">
+                      <ReusableChart
+                        type="bar"
+                        title="Sprint Velocity (Points)"
+                        labels={["Committed", "Completed"]}
+                        data={[
+                          sprint.issues?.reduce((acc, i) => acc + (i.size || 0), 0) || 0,
+                          sprint.issues?.filter((i) => i.status === "Done").reduce((acc, i) => acc + (i.size || 0), 0) || 0,
+                        ]}
+                        backgroundColors={["#3b3b3b", "#009063"]}
+                      />
+                    </div>
+
+                    {/* Burndown Chart */}
+                    <div className="bg-[#fbfbfb] border border-[#dfdcef] rounded-xl p-4 h-[300px] shadow-sm">
+                      <ReusableChart
+                        type="line"
+                        title="Burndown Chart"
+                        labels={dateLabels}
+                        datasets={[
+                          {
+                            label: "Ideal Burndown",
+                            data: idealData,
+                            borderColor: "#dfdcef",
+                            borderDash: [5, 5],
+                            borderWidth: 2,
+                            pointRadius: 0,
+                          },
+                          {
+                            label: "Actual Remaining",
+                            data: actualData,
+                            borderColor: "#009063",
+                            backgroundColor: "#009063",
+                            borderWidth: 2,
+                            spanGaps: true,
+                            tension: 0.1,
+                          },
+                        ]}
+                      />
+                    </div>
+
+                    {/* Workload by Assignee */}
+                    <div className="bg-[#fbfbfb] border border-[#dfdcef] rounded-xl p-4 h-[300px] shadow-sm">
+                      <ReusableChart
+                        type="bar"
+                        title="Workload by Assignee"
+                        labels={
+                          Array.from(new Set(sprint.issues?.map((i) => i.assignedTo).filter(Boolean)))
+                            .map((id) => employees?.find((e) => e.id === id)?.name || "Unknown")
+                        }
+                        data={
+                          Array.from(new Set(sprint.issues?.map((i) => i.assignedTo).filter(Boolean)))
+                            .map((id) =>
+                              sprint.issues
+                                ?.filter((i) => i.assignedTo === id)
+                                .reduce((acc, i) => acc + (i.size || 0), 0) || 0
+                            )
+                        }
+                        backgroundColors={["#3b3b3b"]}
+                      />
+                    </div>
                   </div>
 
                   {/* Issues Section */}
