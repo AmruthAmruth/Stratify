@@ -20,7 +20,9 @@ const Sidebar: React.FC = () => {
   const userId = useSelector((state: RootState) => state.auth.userId);
   const companyName = useSelector((state: RootState) => state.auth.companyName);
   const companyLogo = useSelector((state: RootState) => state.auth.companyLogo);
-  const menus = role ? roleMenus[role] : [];
+  const menus = (role && roleMenus[role]) ? roleMenus[role] : [];
+
+  console.log("Sidebar Debug:", { role, menus, roleMenusKeys: Object.keys(roleMenus) });
 
   const location = useLocation();
   const currentPath = location.pathname;

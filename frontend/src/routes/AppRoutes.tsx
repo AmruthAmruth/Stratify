@@ -12,10 +12,10 @@ import managerRoutes from "./ManagerRoutes";
 import teamRoutes from "./EmployeeRoutes";
 import generalRoutes from "./GeneralRoutes";
 
-type UserRole = "superAdmin" | "company" | "manager" | "employee" | "general";
+type UserRole = "super-admin" | "company" | "manager" | "employee" | "general";
 
 const roleRoutesMap: Record<UserRole, RouteObject[]> = {
-  superAdmin: superAdminRoutes,
+  "super-admin": superAdminRoutes,
   company: adminRoutes,
   manager: managerRoutes,
   employee: teamRoutes,

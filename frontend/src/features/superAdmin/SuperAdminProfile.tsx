@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { User, Mail, Camera, Shield } from 'lucide-react';
-import { getSuperAdminProfile, updateSuperAdminProfile } from '@/services/authApi';
+import { getSuperAdminProfile, updateSuperAdminProfile } from '@/services/superAdmin';
 import DynamicForm from '@/shared/components/Forms/DynamicForm';
 import { z } from 'zod';
 import { enqueueSnackbar } from 'notistack';
@@ -61,7 +61,10 @@ const SuperAdminProfile = () => {
             };
             reader.readAsDataURL(file);
 
-            await updateSuperAdminProfile({ profileImage: file });
+            const formData = new FormData();
+            formData.append('profileImage', file);
+
+            await updateSuperAdminProfile(formData);
             enqueueSnackbar('Profile picture updated successfully!', { variant: 'success' });
             await fetchProfile();
         } catch (error: any) {
@@ -74,7 +77,12 @@ const SuperAdminProfile = () => {
 
     const handleProfileUpdate = async (values: Record<string, unknown>) => {
         try {
-            await updateSuperAdminProfile(values);
+            const formData = new FormData();
+            Object.keys(values).forEach(key => {
+                formData.append(key, values[key] as string);
+            });
+
+            await updateSuperAdminProfile(formData);
             enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
             await fetchProfile();
             setActiveTab('view');

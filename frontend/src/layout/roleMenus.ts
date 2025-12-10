@@ -1,7 +1,7 @@
 import { UserRole, MenuItem } from "./types";
 
 export const roleMenus: Record<UserRole, MenuItem[]> = {
-  superAdmin: [
+  "super-admin": [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
     { label: "Companies", path: "/companies", icon: "Building2" },
     { label: "Plans", path: "/plans", icon: "Calendar" },
@@ -9,6 +9,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
     { label: "Messages", path: "/message", icon: "MessageCircle" },
     { label: "Payments", path: "/payments", icon: "CreditCard" },
     { label: "Notification", path: "/notification", icon: "Bell" },
+    { label: "My Profile", path: "/profile", icon: "User" },
   ],
   company: [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },

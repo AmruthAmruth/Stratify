@@ -21,7 +21,7 @@ export class LoginUseCase {
     const isPasswordValid = await comparePassword(data.password, user.password);
     if (!isPasswordValid) throw new AppError(Messages.LOGIN_FAILED, StatusCodes.UNAUTHORIZED);
 
-    const payload = { id: user.id, role: "superAdmin" };
+    const payload = { id: user.id, role: "super-admin" };
 
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);

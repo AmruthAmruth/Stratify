@@ -11,6 +11,7 @@ import meetingRouter from "./interfaces/routes/MeetingRoutes";
 import chatRouter from "./interfaces/routes/ChatRoutes";
 import groupChatRouter from "./interfaces/routes/GroupChatRoutes";
 import managerRouter from "./interfaces/routes/ManagerRoutes";
+import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
 
 const router = Router();
 
@@ -26,4 +27,5 @@ router.use("/meeting", meetingRouter)
 router.use('/chat', chatRouter)
 router.use('/group-chat', groupChatRouter)
 router.use('/manager', managerRouter)
+router.use('/super-admin', superAdminRouter)
 export default router;
