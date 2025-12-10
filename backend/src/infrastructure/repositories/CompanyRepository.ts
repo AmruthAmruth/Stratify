@@ -217,4 +217,48 @@ export class CompanyRepository implements ICompanyRepository {
       { new: true }
     );
   }
+
+  async update(company: Company): Promise<Company> {
+    const doc = await CompanyModel.findByIdAndUpdate(
+      company.id,
+      {
+        name: company.name,
+        email: company.email,
+        phone: company.phone,
+        industry: company.industry,
+        description: company.description,
+        businessRegNo: company.businessRegNo,
+        address: company.address,
+        city: company.city,
+        state: company.state,
+        country: company.country,
+        zipcode: company.zipcode,
+        profileImage: company.profileImage,
+      },
+      { new: true }
+    );
+
+    if (!doc) {
+      throw new Error("Company not found");
+    }
+
+    return new Company(
+      (doc._id as mongoose.Types.ObjectId).toString(),
+      doc.name,
+      doc.email,
+      doc.phone,
+      doc.industry,
+      doc.description || "",
+      doc.businessRegNo,
+      doc.address,
+      doc.city,
+      doc.state,
+      doc.country,
+      doc.zipcode,
+      doc.password,
+      doc.status,
+      "company",
+      doc.profileImage
+    );
+  }
 }

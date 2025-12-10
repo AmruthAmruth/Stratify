@@ -1,6 +1,7 @@
 import Department from "@/features/company/Department";
 import CompanyDepartmentDetails from "@/features/company/DepartmentDetailsPage";
 import ProfilePage from "@/features/company/ProfilePage";
+import CompanyProfile from "@/features/company/CompanyProfile";
 import Projects from "@/features/company/CompanyProjects";
 import CompanyProjectDetailsPage from "@/features/company/CompanyProjectDetailsPage";
 import SubscriptionPlans from "@/features/company/SubscriptionPlans";
@@ -48,6 +49,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "team-member-profile/:id",
     element: <ProfilePage />,
+  },
+  {
+    path: "my-profile",
+    element: <CompanyProfile />,
   },
   {
     path: "projects",

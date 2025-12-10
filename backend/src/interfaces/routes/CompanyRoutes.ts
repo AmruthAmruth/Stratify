@@ -27,6 +27,12 @@ companyRouter.get(
   asyncHandler(controller.getCompanyAnalytics),
 );
 
+companyRouter.put(
+  "/profile",
+  authMiddleware(["company"]),
+  asyncHandler(controller.updateProfile),
+);
+
 companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post(
   "/unapprove-company",

@@ -6,6 +6,7 @@ import { IUnapproveCompany } from "../../application/interfaces/company/IUnappro
 import { IGetCompanyMemebersUseCase } from "../../application/interfaces/company/IGetCompanyMembersUseCase";
 import { IGetProfileUseCase } from "../../application/interfaces/company/IGetProfileUseCase";
 import { IGetCompanyAnalyticsUseCase } from "../../application/interfaces/company/IGetCompanyAnalyticsUseCase";
+import { IUpdateCompanyProfileUseCase } from "../../application/interfaces/company/IUpdateCompanyProfileUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { AuthRequest } from "../middleware/AuthMiddleware";
@@ -20,6 +21,7 @@ export class CompanyController {
     private _getCompanyMembersUseCase: IGetCompanyMemebersUseCase,
     private _getTeamMemberProfileUseCase: IGetProfileUseCase,
     private _getCompanyAnalyticsUseCase: IGetCompanyAnalyticsUseCase,
+    private _updateCompanyProfileUseCase: IUpdateCompanyProfileUseCase,
   ) { }
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
@@ -83,5 +85,10 @@ export class CompanyController {
     res.status(StatusCodes.OK).json(analytics);
   };
 
+  updateProfile = async (req: AuthRequest, res: Response): Promise<void> => {
+    const companyId = req.userId!;
+    const data = req.body;
+    const updatedCompany = await this._updateCompanyProfileUseCase.execute(companyId, data);
+    res.status(StatusCodes.OK).json(updatedCompany);
+  };
 }
-

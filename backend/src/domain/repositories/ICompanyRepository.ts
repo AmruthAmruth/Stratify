@@ -19,4 +19,6 @@ export interface ICompanyRepository {
   approveCompany(id: string): Promise<void>;
 
   unapproveCompany(id: string): Promise<void>;
+
+  update(company: Company): Promise<Company>;
 }

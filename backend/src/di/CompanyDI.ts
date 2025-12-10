@@ -13,6 +13,7 @@ import { UnapproveCompany } from "../application/use-cases/company/UnApproveComp
 import { GetCompanyMemebersUseCase } from "../application/use-cases/company/GetCompanyMembersUseCase";
 import { GetProfileUseCase } from "../application/use-cases/company/GetProfileUseCase";
 import { GetCompanyAnalyticsUseCase } from "../application/use-cases/company/GetCompanyAnalyticsUseCase";
+import { UpdateCompanyProfileUseCase } from "../application/use-cases/company/UpdateCompanyProfileUseCase";
 import { CompanyController } from "../interfaces/controllers/CompanyController";
 
 export const companyDI = () => {
@@ -52,6 +53,7 @@ export const companyDI = () => {
     leaveRepo,
     meetingRepo,
   );
+  const updateCompanyProfile = new UpdateCompanyProfileUseCase(companyRepo);
 
   return new CompanyController(
     getCompanyById,
@@ -61,6 +63,7 @@ export const companyDI = () => {
     getCompanyMembers,
     getTeamMemberProfile,
     getCompanyAnalytics,
+    updateCompanyProfile,
   );
 };
 

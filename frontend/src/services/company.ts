@@ -87,3 +87,6 @@ export const listPurchasedCompany = () => handleRequest(api.get(COMPANY_ROUTES.L
 export const getCompanyAnalytics = () =>
   handleRequest(api.get(COMPANY_ROUTES.COMPANY_ANALYTICS));
 
+export const updateCompanyProfile = (data: Record<string, unknown>) =>
+  handleRequest(api.put(COMPANY_ROUTES.UPDATE_PROFILE, data));
+
