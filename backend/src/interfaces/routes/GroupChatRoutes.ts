@@ -13,7 +13,7 @@ groupChatRouter.post(
     authMiddleware(["manager", "company", "employee"]),
     asyncHandler(controller.createGroup)
 );
-
+ 
 // Send a message to a group
 groupChatRouter.post(
     "/send",
