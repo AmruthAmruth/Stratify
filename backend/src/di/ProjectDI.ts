@@ -12,6 +12,7 @@ import { CreateBacklogUseCase } from "../application/use-cases/project/CreateBac
 import { CreateTaskUseCase } from "../application/use-cases/project/CreateTaskUseCase";
 import { GetProjectsByCompanyUseCase } from "../application/use-cases/project/GetProjectsByCompanyUseCase";
 import { GetProjectsByDepartmentUseCase } from "../application/use-cases/project/GetProjectsByDepartmentUseCase";
+import { GetProjectsForEmployeeUseCase } from "../application/use-cases/project/GetProjectsForEmployeeUseCase";
 import { ProjectController } from "../interfaces/controllers/ProjectController";
 import { IssueRepository } from "../infrastructure/repositories/IssueRepository";
 import { CreateIssueUseCase } from "../application/use-cases/project/CreateIssuesUseCase";
@@ -86,6 +87,10 @@ export const projectDI = () => {
   const getProjectsByDepartmentUseCase = new GetProjectsByDepartmentUseCase(
     projectRepo,
     managerRepo,
+  );
+  const getProjectsForEmployeeUseCase = new GetProjectsForEmployeeUseCase(
+    projectRepo,
+    employeeRepo,
   );
   const createIssueUseCase = new CreateIssueUseCase(
     projectRepo,
@@ -184,6 +189,7 @@ export const projectDI = () => {
     updateSprintUseCase,
     deleteSprintUseCase,
     updateSubTaskUseCase,
-    deleteSubTaskUseCase
+    deleteSubTaskUseCase,
+    getProjectsForEmployeeUseCase
   );
 };

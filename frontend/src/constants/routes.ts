@@ -51,6 +51,7 @@ export const SUPER_ADMIN_ROUTES = {
 export const PROJECT_ROUTES = {
   COMPANY_PROJECTS: "/api/project/company-projects",
   DEPARTMENT_PROJECTS: "/api/project/department-projects",
+  EMPLOYEE_PROJECTS: "/api/project/employee-projects",
   PROJECT_DETAILS: (id: string) => `/api/project/project/${id}`,
   CREATE_PROJECT: "/api/project/create-project",
   UPDATE_PROJECT: "/api/project/project",

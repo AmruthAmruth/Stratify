@@ -22,8 +22,12 @@ export const getCompanyProjects = () =>
 export const getDepartmentProjects = () =>
   handleRequest(api.get(PROJECT_ROUTES.DEPARTMENT_PROJECTS));
 
+export const getEmployeeProjects = () =>
+  handleRequest(api.get(PROJECT_ROUTES.EMPLOYEE_PROJECTS));
+
 export const getProjectDetails = (id: string) =>
   handleRequest(api.get(PROJECT_ROUTES.PROJECT_DETAILS(id)));
+
 
 export const createProject = (data: Record<string, unknown>) =>
   handleRequest(api.post(PROJECT_ROUTES.CREATE_PROJECT, data));

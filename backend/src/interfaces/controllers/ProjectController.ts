@@ -5,6 +5,7 @@ import { ICreateBacklogUseCase } from "../../application/interfaces/project/ICre
 import { ICreateTaskUseCase } from "../../application/interfaces/project/ICreateTaskUseCase";
 import { IGetProjectsByCompanyUseCase } from "../../application/interfaces/project/IGetProjectsByCompanyUseCase";
 import { IGetProjectsByDepartmentUseCase } from "../../application/interfaces/project/IGetProjectsByDepartmentUseCase";
+import { IGetProjectsForEmployeeUseCase } from "../../application/interfaces/project/IGetProjectsForEmployeeUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
@@ -54,7 +55,8 @@ export class ProjectController {
     private _updateSprintUseCase: IUpdateSprintUseCase,
     private _deleteSprintUseCase: IDeleteSprintUseCase,
     private _updateSubTaskUseCase: IUpdateSubTaskUseCase,
-    private _deleteSubTaskUseCase: IDeleteSubTaskUseCase
+    private _deleteSubTaskUseCase: IDeleteSubTaskUseCase,
+    private _getProjectsForEmployeeUseCase: IGetProjectsForEmployeeUseCase
   ) { }
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -111,6 +113,17 @@ export class ProjectController {
     const managerId = req.userId;
     const response = await this._getProjectsByDepartmentUseCase.execute(
       managerId!,
+    );
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  getProjectsForEmployee = async (
+    req: AuthRequest,
+    res: Response,
+  ): Promise<void> => {
+    const employeeId = req.userId;
+    const response = await this._getProjectsForEmployeeUseCase.execute(
+      employeeId!,
     );
     res.status(StatusCodes.OK).json(response);
   };

@@ -45,6 +45,13 @@ projectRouter.get(
   asyncHandler(controller.getProjectsByDepartment)
 );
 
+projectRouter.get(
+  "/employee-projects",
+  authMiddleware(["employee"]),
+  asyncHandler(controller.getProjectsForEmployee)
+);
+
+
 
 /* ----------------------------------------------------
  * USER STORIES

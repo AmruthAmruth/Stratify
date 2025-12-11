@@ -3,7 +3,8 @@ import GroupChatPage from "@/features/employee/GroupChatPage";
 import JoinMeeting from "@/features/employee/JoinMeeting";
 import Leave from "@/features/employee/Leave";
 import Notification from "@/features/employee/Notification";
-import ProjectPage from "@/features/employee/ProjectPage";
+import EmployeeProjects from "@/features/employee/EmployeeProjects";
+import EmployeeProjectDetailsPage from "@/features/employee/ProjectDetailsPage";
 import Task from "@/features/employee/Task";
 import type { RouteObject } from "react-router";
 import EmployeeDashboard from "@/features/employee/Dashboard";
@@ -27,23 +28,27 @@ const teamRoutes: RouteObject[] = [
     element: <Notification />
   },
   {
-    path: "/meetings",
+    path: "meetings",
     element: <JoinMeeting />,
   },
   {
-    path: "/message",
+    path: "message",
     element: <ChatPage />,
   },
   {
-    path: "/group-chat",
+    path: "group-chat",
     element: <GroupChatPage />,
   },
   {
-    path: "/project",
-    element: <ProjectPage />,
+    path: "project",
+    element: <EmployeeProjects />,
   },
   {
-    path: "/my-profile",
+    path: "project/:id",
+    element: <EmployeeProjectDetailsPage />,
+  },
+  {
+    path: "my-profile",
     element: <EmployeeProfile />,
   },
 ];
