@@ -18,6 +18,7 @@ export interface ManagerProfileResponse {
     joinDate: Date;
     projectsManaged: number;
     teamSize: number;
+    companyId: string;
 }
 
 export interface UpdateManagerProfileData {
@@ -46,6 +47,7 @@ export interface ManagerWithDepartment {
     profileImage?: string;
     role: string;
     joiningDate: Date;
+    companyId: string;
     departmentId?: {
         _id: Types.ObjectId;
         name: string;

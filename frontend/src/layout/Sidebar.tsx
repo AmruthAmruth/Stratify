@@ -9,6 +9,7 @@ import { getUnreadCounts } from "@/services/chat";
 import { getSocket } from "@/shared/socket/socket";
 import { getCompanyProfile } from "@/services/company";
 import { setCompanyInfo } from "@/store/slices/authSlice";
+import api from "@/services/axiosInstance";
 
 const getIcon = (iconName: string) => {
   return (Icons as any)[iconName] || Icons.Circle;
@@ -45,21 +46,11 @@ const Sidebar: React.FC = () => {
 
         // If user is manager or employee, fetch their profile to get companyId
         if (role === "manager") {
-          const response = await fetch(`/api/manager/profile`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          });
-          const managerData = await response.json();
-          companyId = managerData.companyId;
+          const response = await api.get('/api/manager/profile');
+          companyId = response.data.manager.companyId;
         } else if (role === "employee") {
-          const response = await fetch(`/api/employee/profile`, {
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("accessToken")}`,
-            },
-          });
-          const employeeData = await response.json();
-          companyId = employeeData.companyId;
+          const response = await api.get('/api/employee/profile');
+          companyId = response.data.companyId;
         }
 
         // Fetch company details

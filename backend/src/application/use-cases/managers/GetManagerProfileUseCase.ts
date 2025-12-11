@@ -59,6 +59,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
             joinDate: manager.joiningDate,
             projectsManaged,
             teamSize,
+            companyId: manager.companyId,
         };
     }
 }
