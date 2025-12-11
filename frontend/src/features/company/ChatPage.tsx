@@ -6,6 +6,7 @@ import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
 import { useSearchParams } from "react-router-dom";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 interface TeamMember {
     id: string;
@@ -129,9 +130,9 @@ const ChatPage = () => {
                 </div>
 
                 {loading ? (
-                    <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">
-                        Loading...
-                    </p>
+                    <div className="flex justify-center items-center py-8">
+                        <LoadingSpinner variant="pulse" size="medium" />
+                    </div>
                 ) : teamMembers.length === 0 ? (
                     <p className="p-4 text-[#3b3b3b]/50 text-center">No team members found.</p>
                 ) : (

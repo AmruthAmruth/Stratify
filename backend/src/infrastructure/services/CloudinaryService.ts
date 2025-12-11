@@ -20,7 +20,21 @@ const storage = new CloudinaryStorage({
   },
 });
 
-export const upload = multer({ storage });
+export const upload = multer({
+  storage,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB max file size for profile images
+  },
+  fileFilter: (_req, file, cb) => {
+    const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    if (allowedMimeTypes.includes(file.mimetype)) {
+      cb(null, true);
+    } else {
+      cb(new Error(`File type not supported. Only JPG, JPEG, and PNG are allowed.`));
+    }
+  }
+});
 
 // Chat media upload configuration
 const chatMediaStorage = new CloudinaryStorage({

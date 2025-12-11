@@ -80,11 +80,31 @@ export class AuthenticationController {
   };
 
   register = async (req: MulterRequest, res: Response): Promise<void> => {
-    if (req.file) req.body.profileImage = req.file.path;
-    const otpExpiresAt = await this._registerUseCase.execute(req.body);
-    res
-      .status(StatusCodes.OK)
-      .json({ message: Messages.OTP_SENT, time: otpExpiresAt });
+    try {
+      console.log("Registration request received");
+      console.log("File uploaded:", req.file ? "Yes" : "No");
+
+      if (req.file) {
+        console.log("File details:", {
+          filename: req.file.filename,
+          size: req.file.size,
+          mimetype: req.file.mimetype,
+          path: req.file.path
+        });
+        req.body.profileImage = req.file.path;
+      }
+
+      console.log("Executing registration use case...");
+      const otpExpiresAt = await this._registerUseCase.execute(req.body);
+
+      console.log("Registration successful, OTP sent");
+      res
+        .status(StatusCodes.OK)
+        .json({ message: Messages.OTP_SENT, time: otpExpiresAt });
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error; // Re-throw to be caught by error middleware
+    }
   };
 
   verifyOtp = async (req: Request, res: Response): Promise<void> => {

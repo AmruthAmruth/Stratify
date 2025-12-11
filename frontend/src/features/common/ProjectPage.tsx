@@ -2,6 +2,7 @@ import { getProjectDetails } from '@/services/projects'
 import ProjectDetailsLayout from '@/shared/components/Project/ProjectDetailsLayout'
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { LoadingSpinner } from '@/shared/components/Loading';
 
 const ProjectPage = () => {
   const { id } = useParams();
@@ -28,7 +29,9 @@ const ProjectPage = () => {
           onRefresh={fetchProjectData}
         />
       ) : (
-        <p>Loading...</p>
+        <div className="flex justify-center items-center min-h-screen">
+          <LoadingSpinner variant="spinner" size="large" text="Loading project..." />
+        </div>
       )}
     </div>
   );

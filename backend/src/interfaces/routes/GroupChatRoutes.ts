@@ -10,7 +10,7 @@ const controller = GroupChatDI();
 // Create a new group
 groupChatRouter.post(
     "/create",
-    authMiddleware(["manager", "company", "employee"]),
+    authMiddleware(["manager", "company", "employee"]), 
     asyncHandler(controller.createGroup)
 );
  

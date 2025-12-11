@@ -1,16 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { 
-  listSubscriptionPlan, 
-  createSubscriptionPlan, 
+import {
+  listSubscriptionPlan,
+  createSubscriptionPlan,
   createSubscriptionPlanForUnauthenticated,
   verifyPayment,
-  verifyPaymentForUnauthenticated 
+  verifyPaymentForUnauthenticated
 } from "@/services/company";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useSnackbar } from "notistack";
 import PlanCard from "../common/PlanCard";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 interface Plan {
   plan: string;
@@ -24,9 +25,9 @@ interface SubscriptionPlansProps {
   onSuccessRedirect?: string; // Optional redirect path after successful payment
 }
 
-const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({ 
-  isAuthenticated, 
-  onSuccessRedirect 
+const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
+  isAuthenticated,
+  onSuccessRedirect
 }) => {
   const [plans, setPlans] = useState<Plan[]>([]);
   const [loading, setLoading] = useState(true);
@@ -69,7 +70,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
   const handleBuy = async (plan: Plan) => {
     try {
       let orderData;
-      
+
       // Create subscription based on authentication status
       if (isAuthenticated) {
         orderData = await createSubscriptionPlan(plan.plan);
@@ -153,11 +154,11 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
     }
   };
 
-  if (loading) return <div className="text-center mt-20 text-gray-500">Loading plans...</div>;
+  if (loading) return <LoadingSpinner fullScreen={true} text="Loading subscription plans..." />;
   if (plans.length === 0) return <div className="text-center mt-20 text-gray-500">No subscription plans available</div>;
 
   // Use different layouts based on authentication status
-  const containerClass = isAuthenticated 
+  const containerClass = isAuthenticated
     ? "max-w-6xl mx-auto mt-12 px-4"
     : "w-full h-screen bg-white flex flex-col items-center justify-center px-6 py-12";
 

@@ -15,6 +15,7 @@ import {
   readAllNotification,
   toggleStatusUpdate,
 } from "@/services/notification";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 const NotificationBoard = () => {
   const dispatch = useDispatch();
@@ -145,7 +146,9 @@ const NotificationBoard = () => {
 
       <div className="space-y-2">
         {isLoading ? (
-          <p className="text-sm text-[#3b3b3b]/70">Loading notifications...</p>
+          <div className="flex justify-center py-4">
+            <LoadingSpinner variant="dots" size="small" />
+          </div>
         ) : notifications.length === 0 ? (
           <p className="text-sm text-[#3b3b3b]/70">No notifications</p>
         ) : (

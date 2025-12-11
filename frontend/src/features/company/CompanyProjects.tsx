@@ -5,6 +5,7 @@ import { getCompanyProjects } from '@/services/projects';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
 import Table from '@/shared/components/Table/Table';
+import { LoadingSpinner } from '@/shared/components/Loading';
 
 const Projects = () => {
   const [projects, setProjects] = useState<any>(null);
@@ -21,10 +22,10 @@ const Projects = () => {
     getCompanyProjects().then((data) => {
       setProjects(data);
     });
-  }, []); 
-  
+  }, []);
+
   if (!projects) {
-    return <div className="text-black">Loading...</div>;
+    return <LoadingSpinner fullScreen={true} text="Loading projects..." />;
   }
 
 
@@ -34,8 +35,8 @@ const Projects = () => {
     )
     .filter((p: any) => (filterStatus ? p.status === filterStatus : true));
 
-  
-    
+
+
   const sortedProjects = [...filteredProjects].sort((a: any, b: any) => {
     if (!sortBy) return 0;
 
@@ -55,8 +56,8 @@ const Projects = () => {
     return 0;
   });
 
-  
-  
+
+
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -64,12 +65,12 @@ const Projects = () => {
     startIndex + itemsPerPage
   );
 
-  
+
   const uniqueStatus = Array.from(
     new Set(projects.projects.map((p: any) => p.status))
   );
 
-  
+
   const clearFilters = () => {
     setSearchTerm('');
     setFilterStatus('');

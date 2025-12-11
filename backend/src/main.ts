@@ -31,7 +31,7 @@ app.use(
   cors({
     origin: (origin, callback) => {
       const allowed = ["http://localhost:5173", "thunder-client://"];
-      if (!origin) return callback(null, true); 
+      if (!origin) return callback(null, true);
       const hostname = new URL(origin).hostname;
       if (allowed.includes(origin) || /\.trycloudflare\.com$/.test(hostname)) {
         callback(null, true);
@@ -88,5 +88,8 @@ const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
+
+// Set server timeout to 30 seconds to prevent indefinite hanging
+server.timeout = 30000; // 30 seconds
 
 export { io };

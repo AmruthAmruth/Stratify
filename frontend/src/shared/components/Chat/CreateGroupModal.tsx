@@ -2,6 +2,7 @@ import { useState } from "react";
 import { createGroup } from "@/services/groupChat";
 import { useDispatch } from "react-redux";
 import { addGroup } from "@/store/slices/groupChatSlice";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 interface CreateGroupModalProps {
     isOpen: boolean;
@@ -110,7 +111,7 @@ const CreateGroupModal = ({ isOpen, onClose, availableMembers }: CreateGroupModa
                         disabled={loading || !groupName.trim() || selectedMembers.length === 0}
                         className="px-4 py-2 bg-[#009063] text-white rounded-lg hover:bg-[#009063]/90 disabled:bg-[#009063]/50 transition-colors"
                     >
-                        {loading ? "Creating..." : "Create Group"}
+                        {loading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Create Group"}
                     </button>
                 </div>
             </div>

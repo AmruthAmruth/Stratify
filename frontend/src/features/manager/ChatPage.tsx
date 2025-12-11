@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 interface Employee {
   id: string;
@@ -113,9 +114,9 @@ const ChatPage = () => {
         </div>
 
         {loading ? (
-          <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">
-            Loading...
-          </p>
+          <div className="flex justify-center items-center py-8">
+            <LoadingSpinner variant="pulse" size="medium" />
+          </div>
         ) : employees.length === 0 ? (
           <p className="p-4 text-[#3b3b3b]/50 text-center">No employees found.</p>
         ) : (

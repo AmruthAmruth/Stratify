@@ -6,6 +6,7 @@ import { sendGroupMessage } from "@/services/groupChat";
 import { addGroupMessage, setGroupMessages } from "@/store/slices/groupChatSlice";
 import { Paperclip, X } from "lucide-react";
 import MediaMessage from "./MediaMessage";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 interface GroupChatBoxProps {
     groupId: string;
@@ -119,9 +120,9 @@ const GroupChatBox = ({
             {/* Chat Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
                 {loading ? (
-                    <p className="text-center text-[#3b3b3b]/50 animate-pulse">
-                        Loading messages...
-                    </p>
+                    <div className="flex justify-center items-center py-8">
+                        <LoadingSpinner variant="pulse" size="medium" />
+                    </div>
                 ) : groupMessages.length > 0 ? (
                     groupMessages.map((msg, index) => (
                         <div
@@ -223,7 +224,7 @@ const GroupChatBox = ({
                         disabled={(!message.trim() && !selectedFile) || isUploading}
                         className="bg-[#009063] hover:bg-[#009063]/90 disabled:bg-[#009063]/50 text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:cursor-not-allowed disabled:transform-none"
                     >
-                        {isUploading ? "Sending..." : "Send"}
+                        {isUploading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Send"}
                     </button>
                 </div>
             </div>

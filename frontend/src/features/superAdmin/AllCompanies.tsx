@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom"; 
+import { useNavigate } from "react-router-dom";
 import Table from "../../shared/components/Table/Table";
 import TableFilterBar from "../../shared/components/FilterBar/TableFilterBar";
 import { approveCompany, getAllCompanies, unapproveCompany } from "@/services/company";
@@ -9,6 +9,7 @@ import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import { rejectionFormFields } from "@/shared/components/Forms/formFields";
 import { rejectionValidationSchema } from "@/shared/utils/validations";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 const AllCompanies = () => {
   const [companies, setCompanies] = useState<any[]>([]);
@@ -17,7 +18,7 @@ const AllCompanies = () => {
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterValue, setFilterValue] = useState("All");
-  const [sortBy, setSortBy] = useState<string | null>(null); 
+  const [sortBy, setSortBy] = useState<string | null>(null);
   const [sortOrder, setSortOrder] = useState<"asc" | "desc" | null>(null);
   const [isSearchMode, setIsSearchMode] = useState(false);
   const [loadingActions, setLoadingActions] = useState<{ [key: string]: boolean }>({});
@@ -41,10 +42,10 @@ const AllCompanies = () => {
     companyId?: string;
   }>({ isOpen: false });
 
-  
 
- 
- 
+
+
+
   useEffect(() => {
     const fetchAllCompanies = async () => {
       try {
@@ -200,7 +201,7 @@ const AllCompanies = () => {
     try {
       setSubmitLoading(true);
       setLoadingActions(prev => ({ ...prev, [companyId]: true }));
-console.log(formData.reason);
+      console.log(formData.reason);
 
       // Pass both companyId and rejection reason to backend
       await unapproveCompany(companyId, formData.reason);
@@ -257,13 +258,12 @@ console.log(formData.reason);
             <button
               onClick={() => openApprovalConfirmDialog(row.id)}
               disabled={isActionLoading}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                isActionLoading
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${isActionLoading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-green-500 hover:bg-green-600 text-white"
-              }`}
+                }`}
             >
-              {isActionLoading ? "Loading..." : "Approve"}
+              {isActionLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Approve"}
             </button>
           )}
 
@@ -271,13 +271,12 @@ console.log(formData.reason);
             <button
               onClick={() => openRejectionModal(row.id)}
               disabled={isActionLoading}
-              className={`px-3 py-1 text-sm rounded-lg transition-colors ${
-                isActionLoading
+              className={`px-3 py-1 text-sm rounded-lg transition-colors ${isActionLoading
                   ? "bg-gray-400 cursor-not-allowed"
                   : "bg-red-500 hover:bg-red-600 text-white"
-              }`}
+                }`}
             >
-              {isActionLoading ? "Loading..." : "Reject"}
+              {isActionLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Reject"}
             </button>
           )}
         </div>
@@ -295,9 +294,8 @@ console.log(formData.reason);
       };
 
       return (
-        <span className={`px-2 py-1 rounded-full text-xs font-medium ${
-          statusColors[status] || "text-gray-600 bg-gray-100"
-        }`}>
+        <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColors[status] || "text-gray-600 bg-gray-100"
+          }`}>
           {row[key]}
         </span>
       );
@@ -307,11 +305,7 @@ console.log(formData.reason);
   };
 
   if (isLoading) {
-    return (
-      <div className="flex justify-center items-center h-64">
-        <div className="text-lg text-gray-600">Loading companies...</div>
-      </div>
-    );
+    return <LoadingSpinner fullScreen={true} text="Loading companies..." />;
   }
 
   return (
@@ -388,11 +382,11 @@ console.log(formData.reason);
           validationSchema={rejectionValidationSchema}
           onSubmit={handleRejectionSubmit}
           initialValues={{ reason: "" }}
-          buttonText={submitLoading ? "Rejecting..." : "Reject Company"}
+          buttonText={submitLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Reject Company"}
         />
         {submitLoading && (
           <div className="flex justify-center mt-4">
-            <div className="w-6 h-6 border-2 border-red-600 border-t-transparent rounded-full animate-spin"></div>
+            <LoadingSpinner variant="spinner" size="small" />
           </div>
         )}
       </Modal>

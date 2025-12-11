@@ -1,8 +1,9 @@
 import React, { useState } from "react";
-import { Mail, ArrowLeft, CheckCircle, AlertCircle, Loader2, Shield, Lock } from "lucide-react";
+import { Mail, ArrowLeft, CheckCircle, AlertCircle, Shield, Lock } from "lucide-react";
 import { enqueueSnackbar } from "notistack";
 import { forgotPassword } from "@/services/authApi";
 import { useNavigate } from "react-router-dom";
+import { LoadingSpinner } from "@/shared/components/Loading";
 
 const ForgotPassword: React.FC = () => {
   const [email, setEmail] = useState("");
@@ -132,9 +133,8 @@ const ForgotPassword: React.FC = () => {
                       type="email"
                       value={email}
                       onChange={(e) => setEmail(e.target.value)}
-                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#009063] focus:border-transparent transition-all duration-200 ${
-                        error ? "border-red-300 bg-red-50" : "border-[#dfdcef] bg-[#fbfbfb]"
-                      }`}
+                      className={`w-full pl-10 pr-4 py-3 border rounded-xl focus:ring-2 focus:ring-[#009063] focus:border-transparent transition-all duration-200 ${error ? "border-red-300 bg-red-50" : "border-[#dfdcef] bg-[#fbfbfb]"
+                        }`}
                       placeholder="Enter your email address"
                       disabled={isLoading}
                     />
@@ -153,10 +153,7 @@ const ForgotPassword: React.FC = () => {
                   className="w-full bg-[#009063] text-white py-3 px-4 rounded-xl font-medium hover:bg-green-700 focus:ring-2 focus:ring-[#009063] focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center space-x-2"
                 >
                   {isLoading ? (
-                    <>
-                      <Loader2 className="w-5 h-5 animate-spin" />
-                      <span>Sending OTP...</span>
-                    </>
+                    <LoadingSpinner variant="dots" size="small" color="#ffffff" />
                   ) : (
                     <span>Send OTP</span>
                   )}

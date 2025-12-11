@@ -29,7 +29,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
         const projectIds = [...new Set(employeeIssues.map(issue => issue.projectId))];
 
         // 4. Find all sprints for these projects that overlap with the leave period
-        const allSprints: any[] = [];
+        const allSprints: unknown[] = [];
         for (const projectId of projectIds) {
             const projectSprints = await this._sprintRepo.findByProject(projectId);
             allSprints.push(...projectSprints);
@@ -51,7 +51,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
         for (const sprint of overlappingSprints) {
             // Get issues assigned to this employee in this sprint
             const assignedIssues = await this._issueRepo.findBySprintAndAssignee(
-                sprint.id!,
+                (sprint as { id?: string }).id!,
                 employeeId
             );
 
@@ -60,8 +60,8 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
                 const overlap = DateUtils.getOverlapDays(
                     startDate,
                     endDate,
-                    sprint.startDate,
-                    sprint.endDate
+                    (sprint as { startDate: Date }).startDate,
+                    (sprint as { endDate: Date }).endDate
                 );
 
                 const leaveDays = overlap
@@ -69,7 +69,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
                     : 0;
 
                 const impactHours = leaveDays * 8;
-                const estimatedHours = assignedIssues.reduce((sum, issue) => sum + issue.estimatedHours, 0);
+                const estimatedHours = assignedIssues.reduce((sum: number, issue: { estimatedHours: number }) => sum + issue.estimatedHours, 0);
 
                 totalImpactHours += impactHours;
 
