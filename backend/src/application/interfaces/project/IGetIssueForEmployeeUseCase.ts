@@ -1,6 +1,5 @@
-import { Issue } from "../../../domain/entities/Issue";
+import { EmployeeIssueDTO } from "../../dto/project/EmployeeIssueDTO";
 
-
-export interface IGetIssueForEmployeeUseCase{
-    execute(employeeId:string):Promise<Issue[]>
+export interface IGetIssueForEmployeeUseCase {
+    execute(employeeId: string): Promise<EmployeeIssueDTO[]>
 }

@@ -6,6 +6,7 @@ import { IssueModel } from "../models/IssueModel";
 import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
+import { EmployeeIssueDTO } from "../../application/dto/project/EmployeeIssueDTO";
 
 export class IssueRepository implements IIssueRepository {
   async create(issue: Issue): Promise<Issue> {
@@ -97,16 +98,102 @@ export class IssueRepository implements IIssueRepository {
 
 
 
-  async findByUserId(userId: string): Promise<Issue[]> {
+  async findByUserId(userId: string): Promise<EmployeeIssueDTO[]> {
     console.log(`[IssueRepository] findByUserId called with: ${userId}`);
     try {
       const objectId = new mongoose.Types.ObjectId(userId);
       console.log(`[IssueRepository] Converted to ObjectId: ${objectId}`);
-      const docs = await IssueModel.find({
-        assignedTo: objectId,
-      });
-      console.log(`[IssueRepository] Found ${docs.length} docs`);
-      return IssueMapper.toEntities(docs);
+
+      // Use aggregation to populate project name and subtasks
+      const results = await IssueModel.aggregate([
+        {
+          $match: { assignedTo: objectId }
+        },
+        {
+          $lookup: {
+            from: 'sprints',
+            localField: 'sprintId',
+            foreignField: '_id',
+            as: 'sprint'
+          }
+        },
+        {
+          $match: {
+            sprintId: { $ne: null },  // Exclude backlog issues (no sprint assigned)
+            'sprint.status': 'Active'  // Only include issues from active sprints
+          }
+        },
+        {
+          $lookup: {
+            from: 'projects',
+            localField: 'projectId',
+            foreignField: '_id',
+            as: 'project'
+          }
+        },
+        {
+          $lookup: {
+            from: 'subtasks',
+            localField: '_id',
+            foreignField: 'issueId',
+            as: 'subtasks'
+          }
+        },
+        {
+          $addFields: {
+            projectName: { $arrayElemAt: ['$project.name', 0] },
+            estimatedHours: {
+              $reduce: {
+                input: '$subtasks',
+                initialValue: 0,
+                in: { $add: ['$$value', '$$this.hours'] }
+              }
+            },
+            subTasks: {
+              $map: {
+                input: '$subtasks',
+                as: 'st',
+                in: {
+                  id: { $toString: '$$st._id' },
+                  title: '$$st.heading',
+                  description: '$$st.description',
+                  estimatedHours: '$$st.hours',
+                  status: '$$st.status'
+                }
+              }
+            }
+          }
+        },
+        {
+          $project: {
+            project: 0,
+            subtasks: 0,
+            sprint: 0  // Remove sprint data from final output
+          }
+        }
+      ]);
+
+      console.log(`[IssueRepository] Found ${results.length} issues with project names and subtasks`);
+
+      // Map the aggregation results to the expected format
+      return results.map(doc => ({
+        id: doc._id.toString(),
+        heading: doc.heading,
+        description: doc.description,
+        acceptanceCriteria: doc.acceptanceCriteria,
+        size: doc.size,
+        estimatedHours: doc.estimatedHours || 0,
+        type: doc.type,
+        status: doc.status,
+        priority: doc.priority,
+        projectId: doc.projectId.toString(),
+        projectName: doc.projectName || 'Unknown Project',
+        sprintId: doc.sprintId ? doc.sprintId.toString() : null,
+        assignedTo: doc.assignedTo ? doc.assignedTo.toString() : null,
+        subTasks: doc.subTasks || [],
+        createdAt: doc.createdAt,
+        updatedAt: doc.updatedAt
+      }));
     } catch (error) {
       console.error(`[IssueRepository] Error in findByUserId:`, error);
       throw error;

@@ -108,3 +108,6 @@ export const removeEmployeeInProject = (data: Record<string, unknown>) => {
 
   return handleRequest(api.post(PROJECT_ROUTES.REMOVE_EMPLOYEE_TO_PROJECT, data))
 }
+
+// Alias for updateTask - used in Task.tsx
+export const updateSubTask = updateTask;

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { SubTask } from "../../domain/entities/SubTask";
 import { ISubtaskRepository } from "../../domain/repositories/ISubTaskRepository";
 import { SubTaskModel } from "../models/SubTaskModel";
@@ -9,7 +10,7 @@ import { Messages } from "../../shared/constants/messages";
 export class SubTaskRepository implements ISubtaskRepository {
   async create(subtask: SubTask): Promise<SubTask> {
     const created = await SubTaskModel.create({
-      issueId: subtask.issueId,
+      issueId: new mongoose.Types.ObjectId(subtask.issueId),
       heading: subtask.heading,
       description: subtask.description,
       hours: subtask.hours,
@@ -25,7 +26,7 @@ export class SubTaskRepository implements ISubtaskRepository {
 
 
   async findAllByIssue(issueId: string): Promise<SubTask[]> {
-    const docs = await SubTaskModel.find({ issueId });
+    const docs = await SubTaskModel.find({ issueId: new mongoose.Types.ObjectId(issueId) });
     return SubTaskMapper.toEntities(docs);
   }
 

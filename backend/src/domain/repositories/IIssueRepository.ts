@@ -1,4 +1,5 @@
 import { Issue } from "../entities/Issue";
+import { EmployeeIssueDTO } from "../../application/dto/project/EmployeeIssueDTO";
 export interface IIssueRepository {
   create(issue: Issue): Promise<Issue>;
   findById(id: string): Promise<Issue | null>;
@@ -8,5 +9,5 @@ export interface IIssueRepository {
   findBySprintId(sprintId: string): Promise<Issue[]>;
   findByProjectId(projectId: string): Promise<Issue[]>;
   deleteByProjectId(projectId: string): Promise<void>;
-  findByUserId(userId:string):Promise<Issue[]>
+  findByUserId(userId: string): Promise<EmployeeIssueDTO[]>
 }

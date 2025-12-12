@@ -1,5 +1,5 @@
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
-import { Issue } from "../../../domain/entities/Issue";
+import { EmployeeIssueDTO } from "../../dto/project/EmployeeIssueDTO";
 
 export class GetEmployeeDashboardStats {
     constructor(
@@ -15,39 +15,39 @@ export class GetEmployeeDashboardStats {
 
         if (issues.length === 0) {
             console.log("[GetEmployeeDashboardStats] No issues found for this user. Checking if ANY issues exist...");
-           
+
         }
 
         console.log(`[GetEmployeeDashboardStats] Issues:`, JSON.stringify(issues, null, 2));
 
         const totalAssigned = issues.length;
         const pendingIssues = issues.filter(
-            (issue: Issue) =>
+            (issue: EmployeeIssueDTO) =>
                 (issue.status || "").toLowerCase() === "todo" ||
                 (issue.status || "").toLowerCase() === "in-progress" ||
                 (issue.status || "").toLowerCase() === "in progress"
         ).length;
         const completedIssues = issues.filter(
-            (issue: Issue) => (issue.status || "").toLowerCase() === "completed" || (issue.status || "").toLowerCase() === "done"
+            (issue: EmployeeIssueDTO) => (issue.status || "").toLowerCase() === "completed" || (issue.status || "").toLowerCase() === "done"
         ).length;
 
-        
+
         const priorityCounts: Record<string, number> = {};
-        issues.forEach((issue: Issue) => {
+        issues.forEach((issue: EmployeeIssueDTO) => {
             const priority = issue.priority || "Unknown";
             priorityCounts[priority] = (priorityCounts[priority] || 0) + 1;
         });
 
-        
+
         const statusCounts: Record<string, number> = {};
-        issues.forEach((issue: Issue) => {
+        issues.forEach((issue: EmployeeIssueDTO) => {
             const status = issue.status || "Unknown";
             statusCounts[status] = (statusCounts[status] || 0) + 1;
         });
 
-        
+
         const typeCounts: Record<string, number> = {};
-        issues.forEach((issue: Issue) => {
+        issues.forEach((issue: EmployeeIssueDTO) => {
             const type = issue.type || "Task";
             typeCounts[type] = (typeCounts[type] || 0) + 1;
         });

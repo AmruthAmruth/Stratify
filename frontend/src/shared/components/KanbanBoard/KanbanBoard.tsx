@@ -1,0 +1,116 @@
+import React from "react";
+import { DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
+import SubtaskCard from "./SubtaskCard";
+
+interface Subtask {
+    id: string;
+    title: string;
+    description?: string;
+    estimatedHours?: number;
+    status: string;
+}
+
+interface KanbanBoardProps {
+    subtasks: Subtask[];
+    onDragEnd: (event: DragEndEvent) => void;
+    onSubtaskClick?: (subtask: Subtask) => void;
+}
+
+interface ColumnProps {
+    id: string;
+    title: string;
+    subtasks: Subtask[];
+    onSubtaskClick?: (subtask: Subtask) => void;
+}
+
+const Column: React.FC<ColumnProps> = ({ id, title, subtasks, onSubtaskClick }) => {
+    const { setNodeRef, isOver } = useDroppable({
+        id: id,
+    });
+
+    const getColumnColor = () => {
+        switch (id) {
+            case "To Do":
+                return "border-[#dfdcef] bg-[#fbfbfb]";
+            case "In Progress":
+                return "border-[#ff9800]/30 bg-[#fff4e6]/30";
+            case "Done":
+                return "border-[#009063]/30 bg-[#e6f7f0]/30";
+            default:
+                return "border-[#dfdcef] bg-[#fbfbfb]";
+        }
+    };
+
+    return (
+        <div
+            ref={setNodeRef}
+            className={`flex-1 min-w-[280px] border-2 rounded-xl p-4 transition-all ${getColumnColor()} ${isOver ? "ring-2 ring-[#009063] bg-[#e6f7f0]/50" : ""
+                }`}
+        >
+            <div className="flex items-center justify-between mb-4">
+                <h3 className="font-bold text-[#2f2f2f] text-sm uppercase tracking-wide">
+                    {title}
+                </h3>
+                <span className="bg-[#009063] text-white text-xs font-bold px-2 py-1 rounded-full">
+                    {subtasks.length}
+                </span>
+            </div>
+            <div className="space-y-2 min-h-[200px]">
+                {subtasks.length === 0 ? (
+                    <div className="text-center text-[#3b3b3b]/50 text-sm py-8">
+                        No subtasks
+                    </div>
+                ) : (
+                    subtasks.map((subtask) => (
+                        <SubtaskCard
+                            key={subtask.id}
+                            id={subtask.id}
+                            title={subtask.title}
+                            description={subtask.description}
+                            estimatedHours={subtask.estimatedHours}
+                            status={subtask.status}
+                            onClick={() => onSubtaskClick?.(subtask)}
+                        />
+                    ))
+                )}
+            </div>
+        </div>
+    );
+};
+
+const KanbanBoard: React.FC<KanbanBoardProps> = ({
+    subtasks,
+    onDragEnd,
+    onSubtaskClick,
+}) => {
+    const todoSubtasks = subtasks.filter((s) => s.status === "To Do");
+    const inProgressSubtasks = subtasks.filter((s) => s.status === "In Progress");
+    const doneSubtasks = subtasks.filter((s) => s.status === "Done");
+
+    return (
+        <DndContext onDragEnd={onDragEnd}>
+            <div className="flex gap-4 overflow-x-auto pb-4">
+                <Column
+                    id="To Do"
+                    title="To Do"
+                    subtasks={todoSubtasks}
+                    onSubtaskClick={onSubtaskClick}
+                />
+                <Column
+                    id="In Progress"
+                    title="In Progress"
+                    subtasks={inProgressSubtasks}
+                    onSubtaskClick={onSubtaskClick}
+                />
+                <Column
+                    id="Done"
+                    title="Done"
+                    subtasks={doneSubtasks}
+                    onSubtaskClick={onSubtaskClick}
+                />
+            </div>
+        </DndContext>
+    );
+};
+
+export default KanbanBoard;
