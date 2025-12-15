@@ -34,12 +34,12 @@ export class ApproveLeaveUseCase implements IApproveLeaveUseCase {
       throw new AppError(Messages.LEAVE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    // if (leave.status !== "Pending") {
-    //   throw new AppError(
-    //     "Only pending leaves can be approved or rejected",
-    //     StatusCodes.BAD_REQUEST
-    //   );
-    // }
+    
+    
+    
+    
+    
+    
     if (status === "Rejected" && (!reason || reason.trim() === "")) {
       throw new AppError(
         Messages.REASON_REQUIRED_FOR_REJECTION,

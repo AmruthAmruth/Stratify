@@ -47,7 +47,7 @@ export class SprintRepository implements ISprintRepository {
       $or: [
         { startDate: { $lte: endDate, $gte: startDate } },
         { endDate: { $gte: startDate, $lte: endDate } },
-        { startDate: { $lte: startDate }, endDate: { $gte: endDate } }, // fully overlapping
+        { startDate: { $lte: startDate }, endDate: { $gte: endDate } }, 
       ],
     });
 
@@ -62,4 +62,12 @@ export class SprintRepository implements ISprintRepository {
   async deleteByProjectId(projectId: string): Promise<void> {
     await SprentModel.deleteMany({ projectId });
   }
+
+
+
+
+
+
+
+
 }

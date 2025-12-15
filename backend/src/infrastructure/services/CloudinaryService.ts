@@ -23,7 +23,7 @@ const storage = new CloudinaryStorage({
 export const upload = multer({
   storage,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB max file size for profile images
+    fileSize: 5 * 1024 * 1024, 
   },
   fileFilter: (_req, file, cb) => {
     const allowedMimeTypes = ["image/jpeg", "image/jpg", "image/png"];
@@ -36,13 +36,13 @@ export const upload = multer({
   }
 });
 
-// Chat media upload configuration
+
 const chatMediaStorage = new CloudinaryStorage({
   cloudinary: cloudinary,
   params: async (_req, file) => {
-    const fileType = file.mimetype.split("/")[0]; // 'image', 'video', 'application', etc.
+    const fileType = file.mimetype.split("/")[0]; 
 
-    // Determine resource type and allowed formats based on file type
+    
     let resourceType: "image" | "video" | "raw" = "raw";
     let allowedFormats: string[] = [];
 
@@ -53,7 +53,7 @@ const chatMediaStorage = new CloudinaryStorage({
       resourceType = "video";
       allowedFormats = ["mp4", "avi", "mov", "wmv", "webm"];
     } else {
-      // Documents and other files
+      
       resourceType = "raw";
       allowedFormats = ["pdf", "doc", "docx", "xls", "xlsx", "ppt", "pptx", "txt", "zip"];
     }
@@ -70,16 +70,16 @@ const chatMediaStorage = new CloudinaryStorage({
 export const chatMediaUpload = multer({
   storage: chatMediaStorage,
   limits: {
-    fileSize: 50 * 1024 * 1024, // 50MB max file size
+    fileSize: 50 * 1024 * 1024, 
   },
   fileFilter: (_req, file, cb) => {
-    // Allowed mime types
+    
     const allowedMimeTypes = [
-      // Images
+      
       "image/jpeg", "image/jpg", "image/png", "image/gif", "image/webp",
-      // Videos
+      
       "video/mp4", "video/avi", "video/quicktime", "video/x-msvideo", "video/webm",
-      // Documents
+      
       "application/pdf",
       "application/msword",
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",

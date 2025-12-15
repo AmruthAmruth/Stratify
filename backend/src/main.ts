@@ -89,7 +89,7 @@ server.listen(PORT, () => {
   console.log(`🚀 Server running on http://localhost:${PORT}`);
 });
 
-// Set server timeout to 30 seconds to prevent indefinite hanging
-server.timeout = 30000; // 30 seconds
+
+server.timeout = 30000; 
 
 export { io };

@@ -6,9 +6,9 @@ import { projectDI } from "../../di/ProjectDI";
 const projectRouter = Router();
 const controller = projectDI();
 
-/* ----------------------------------------------------
- * PROJECT CREATION & MANAGEMENT
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/create-project",
   authMiddleware(["company", "manager"]),
@@ -53,9 +53,9 @@ projectRouter.get(
 
 
 
-/* ----------------------------------------------------
- * USER STORIES
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/create-user-story",
   authMiddleware(["company", "manager"]),
@@ -63,9 +63,9 @@ projectRouter.post(
 );
 
 
-/* ----------------------------------------------------
- * ISSUES
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/create-issue",
   authMiddleware(["company", "manager"]),
@@ -96,9 +96,9 @@ projectRouter.delete(
   asyncHandler(controller.deleteIssue)
 );
 
-/* ----------------------------------------------------
- * SUBTASKS
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/create-sub-task",
   authMiddleware(["company", "manager", "employee"]),
@@ -118,9 +118,9 @@ projectRouter.delete(
 );
 
 
-/* ----------------------------------------------------
- * SPRINTS
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/create-sprint",
   authMiddleware(["company", "manager"]),
@@ -140,9 +140,9 @@ projectRouter.delete(
 );
 
 
-/* ----------------------------------------------------
- * EMPLOYEE MANAGEMENT (PROJECT LEVEL)
- * ---------------------------------------------------- */
+
+
+
 projectRouter.post(
   "/add-employee-project",
   authMiddleware(["company", "manager"]),
@@ -168,9 +168,9 @@ projectRouter.get(
 );
 
 
-/* ----------------------------------------------------
- * EMPLOYEE — ISSUE VIEW
- * ---------------------------------------------------- */
+
+
+
 projectRouter.get(
   "/issues",
   authMiddleware(["employee"]),

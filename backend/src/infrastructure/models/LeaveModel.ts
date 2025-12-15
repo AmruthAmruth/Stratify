@@ -31,7 +31,7 @@ const LeaveSchema = new Schema<LeaveDocument>(
       default: "Pending",
     },
     reason: { type: String },
-    rejectedReason: { type: String }, // <-- Added this field
+    rejectedReason: { type: String }, 
     month: { type: Number, required: true, min: 0, max: 11 },
     departmentId: {
       type: Schema.Types.ObjectId,

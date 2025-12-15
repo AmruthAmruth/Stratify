@@ -59,7 +59,7 @@ export class CreateIssueUseCase implements ICreateIssueUseCase {
 
     const createdIssue = await this._issueRepo.create(issue);
 
-    // Notify employee if task is assigned
+    
     if (issueDTO.assignedTo) {
       const employee = await this._employeeRepo.findById(issueDTO.assignedTo);
       if (employee) {

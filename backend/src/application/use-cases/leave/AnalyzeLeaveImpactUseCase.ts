@@ -16,19 +16,19 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
     ) { }
 
     async execute(employeeId: string, startDate: Date, endDate: Date): Promise<LeaveImpactDTO> {
-        // 1. Validate employee exists
+        
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
             throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // 2. Find all issues assigned to this employee
+        
         const employeeIssues = await this._issueRepo.findByUserId(employeeId);
 
-        // 3. Get unique project IDs from employee's issues
+        
         const projectIds = [...new Set(employeeIssues.map(issue => issue.projectId))];
 
-        // 4. Find all sprints for these projects that overlap with the leave period
+        
         const allSprints: unknown[] = [];
         for (const projectId of projectIds) {
             const projectSprints = await this._sprintRepo.findByProject(projectId);
@@ -44,19 +44,19 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
             );
         });
 
-        // 5. For each overlapping sprint, analyze the impact
+        
         const affectedSprints: AffectedSprint[] = [];
         let totalImpactHours = 0;
 
         for (const sprint of overlappingSprints) {
-            // Get issues assigned to this employee in this sprint
+            
             const assignedIssues = await this._issueRepo.findBySprintAndAssignee(
                 (sprint as { id?: string }).id!,
                 employeeId
             );
 
             if (assignedIssues.length > 0) {
-                // Calculate leave days within sprint period
+                
                 const overlap = DateUtils.getOverlapDays(
                     startDate,
                     endDate,
@@ -84,10 +84,10 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
             }
         }
 
-        // 6. Determine if reassignment is required
+        
         const requiresReassignment = affectedSprints.length > 0;
 
-        // 7. Generate suggestions
+        
         const suggestions: string[] = [];
 
         if (affectedSprints.length === 0) {
@@ -101,7 +101,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
                 suggestions.push("Or adjust sprint commitments to account for reduced capacity");
             }
 
-            // List affected sprints
+            
             affectedSprints.forEach(sprint => {
                 suggestions.push(
                     `Sprint "${sprint.sprintName}": ${sprint.assignedIssues} task(s), ${sprint.estimatedHours}h total work`

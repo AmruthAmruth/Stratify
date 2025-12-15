@@ -9,13 +9,13 @@ import fs from "fs";
 const managerRouter = Router();
 const controller = managerDI();
 
-// Ensure uploads directory exists
+
 const uploadsDir = "uploads";
 if (!fs.existsSync(uploadsDir)) {
     fs.mkdirSync(uploadsDir, { recursive: true });
 }
 
-// Configure multer for file uploads
+
 const storage = multer.diskStorage({
     destination: (_req, _file, cb) => {
         cb(null, uploadsDir);
@@ -28,7 +28,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, // 5MB limit
+    limits: { fileSize: 5 * 1024 * 1024 }, 
     fileFilter: (_req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -42,7 +42,7 @@ const upload = multer({
     },
 });
 
-// Manager profile routes
+
 managerRouter.get(
     "/profile",
     authMiddleware(["manager"]),
@@ -62,7 +62,7 @@ managerRouter.post(
     asyncHandler(controller.changePassword)
 );
 
-// Team management routes
+
 managerRouter.get(
     "/team/employees",
     authMiddleware(["manager"]),

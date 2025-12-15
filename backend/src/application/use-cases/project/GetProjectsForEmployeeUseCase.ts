@@ -23,7 +23,7 @@ export class GetProjectsForEmployeeUseCase
             throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Get all projects where employee is a team member
+        
         const projects = await this._projectRepo.findByTeamMemberId(employeeId);
 
         if (!projects || projects.length === 0) {

@@ -12,7 +12,7 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
     constructor(private _companyRepository: ICompanyRepository) { }
 
     async execute(companyId: string, themeColor: string): Promise<Company> {
-        // Validate hex color format
+        
         const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
         if (!hexColorRegex.test(themeColor)) {
             throw new AppError(
@@ -27,7 +27,7 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
             throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Update theme color
+        
         company.themeColor = themeColor;
 
         return await this._companyRepository.update(company);

@@ -49,7 +49,7 @@ const MeetingSchema = new Schema<MeetingDocument>(
   { timestamps: true }
 );
 
-// Indexes for efficient queries
+
 MeetingSchema.index({ projectId: 1, scheduledDate: 1 });
 MeetingSchema.index({ scheduledDate: 1, status: 1 });
 

@@ -1,6 +1,6 @@
 import { Types } from "mongoose";
 
-// Type definitions for Manager profile operations
+
 
 export interface ManagerProfileResponse {
     id: string;

@@ -40,7 +40,7 @@ export class AddEmployeeProjectUseCase implements IAddEmployeeProjectUseCase {
 
     await this._projectRepo.update(project);
 
-    // Notify employee about being added to project
+    
     const notification = new Notification(
       employee.id!,
       employee.role,

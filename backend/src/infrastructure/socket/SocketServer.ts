@@ -32,13 +32,13 @@ export const initSocket = (server: HttpServer) => {
       const receiverSocketId = connectedUsers.get(receiverId);
       const senderSocketId = connectedUsers.get(senderId);
 
-      // Send to receiver
+      
       if (receiverSocketId) {
         io.to(receiverSocketId).emit("receive-message", messageData);
         console.log(`✅ Sent to receiver ${receiverId}`);
       }
 
-      // Send back to sender for confirmation (so they see it in their chat)
+      
       if (senderSocketId) {
         io.to(senderSocketId).emit("receive-message", messageData);
         console.log(`✅ Sent back to sender ${senderId}`);
@@ -57,7 +57,7 @@ export const initSocket = (server: HttpServer) => {
     });
 
 
-    // ---------- GROUP CHAT ----------
+    
     socket.on("join-group", (groupId: string) => {
       socket.join(groupId);
       console.log(`👥 Socket ${socket.id} joined group ${groupId}`);
@@ -72,7 +72,7 @@ export const initSocket = (server: HttpServer) => {
       const { groupId, senderId, message } = data;
       console.log(`💬 Group message from ${senderId} to group ${groupId}: ${message}`);
 
-      // Broadcast to all members in the group room
+      
       io.to(groupId).emit("receive-group-message", {
         groupId,
         senderId,
@@ -90,7 +90,7 @@ export const initSocket = (server: HttpServer) => {
     });
 
 
-    // ---------- NOTIFICATION ----------
+    
     socket.on("disconnect", () => {
       for (const [userId, id] of connectedUsers.entries()) {
         if (id === socket.id) {
@@ -106,9 +106,9 @@ export const initSocket = (server: HttpServer) => {
 };
 
 
-// ---------------- EMITTERS ----------------
 
-// Notification emitter (you already had this)
+
+
 export const emitNotification = (io: Server, userId: string, notification: unknown) => {
   const socketId = connectedUsers.get(userId);
   if (socketId) {
@@ -117,7 +117,7 @@ export const emitNotification = (io: Server, userId: string, notification: unkno
   }
 };
 
-// Chat emitter (new)
+
 export const emitChatMessage = (
   io: Server,
   receiverId: string,
@@ -138,7 +138,7 @@ export const emitChatMessage = (
   }
 };
 
-// Group chat emitters
+
 export const emitGroupMessage = (
   io: Server,
   groupId: string,

@@ -26,7 +26,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
         }
 
         try {
-            // Fetch all data in parallel
+            
             const [departments, employees, managers, projects] = await Promise.all([
                 this._departmentRepo.findDepartmentsByCompanyId(companyId),
                 this._employeeRepo.findByCompanyId(companyId),
@@ -34,7 +34,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 this._projectRepo.findByCompanyId(companyId),
             ]);
 
-            // Fetch leaves for all departments
+            
             const currentMonth = new Date().getMonth() + 1;
             const leavePromises = departments
                 .filter((dept) => dept.id !== undefined)
@@ -44,7 +44,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
             const leavesArrays = await Promise.all(leavePromises);
             const allLeaves = leavesArrays.flat();
 
-            // Fetch meetings for all managers
+            
             const meetingPromises = managers
                 .filter((manager) => manager.id !== undefined)
                 .map((manager) =>
@@ -53,7 +53,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
             const meetingsArrays = await Promise.all(meetingPromises);
             const allMeetings = meetingsArrays.flat();
 
-            // Calculate Statistics
+            
             const totalEmployees = employees.length;
             const totalManagers = managers.length;
             const activeDepartments = departments.filter(
@@ -79,9 +79,9 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
 
             const totalMeetings = allMeetings.length;
 
-            // Prepare Chart Data
+            
 
-            // 1. Department Distribution (Doughnut) - Employees per department
+            
             const departmentEmployeeCounts: { [key: string]: number } = {};
             for (const dept of departments) {
                 const deptEmployees = employees.filter(
@@ -92,7 +92,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 }
             }
 
-            // 2. Project Status (Pie)
+            
             const projectStatusCounts = {
                 Active: projects.filter((p) => {
                     const status = (p.status || "").toLowerCase();
@@ -118,7 +118,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 ).length,
             };
 
-            // 3. Employee by Department (Bar)
+            
             const employeeByDepartment: { [key: string]: number } = {};
             for (const dept of departments) {
                 const deptEmployees = employees.filter(
@@ -127,14 +127,14 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 employeeByDepartment[dept.name] = deptEmployees.length;
             }
 
-            // 4. Leave Status (Pie)
+            
             const leaveStatusCounts = {
                 Pending: allLeaves.filter((l) => l.status === "Pending").length,
                 Approved: allLeaves.filter((l) => l.status === "Approved").length,
                 Rejected: allLeaves.filter((l) => l.status === "Rejected").length,
             };
 
-            // 5. Meeting Types (Bar)
+            
             const meetingTypeCounts = {
                 "Daily Standup": allMeetings.filter(
                     (m) =>
@@ -162,7 +162,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 }).length,
             };
 
-            // 6. Company Activity Timeline (Line) - Last 6 months
+            
             const currentDate = new Date();
             const monthNames = [
                 "Jan",
@@ -189,7 +189,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                 );
                 last6Months.push(monthNames[date.getMonth()]);
 
-                // Count projects created in this month
+                
                 const monthProjects = projects.filter((p) => {
                     if (!p.createdAt && !p.startDate) return false;
                     const projectDate = new Date(p.createdAt || p.startDate!);
@@ -199,7 +199,7 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                     );
                 }).length;
 
-                // Count meetings in this month
+                
                 const monthMeetings = allMeetings.filter((m) => {
                     if (!m.createdAt) return false;
                     const meetingDate = new Date(m.createdAt);
@@ -209,11 +209,11 @@ export class GetCompanyAnalyticsUseCase implements IGetCompanyAnalyticsUseCase {
                     );
                 }).length;
 
-                // Combined activity score
+                
                 activityCounts.push(monthProjects * 3 + monthMeetings);
             }
 
-            // Build response
+            
             const analytics: CompanyAnalyticsDTO = {
                 stats: {
                     totalEmployees,

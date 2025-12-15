@@ -103,7 +103,7 @@ export class AuthenticationController {
         .json({ message: Messages.OTP_SENT, time: otpExpiresAt });
     } catch (error) {
       console.error("Registration error:", error);
-      throw error; // Re-throw to be caught by error middleware
+      throw error; 
     }
   };
 

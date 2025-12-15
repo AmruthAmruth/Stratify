@@ -1,4 +1,4 @@
-// application/useCases/meeting/GenerateMeetingTokenUseCase.ts
+
 import { IMeetingRepository } from "../../../domain/repositories/IMeetingRepository";
 import { ZegoTokenService } from "../../../infrastructure/services/zego/ZegoTokenService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";

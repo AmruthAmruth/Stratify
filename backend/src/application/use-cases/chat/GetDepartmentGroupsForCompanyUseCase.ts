@@ -4,6 +4,7 @@ import { IDepartmentRepository } from "../../../domain/repositories/IDepartmentR
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
+import { Messages } from '../../../shared/constants/messages';
 
 export class GetDepartmentGroupsForCompanyUseCase implements IGetDepartmentGroupsForCompanyUseCase {
     constructor(
@@ -15,35 +16,35 @@ export class GetDepartmentGroupsForCompanyUseCase implements IGetDepartmentGroup
     ) { }
 
     async execute(userId: string): Promise<GroupWithMembers[]> {
-        // 1. Get user's company
+        
         const company = await this.companyRepository.findById(userId);
         if (!company) {
-            throw new Error("Company not found");
+            throw new Error(Messages.COMPANY_NOT_FOUND);
         }
 
-        // 2. Get all departments for this company
+        
         const departments = await this.departmentRepository.findDepartmentsByCompanyId(company.id!);
 
-        // 3. For each department, get or create a group
+        
         const groupsWithMembers: GroupWithMembers[] = [];
 
         for (const department of departments) {
-            // Check if group exists for this department
+            
             let group = await this.groupRepository.findByDepartmentId(department.id!);
 
-            // Get department members (manager + employees + company owner)
+            
             const members: string[] = [];
             const memberInfos: MemberInfo[] = [];
 
-            // Add company owner first (so they can send messages)
+            
             members.push(userId);
             memberInfos.push({
                 id: userId,
                 name: company.name,
-                role: "manager" // Display as manager in UI
+                role: "manager" 
             });
 
-            // Add manager if assigned
+            
             if (department.managerId) {
                 const manager = await this.managerRepository.findById(department.managerId);
                 if (manager) {
@@ -56,7 +57,7 @@ export class GetDepartmentGroupsForCompanyUseCase implements IGetDepartmentGroup
                 }
             }
 
-            // Add all employees in this department
+            
             const employees = await this.employeeRepository.findByDepartmentId(department.id!);
             for (const employee of employees) {
                 members.push(employee.id!);
@@ -67,7 +68,7 @@ export class GetDepartmentGroupsForCompanyUseCase implements IGetDepartmentGroup
                 });
             }
 
-            // Create group if it doesn't exist
+            
             if (!group && members.length > 0) {
                 group = await this.groupRepository.createDepartmentGroup(
                     department.name,
@@ -75,16 +76,16 @@ export class GetDepartmentGroupsForCompanyUseCase implements IGetDepartmentGroup
                     department.id!
                 );
             } else if (group) {
-                // Update group members to include company if not already present
+                
                 if (!group.members.includes(userId)) {
                     const updatedMembers = [userId, ...group.members];
-                    // Update the group with new members
+                    
                     await this.groupRepository.updateMembers(group.id, updatedMembers);
                     group.members = updatedMembers;
                 }
             }
 
-            // Only add groups with members
+            
             if (group && memberInfos.length > 0) {
                 groupsWithMembers.push({
                     id: group.id,

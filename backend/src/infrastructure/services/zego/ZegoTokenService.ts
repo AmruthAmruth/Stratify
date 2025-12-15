@@ -1,4 +1,4 @@
-// infrastructure/services/zego/ZegoTokenService.ts
+
 import { generateToken04 } from "./tokenGenerator/token04";
 
 export class ZegoTokenService {
@@ -8,13 +8,13 @@ export class ZegoTokenService {
   ) {}
 
   generate(roomId: string, userId: string, userName: string): string {
-    const effectiveTimeInSeconds = 3600; // 1 hour
+    const effectiveTimeInSeconds = 3600; 
 
     const payload = JSON.stringify({
       room_id: roomId,
       privilege: {
-        1: 1, // Login privilege
-        2: 1, // Publish privilege
+        1: 1, 
+        2: 1, 
       },
       user_name: userName,
     });

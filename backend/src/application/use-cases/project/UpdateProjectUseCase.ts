@@ -109,7 +109,7 @@ export class UpdateProjectUseCase implements IUpdateProjectUseCase {
       companyId,
       projectDTO.teamMemberIds ?? existingProject.teamMemberIds,
       existingProject.createdAt,
-      new Date(), // updatedAt
+      new Date(), 
     );
 
     return await this._projectRepo.update(updatedProject);

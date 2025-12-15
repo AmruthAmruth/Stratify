@@ -190,7 +190,7 @@ export class GroupChatController {
             return;
         }
 
-        // Verify user is a member of the group
+        
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
             res.status(StatusCodes.NOT_FOUND).json({ message: Messages.GROUP_NOT_FOUND });

@@ -42,14 +42,14 @@ export class GroupMessageRepository implements IGroupMessageRepository {
     const query: { groupId: string; createdAt?: { $gt: Date } } = { groupId };
     if (after) query.createdAt = { $gt: after };
 
-    // Get messages with sender names using aggregation
+    
     const messages = await GroupMessageModel.aggregate([
       { $match: query },
       { $sort: { createdAt: 1 } },
       { $limit: limit },
       {
         $lookup: {
-          from: "employees", // MongoDB collection name for employees
+          from: "employees", 
           let: { senderIdStr: "$senderId" },
           pipeline: [
             {

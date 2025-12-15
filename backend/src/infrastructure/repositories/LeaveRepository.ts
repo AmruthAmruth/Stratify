@@ -194,4 +194,16 @@ export class LeaveRepository implements ILeaveRepository {
   }
 
 
+async findLeaveOfEmployee(employeeId:string,startDate:Date,endDate:Date):Promise<boolean>{
+  const leave = await LeaveModel.find({employeeId,$or:[{startDate:{$gte:startDate},endDate:{$lte:endDate}}]})
+    if(leave){
+      return true
+    }else{
+      return false;
+    }
+}
+
+
+
+
 }

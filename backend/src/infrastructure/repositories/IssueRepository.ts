@@ -104,7 +104,7 @@ export class IssueRepository implements IIssueRepository {
       const objectId = new mongoose.Types.ObjectId(userId);
       console.log(`[IssueRepository] Converted to ObjectId: ${objectId}`);
 
-      // Use aggregation to populate project name and subtasks
+      
       const results = await IssueModel.aggregate([
         {
           $match: { assignedTo: objectId }
@@ -119,8 +119,8 @@ export class IssueRepository implements IIssueRepository {
         },
         {
           $match: {
-            sprintId: { $ne: null },  // Exclude backlog issues (no sprint assigned)
-            'sprint.status': 'Active'  // Only include issues from active sprints
+            sprintId: { $ne: null },  
+            'sprint.status': 'Active'  
           }
         },
         {
@@ -168,14 +168,14 @@ export class IssueRepository implements IIssueRepository {
           $project: {
             project: 0,
             subtasks: 0,
-            sprint: 0  // Remove sprint data from final output
+            sprint: 0  
           }
         }
       ]);
 
       console.log(`[IssueRepository] Found ${results.length} issues with project names and subtasks`);
 
-      // Map the aggregation results to the expected format
+      
       return results.map(doc => ({
         id: doc._id.toString(),
         heading: doc.heading,
@@ -199,4 +199,16 @@ export class IssueRepository implements IIssueRepository {
       throw error;
     }
   }
+
+
+
+   async countPoints(employeeId:string,sprintId:string):Promise<number>{
+    const issues= await IssueModel.find({assignedTo:employeeId,sprintId})
+    const totalPoint= issues.reduce((acc,cur)=>cur.size+acc,0);
+    return totalPoint
+   }
+
+
+
+
 }

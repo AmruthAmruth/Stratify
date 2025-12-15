@@ -36,7 +36,7 @@ export class MeetingController {
 
   joinMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
     const { roomId } = req.params;
-    const userId = req.userId; // Get userId from auth middleware
+    const userId = req.userId; 
     const meeting = await this._joinMeetingUseCase.execute(roomId, userId!);
     res.status(StatusCodes.OK).json(meeting)
   }

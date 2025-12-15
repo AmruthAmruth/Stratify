@@ -15,7 +15,7 @@ export class UpdateCompanyProfileUseCase implements IUpdateCompanyProfileUseCase
             throw new AppError(Messages.COMPANY_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Update fields
+        
         if (data.name) company.name = data.name;
         if (data.phone) company.phone = data.phone;
         if (data.industry) company.industry = data.industry;

@@ -1,5 +1,5 @@
 import { Department } from "../../domain/entities/Department";
-import { Employee } from "../../domain/entities/Employee"; // ✅ needed for team members
+import { Employee } from "../../domain/entities/Employee"; 
 import { CreateDepartmentDTO } from "../dto/departments/CreateDepartmentDTO";
 import { DepartmentDetails } from "../dto/departments/CompanyDepartmentsDTO";
 import { DepartmentDetailsDTO, TeamMemberDTO } from "../dto/departments/DepartmentDetailsDTO";

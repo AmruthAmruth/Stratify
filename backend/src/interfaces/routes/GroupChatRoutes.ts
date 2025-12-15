@@ -7,14 +7,13 @@ import { chatMediaUpload } from "../../infrastructure/services/CloudinaryService
 const groupChatRouter = express.Router();
 const controller = GroupChatDI();
 
-// Create a new group
 groupChatRouter.post(
     "/create",
     authMiddleware(["manager", "company", "employee"]), 
     asyncHandler(controller.createGroup)
 );
  
-// Send a message to a group
+
 groupChatRouter.post(
     "/send",
     authMiddleware(["manager", "company", "employee"]),
@@ -22,42 +21,42 @@ groupChatRouter.post(
     asyncHandler(controller.sendGroupMessage)
 );
 
-// Get messages for a specific group
+
 groupChatRouter.get(
     "/:groupId/messages",
     authMiddleware(["manager", "company", "employee"]),
     asyncHandler(controller.getGroupMessages)
 );
 
-// Get department groups for company (auto-created per department)
+
 groupChatRouter.get(
     "/department-groups",
     authMiddleware(["company"]),
     asyncHandler(controller.getDepartmentGroupsForCompany)
 );
 
-// Get my department group for manager/employee
+
 groupChatRouter.get(
     "/my-department-group",
     authMiddleware(["manager", "employee"]),
     asyncHandler(controller.getMyDepartmentGroup)
 );
 
-// Get all groups for the authenticated user
+
 groupChatRouter.get(
     "/my-groups",
     authMiddleware(["manager", "company", "employee"]),
     asyncHandler(controller.getGroupsForUser)
 );
 
-// Add a member to a group
+
 groupChatRouter.post(
     "/:groupId/members",
     authMiddleware(["manager", "company", "employee"]),
     asyncHandler(controller.addMemberToGroup)
 );
 
-// Remove a member from a group
+
 groupChatRouter.delete(
     "/:groupId/members/:memberId",
     authMiddleware(["manager", "company", "employee"]),

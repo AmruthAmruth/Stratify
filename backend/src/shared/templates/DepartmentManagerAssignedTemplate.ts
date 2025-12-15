@@ -2,7 +2,7 @@ export const departmentManagerAssignedTemplate = (
   managerName: string,
   departmentName: string,
   companyName: string,
-  year: number = new Date().getFullYear(), // default value
+  year: number = new Date().getFullYear(), 
 ): string => {
   return `
 <!DOCTYPE html>

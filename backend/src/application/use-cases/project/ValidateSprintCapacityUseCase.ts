@@ -20,13 +20,13 @@ export class ValidateSprintCapacityUseCase implements IValidateSprintCapacityUse
     ) { }
 
     async execute(sprintId: string): Promise<SprintValidationDTO> {
-        // 1. Validate sprint exists
+        
         const sprint = await this._sprintRepo.findById(sprintId);
         if (!sprint) {
             throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // 2. Get project and team members
+        
         const project = await this._projectRepo.findById(sprint.projectId);
         if (!project) {
             throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
@@ -43,23 +43,23 @@ export class ValidateSprintCapacityUseCase implements IValidateSprintCapacityUse
             };
         }
 
-        // 3. Calculate total working days in sprint
+        
         const totalWorkingDays = DateUtils.calculateWorkingDays(
             sprint.startDate,
             sprint.endDate
         );
 
-        // 4. Get all issues in this sprint
+        
         const sprintIssues = await this._issueRepo.findBySprintId(sprintId);
 
-        // 5. Get all approved leaves for team members in sprint date range
+        
         const allLeaves = await this._leaveRepo.findApprovedLeavesByEmployeesInRange(
             teamMemberIds,
             sprint.startDate,
             sprint.endDate
         );
 
-        // 6. Calculate capacity and requirements for each employee
+        
         const overcommittedEmployees: OvercommittedEmployee[] = [];
         let totalRequiredHours = 0;
         let totalAvailableHours = 0;
@@ -68,10 +68,10 @@ export class ValidateSprintCapacityUseCase implements IValidateSprintCapacityUse
             const employee = await this._employeeRepo.findById(employeeId);
             if (!employee) continue;
 
-            // Calculate employee's total sprint hours (excluding weekends)
+            
             const employeeTotalHours = totalWorkingDays * 8;
 
-            // Calculate employee's leave hours
+            
             const employeeLeaves = allLeaves.filter(leave => leave.employeeId === employeeId);
             const leaveDays = DateUtils.countLeaveDays(
                 employeeLeaves.map(leave => ({
@@ -83,17 +83,17 @@ export class ValidateSprintCapacityUseCase implements IValidateSprintCapacityUse
             );
             const leaveHours = leaveDays * 8;
 
-            // Calculate employee's available hours
+            
             const availableHours = employeeTotalHours - leaveHours;
 
-            // Calculate employee's assigned hours
+            
             const assignedIssues = sprintIssues.filter(issue => issue.assignedTo === employeeId);
             const requiredHours = assignedIssues.reduce((sum, issue) => sum + issue.estimatedHours, 0);
 
             totalRequiredHours += requiredHours;
             totalAvailableHours += availableHours;
 
-            // Check if employee is overcommitted
+            
             if (requiredHours > availableHours) {
                 overcommittedEmployees.push({
                     employeeId: employee.id!,
@@ -105,7 +105,7 @@ export class ValidateSprintCapacityUseCase implements IValidateSprintCapacityUse
             }
         }
 
-        // 7. Generate warnings
+        
         const warnings: string[] = [];
 
         if (overcommittedEmployees.length > 0) {

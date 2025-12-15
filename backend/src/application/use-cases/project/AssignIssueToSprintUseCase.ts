@@ -25,7 +25,7 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
       );
     }
 
-    // Assign issue to sprint
+    
     issue.sprintId = sprintId;
 
     const updatedIssue = await this._issueRepo.update(issue);

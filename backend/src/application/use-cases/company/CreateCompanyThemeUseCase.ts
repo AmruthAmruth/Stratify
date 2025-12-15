@@ -16,21 +16,21 @@ export class CreateCompanyThemeUseCase implements ICreateCompanyThemeUseCase {
 
     async execute(companyId: string, imageBuffer: Buffer): Promise<CompanyTheme> {
         try {
-            // Extract colors from the logo image
+            
             const { backgroundColor, textColor } =
                 await this.colorExtractionService.extractColorsFromImage(imageBuffer);
 
-            // Check if theme already exists for this company
+            
             const existingTheme = await this.companyThemeRepository.findByCompanyId(companyId);
 
             if (existingTheme) {
-                // Update existing theme
+                
                 existingTheme.backgroundColor = backgroundColor;
                 existingTheme.textColor = textColor;
                 return await this.companyThemeRepository.update(existingTheme);
             }
 
-            // Create new theme
+            
             const theme = new CompanyTheme(
                 undefined,
                 companyId,
