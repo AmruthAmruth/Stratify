@@ -177,4 +177,10 @@ projectRouter.get(
   asyncHandler(controller.getIssueForEmployee)
 );
 
+projectRouter.get(
+  "/manager/issues",
+  authMiddleware(["manager"]),
+  asyncHandler(controller.getIssuesForManager)
+);
+
 export default projectRouter;

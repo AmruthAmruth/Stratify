@@ -71,6 +71,7 @@ export const PROJECT_ROUTES = {
   Add_EMPLOYEE_TO_PROJECT: '/api/project/add-employee-project',
   ASSINGED_STORY_TO_SPRINT: '/api/project/assign-to-sprint',
   GET_ISSSUES_FOR_EMPLOYEE: '/api/project/issues',
+  GET_ISSUES_FOR_MANAGER: '/api/project/manager/issues',
   UPDATE_ISSUE: '/api/project/update-issue',
   DELETE_ISSUE: (issueId: string) => `/api/project/delete-issue/${issueId}`,
   REMOVE_EMPLOYEE_TO_PROJECT: '/api/project/remove-emp'

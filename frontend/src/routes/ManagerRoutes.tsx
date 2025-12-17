@@ -11,6 +11,7 @@ import MyTeam from "@/features/manager/MyTeam";
 import type { RouteObject } from "react-router-dom";
 import Dashboard from "@/features/manager/Dashboard";
 import Profile from "@/features/manager/Profile";
+import Tasks from "@/features/manager/Tasks";
 
 const managerRoutes: RouteObject[] = [
   {
@@ -32,6 +33,10 @@ const managerRoutes: RouteObject[] = [
   {
     path: "projects",
     element: <Projects />,
+  },
+  {
+    path: "tasks",
+    element: <Tasks />,
   },
   {
     path: "project/:id",

@@ -21,6 +21,7 @@ import { IDeleteProjectUseCase } from "../../application/interfaces/project/IDel
 import { IUpdateProjectUseCase } from "../../application/interfaces/project/IUpdateProjectUseCase";
 import { IGetEmployeeNotInProjectUseCase } from "../../application/interfaces/project/IGetEmployeeNotInProjectUseCase";
 import { IGetIssueForEmployeeUseCase } from "../../application/interfaces/project/IGetIssueForEmployeeUseCase";
+import { IGetIssuesForManagerUseCase } from "../../application/interfaces/project/IGetIssuesForManagerUseCase";
 import { IRemoveEmployeeInProjectUseCase } from "../../application/interfaces/project/IRemoveEmployeeINProjectUseCase";
 import { IUpdateIssueUseCase } from "../../application/interfaces/project/IUpdateIssueUseCase";
 import { IDeleteIssueUseCase } from "../../application/interfaces/project/IDeleteIssueUseCase";
@@ -56,7 +57,8 @@ export class ProjectController {
     private _deleteSprintUseCase: IDeleteSprintUseCase,
     private _updateSubTaskUseCase: IUpdateSubTaskUseCase,
     private _deleteSubTaskUseCase: IDeleteSubTaskUseCase,
-    private _getProjectsForEmployeeUseCase: IGetProjectsForEmployeeUseCase
+    private _getProjectsForEmployeeUseCase: IGetProjectsForEmployeeUseCase,
+    private _getIssuesForManagerUseCase: IGetIssuesForManagerUseCase
   ) { }
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -287,5 +289,10 @@ export class ProjectController {
     res.status(StatusCodes.OK).json({ message: Messages.SUBTASK_DELETED });
   };
 
+  getIssuesForManager = async (req: AuthRequest, res: Response): Promise<void> => {
+    const managerId = req.userId;
+    const response = await this._getIssuesForManagerUseCase.execute(managerId!);
+    res.status(StatusCodes.OK).json(response);
+  };
 
 }

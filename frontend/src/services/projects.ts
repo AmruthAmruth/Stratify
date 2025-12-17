@@ -90,6 +90,9 @@ export const addEmployeeProject = (data: Record<string, unknown>) =>
 export const getIssuesForEmployee = () =>
   handleRequest(api.get(PROJECT_ROUTES.GET_ISSSUES_FOR_EMPLOYEE));
 
+export const getIssuesForManager = () =>
+  handleRequest(api.get(PROJECT_ROUTES.GET_ISSUES_FOR_MANAGER));
+
 
 export const updateIssue = (data: Record<string, unknown>) => {
   return handleRequest(api.put(PROJECT_ROUTES.UPDATE_ISSUE, data))

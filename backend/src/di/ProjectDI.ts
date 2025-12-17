@@ -29,6 +29,7 @@ import { DeleteProjectUseCase } from "../application/use-cases/project/DeletePro
 import { UpdateProjectUseCase } from "../application/use-cases/project/UpdateProjectUseCase";
 import { GetEmployeeNotInProjectUseCase } from "../application/use-cases/project/GetEmployeeNotInProjectUseCase";
 import { GetIssueForEmployeeUseCase } from "../application/use-cases/project/GetIssueForEmployeeUseCase";
+import { GetIssuesForManagerUseCase } from "../application/use-cases/project/GetIssuesForManagerUseCase";
 import { RemoveEmployeeInProjectUseCase } from "../application/use-cases/project/RemoveEmployeeInProjectUseCase";
 import { UpdateIssueUseCase } from "../application/use-cases/project/UpdateIssueUseCase";
 import { DeleteIssueUseCase } from "../application/use-cases/project/DeleteIssueUseCase";
@@ -164,6 +165,12 @@ export const projectDI = () => {
   const updateSubTaskUseCase = new UpdateSubTaskUseCase(subTaskRepo);
   const deleteSubTaskUseCase = new DeleteSubTaskUseCase(subTaskRepo);
 
+  const getIssuesForManagerUseCase = new GetIssuesForManagerUseCase(
+    issueRepo,
+    managerRepo,
+    projectRepo
+  );
+
   return new ProjectController(
     createProjectUseCase,
     createUserStoryUseCase,
@@ -190,6 +197,7 @@ export const projectDI = () => {
     deleteSprintUseCase,
     updateSubTaskUseCase,
     deleteSubTaskUseCase,
-    getProjectsForEmployeeUseCase
+    getProjectsForEmployeeUseCase,
+    getIssuesForManagerUseCase
   );
 };

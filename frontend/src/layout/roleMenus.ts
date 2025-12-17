@@ -26,6 +26,7 @@ export const roleMenus: Record<UserRole, MenuItem[]> = {
   ],
   manager: [
     { label: "Dashboard", path: "/dashboard", icon: "LayoutDashboard" },
+    { label: "My Tasks", path: "/tasks", icon: "ClipboardList" },
     { label: "My Team", path: "/team", icon: "Users" },
     { label: "Projects", path: "/projects", icon: "FolderTree" },
     { label: "Meetings", path: "/meetings", icon: "Video" },
