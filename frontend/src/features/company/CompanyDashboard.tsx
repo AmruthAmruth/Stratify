@@ -42,7 +42,7 @@ const CompanyDashboard = () => {
   const fetchDashboardData = async () => {
     try {
       setLoading(true);
-      const data: any = await getCompanyAnalytics();
+      const data = await getCompanyAnalytics();
       console.log('Company Analytics Response:', data);
       setAnalytics(data);
     } catch (error) {

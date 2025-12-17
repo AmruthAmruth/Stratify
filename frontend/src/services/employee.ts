@@ -1,7 +1,13 @@
 import axiosInstance from './axiosInstance';
 import { EMPLOYEE_ROUTES } from '@/constants/routes';
+import type { UserProfile } from '@/types/types';
 
-export const getEmployeeDashboardStats = async () => {
+export const getEmployeeDashboardStats = async (): Promise<{
+    totalTasks: number;
+    completedTasks: number;
+    pendingTasks: number;
+    upcomingMeetings: number;
+}> => {
     try {
         const response = await axiosInstance.get('/api/employee/dashboard-stats');
         return response.data;
@@ -11,7 +17,7 @@ export const getEmployeeDashboardStats = async () => {
     }
 };
 
-export const getEmployeeProfile = async () => {
+export const getEmployeeProfile = async (): Promise<UserProfile> => {
     try {
         const response = await axiosInstance.get(EMPLOYEE_ROUTES.GET_PROFILE);
         return response.data;
@@ -21,7 +27,7 @@ export const getEmployeeProfile = async () => {
     }
 };
 
-export const updateEmployeeProfile = async (data: Record<string, unknown>) => {
+export const updateEmployeeProfile = async (data: Record<string, unknown>): Promise<UserProfile> => {
     try {
         const response = await axiosInstance.put(EMPLOYEE_ROUTES.UPDATE_PROFILE, data);
         return response.data;

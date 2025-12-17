@@ -1,6 +1,7 @@
 import { GROUP_CHAT_ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
 import api from "./axiosInstance";
+import type { GroupChat, GroupChatMessage } from "@/types/types";
 
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
     try {
@@ -14,10 +15,10 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
     }
 };
 
-export const createGroup = (data: { name: string; members: string[] }) =>
+export const createGroup = (data: { name: string; members: string[] }): Promise<GroupChat> =>
     handleRequest(api.post(GROUP_CHAT_ROUTES.CREATE_GROUP, data));
 
-export const sendGroupMessage = (data: { groupId: string; message: string; senderName?: string }, file?: File) => {
+export const sendGroupMessage = (data: { groupId: string; message: string; senderName?: string }, file?: File): Promise<GroupChatMessage> => {
     if (file) {
         // Use FormData for file upload
         const formData = new FormData();
@@ -39,24 +40,24 @@ export const sendGroupMessage = (data: { groupId: string; message: string; sende
     return handleRequest(api.post(GROUP_CHAT_ROUTES.SEND_MESSAGE, data));
 };
 
-export const getGroupMessages = (groupId: string, limit?: number, after?: string) =>
+export const getGroupMessages = (groupId: string, limit?: number, after?: string): Promise<GroupChatMessage[]> =>
     handleRequest(
         api.get(GROUP_CHAT_ROUTES.GET_MESSAGES(groupId), {
             params: { limit, after },
         })
     );
 
-export const getMyGroups = () =>
+export const getMyGroups = (): Promise<GroupChat[]> =>
     handleRequest(api.get(GROUP_CHAT_ROUTES.MY_GROUPS));
 
-export const addMemberToGroup = (groupId: string, data: { newMemberId: string; newMemberName: string }) =>
+export const addMemberToGroup = (groupId: string, data: { newMemberId: string; newMemberName: string }): Promise<{ success: boolean; message: string }> =>
     handleRequest(api.post(GROUP_CHAT_ROUTES.ADD_MEMBER(groupId), data));
 
-export const removeMemberFromGroup = (groupId: string, memberId: string, data: { memberName: string }) =>
+export const removeMemberFromGroup = (groupId: string, memberId: string, data: { memberName: string }): Promise<{ success: boolean; message: string }> =>
     handleRequest(api.delete(GROUP_CHAT_ROUTES.REMOVE_MEMBER(groupId, memberId), { data }));
 
-export const getDepartmentGroups = () =>
+export const getDepartmentGroups = (): Promise<GroupChat[]> =>
     handleRequest(api.get(GROUP_CHAT_ROUTES.DEPARTMENT_GROUPS));
 
-export const getMyDepartmentGroup = () =>
+export const getMyDepartmentGroup = (): Promise<GroupChat> =>
     handleRequest(api.get(GROUP_CHAT_ROUTES.MY_DEPARTMENT_GROUP));

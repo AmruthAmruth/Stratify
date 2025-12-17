@@ -1,6 +1,7 @@
 import api from "./axiosInstance";
 import { AUTH_ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
+import type { UserProfile } from "@/types/types";
 
 
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
@@ -15,10 +16,10 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
   }
 };
 
-export const superAdminLogin = (data: { email: string; password: string }) =>
+export const superAdminLogin = (data: { email: string; password: string }): Promise<{ accessToken: string }> =>
   handleRequest(api.post(AUTH_ROUTES.SUPER_ADMIN_LOGIN, data));
 
-export const companyRegistration = (data: Record<string, unknown>) => {
+export const companyRegistration = (data: Record<string, unknown>): Promise<{ message: string; companyId: string }> => {
   const formData = new FormData();
   for (const key in data) {
     if (key === "profileImage" && data.profileImage instanceof File) {
@@ -34,31 +35,31 @@ export const companyRegistration = (data: Record<string, unknown>) => {
   );
 };
 
-export const verifyOTP = (data: { otp: string; email: string }) =>
+export const verifyOTP = (data: { otp: string; email: string }): Promise<{ message: string; success: boolean }> =>
   handleRequest(api.post(AUTH_ROUTES.COMPANY_VERIFY_OTP, data));
 
-export const companyLogin = (data: { email: string; password: string }) =>
+export const companyLogin = (data: { email: string; password: string }): Promise<{ accessToken: string }> =>
   handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGIN, data));
 
-export const logout = () => handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGOUT));
+export const logout = (): Promise<{ message: string }> => handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGOUT));
 
-export const resendOTP = (email: string) =>
+export const resendOTP = (email: string): Promise<{ message: string }> =>
   handleRequest(api.post(AUTH_ROUTES.RESEND_OTP, { email }));
 
-export const forgotPassword = (email: string) =>
+export const forgotPassword = (email: string): Promise<{ message: string; time: string }> =>
   handleRequest(api.post(AUTH_ROUTES.FORGOT_PASSWORD, { email }));
 
-export const forgotPasswordVerifyOTP = (data: { email: string; otp: string }) =>
+export const forgotPasswordVerifyOTP = (data: { email: string; otp: string }): Promise<{ message: string; success: boolean }> =>
   handleRequest(api.post(AUTH_ROUTES.FORGOT_PASSWORD_VERIFY_OTP, data));
 
-export const updatePassword = (data: { email: string; password: string }) =>
+export const updatePassword = (data: { email: string; password: string }): Promise<{ message: string }> =>
   handleRequest(api.post(AUTH_ROUTES.RESET_PASSWORD, data));
 
 // Manager Profile APIs
-export const getManagerProfile = () =>
+export const getManagerProfile = (): Promise<UserProfile> =>
   handleRequest(api.get('/api/manager/profile'));
 
-export const updateManagerProfile = (data: Record<string, unknown>) => {
+export const updateManagerProfile = (data: Record<string, unknown>): Promise<UserProfile> => {
   const formData = new FormData();
   for (const key in data) {
     if (key === 'profileImage' && data.profileImage instanceof File) {
@@ -74,5 +75,5 @@ export const updateManagerProfile = (data: Record<string, unknown>) => {
   );
 };
 
-export const changeManagerPassword = (data: { currentPassword: string; newPassword: string }) =>
+export const changeManagerPassword = (data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> =>
   handleRequest(api.post('/api/manager/change-password', data));

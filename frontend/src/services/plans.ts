@@ -1,6 +1,7 @@
 import api from "./axiosInstance";
 import { SUPER_ADMIN_ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
+import type { SubscriptionPlan } from "@/types/types";
 
 const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
   try {
@@ -15,14 +16,19 @@ const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
 };
 
 
-export const createSubscription = (data: Record<string, unknown>) =>
+export const createSubscription = (data: Record<string, unknown>): Promise<SubscriptionPlan> =>
   handleRequest(api.post(SUPER_ADMIN_ROUTES.CREATE_PLAN, data));
 
-export const updateSubscription = (data: Record<string, unknown>) =>
+export const updateSubscription = (data: Record<string, unknown>): Promise<SubscriptionPlan> =>
   handleRequest(api.put(SUPER_ADMIN_ROUTES.UPDATE_PLAN, data));
 
-export const deleteSubscription = (plan: string) =>
+export const deleteSubscription = (plan: string): Promise<{ success: boolean; message: string }> =>
   handleRequest(api.delete(SUPER_ADMIN_ROUTES.DELETE_PLAN, { data: { plan } }));
 
-export const getSuperAdminDashboardStats = () =>
+export const getSuperAdminDashboardStats = (): Promise<{
+  totalCompanies: number;
+  activeCompanies: number;
+  pendingApprovals: number;
+  totalRevenue: number;
+}> =>
   handleRequest(api.get(SUPER_ADMIN_ROUTES.DASHBOARD_STATS));

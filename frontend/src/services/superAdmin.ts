@@ -1,6 +1,7 @@
 import axiosInstance from './axiosInstance';
+import type { SuperAdminProfile } from '@/types/types';
 
-export const getSuperAdminProfile = async () => {
+export const getSuperAdminProfile = async (): Promise<SuperAdminProfile> => {
     try {
         const response = await axiosInstance.get('/api/super-admin/profile');
         return response.data;
@@ -10,7 +11,7 @@ export const getSuperAdminProfile = async () => {
     }
 };
 
-export const updateSuperAdminProfile = async (data: FormData) => {
+export const updateSuperAdminProfile = async (data: FormData): Promise<SuperAdminProfile> => {
     try {
         const response = await axiosInstance.put('/api/super-admin/profile', data, {
             headers: {
