@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useDroppable } from "@dnd-kit/core";
 import { SprintDTO, UserRole, EmployeeDTO } from "./types";
 import IssueList from "./IssueList";
 import ReusableChart from "../Chart/ReusableChart";
@@ -69,10 +70,27 @@ const SprintList: React.FC<Props> = ({ sprints, role, employees }) => {
           actualData[totalDays - 1] = remainingPoints;
         }
 
+        // Droppable zone for Active and Planned sprints
+        const canDrop = sprint.status === "Active" || sprint.status === "Planned";
+        const { setNodeRef, isOver } = useDroppable({
+          id: sprint.id,
+          disabled: !canDrop,
+          data: { sprint },
+        });
+
         return (
           <div
             key={sprint.id}
-            className="relative group rounded-2xl border border-[#dfdcef]/50 shadow-lg bg-gradient-to-br from-[#fbfbfb] via-white to-[#dfdcef]/10 overflow-hidden transition-all duration-300"
+            ref={canDrop ? setNodeRef : undefined}
+            className={`
+              relative group rounded-2xl border shadow-lg 
+              bg-gradient-to-br from-[#fbfbfb] via-white to-[#dfdcef]/10 
+              overflow-hidden transition-all duration-300
+              ${isOver && canDrop
+                ? "border-[#009063] border-4 ring-4 ring-[#009063]/20 bg-[#e6f7f0]/30"
+                : "border-[#dfdcef]/50"
+              }
+            `}
           >
             {/* Header (compact drill) */}
             <button
@@ -113,6 +131,20 @@ const SprintList: React.FC<Props> = ({ sprints, role, employees }) => {
                 </svg>
               </div>
             </button>
+
+            {/* Drop Indicator Overlay */}
+            {isOver && canDrop && (
+              <div className="absolute inset-0 bg-[#009063]/10 pointer-events-none flex items-center justify-center z-10">
+                <div className="bg-white/95 border-2 border-[#009063] rounded-xl px-6 py-3 shadow-xl">
+                  <div className="flex items-center gap-2 text-[#009063] font-semibold">
+                    <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                      <path fillRule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clipRule="evenodd" />
+                    </svg>
+                    <span>Drop issue here</span>
+                  </div>
+                </div>
+              </div>
+            )}
 
             {/* Expanded content */}
             {isExpanded && (

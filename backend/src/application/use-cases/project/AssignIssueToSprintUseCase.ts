@@ -18,14 +18,8 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
     const sprint = await this._sprintRepo.findById(sprintId);
     if (!sprint) throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
 
-    if (!issue.assignedTo) {
-      throw new AppError(
-        Messages.ISSUE_NO_ASSIGNEE,
-        StatusCodes.BAD_REQUEST,
-      );
-    }
-
-    
+    // Allow assigning issues to sprints without employee assignment
+    // Employees can be assigned later by the manager
     issue.sprintId = sprintId;
 
     const updatedIssue = await this._issueRepo.update(issue);

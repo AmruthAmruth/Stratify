@@ -63,3 +63,6 @@ export interface ProjectDTO {
   plannedSprintCount: number;
   completedSprintCount: number;
 }
+
+// Alias for backward compatibility
+export type ProjectDetailsDTO = ProjectDTO;

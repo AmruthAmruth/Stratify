@@ -159,6 +159,14 @@ export const updateIssueFields = [
     label: "Priority",
     type: "select",
     options: ["Low", "Medium", "High"],
+  },
+
+  {
+    name: "assignedTo",
+    label: "Assign to Employee",
+    type: "select",
+    placeholder: "Select employee (optional)",
+    options: [], // Will be populated dynamically with project employees
   }
 ];
 

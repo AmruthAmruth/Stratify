@@ -8,6 +8,7 @@ import Modal from "../ModalFrom/ModalForm";
 import AuthForm from "../Forms/DynamicForm";
 import ConfirmDialog from "../ConfirmDialog/ConfirmDialog";
 import { enqueueSnackbar } from "notistack";
+import DraggableIssueCard from "./DraggableIssueCard";
 
 interface Props {
   issues: IssueDTO[];
@@ -59,6 +60,25 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
     setCurrentIssue(issue);
     setUpdateIssueModalOpen(true);
   }, []);
+
+  // Get dynamic update issue fields with employee options
+  const getDynamicUpdateIssueFields = useCallback(() => {
+    return updateIssueFields.map((field) => {
+      if (field.name === "assignedTo" && employees) {
+        return {
+          ...field,
+          options: [
+            { label: "Unassigned", value: "" },
+            ...employees.map((emp) => ({
+              label: `${emp.name} — ${emp.position}`,
+              value: emp.id,
+            })),
+          ],
+        };
+      }
+      return field;
+    });
+  }, [employees]);
 
   const closeSubtaskModal = useCallback(() => {
     formRef.current?.resetForm?.();
@@ -113,9 +133,15 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
       try {
         const payload = { ...values, id: currentIssue.id };
         await updateIssue(payload);
+
+        // Wait for refresh to complete before closing modal
+        // This ensures the UI updates with the new employee assignment
+        if (onRefresh) {
+          await onRefresh();
+        }
+
         enqueueSnackbar("Issue updated successfully!", { variant: "success" });
         closeUpdateIssueModal();
-        if (onRefresh) await onRefresh();
       } catch (err: any) {
         enqueueSnackbar(err.message || "Failed to update issue", { variant: "error" });
       }
@@ -222,7 +248,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
           <AuthForm
             key={currentIssue.id}
             ref={updateFormRef}
-            fields={updateIssueFields}
+            fields={getDynamicUpdateIssueFields()}
             validationSchema={updateIssueSchema}
             initialValues={currentIssue}
             onSubmit={handleUpdateIssue}
@@ -251,6 +277,58 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
         const isExpanded = expandedIssues.has(issue.id);
         const showSubtasks = canEdit || hasSubtasks(issue);
 
+        // For backlog items (no sprintId), show draggable cards if user can edit
+        if (canEdit && !issue.sprintId) {
+          return (
+            <div key={issue.id} className="mb-4">
+              <DraggableIssueCard
+                issue={issue}
+                employees={employees}
+                onClick={() => toggleExpanded(issue.id)}
+              />
+
+              {/* Expanded view for editing */}
+              {isExpanded && (
+                <div className="mt-2 bg-white rounded-xl border-2 border-[#009063]/20 p-6 space-y-4">
+                  <div>
+                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                      Description
+                    </p>
+                    <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
+                  </div>
+
+                  {issue.acceptanceCriteria && (
+                    <div>
+                      <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                        Acceptance Criteria
+                      </p>
+                      <p className="text-base text-[#3b3b3b]/80">{issue.acceptanceCriteria}</p>
+                    </div>
+                  )}
+
+                  {/* Action Buttons */}
+                  <div className="flex gap-3 pt-2 border-t">
+                    <button
+                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-gray-50"
+                      onClick={() => openUpdateIssueModal(issue)}
+                    >
+                      Edit Issue
+                    </button>
+
+                    <button
+                      className="flex-1 text-sm bg-red-500 text-white rounded-lg px-4 py-2.5 hover:bg-red-600"
+                      onClick={() => handleDeleteIssue(issue.id)}
+                    >
+                      Delete Issue
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          );
+        }
+
+        // For sprint issues or non-editable view, show traditional expandable cards
         return (
           <section
             key={issue.id}
@@ -295,7 +373,21 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
             {/* Expanded content */}
             {isExpanded && (
               <div className="p-8 space-y-6 border-t">
-                <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
+                <div>
+                  <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                    Description
+                  </p>
+                  <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
+                </div>
+
+                {issue.acceptanceCriteria && (
+                  <div>
+                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                      Acceptance Criteria
+                    </p>
+                    <p className="text-base text-[#3b3b3b]/80">{issue.acceptanceCriteria}</p>
+                  </div>
+                )}
 
                 {/* Details */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
@@ -313,7 +405,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                     <span className="text-xs text-[#3b3b3b]/60">Size</span>
                     <span className="block text-sm font-medium">{issue.size}</span>
                   </div>
-                 
+
                   <div className="bg-white border rounded-lg p-3">
                     <span className="text-xs text-[#3b3b3b]/60">Assigned To</span>
                     <span className="block text-sm font-medium">

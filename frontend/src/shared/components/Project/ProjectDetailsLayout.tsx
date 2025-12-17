@@ -1,5 +1,6 @@
 // components/project/ProjectDetailsLayout.tsx
 import React, { useState, useRef, useEffect } from "react";
+import { DndContext, DragEndEvent } from "@dnd-kit/core";
 import { ProjectDetailsDTO, UserRole } from "./types";
 import ProjectHeader from "./ProjectHeader";
 import ProjectSection from "./ProjectSection";
@@ -173,6 +174,34 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
     } catch (err: any) {
       console.error(err);
       enqueueSnackbar(err.message || "Failed to assign issue", { variant: "error" });
+    }
+  };
+
+  // ────────────────────────────────
+  // DRAG AND DROP HANDLER
+  // ────────────────────────────────
+  const handleDragEnd = async (event: DragEndEvent) => {
+    const { active, over } = event;
+
+    if (!over) return;
+
+    const issueId = active.id as string;
+    const sprintId = over.id as string;
+
+    try {
+      // Assign issue to sprint without requiring employee
+      await assignIssueToSprint({
+        issueId,
+        sprintId,
+      });
+
+      enqueueSnackbar("Issue assigned to sprint successfully!", { variant: "success" });
+
+      // Refresh project data to show updated state
+      if (onRefresh) await onRefresh();
+    } catch (err: any) {
+      console.error(err);
+      enqueueSnackbar(err.message || "Failed to assign issue to sprint", { variant: "error" });
     }
   };
 
@@ -392,47 +421,50 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* SECTIONS */}
       {/* ──────────────────────────────── */}
 
-      {/* BACKLOG */}
-      <ProjectSection title="Backlog Items">
-        {canManage && (
-          <button
-            onClick={() => setIsIssueModalOpen(true)}
-            className="bg-blue-600 text-white px-4 py-2 rounded mb-3"
-            aria-label="Create new issue"
-          >
-            + Create Issue
-          </button>
-        )}
-        <IssueList issues={backlog} role={role} onRefresh={onRefresh} employees={assignedEmployees} />
-      </ProjectSection>
+      {/* Wrap backlog and sprints in DndContext for drag-and-drop */}
+      <DndContext onDragEnd={handleDragEnd}>
+        {/* BACKLOG */}
+        <ProjectSection title="Backlog Items">
+          {canManage && (
+            <button
+              onClick={() => setIsIssueModalOpen(true)}
+              className="bg-blue-600 text-white px-4 py-2 rounded mb-3"
+              aria-label="Create new issue"
+            >
+              + Create Issue
+            </button>
+          )}
+          <IssueList issues={backlog} role={role} onRefresh={onRefresh} employees={assignedEmployees} />
+        </ProjectSection>
 
-      {/* ACTIVE SPRINTS */}
-      <ProjectSection title="Active Sprints">
-        {canManage && (
-          <button
-            onClick={() => setIsSprintModalOpen(true)}
-            className="bg-green-600 text-white px-4 py-2 rounded mb-3"
-            aria-label="Create new sprint"
-          >
-            + Create Sprint
-          </button>
-        )}
-        <SprintList sprints={activeSprints} role={role} employees={assignedEmployees} />
-      </ProjectSection>
+        {/* ACTIVE SPRINTS */}
+        <ProjectSection title="Active Sprints">
+          {canManage && (
+            <button
+              onClick={() => setIsSprintModalOpen(true)}
+              className="bg-green-600 text-white px-4 py-2 rounded mb-3"
+              aria-label="Create new sprint"
+            >
+              + Create Sprint
+            </button>
+          )}
+          <SprintList sprints={activeSprints} role={role} employees={assignedEmployees} />
+        </ProjectSection>
 
-      {/* PLANNED */}
-      <ProjectSection title="Planned Sprints">
-        <SprintList sprints={plannedSprints} role={role} employees={assignedEmployees} />
-      </ProjectSection>
+        {/* PLANNED */}
+        <ProjectSection title="Planned Sprints">
+          <SprintList sprints={plannedSprints} role={role} employees={assignedEmployees} />
+        </ProjectSection>
+      </DndContext>
 
-      {/* COMPLETED */}
+      {/* COMPLETED (outside DndContext - no drag-drop needed) */}
       <ProjectSection title="Completed Sprints">
         <SprintList sprints={completedSprints} role={role} employees={assignedEmployees} />
       </ProjectSection>
 
       {/* EMPLOYEES */}
       <ProjectSection title="Assigned Employees">
-        <EmployeeList employees={assignedEmployees} projectId={project.id} onRemove={(emp) => console.log("Remove employee:", emp)} />
+        <EmployeeList employees={assignedEmployees} projectId={project.id} />
       </ProjectSection>
     </div>
   );

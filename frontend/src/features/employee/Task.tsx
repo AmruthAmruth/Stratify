@@ -293,9 +293,24 @@ const Task = () => {
                         <h3 className="text-xl font-bold text-[#2f2f2f] mb-2">
                           {issue.heading}
                         </h3>
-                        <p className="text-sm text-[#3b3b3b]/80 mb-3">
-                          {issue.description}
-                        </p>
+                        <div className="mb-3">
+                          <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                            Description
+                          </p>
+                          <p className="text-sm text-[#3b3b3b]/80">
+                            {issue.description}
+                          </p>
+                        </div>
+                        {issue.acceptanceCriteria && (
+                          <div className="mb-3">
+                            <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                              Acceptance Criteria
+                            </p>
+                            <p className="text-sm text-[#3b3b3b]/80">
+                              {issue.acceptanceCriteria}
+                            </p>
+                          </div>
+                        )}
                         <div className="flex flex-wrap gap-2">
                           <span
                             className={`px-3 py-1 rounded-full text-xs font-medium border ${getPriorityColor(
