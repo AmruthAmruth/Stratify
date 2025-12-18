@@ -35,8 +35,9 @@ const ForgotPassword: React.FC = () => {
         enqueueSnackbar("Verification successful! OTP sent to your email.", { variant: "success" });
         navigate("/forgot-otp");
       })
-      .catch((err: any) => {
-        enqueueSnackbar(err?.message || "Verification failed", { variant: "error" });
+      .catch((err) => {
+        const error = err as { message?: string };
+        enqueueSnackbar(error?.message || "Verification failed", { variant: "error" });
       })
       .finally(() => setIsLoading(false));
   };

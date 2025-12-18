@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import api from "./axiosInstance";
 import { MEETING_ROUTES } from "@/constants/routes";
+import type { Meeting } from "@/types/types";
 
 
 const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
@@ -17,17 +18,17 @@ const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
 
 
 
-export const createMeeting = (title: string) =>
-  handleRequest(api.post(MEETING_ROUTES.CREATE_MEETING, {title}));
+export const createMeeting = (title: string): Promise<Meeting> =>
+  handleRequest(api.post(MEETING_ROUTES.CREATE_MEETING, { title }));
 
 
-export const getMeetingsByCreator = () => handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_BY_CREATOR));
-export const generateToken = (roomId: string, userName: string) => handleRequest(api.post(MEETING_ROUTES.GENARATE_TOKEN, { roomId, userName }));
-export const joinMeeting = (roomId: string) =>
+export const getMeetingsByCreator = (): Promise<Meeting[]> => handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_BY_CREATOR));
+export const generateToken = (roomId: string, userName: string): Promise<{ token: string }> => handleRequest(api.post(MEETING_ROUTES.GENARATE_TOKEN, { roomId, userName }));
+export const joinMeeting = (roomId: string): Promise<{ success: boolean; message: string }> =>
   handleRequest(api.post(`${MEETING_ROUTES.JOING_MEETING}/${roomId}`));
 
-export const closeMeeting = (roomId: string) =>
+export const closeMeeting = (roomId: string): Promise<{ success: boolean; message: string }> =>
   handleRequest(api.post(`${MEETING_ROUTES.CLOSE_MEETING}/${roomId}`));
 
 
-export const employeeMeetings=()=>handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_FOR_EMPLOYEE))
+export const employeeMeetings = (): Promise<Meeting[]> => handleRequest(api.get(MEETING_ROUTES.GET_MEETINGS_FOR_EMPLOYEE))

@@ -31,8 +31,9 @@ const ResetPassword: React.FC = () => {
       });
       localStorage.removeItem("email");
       navigate("/login");
-    } catch (err: any) {
-      enqueueSnackbar(err?.message || "Failed to reset password", {
+    } catch (err) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error?.message || "Failed to reset password", {
         variant: "error",
       });
     }

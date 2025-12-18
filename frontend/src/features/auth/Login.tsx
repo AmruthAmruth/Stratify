@@ -55,18 +55,19 @@ const Login: React.FC = () => {
 
         navigate("/dashboard");
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error("Login failed:", err);
 
-      const errorMessage = err?.message || "Login failed";
+      const error = err as { message?: string; details?: { companyId?: string } };
+      const errorMessage = error?.message || "Login failed";
 
       // check if it's the subscription error
       if ( // replace with real logged-in name
         errorMessage ===
         "Your subscription is not active. Please subscribe to continue." &&
-        err?.details?.companyId
+        error?.details?.companyId
       ) {
-        const companyId = err.details.companyId; // ✅ safe access
+        const companyId = error.details.companyId; // ✅ safe access
         enqueueSnackbar("Redirecting to subscription purchase page...", {
           variant: "info",
         });

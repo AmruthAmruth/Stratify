@@ -1,6 +1,7 @@
 import { CHAT_ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
 import api from "./axiosInstance";
+import type { ChatMessage, ChatTeamMember } from "@/types/types";
 
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
   try {
@@ -14,7 +15,7 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
   }
 };
 
-export const sendTheMessage = (data: Record<string, unknown>, file?: File) => {
+export const sendTheMessage = (data: Record<string, unknown>, file?: File): Promise<ChatMessage> => {
   if (file) {
     // Use FormData for file upload
     const formData = new FormData();
@@ -33,14 +34,14 @@ export const sendTheMessage = (data: Record<string, unknown>, file?: File) => {
   return handleRequest(api.post(CHAT_ROUTES.SENT_MESSAGE, data));
 };
 
-export const getTeamMemeberList = () => handleRequest(api.get(CHAT_ROUTES.TEAM_MEMEBER_LIST))
+export const getTeamMemeberList = (): Promise<ChatTeamMember[]> => handleRequest(api.get(CHAT_ROUTES.TEAM_MEMEBER_LIST))
 
-export const getChatHistory = (receiverId: string) => handleRequest(api.get(`${CHAT_ROUTES.CHAT_HISTROY_ROUTES}/${receiverId}`))
+export const getChatHistory = (receiverId: string): Promise<ChatMessage[]> => handleRequest(api.get(`${CHAT_ROUTES.CHAT_HISTROY_ROUTES}/${receiverId}`))
 
-export const markMessagesAsRead = (senderId: string) =>
+export const markMessagesAsRead = (senderId: string): Promise<{ success: boolean }> =>
   handleRequest(api.put(`${CHAT_ROUTES.MARK_AS_READ}/${senderId}`));
 
-export const getUnreadCounts = () =>
+export const getUnreadCounts = (): Promise<Record<string, number>> =>
   handleRequest<Record<string, number>>(api.get(CHAT_ROUTES.UNREAD_COUNTS));
 
 
