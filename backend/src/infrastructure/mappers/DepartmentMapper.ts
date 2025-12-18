@@ -1,5 +1,6 @@
 import { Department } from "../../domain/entities/Department";
 import { DepartmentDocument } from "../models/DepartmentModel";
+import { Types } from "mongoose";
 
 export class DepartmentMapper {
   static toEntity(doc: DepartmentDocument): Department {
@@ -12,6 +13,15 @@ export class DepartmentMapper {
       doc.createdAt,
       doc.updatedAt,
     );
+  }
+
+  static toDocument(entity: Department): Partial<DepartmentDocument> {
+    return {
+      name: entity.name,
+      description: entity.description,
+      companyId: new Types.ObjectId(entity.companyId),
+      managerId: entity.managerId ? new Types.ObjectId(entity.managerId) : undefined,
+    };
   }
 
   static toEntities(docs: DepartmentDocument[]): Department[] {

@@ -1,5 +1,6 @@
 import { Leave } from "../../domain/entities/Leave";
 import { LeaveDocument } from "../models/LeaveModel";
+import { Types } from "mongoose";
 
 export class LeaveMapper {
   static toEntity(doc: LeaveDocument): Leave {
@@ -18,6 +19,21 @@ export class LeaveMapper {
       doc.companyId.toString(),
       doc.rejectedReason,
     );
+  }
+
+  static toDocument(entity: Leave): Partial<LeaveDocument> {
+    return {
+      employeeId: new Types.ObjectId(entity.employeeId),
+      startDate: entity.startDate,
+      endDate: entity.endDate,
+      type: entity.type,
+      status: entity.status,
+      reason: entity.reason,
+      month: entity.month,
+      departmentId: new Types.ObjectId(entity.departmentId),
+      companyId: new Types.ObjectId(entity.companyId),
+      rejectedReason: entity.rejectedReason,
+    };
   }
 
   static toEntities(docs: LeaveDocument[]): Leave[] {

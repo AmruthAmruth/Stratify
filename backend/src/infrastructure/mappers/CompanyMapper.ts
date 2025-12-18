@@ -24,6 +24,26 @@ export class CompanyMapper {
     );
   }
 
+  static toDocument(entity: Company): Partial<ICompanyDoc> {
+    return {
+      name: entity.name,
+      email: entity.email,
+      phone: entity.phone,
+      industry: entity.industry,
+      description: entity.description,
+      businessRegNo: entity.businessRegNo,
+      address: entity.address,
+      city: entity.city,
+      state: entity.state,
+      country: entity.country,
+      zipcode: entity.zipcode,
+      password: entity.password,
+      status: entity.status,
+      role: entity.role,
+      profileImage: entity.profileImage,
+    };
+  }
+
   static toEntities(docs: ICompanyDoc[]): Company[] {
     return docs.map((d) => this.toEntity(d));
   }

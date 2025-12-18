@@ -1,42 +1,17 @@
-import { Types } from "mongoose";
 import { Manager } from "../../domain/entities/Manager";
 import { IManagerRepository } from "../../domain/repositories/IManagerRepository";
-import { ManagerModel } from "../models/ManagerModel";
+import { ManagerModel, ManagerDocument } from "../models/ManagerModel";
 import { ManagerMapper } from "../mappers/ManagerMapper";
 import { ManagerWithDepartment } from "../../application/interfaces/managers/types";
+import { BaseRepository } from "./BaseRepository";
 
-export class ManagerRepository implements IManagerRepository {
-  async create(manager: Manager): Promise<Manager> {
-    const doc = await ManagerModel.create({
-      name: manager.name,
-      email: manager.email,
-      phone: manager.phone,
-      password: manager.password,
-      role: manager.role,
-      position: manager.position,
-      joiningDate: manager.joiningDate,
-      gender: manager.gender,
-      dob: manager.dob,
-      companyId: new Types.ObjectId(manager.companyId),
-      departmentId: manager.departmentId
-        ? new Types.ObjectId(manager.departmentId)
-        : undefined,
-      profileImage: manager.profileImage,
-    });
-
-    return ManagerMapper.toEntity(doc);
-  }
-
-  async findById(id: string): Promise<Manager | null> {
-    const doc = await ManagerModel.findById(id).exec();
-    if (!doc) return null;
-    return ManagerMapper.toEntity(doc);
+export class ManagerRepository extends BaseRepository<Manager, ManagerDocument> implements IManagerRepository {
+  constructor() {
+    super(ManagerModel, ManagerMapper);
   }
 
   async findByEmail(email: string): Promise<Manager | null> {
-    const doc = await ManagerModel.findOne({ email }).exec();
-    if (!doc) return null;
-    return ManagerMapper.toEntity(doc);
+    return this.findOne({ email });
   }
 
   async updatePassword(email: string, password: string): Promise<void> {
@@ -55,15 +30,14 @@ export class ManagerRepository implements IManagerRepository {
   }
 
   async totalManagerInACompany(companyId: string): Promise<number> {
-    return await ManagerModel.countDocuments({ companyId });
+    return this.count({ companyId });
   }
 
   async findByCompanyId(companyId: string): Promise<Manager[]> {
-    const docs = await ManagerModel.find({ companyId }).exec();
-    return ManagerMapper.toEntities(docs);
+    return this.findMany({ companyId });
   }
 
-  async update(id: string, data: Partial<Manager>): Promise<Manager | null> {
+  async updatePartial(id: string, data: Partial<Manager>): Promise<Manager | null> {
     const updateData: Record<string, unknown> = {};
     if (data.name) updateData.name = data.name;
     if (data.email) updateData.email = data.email;

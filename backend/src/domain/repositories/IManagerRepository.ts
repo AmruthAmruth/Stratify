@@ -11,6 +11,6 @@ export interface IManagerRepository {
   ): Promise<{ id: string; name: string }[]>;
   totalManagerInACompany(companyId: string): Promise<number>;
   findByCompanyId(companyId: string): Promise<Manager[]>;
-  update(id: string, data: Partial<Manager>): Promise<Manager | null>;
+  updatePartial(id: string, data: Partial<Manager>): Promise<Manager | null>;
   findByIdWithDepartment(id: string): Promise<ManagerWithDepartment | null>;
 }

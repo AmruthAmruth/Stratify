@@ -23,7 +23,7 @@ export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase
         if (data.dateOfBirth) updateData.dob = data.dateOfBirth;
         if (data.profileImage) updateData.profileImage = data.profileImage;
 
-        const updatedManager = await this.managerRepository.update(managerId, updateData);
+        const updatedManager = await this.managerRepository.updatePartial(managerId, updateData);
 
         if (!updatedManager) {
             throw new AppError(Messages.MANAGER_UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);

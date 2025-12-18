@@ -1,119 +1,22 @@
 import { ICompanyRepository } from "../../domain/repositories/ICompanyRepository";
 import { Company } from "../../domain/entities/Company";
-import CompanyModel from "../models/CompanyModel";
-import mongoose, { FilterQuery } from "mongoose";
+import CompanyModel, { ICompanyDoc } from "../models/CompanyModel";
+import { FilterQuery } from "mongoose";
 import { PaginatedResult } from "../../domain/common/Pagination";
+import { BaseRepository } from "./BaseRepository";
+import { CompanyMapper } from "../mappers/CompanyMapper";
 
-export class CompanyRepository implements ICompanyRepository {
-  async create(company: Company): Promise<Company> {
-    const doc = await CompanyModel.create({
-      name: company.name,
-      email: company.email,
-      phone: company.phone,
-      industry: company.industry,
-      description: company.description,
-      businessRegNo: company.businessRegNo,
-      address: company.address,
-      city: company.city,
-      state: company.state,
-      country: company.country,
-      zipcode: company.zipcode,
-      password: company.password,
-      status: company.status,
-      profileImage: company.profileImage,
-      role: "company",
-    });
-
-    return new Company(
-      (doc._id as mongoose.Types.ObjectId).toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.industry,
-      doc.description || "",
-      doc.businessRegNo,
-      doc.address,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.zipcode,
-      doc.password,
-      doc.status,
-      "company",
-      doc.profileImage
-    );
+export class CompanyRepository extends BaseRepository<Company, ICompanyDoc> implements ICompanyRepository {
+  constructor() {
+    super(CompanyModel, CompanyMapper);
   }
 
   async findByEmail(email: string): Promise<Company | null> {
-    const doc = await CompanyModel.findOne({ email });
-    if (!doc) return null;
-
-    return new Company(
-      (doc._id as mongoose.Types.ObjectId).toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.industry,
-      doc.description || "",
-      doc.businessRegNo,
-      doc.address,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.zipcode,
-      doc.password,
-      doc.status,
-      "company",
-      doc.profileImage
-    );
+    return this.findOne({ email });
   }
 
   async findByPhone(phone: string): Promise<Company | null> {
-    const doc = await CompanyModel.findOne({ phone });
-    if (!doc) return null;
-
-    return new Company(
-      (doc._id as mongoose.Types.ObjectId).toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.industry,
-      doc.description || "",
-      doc.businessRegNo,
-      doc.address,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.zipcode,
-      doc.password,
-      doc.status,
-      "company",
-      doc.profileImage
-    );
-  }
-
-  async findById(id: string): Promise<Company | null> {
-    const doc = await CompanyModel.findById(id);
-    if (!doc) return null;
-
-    return new Company(
-      (doc._id as mongoose.Types.ObjectId).toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.industry,
-      doc.description || "",
-      doc.businessRegNo,
-      doc.address,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.zipcode,
-      doc.password,
-      doc.status,
-      "company",
-      doc.profileImage
-    );
+    return this.findOne({ phone });
   }
 
   async updatePassword(email: string, password: string): Promise<void> {
@@ -141,27 +44,7 @@ export class CompanyRepository implements ICompanyRepository {
       const data = await CompanyModel.find(filter).sort(sort).limit(pageSize);
 
       return {
-        data: data.map(
-          (doc) =>
-            new Company(
-              (doc._id as mongoose.Types.ObjectId).toString(),
-              doc.name,
-              doc.email,
-              doc.phone,
-              doc.industry,
-              doc.description || "",
-              doc.businessRegNo,
-              doc.address,
-              doc.city,
-              doc.state,
-              doc.country,
-              doc.zipcode,
-              doc.password,
-              doc.status,
-              "company",
-              doc.profileImage
-            )
-        ),
+        data: CompanyMapper.toEntities(data),
         total: data.length,
         page,
         pageSize
@@ -174,27 +57,7 @@ export class CompanyRepository implements ICompanyRepository {
         .limit(pageSize);
 
       return {
-        data: data.map(
-          (doc) =>
-            new Company(
-              (doc._id as mongoose.Types.ObjectId).toString(),
-              doc.name,
-              doc.email,
-              doc.phone,
-              doc.industry,
-              doc.description || "",
-              doc.businessRegNo,
-              doc.address,
-              doc.city,
-              doc.state,
-              doc.country,
-              doc.zipcode,
-              doc.password,
-              doc.status,
-              "company",
-              doc.profileImage
-            )
-        ),
+        data: CompanyMapper.toEntities(data),
         total,
         page,
         pageSize
@@ -215,50 +78,6 @@ export class CompanyRepository implements ICompanyRepository {
       id,
       { status: "rejected" },
       { new: true }
-    );
-  }
-
-  async update(company: Company): Promise<Company> {
-    const doc = await CompanyModel.findByIdAndUpdate(
-      company.id,
-      {
-        name: company.name,
-        email: company.email,
-        phone: company.phone,
-        industry: company.industry,
-        description: company.description,
-        businessRegNo: company.businessRegNo,
-        address: company.address,
-        city: company.city,
-        state: company.state,
-        country: company.country,
-        zipcode: company.zipcode,
-        profileImage: company.profileImage,
-      },
-      { new: true }
-    );
-
-    if (!doc) {
-      throw new Error("Company not found");
-    }
-
-    return new Company(
-      (doc._id as mongoose.Types.ObjectId).toString(),
-      doc.name,
-      doc.email,
-      doc.phone,
-      doc.industry,
-      doc.description || "",
-      doc.businessRegNo,
-      doc.address,
-      doc.city,
-      doc.state,
-      doc.country,
-      doc.zipcode,
-      doc.password,
-      doc.status,
-      "company",
-      doc.profileImage
     );
   }
 }

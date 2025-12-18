@@ -1,40 +1,24 @@
 import { Types } from "mongoose";
 import { Department } from "../../domain/entities/Department";
 import { IDepartmentRepository } from "../../domain/repositories/IDepartmentRepository";
-import { DepartmentModel } from "../models/DepartmentModel";
+import { DepartmentModel, DepartmentDocument } from "../models/DepartmentModel";
 import { DepartmentMapper } from "../mappers/DepartmentMapper";
+import { BaseRepository } from "./BaseRepository";
 
-export class DepartmentRepository implements IDepartmentRepository {
+export class DepartmentRepository extends BaseRepository<Department, DepartmentDocument> implements IDepartmentRepository {
+  constructor() {
+    super(DepartmentModel, DepartmentMapper);
+  }
+
   async findByNameAndCompany(
     name: string,
     companyId: string
   ): Promise<Department | null> {
     const normalizedName = name.toLowerCase().trim();
-    const doc = await DepartmentModel.findOne({
+    return this.findOne({
       companyId,
       normalizedName,
-    }).exec();
-    if (!doc) return null;
-
-    return DepartmentMapper.toEntity(doc);
-  }
-
-  async create(department: Department): Promise<Department> {
-    const created = await new DepartmentModel({
-      name: department.name,
-      description: department.description,
-      companyId: department.companyId,
-      managerId: department.managerId ?? null,
-    }).save();
-
-    return DepartmentMapper.toEntity(created);
-  }
-
-  async findById(id: string): Promise<Department | null> {
-    const doc = await DepartmentModel.findById(id).exec();
-    if (!doc) return null;
-
-    return DepartmentMapper.toEntity(doc);
+    });
   }
 
   async assignManager(departmentId: string, managerId: string): Promise<void> {
@@ -46,8 +30,7 @@ export class DepartmentRepository implements IDepartmentRepository {
   }
 
   async findDepartmentsByCompanyId(companyId: string): Promise<Department[]> {
-    const docs = await DepartmentModel.find({ companyId }).exec();
-    return DepartmentMapper.toEntities(docs);
+    return this.findMany({ companyId });
   }
 
   async getUnassignedDepartments(

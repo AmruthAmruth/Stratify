@@ -1,5 +1,6 @@
 import { Project } from "../../domain/entities/Project";
 import { ProjectDocument } from "../models/ProjectModel";
+import { Types } from "mongoose";
 
 export class ProjectMapper {
   static toEntity(doc: ProjectDocument): Project {
@@ -20,6 +21,23 @@ export class ProjectMapper {
       doc.createdAt,
       doc.updatedAt,
     );
+  }
+
+  static toDocument(entity: Project): Partial<ProjectDocument> {
+    return {
+      name: entity.name,
+      key: entity.key,
+      description: entity.description,
+      startDate: entity.startDate,
+      endDate: entity.endDate,
+      status: entity.status,
+      departmentId: new Types.ObjectId(entity.departmentId),
+      projectLeadId: new Types.ObjectId(entity.projectLeadId),
+      createdBy: new Types.ObjectId(entity.createdBy),
+      createdByModel: entity.createdByModel,
+      companyId: new Types.ObjectId(entity.companyId),
+      teamMemberIds: entity.teamMemberIds?.map((id) => new Types.ObjectId(id)),
+    };
   }
 
   static toEntities(docs: ProjectDocument[]): Project[] {

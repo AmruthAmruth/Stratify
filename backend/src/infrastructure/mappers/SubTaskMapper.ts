@@ -1,5 +1,6 @@
 import { SubTask } from "../../domain/entities/SubTask";
 import { SubTaskDocument } from "../models/SubTaskModel";
+import { Types } from "mongoose";
 
 export class SubTaskMapper {
   static toEntity(doc: SubTaskDocument): SubTask {
@@ -14,6 +15,17 @@ export class SubTaskMapper {
       doc.createdAt,
       doc.updatedAt,
     );
+  }
+
+  static toDocument(entity: SubTask): Partial<SubTaskDocument> {
+    return {
+      issueId: new Types.ObjectId(entity.issueId),
+      heading: entity.heading,
+      description: entity.description,
+      hours: entity.hours,
+      status: entity.status,
+      assignedToId: entity.assignedToId ? new Types.ObjectId(entity.assignedToId) : undefined,
+    };
   }
 
   static toEntities(docs: SubTaskDocument[]): SubTask[] {

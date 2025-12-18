@@ -1,5 +1,6 @@
 import { Backlog } from "../../domain/entities/Backlog";
 import { BacklogDocument } from "../models/BacklogModel";
+import { Types } from "mongoose";
 
 export class BacklogMapper {
   static toEntity(doc: BacklogDocument): Backlog {
@@ -12,6 +13,15 @@ export class BacklogMapper {
       doc.createdAt,
       doc.updatedAt,
     );
+  }
+
+  static toDocument(entity: Backlog): Partial<BacklogDocument> {
+    return {
+      projectId: new Types.ObjectId(entity.projectId),
+      name: entity.name,
+      description: entity.description,
+      createdBy: new Types.ObjectId(entity.createdBy),
+    };
   }
 
   static toEntities(docs: BacklogDocument[]): Backlog[] {
