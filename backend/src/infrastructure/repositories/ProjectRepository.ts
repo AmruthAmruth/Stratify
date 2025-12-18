@@ -90,7 +90,7 @@ export class ProjectRepository extends BaseRepository<Project, ProjectDocument> 
       teamMemberIds: new Types.ObjectId(employeeId),
     });
   }
-
+   
   async findActiveProjects(): Promise<Project[]> {
     const now = new Date();
     return this.findMany({
