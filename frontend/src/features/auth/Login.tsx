@@ -39,21 +39,38 @@ const Login: React.FC = () => {
       enqueueSnackbar("Login successful!", { variant: "success" });
 
       if (data.accessToken) {
-        const decoded: DecodedToken = jwtDecode(data.accessToken);
-        console.log("decoded", decoded);
+        try {
+          const decoded: DecodedToken = jwtDecode(data.accessToken);
+          console.log("decoded", decoded);
 
-        dispatch(
-          setCredentials({
-            accessToken: data.accessToken,
-            role: decoded.role,
-            userId: decoded.id,
-            name: decoded.name,
-          })
-        );
+          // Validate token payload
+          if (!decoded.id || !decoded.role || !decoded.exp) {
+            throw new Error("Invalid token payload - missing required fields");
+          }
 
-        connectSocket(decoded.id)
+          // Check if token is already expired
+          if (decoded.exp * 1000 < Date.now()) {
+            throw new Error("Received expired token");
+          }
 
-        navigate("/dashboard");
+          dispatch(
+            setCredentials({
+              accessToken: data.accessToken,
+              role: decoded.role,
+              userId: decoded.id,
+              name: decoded.name,
+            })
+          );
+
+          connectSocket(decoded.id);
+
+          navigate("/dashboard");
+        } catch (decodeError) {
+          console.error("Token decode/validation error:", decodeError);
+          enqueueSnackbar("Authentication error. Please try again.", { variant: "error" });
+        }
+      } else {
+        enqueueSnackbar("No access token received", { variant: "error" });
       }
     } catch (err) {
       console.error("Login failed:", err);

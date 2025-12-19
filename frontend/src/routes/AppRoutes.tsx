@@ -19,23 +19,24 @@ const roleRoutesMap: Record<UserRole, RouteObject[]> = {
   company: adminRoutes,
   manager: managerRoutes,
   employee: teamRoutes,
-  general: generalRoutes
+  general: []
 };
 
 const AppRoutes: React.FC = () => {
   const userRole = useSelector((state: RootState) => state.auth.role) ?? "general";
-
 
   const roleRoutes = roleRoutesMap[userRole as UserRole] ?? [];
 
   let routes: RouteObject[];
 
   if (userRole === "general") {
+    // Unauthenticated users - only show general routes
     routes = [
-      ...roleRoutes,
+      ...generalRoutes,
       { path: "*", element: <h1>404 - Not Found</h1> }
     ];
   } else {
+    // Authenticated users - show both role-specific routes AND general routes
     routes = [
       {
         path: "/",
@@ -45,6 +46,8 @@ const AppRoutes: React.FC = () => {
           { index: true, element: <Navigate to="dashboard" replace /> }
         ]
       },
+      // Include general routes so authenticated users can still access login, register, etc.
+      ...generalRoutes,
       { path: "*", element: <h1>404 - Not Found</h1> }
     ];
   }

@@ -14,64 +14,61 @@ import SubscriptionPlans from "@/features/general/SubscriptionPurchase";
 import ProjectDetails from "@/features/general/ProjectDetails";
 const generalRoutes: RouteObject[] = [
   {
-    path: "",
+    path: "/",
     element: <Homepage />,
   },
   {
-    path: "login",
+    path: "/login",
     element: <LoginForm />,
   },
   {
-    path: "super-admin-login",
+    path: "/super-admin-login",
     element: <SuperAdminLogin />,
   },
   {
-    path: "register",
+    path: "/register",
     element: <RegisterForm />,
   },
   {
-    path: "verify-otp",
+    path: "/verify-otp",
     element: <OTPPage context="register" />,
   },
   {
-    path: "forgot-otp",
+    path: "/forgot-otp",
     element: <OTPPage context="forgotPassword" />,
   },
   {
-    path: "forgot-password",
+    path: "/forgot-password",
     element: <ForgotPassword />,
   },
   {
-    path: "reset-password",
+    path: "/reset-password",
     element: <ResetPassword />,
   },
   {
-    path: "about",
+    path: "/about",
     element: <AboutPage />,
   },
   {
-    path: "contact",
+    path: "/contact",
     element: <ContactPage />,
   },
   {
-    path: "company-profile",
+    path: "/company-profile",
     element: <CompanyProfilePage />,
   },
   {
-    path: "company-pending-approval",
+    path: "/company-pending-approval",
     element: <CompanyPendingApproval />,
   },
   {
-    path: "subscription-purchase/:companyId",
+    path: "/subscription-purchase/:companyId",
     element: <SubscriptionPlans />,
   },
   {
-    path: "project-details",
+    path: "/project-details",
     element: <ProjectDetails />,
   },
-
-
-
 ];
 
 export default generalRoutes;
