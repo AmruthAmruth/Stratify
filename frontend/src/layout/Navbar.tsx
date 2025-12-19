@@ -7,10 +7,14 @@ import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
 import { RootState } from '@/store';
 
-const Navbar = ({ role, userId }: { role: string; userId: string }) => {
+const Navbar = () => {
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
+
+  // Get auth data from Redux
+  const name = useSelector((state: RootState) => state.auth.name);
+  const userId = useSelector((state: RootState) => state.auth.userId);
 
   // Just read from Redux - NotificationListener handles socket updates
   const notifications = useSelector((state: RootState) => state.notification.notifications);
@@ -34,7 +38,7 @@ const Navbar = ({ role, userId }: { role: string; userId: string }) => {
   return (
     <header className="w-full bg-white shadow px-6 py-6 flex justify-between items-center border-b border-[#dfdcef]">
       <h1 className="text-xl font-semibold text-gray-900">
-        Welcome, <span className="text-[#009063]">{role}</span>
+        Welcome, <span className="text-[#009063]">{name || 'User'}</span>
       </h1>
 
       <div className="flex items-center space-x-6">

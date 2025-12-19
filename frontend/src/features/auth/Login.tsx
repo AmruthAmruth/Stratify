@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import AuthForm from "../../shared/components/Forms/DynamicForm";
 import { loginFields } from "../../shared/components/Forms/formFields";
 import { loginSchema } from "@/shared/utils/validations";
@@ -6,11 +6,12 @@ import { Navbar } from "../general/Navbar";
 import { Users } from "lucide-react";
 import { companyLogin } from "@/services/authApi";
 import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "@/store/slices/authSlice";
 import { useSnackbar } from "notistack";
 import { connectSocket } from "@/shared/socket/socket";
+import { RootState } from "@/store";
 
 
 const Login: React.FC = () => {
@@ -29,6 +30,16 @@ const Login: React.FC = () => {
   const dispatch = useDispatch()
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
+
+  // Check if user is already logged in
+  const isAuthenticated = useSelector((state: RootState) => state.auth.accessToken);
+
+  // Redirect to dashboard if already logged in
+  useEffect(() => {
+    if (isAuthenticated) {
+      navigate("/dashboard", { replace: true });
+    }
+  }, [isAuthenticated, navigate]);
 
   const handleLogin = async (values: LoginValues) => {
     console.log("Login Data:", values);
