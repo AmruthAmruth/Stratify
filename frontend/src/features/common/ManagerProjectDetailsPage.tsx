@@ -80,10 +80,7 @@ interface ProjectData {
   activeSprintCount?: number;
 }
 
-interface StoryOption {
-  value: string;
-  label: string;
-}
+
 
 const ManagerProjectDetailsPage = () => {
   const [project, setProject] = useState<ProjectData | null>(null);
@@ -195,14 +192,7 @@ const ManagerProjectDetailsPage = () => {
     }
     : undefined;
 
-  const freeBacklogOptions = useMemo(() => {
-    return (project?.backlog || [])
-      .filter((issue) => !issue.sprintId)
-      .map((issue) => ({
-        value: issue.id || issue._id,
-        label: `${issue.title} (${issue.type})`,
-      }));
-  }, [project?.backlog]);
+
 
 
 

@@ -228,7 +228,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         </span>
       );
     }
-    return (row as any)[key];
+    return (row as unknown as Record<string, unknown>)[key] as React.ReactNode;
   };
 
   const handleBackToDepartments = () => {

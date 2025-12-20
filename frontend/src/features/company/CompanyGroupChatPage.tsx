@@ -23,18 +23,18 @@ const CompanyGroupChatPage = () => {
     const [chatLoading, setChatLoading] = useState(false);
     const [departmentGroups, setDepartmentGroups] = useState<DepartmentGroup[]>([]);
     const [selectedGroup, setSelectedGroup] = useState<DepartmentGroup | null>(null);
-    const [groupMessages, setGroupMessagesState] = useState<{ [key: string]: any[] }>({});
+    const [groupMessages, setGroupMessagesState] = useState<{ [key: string]: unknown[] }>({});
 
     const dispatch = useDispatch();
 
     // Fetch department groups on mount
     useEffect(() => {
         getDepartmentGroups()
-            .then((data: any) => {
+            .then((data: unknown) => {
                 if (data && Array.isArray(data)) {
-                    setDepartmentGroups(data);
+                    setDepartmentGroups(data as DepartmentGroup[]);
                     // Also set in Redux for compatibility with GroupChatBox
-                    const formattedGroups = data.map((group: DepartmentGroup) => ({
+                    const formattedGroups = (data as DepartmentGroup[]).map((group: DepartmentGroup) => ({
                         id: group.id,
                         name: group.name,
                         members: group.members.map(m => m.id),
@@ -65,11 +65,11 @@ const CompanyGroupChatPage = () => {
 
         setChatLoading(true);
         getGroupMessages(selectedGroup.id)
-            .then((messages: any) => {
-                dispatch(setGroupMessages({ groupId: selectedGroup.id, messages: messages || [] }));
+            .then((messages: unknown) => {
+                dispatch(setGroupMessages({ groupId: selectedGroup.id, messages: (messages as any[]) || [] }));
                 setGroupMessagesState(prev => ({
                     ...prev,
-                    [selectedGroup.id]: messages || []
+                    [selectedGroup.id]: (messages as unknown[]) || []
                 }));
             })
             .catch((err) => console.error("Failed to load group messages:", err))
@@ -108,8 +108,8 @@ const CompanyGroupChatPage = () => {
                                 key={group.id}
                                 onClick={() => handleSelectGroup(group)}
                                 className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${selectedGroup?.id === group.id
-                                        ? "bg-[#009063]/10 shadow-sm"
-                                        : ""
+                                    ? "bg-[#009063]/10 shadow-sm"
+                                    : ""
                                     }`}
                             >
                                 {/* Department Avatar */}

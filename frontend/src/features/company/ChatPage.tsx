@@ -20,7 +20,7 @@ const ChatPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-    const [chatHistory, setChatHistory] = useState<any[]>([]);
+    const [chatHistory, setChatHistory] = useState<unknown[]>([]);
     const [loading, setLoading] = useState(true);
     const [chatLoading, setChatLoading] = useState(false);
     const userId = useSelector((state: RootState) => state.auth.userId);
@@ -58,10 +58,16 @@ const ChatPage = () => {
         const socket = getSocket();
         if (!socket) return;
 
-        const handleReceiveMessage = (msg: any) => {
+        interface Message {
+            senderId: string;
+            message: string;
+            createdAt: string;
+        }
+
+        const handleReceiveMessage = (msg: Message) => {
             if (msg.senderId !== userId) {
                 setTeamMembers((prev) => {
-                    let updated = [...prev];
+                    const updated = [...prev];
                     const index = updated.findIndex((m) => m.id === msg.senderId);
                     if (index !== -1) {
                         const member = { ...updated[index] };
