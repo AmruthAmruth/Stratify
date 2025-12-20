@@ -37,9 +37,9 @@ const EmployeeProjects: React.FC = () => {
             const data = await getEmployeeProjects();
             console.log("Employee projects data received:", data);
             setProjectsData(data);
-        } catch (err: any) {
+        } catch (err: unknown) {
             console.error("Error fetching employee projects:", err);
-            enqueueSnackbar(err?.message || "Failed to load projects", {
+            enqueueSnackbar((err as Error)?.message || "Failed to load projects", {
                 variant: "error",
             });
         } finally {
@@ -90,8 +90,8 @@ const EmployeeProjects: React.FC = () => {
 
     const sortedProjects = [...filteredProjects].sort((a, b) => {
         if (!sortBy) return 0;
-        let aValue = a[sortBy as keyof Project] ?? "";
-        let bValue = b[sortBy as keyof Project] ?? "";
+        const aValue = a[sortBy as keyof Project] ?? "";
+        const bValue = b[sortBy as keyof Project] ?? "";
 
         if (typeof aValue === "string" && typeof bValue === "string") {
             return sortOrder === "asc"

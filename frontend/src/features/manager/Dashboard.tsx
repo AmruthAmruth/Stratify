@@ -24,6 +24,24 @@ interface ChartData {
   departmentActivity: { labels: string[]; data: number[] };
 }
 
+interface Project {
+  _id?: string;
+  id?: string;
+  status?: string;
+  createdAt?: string;
+  startDate?: string;
+  employees?: Array<{ _id?: string; id?: string }>;
+  issues?: Array<{ status?: string }>;
+}
+
+interface Leave {
+  status: string;
+}
+
+interface Meeting {
+  title?: string;
+}
+
 const Dashboard = () => {
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<DashboardStats>({
@@ -53,19 +71,19 @@ const Dashboard = () => {
       setLoading(true);
 
       // Fetch projects data
-      const projectsResponse: any = await getDepartmentProjects();
+      const projectsResponse = await getDepartmentProjects() as unknown as { projects?: Project[] };
       const projects = projectsResponse.projects || [];
       console.log('Projects Response:', projectsResponse);
       console.log('Projects Array:', projects);
 
       // Fetch leaves data
-      const leavesResponse: any = await getDepartmentLeave();
+      const leavesResponse = await getDepartmentLeave() as unknown as { leaves?: Leave[] };
       const leaves = leavesResponse.leaves || [];
       console.log('Leaves Response:', leavesResponse);
       console.log('Leaves Array:', leaves);
 
       // Fetch meetings data
-      const meetingsResponse: any = await getMeetingsByCreator();
+      const meetingsResponse = await getMeetingsByCreator() as unknown as Meeting[] | { meetings?: Meeting[] };
       // Meetings API returns array directly, not { meetings: [...] }
       const meetings = Array.isArray(meetingsResponse) ? meetingsResponse : (meetingsResponse.meetings || []);
       console.log('Meetings Response:', meetingsResponse);
@@ -74,20 +92,20 @@ const Dashboard = () => {
       // Calculate statistics
       const totalProjects = projects.length;
       const activeProjects = projects.filter(
-        (p: any) => {
+        (p) => {
           const status = (p.status || '').toLowerCase();
           return status === 'active' || status === 'in-progress' || status === 'in progress';
         }
       ).length;
       const completedProjects = projects.filter(
-        (p: any) => (p.status || '').toLowerCase() === 'completed'
+        (p) => (p.status || '').toLowerCase() === 'completed'
       ).length;
 
       // Get unique employees from projects
       const employeeSet = new Set();
-      projects.forEach((project: any) => {
+      projects.forEach((project) => {
         if (project.employees && Array.isArray(project.employees)) {
-          project.employees.forEach((emp: any) => {
+          project.employees.forEach((emp) => {
             employeeSet.add(emp._id || emp.id);
           });
         }
@@ -95,19 +113,19 @@ const Dashboard = () => {
       const totalEmployees = employeeSet.size;
 
       const pendingLeaves = leaves.filter(
-        (l: any) => l.status === 'pending'
+        (l) => l.status === 'pending'
       ).length;
 
       // Active employees - employees assigned to active projects
       const activeEmployeeSet = new Set();
       projects
-        .filter((p: any) => {
+        .filter((p) => {
           const status = (p.status || '').toLowerCase();
           return status === 'active' || status === 'in-progress' || status === 'in progress';
         })
-        .forEach((project: any) => {
+        .forEach((project) => {
           if (project.employees && Array.isArray(project.employees)) {
-            project.employees.forEach((emp: any) => {
+            project.employees.forEach((emp) => {
               activeEmployeeSet.add(emp._id || emp.id);
             });
           }
@@ -127,32 +145,32 @@ const Dashboard = () => {
 
       // 1. Project Status (Doughnut)
       const projectStatusCounts = {
-        Active: projects.filter((p: any) => {
+        Active: projects.filter((p) => {
           const status = (p.status || '').toLowerCase();
           return status === 'active' || status === 'in-progress' || status === 'in progress';
         }).length,
-        Completed: projects.filter((p: any) => (p.status || '').toLowerCase() === 'completed').length,
-        Planned: projects.filter((p: any) => {
+        Completed: projects.filter((p) => (p.status || '').toLowerCase() === 'completed').length,
+        Planned: projects.filter((p) => {
           const status = (p.status || '').toLowerCase();
           return status === 'pending' || status === 'planning' || status === 'planned';
         }).length,
-        OnHold: projects.filter((p: any) => (p.status || '').toLowerCase() === 'on-hold').length,
+        OnHold: projects.filter((p) => (p.status || '').toLowerCase() === 'on-hold').length,
       };
 
       // 2. Leave Status (Pie)
       const leaveStatusCounts = {
-        Pending: leaves.filter((l: any) => l.status === 'pending').length,
-        Approved: leaves.filter((l: any) => l.status === 'approved').length,
-        Rejected: leaves.filter((l: any) => l.status === 'rejected').length,
+        Pending: leaves.filter((l) => l.status === 'pending').length,
+        Approved: leaves.filter((l) => l.status === 'approved').length,
+        Rejected: leaves.filter((l) => l.status === 'rejected').length,
       };
 
       // 3. Meeting Types (Bar)
       const meetingTypeCounts = {
-        'Daily Standup': meetings.filter((m: any) => m.title?.toLowerCase().includes('daily') || m.title?.toLowerCase().includes('standup')).length,
-        'Planning': meetings.filter((m: any) => m.title?.toLowerCase().includes('planning')).length,
-        'Review': meetings.filter((m: any) => m.title?.toLowerCase().includes('review')).length,
-        'Retrospective': meetings.filter((m: any) => m.title?.toLowerCase().includes('retro')).length,
-        'Other': meetings.filter((m: any) => {
+        'Daily Standup': meetings.filter((m) => m.title?.toLowerCase().includes('daily') || m.title?.toLowerCase().includes('standup')).length,
+        'Planning': meetings.filter((m) => m.title?.toLowerCase().includes('planning')).length,
+        'Review': meetings.filter((m) => m.title?.toLowerCase().includes('review')).length,
+        'Retrospective': meetings.filter((m) => m.title?.toLowerCase().includes('retro')).length,
+        'Other': meetings.filter((m) => {
           const title = m.title?.toLowerCase() || '';
           return !title.includes('daily') && !title.includes('standup') &&
             !title.includes('planning') && !title.includes('review') &&
@@ -172,9 +190,10 @@ const Dashboard = () => {
 
         // Count projects created in this month
         // Note: If createdAt is not available, we'll show total projects in current month
-        const monthProjects = projects.filter((p: any) => {
-          if (!p.createdAt && !p.startDate) return false;
-          const projectDate = new Date(p.createdAt || p.startDate);
+        const monthProjects = projects.filter((p) => {
+          const dateStr = p.createdAt || p.startDate;
+          if (!dateStr) return false;
+          const projectDate = new Date(dateStr);
           return projectDate.getMonth() === date.getMonth() &&
             projectDate.getFullYear() === date.getFullYear();
         }).length;
@@ -188,9 +207,9 @@ const Dashboard = () => {
       let inReviewCount = 0;
       let completedCount = 0;
 
-      projects.forEach((project: any) => {
+      projects.forEach((project) => {
         if (project.issues && Array.isArray(project.issues)) {
-          project.issues.forEach((issue: any) => {
+          project.issues.forEach((issue) => {
             const status = (issue.status || '').toLowerCase();
             if (status === 'todo' || status === 'to-do' || status === 'pending') {
               todoCount++;
@@ -207,7 +226,7 @@ const Dashboard = () => {
 
       // If no issues found, use project count as approximation
       if (todoCount === 0 && inProgressCount === 0 && inReviewCount === 0 && completedCount === 0) {
-        const plannedProjects = projects.filter((p: any) => (p.status || '').toLowerCase() === 'planned').length;
+        const plannedProjects = projects.filter((p) => (p.status || '').toLowerCase() === 'planned').length;
         todoCount = plannedProjects;
         inProgressCount = activeProjects;
         completedCount = completedProjects;
@@ -272,7 +291,7 @@ const Dashboard = () => {
       console.log('Project Timeline Data:', projectCountsByMonth);
       console.log('Task Distribution Data:', Object.values(taskDistribution));
       console.log('Department Activity Data:', Object.values(departmentActivity));
-    } catch (error) {
+    } catch (error: unknown) {
       console.error('Error fetching dashboard data:', error);
     } finally {
       setLoading(false);

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useDispatch } from "react-redux";
 import { getDepartmentGroups, getGroupMessages } from "@/services/groupChat";
-import { setGroups, setActiveGroup, setGroupMessages } from "@/store/slices/groupChatSlice";
+import { setGroups, setActiveGroup, setGroupMessages, IGroupMessage } from "@/store/slices/groupChatSlice";
 import { joinGroupRoom, leaveGroupRoom } from "@/shared/socket/socket";
 import GroupChatBox from "@/shared/components/Chat/GroupChatBox";
 
@@ -23,7 +23,7 @@ const CompanyGroupChatPage = () => {
     const [chatLoading, setChatLoading] = useState(false);
     const [departmentGroups, setDepartmentGroups] = useState<DepartmentGroup[]>([]);
     const [selectedGroup, setSelectedGroup] = useState<DepartmentGroup | null>(null);
-    const [groupMessages, setGroupMessagesState] = useState<{ [key: string]: unknown[] }>({});
+    const [groupMessages, setGroupMessagesState] = useState<{ [key: string]: IGroupMessage[] }>({});
 
     const dispatch = useDispatch();
 
@@ -66,10 +66,11 @@ const CompanyGroupChatPage = () => {
         setChatLoading(true);
         getGroupMessages(selectedGroup.id)
             .then((messages: unknown) => {
-                dispatch(setGroupMessages({ groupId: selectedGroup.id, messages: (messages as any[]) || [] }));
+                const typedMessages = (messages as IGroupMessage[]) || [];
+                dispatch(setGroupMessages({ groupId: selectedGroup.id, messages: typedMessages }));
                 setGroupMessagesState(prev => ({
                     ...prev,
-                    [selectedGroup.id]: (messages as unknown[]) || []
+                    [selectedGroup.id]: typedMessages
                 }));
             })
             .catch((err) => console.error("Failed to load group messages:", err))

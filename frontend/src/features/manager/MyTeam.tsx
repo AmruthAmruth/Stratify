@@ -3,7 +3,7 @@ import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import ReusableChart from '@/shared/components/Chart/ReusableChart';
 import Table from '@/shared/components/Table/Table';
 import { getDepartmentEmployees, getTeamAnalytics, Employee, TeamAnalytics } from '@/services/team';
-import { Users, UserCheck, UserX, Clock, TrendingUp, Briefcase } from 'lucide-react';
+import { Users, UserCheck, TrendingUp, Briefcase } from 'lucide-react';
 
 const MyTeam = () => {
     const [loading, setLoading] = useState(true);
@@ -247,7 +247,7 @@ const MyTeam = () => {
                 />
             </div>
 
-            
+
         </div>
     );
 };

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import ChatBox from "@/shared/components/Chat/ChatBox";
 import { getChatHistory, getTeamMemeberList, markMessagesAsRead } from "@/services/chat";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
@@ -22,7 +22,6 @@ const ChatPage = () => {
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
   const userId = useSelector((state: RootState) => state.auth.userId);
-  const dispatch = useDispatch();
 
   // ✅ Fetch team members with enriched data (includes lastMessage, unreadCount, etc.)
   useEffect(() => {

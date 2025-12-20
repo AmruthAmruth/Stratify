@@ -1,0 +1,249 @@
+
+> frontend@0.0.0 lint
+> eslint .
+
+
+/home/amruth/Desktop/Stratify/frontend/src/features/company/Department.tsx
+  148:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  166:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/ChatPage.tsx
+  21:50  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  25:9   error  'dispatch' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  52:40  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  55:15  error  'updated' is never reassigned. Use 'const' instead  prefer-const
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/EmployeeProfile.tsx
+  4:5  error  'Mail' is defined but never used    @typescript-eslint/no-unused-vars
+  5:5  error  'Phone' is defined but never used   @typescript-eslint/no-unused-vars
+  6:5  error  'MapPin' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/EmployeeProjects.tsx
+  40:23  error  Unexpected any. Specify a different type           @typescript-eslint/no-explicit-any
+  93:13  error  'aValue' is never reassigned. Use 'const' instead  prefer-const
+  94:13  error  'bValue' is never reassigned. Use 'const' instead  prefer-const
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/GroupChatPage.tsx
+  46:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/JoinMeeting.tsx
+  10:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  60:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/Leave.tsx
+  17:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  59:44  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  66:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/ProjectPage.tsx
+  4:10  error  'useEffect' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/features/employee/Task.tsx
+  119:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  130:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  142:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  371:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/general/About.tsx
+  27:8   error  'Footer' is defined but never used              @typescript-eslint/no-unused-vars
+  30:10  error  'isVisible' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/features/general/Contact.tsx
+  2:29   error  'Activity' is defined but never used  @typescript-eslint/no-unused-vars
+  2:39   error  'Users' is defined but never used     @typescript-eslint/no-unused-vars
+  2:102  error  'Database' is defined but never used  @typescript-eslint/no-unused-vars
+  2:112  error  'Server' is defined but never used    @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/ChatPage.tsx
+  21:50  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  25:9   error  'dispatch' is assigned a value but never used       @typescript-eslint/no-unused-vars
+  52:40  error  Unexpected any. Specify a different type            @typescript-eslint/no-explicit-any
+  56:15  error  'updated' is never reassigned. Use 'const' instead  prefer-const
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/Dashboard.tsx
+   56:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   62:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   68:31  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   77:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   88:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   90:43  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   98:13  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  104:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  108:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  110:45  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  130:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  134:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  139:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:36  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:37  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  151:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  152:41  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  153:39  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  154:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  155:38  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  175:51  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  191:34  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  193:42  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  210:53  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/DepartmentLeaves.tsx
+   21:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   24:54  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   44:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   45:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   48:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   74:33  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   96:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:32  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  117:47  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  144:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/GroupChatPage.tsx
+  46:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/Meeting.tsx
+   13:44   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   24:21   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   45:21   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   51:32   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   60:21   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   86:28   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  136:78   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  136:104  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  140:22   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  141:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  146:22   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  147:19   error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/MyTeam.tsx
+  6:28  error  'UserX' is defined but never used  @typescript-eslint/no-unused-vars
+  6:35  error  'Clock' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/Profile.tsx
+    2:77  error  'Edit' is defined but never used          @typescript-eslint/no-unused-vars
+    2:83  error  'Lock' is defined but never used          @typescript-eslint/no-unused-vars
+   41:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   83:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   97:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  111:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/Projects.tsx
+  211:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  257:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  300:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/manager/Tasks.tsx
+  185:50  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  196:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  208:48  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  220:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  544:55  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/superAdmin/AllCompanies.tsx
+   15:46  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   16:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  175:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  209:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  243:28  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/superAdmin/ManagePlans.tsx
+  115:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/features/superAdmin/SuperAdminProfile.tsx
+  29:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  70:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  89:25  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/hooks/useAuth.ts
+  59:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/layout/Navbar.tsx
+  17:9   error  'userId' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  27:21  error  Unexpected any. Specify a different type     @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/layout/Sidebar.tsx
+  15:20  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/routes/CompanyRoutes.tsx
+  6:8  error  'CompanyProjectDetailsPage' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/routes/ManagerRoutes.tsx
+  1:8  error  'ManagerProjectDetailsPage' is defined but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/OTP/OTPPage.tsx
+   7:10  error  'jwtDecode' is defined but never used          @typescript-eslint/no-unused-vars
+   9:10  error  'setCredentials' is defined but never used     @typescript-eslint/no-unused-vars
+  15:11  error  'DecodedToken' is defined but never used       @typescript-eslint/no-unused-vars
+  26:9   error  'dispatch' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  52:47  error  'data' is defined but never used               @typescript-eslint/no-unused-vars
+  66:19  error  Unexpected any. Specify a different type       @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Chart/ReusableChart.tsx
+  34:14  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Chat/ChatBox.tsx
+  14:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  52:40  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Chat/GroupChatBox.tsx
+  14:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/CollapsibleSection/CollapsibleSection.tsx
+   52:3   error  'iconColor' is defined but never used                @typescript-eslint/no-unused-vars
+   77:17  error  'itemName' is assigned a value but never used        @typescript-eslint/no-unused-vars
+  276:37  error  'remainingHours' is assigned a value but never used  @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Forms/DynamicForm.tsx
+  42:7  error  'buttonClassName' is assigned a value but never used  @typescript-eslint/no-unused-vars
+  43:7  error  'buttonColor' is assigned a value but never used      @typescript-eslint/no-unused-vars
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Meetings/VideoCall.tsx
+  11:24  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Notification/NotificationBoard.tsx
+  31:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  33:58  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  41:17  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Notification/NotificationItem.tsx
+  59:13  error  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+  75:13  error  Expected an assignment or function call and instead saw an expression  @typescript-eslint/no-unused-expressions
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Project/EmployeeList.tsx
+   57:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   57:29  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Project/IssueList.tsx
+   29:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   95:56  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  119:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  127:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  145:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  164:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  173:35  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  185:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  204:23  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+/home/amruth/Desktop/Stratify/frontend/src/shared/components/Project/ProjectDetailsLayout.tsx
+   63:52  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+   94:59  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  101:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  107:60  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  114:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  120:62  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  129:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  135:67  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  143:21  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  150:66  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  174:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+  202:19  error  Unexpected any. Specify a different type  @typescript-eslint/no-explicit-any
+
+✖ 161 problems (161 errors, 0 warnings)
+  4 errors and 0 warnings potentially fixable with the `--fix` option.
+

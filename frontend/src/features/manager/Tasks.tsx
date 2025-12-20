@@ -182,21 +182,31 @@ const Tasks = () => {
     };
 
     // Handle create subtask
-    const handleCreateSubTask = async (formData: any) => {
+    interface SubTaskFormData {
+        title: string;
+        description: string;
+        estimatedHours: number;
+        assignedTo?: string;
+        status: string;
+        priority: string;
+        [key: string]: unknown;
+    }
+
+    const handleCreateSubTask = async (formData: Record<string, unknown>) => {
         if (!selectedIssueId) return;
         setSubmitLoading(true);
         try {
             await createSubTask({
-                ...formData,
+                ...(formData as unknown as SubTaskFormData),
                 issueId: selectedIssueId,
             });
             enqueueSnackbar("Subtask created successfully!", { variant: "success" });
             setIsCreateSubtaskModalOpen(false);
             await fetchIssues();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Failed to create subtask:", error);
             enqueueSnackbar(
-                error?.message || "Failed to create subtask",
+                (error as Error)?.message || "Failed to create subtask",
                 { variant: "error" }
             );
         } finally {
@@ -205,22 +215,22 @@ const Tasks = () => {
     };
 
     // Handle edit subtask
-    const handleEditSubTask = async (formData: any) => {
+    const handleEditSubTask = async (formData: Record<string, unknown>) => {
         if (!selectedSubtask) return;
         setSubmitLoading(true);
         try {
             await updateSubTask({
                 id: selectedSubtask.id,
-                ...formData,
+                ...(formData as unknown as SubTaskFormData),
             });
             enqueueSnackbar("Subtask updated successfully!", { variant: "success" });
             setIsEditSubtaskModalOpen(false);
             setSelectedSubtask(null);
             await fetchIssues();
-        } catch (error: any) {
+        } catch (error: unknown) {
             console.error("Failed to update subtask:", error);
             enqueueSnackbar(
-                error?.message || "Failed to update subtask",
+                (error as Error)?.message || "Failed to update subtask",
                 { variant: "error" }
             );
         } finally {
@@ -541,7 +551,7 @@ const Tasks = () => {
                 <AuthForm
                     fields={createSubTaskFields}
                     validationSchema={createSubTaskSchema}
-                    initialValues={selectedSubtask as any}
+                    initialValues={selectedSubtask as unknown as Record<string, unknown>}
                     onSubmit={handleEditSubTask}
                     buttonText={submitLoading ? "Updating..." : "Update Subtask"}
                     disabled={submitLoading}

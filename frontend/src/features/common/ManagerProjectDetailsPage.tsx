@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from "react";
+import React, { useEffect, useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, Title } from "chart.js";
 import CollapsibleSection from "@/shared/components/CollapsibleSection/CollapsibleSection";
 import ReusableChart from "@/shared/components/Chart/ReusableChart";

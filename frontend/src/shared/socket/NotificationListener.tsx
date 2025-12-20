@@ -2,7 +2,7 @@ import { useEffect } from "react";
 import { useSnackbar } from "notistack";
 import { useSelector, useDispatch } from "react-redux";
 import { getSocket, connectSocket } from "./socket";
-import { addNotification } from "@/store/slices/notificationSlice";
+import { addNotification, INotification } from "@/store/slices/notificationSlice";
 import { RootState } from "@/store";
 
 const NotificationListener = () => {
@@ -21,26 +21,38 @@ const NotificationListener = () => {
 
     if (!socket) return;
 
-    const handleNewNotification = (data: any) => {
-      console.log("Received notification:", data);
+    interface SocketNotificationData {
+      id?: string;
+      _id?: string;
+      title: string;
+      message: string;
+      isRead?: boolean;
+      createdAt?: string;
+      type?: string;
+      [key: string]: unknown;
+    }
+
+    const handleNewNotification = (data: unknown) => {
+      const notificationData = data as SocketNotificationData;
+      console.log("Received notification:", notificationData);
 
       // Normalize the notification data structure
       const normalizedNotification = {
-        id: data.id || data._id,
-        title: data.title,
-        message: data.message,
-        isRead: data.isRead ?? false,
-        createdAt: data.createdAt || new Date().toISOString(),
-        ...data,
+        ...notificationData,
+        id: notificationData.id || notificationData._id || "",
+        title: notificationData.title,
+        message: notificationData.message,
+        isRead: notificationData.isRead ?? false,
+        createdAt: notificationData.createdAt || new Date().toISOString(),
       };
 
       // Show toast
-      enqueueSnackbar(data.message || "New notification", {
+      enqueueSnackbar(notificationData.message || "New notification", {
         variant: "info",
       });
 
       // Update Redux - this is the SINGLE source of truth
-      dispatch(addNotification(normalizedNotification));
+      dispatch(addNotification(normalizedNotification as unknown as INotification));
     };
 
     socket.on("new-notification", handleNewNotification);

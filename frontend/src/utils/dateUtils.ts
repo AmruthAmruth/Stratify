@@ -10,7 +10,6 @@ export function formatChatTime(date: Date | string | undefined): string {
     const diffMs = now.getTime() - messageDate.getTime();
     const diffMins = Math.floor(diffMs / 60000);
     const diffHours = Math.floor(diffMs / 3600000);
-    const diffDays = Math.floor(diffMs / 86400000);
 
     // Less than 1 minute
     if (diffMins < 1) return "Just now";

@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 
 // Define INotification interface locally to avoid import errors
-interface INotification {
+export interface INotification {
   id?: string;
   _id?: string;
   userId?: string;

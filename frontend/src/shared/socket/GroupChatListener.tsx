@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { getSocket } from "./socket";
 import { useDispatch, useSelector } from "react-redux";
-import { addGroupMessage, incrementUnreadCount, updateGroupMembers } from "@/store/slices/groupChatSlice";
+import { addGroupMessage } from "@/store/slices/groupChatSlice";
 import { RootState } from "@/store";
 
 const GroupChatListener = () => {
@@ -35,13 +35,13 @@ const GroupChatListener = () => {
         });
 
         // Listen for member joined
-        socket.on("group-member-joined", ({ groupId, userId, userName }) => {
+        socket.on("group-member-joined", ({ groupId, userName }) => {
             console.log(`👤 ${userName} joined group ${groupId}`);
             // You can show a notification or update the member list
         });
 
         // Listen for member left
-        socket.on("group-member-left", ({ groupId, userId, userName }) => {
+        socket.on("group-member-left", ({ groupId, userName }) => {
             console.log(`👋 ${userName} left group ${groupId}`);
             // You can show a notification or update the member list
         });

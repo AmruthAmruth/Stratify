@@ -208,8 +208,8 @@ const Projects: React.FC = () => {
       });
 
       await fetchProjectsAndEmployees();
-    } catch (err: any) {
-      enqueueSnackbar(err?.response?.data?.message || err?.message || "Failed to delete project.", {
+    } catch (err: unknown) {
+      enqueueSnackbar((err as any)?.response?.data?.message || (err as Error)?.message || "Failed to delete project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
       });
@@ -254,8 +254,8 @@ const Projects: React.FC = () => {
 
       await fetchProjectsAndEmployees();
       closeModal();
-    } catch (err: any) {
-      enqueueSnackbar(err?.message || "Failed to update project.", {
+    } catch (err: unknown) {
+      enqueueSnackbar((err as Error)?.message || "Failed to update project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
       });
@@ -297,8 +297,8 @@ const Projects: React.FC = () => {
 
       await fetchProjectsAndEmployees();
       closeModal();
-    } catch (err: any) {
-      enqueueSnackbar(err?.message || "Failed to create project.", {
+    } catch (err: unknown) {
+      enqueueSnackbar((err as Error)?.message || "Failed to create project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
       });

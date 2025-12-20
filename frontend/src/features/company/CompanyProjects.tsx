@@ -7,8 +7,29 @@ import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
 import Table from '@/shared/components/Table/Table';
 import { LoadingSpinner } from '@/shared/components/Loading';
 
+interface LocalProject {
+  id: string;
+  projectName: string;
+  projectDescription: string;
+  departmentName: string;
+  projectLead: string;
+  status: string;
+  remainingTimeInDays: number;
+  [key: string]: unknown;
+}
+
+interface LocalProjectsResponse {
+  projects: LocalProject[];
+  counts: {
+    total: number;
+    planned: number;
+    active: number;
+    completed: number;
+  };
+}
+
 const Projects = () => {
-  const [projects, setProjects] = useState<any>(null);
+  const [projects, setProjects] = useState<LocalProjectsResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -20,7 +41,7 @@ const Projects = () => {
 
   useEffect(() => {
     getCompanyProjects().then((data) => {
-      setProjects(data);
+      setProjects(data as unknown as LocalProjectsResponse);
     });
   }, []);
 
@@ -30,14 +51,14 @@ const Projects = () => {
 
 
   const filteredProjects = projects.projects
-    .filter((p: any) =>
+    .filter((p: LocalProject) =>
       p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((p: any) => (filterStatus ? p.status === filterStatus : true));
+    .filter((p: LocalProject) => (filterStatus ? p.status === filterStatus : true));
 
 
 
-  const sortedProjects = [...filteredProjects].sort((a: any, b: any) => {
+  const sortedProjects = [...filteredProjects].sort((a: LocalProject, b: LocalProject) => {
     if (!sortBy) return 0;
 
     const aValue = a[sortBy] || '';
@@ -67,7 +88,7 @@ const Projects = () => {
 
 
   const uniqueStatus = Array.from(
-    new Set(projects.projects.map((p: any) => p.status))
+    new Set(projects.projects.map((p: LocalProject) => p.status))
   ) as string[];
 
 

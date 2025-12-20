@@ -88,14 +88,22 @@ const Department: React.FC = () => {
   // ----------------------
   // Add Department Handler
   // ----------------------
-  const handleAddDepartment = async (values: any) => {
+  interface DepartmentFormValues {
+    name: string;
+    description?: string;
+    managerId?: string;
+  }
+
+  const handleAddDepartment = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
 
+    const formValues = values as unknown as DepartmentFormValues;
+
     // Prepare payload
-    const payload: any = {
-      name: values.name,
-      description: values.description,
-      ...(values.managerId && values.managerId.trim() !== "" && { managerId: values.managerId }),
+    const payload = {
+      name: formValues.name,
+      description: formValues.description,
+      ...(formValues.managerId && formValues.managerId.trim() !== "" && { managerId: formValues.managerId }),
     };
 
     try {
@@ -137,11 +145,12 @@ const Department: React.FC = () => {
       }
 
       setIsDepartmentModalOpen(false);
-    } catch (err: any) {
+      setIsDepartmentModalOpen(false);
+    } catch (err: unknown) {
       console.error("Error while creating department:", err);
 
       const errorMessage =
-        err?.message || "Failed to create department. Try again.";
+        (err as Error)?.message || "Failed to create department. Try again.";
 
       enqueueSnackbar(errorMessage, {
         variant: "error",
@@ -155,14 +164,23 @@ const Department: React.FC = () => {
   // ----------------------
   // Add Manager Handler (Updated)
   // ----------------------
-  const handleAddManager = async (values: any) => {
+  interface ManagerFormValues {
+    name: string;
+    email: string;
+    departmentId?: string;
+    [key: string]: unknown;
+  }
+
+  const handleAddManager = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
+
+    const formValues = values as unknown as ManagerFormValues;
 
     try {
       // Build payload
       const payload = {
-        ...values,
-        ...(values.departmentId?.trim() && { departmentId: values.departmentId }),
+        ...formValues,
+        ...(formValues.departmentId?.trim() && { departmentId: formValues.departmentId }),
       };
 
       // Create manager
