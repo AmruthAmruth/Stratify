@@ -19,28 +19,13 @@ import { getEmployeeProfile, updateEmployeeProfile } from "@/services/employee";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
 import { toast } from "react-hot-toast";
 
-interface Employee {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    role: string;
-    position: string;
-    departmentId: {
-        _id: string;
-        name: string;
-    };
-    profileImage?: string;
-    joiningDate: string;
-    dob: string;
-    gender?: string;
-}
+import type { UserProfile } from "@/types/types";
 
 const EmployeeProfile: React.FC = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
-    const [employee, setEmployee] = useState<Employee | null>(null);
+    const [employee, setEmployee] = useState<UserProfile | null>(null);
     const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<Partial<Employee>>({});
+    const [formData, setFormData] = useState<Partial<UserProfile>>({});
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
@@ -101,6 +86,8 @@ const EmployeeProfile: React.FC = () => {
         );
     }
 
+    const departmentName = typeof employee?.departmentId === 'object' ? employee.departmentId.name : 'N/A';
+
     return (
         <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
@@ -130,20 +117,20 @@ const EmployeeProfile: React.FC = () => {
 
                     {/* Info */}
                     <div className="flex-1 flex flex-col justify-center gap-2 z-10 text-center lg:text-left">
-                        <h1 className="text-3xl font-bold text-gray-900">{employee.name}</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">{employee?.name}</h1>
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-gray-600">
                             <span className="flex items-center gap-1">
                                 <Briefcase className="w-4 h-4" />
-                                {employee.position}
+                                {employee?.position}
                             </span>
                             <span className="flex items-center gap-1">
                                 <Building className="w-4 h-4" />
-                                {employee.departmentId?.name || "N/A"}
+                                {departmentName}
                             </span>
                             <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
                                 <Shield className="w-3 h-3 mr-1" />
-                                {employee.role}
+                                {employee?.role}
                             </span>
                         </div>
                     </div>
@@ -187,7 +174,7 @@ const EmployeeProfile: React.FC = () => {
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</label>
-                                    <p className="text-gray-900 font-medium">{employee.email}</p>
+                                    <p className="text-gray-900 font-medium">{employee?.email}</p>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Phone</label>
@@ -200,17 +187,17 @@ const EmployeeProfile: React.FC = () => {
                                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
                                         />
                                     ) : (
-                                        <p className="text-gray-900 font-medium">{employee.phone}</p>
+                                        <p className="text-gray-900 font-medium">{employee?.phone}</p>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date of Birth</label>
-                                        <p className="text-gray-900 font-medium">{new Date(employee.dob).toLocaleDateString()}</p>
+                                        <p className="text-gray-900 font-medium">{employee?.dob ? new Date(employee.dob).toLocaleDateString() : 'N/A'}</p>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Gender</label>
-                                        <p className="text-gray-900 font-medium capitalize">{employee.gender || "N/A"}</p>
+                                        <p className="text-gray-900 font-medium capitalize">{employee?.gender || "N/A"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -228,21 +215,21 @@ const EmployeeProfile: React.FC = () => {
                                     <InfoCard
                                         icon={<Calendar className="w-5 h-5 text-orange-600" />}
                                         label="Joining Date"
-                                        value={new Date(employee.joiningDate).toLocaleDateString()}
+                                        value={employee?.joiningDate ? new Date(employee.joiningDate).toLocaleDateString() : 'N/A'}
                                         bgColor="bg-orange-50"
                                         hoverColor="hover:bg-orange-100"
                                     />
                                     <InfoCard
                                         icon={<Shield className="w-5 h-5 text-indigo-600" />}
                                         label="Employee ID"
-                                        value={employee.id.substring(0, 8).toUpperCase()}
+                                        value={employee?.id?.substring(0, 8).toUpperCase() || 'N/A'}
                                         bgColor="bg-indigo-50"
                                         hoverColor="hover:bg-indigo-100"
                                     />
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Department</label>
-                                    <p className="text-gray-900 font-medium">{employee.departmentId?.name || "N/A"}</p>
+                                    <p className="text-gray-900 font-medium">{departmentName}</p>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Position</label>

@@ -1,8 +1,51 @@
 // Updated CollapsibleSection.tsx
-import React, { useState } from "react";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import React, { useState, ReactNode, Dispatch, SetStateAction } from "react";
 import ReusableChart from "../Chart/ReusableChart";
 
-const CollapsibleSection = ({
+// Local interfaces for type safety in callbacks
+interface LocalSubTask {
+  id?: string;
+  _id?: string;
+  heading: string;
+  description?: string;
+  status: string;
+  hours?: number;
+  assignedToId?: string;
+}
+
+interface LocalIssue {
+  id?: string;
+  _id?: string;
+  heading: string;
+  description?: string;
+  type?: string;
+  status: string;
+  priority?: string;
+  size?: number;
+  estimatedHours?: number;
+  acceptanceCriteria?: string;
+  assignedTo?: string;
+  subTasks?: LocalSubTask[];
+}
+
+interface CollapsibleSectionProps {
+  title: string;
+  icon: ReactNode;
+  iconBgColor: string;
+  iconColor: string;
+  data: any[];
+  type: 'sprint' | 'backlog';
+  expandedItem: string | null;
+  setExpandedItem: Dispatch<SetStateAction<string | null>>;
+  getStatusColor: (status: string) => string;
+  getPriorityColor: (priority: string) => string;
+  getTypeColor: (type: string) => string;
+  onAssignIssue?: (sprintId: string) => void;
+}
+/* eslint-enable @typescript-eslint/no-explicit-any */
+
+const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   title,
   icon,
   iconBgColor,
@@ -16,7 +59,7 @@ const CollapsibleSection = ({
   getTypeColor,
   onAssignIssue
 }) => {
-  const [expandedIssue, setExpandedIssue] = useState(null);
+  const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
   return (
     <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] overflow-hidden">
@@ -208,10 +251,10 @@ const CollapsibleSection = ({
                             title="Issue Breakdown"
                             labels={["Planned", "In Progress", "Done", "Blocked"]}
                             data={[
-                              item.issues.filter((i) => i.status === "Planned").length,
-                              item.issues.filter((i) => i.status === "In Progress").length,
-                              item.issues.filter((i) => i.status === "Done").length,
-                              item.issues.filter((i) => i.status === "Blocked").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "Planned").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "Done").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "Blocked").length,
                             ]}
                             backgroundColors={["#dfdcef", "#FFB84D", "#009063", "#FF6B6B"]}
                           />
@@ -223,23 +266,23 @@ const CollapsibleSection = ({
                             type="line"
                             title="Burndown (Subtask Hours)"
                             labels={(() => {
-                              const totalSubtaskHours = item.issues.reduce((sum, issue) =>
-                                sum + (issue.subTasks?.reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              const totalSubtaskHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                                sum + (issue.subTasks?.reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
-                              const completedHours = item.issues.reduce((sum, issue) =>
-                                sum + (issue.subTasks?.filter(st => st.status === "Done")
-                                  .reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              const completedHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                                sum + (issue.subTasks?.filter((st: LocalSubTask) => st.status === "Done")
+                                  .reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
                               const remainingHours = totalSubtaskHours - completedHours;
                               return ["Total Hours", "Completed", "Remaining"];
                             })()}
                             data={(() => {
-                              const totalSubtaskHours = item.issues.reduce((sum, issue) =>
-                                sum + (issue.subTasks?.reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              const totalSubtaskHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                                sum + (issue.subTasks?.reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
-                              const completedHours = item.issues.reduce((sum, issue) =>
-                                sum + (issue.subTasks?.filter(st => st.status === "Done")
-                                  .reduce((s, st) => s + (st.hours || 0), 0) || 0), 0
+                              const completedHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                                sum + (issue.subTasks?.filter((st: LocalSubTask) => st.status === "Done")
+                                  .reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
                               const remainingHours = totalSubtaskHours - completedHours;
                               return [totalSubtaskHours, completedHours, remainingHours];
@@ -255,9 +298,9 @@ const CollapsibleSection = ({
                             title="Velocity (Completion %)"
                             labels={["Completed", "In Progress", "Pending"]}
                             data={[
-                              item.issues.filter((i) => i.status === "Done").length,
-                              item.issues.filter((i) => i.status === "In Progress").length,
-                              item.issues.filter((i) => i.status === "Planned" || i.status === "Blocked").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "Done").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
+                              item.issues.filter((i: LocalIssue) => i.status === "Planned" || i.status === "Blocked").length,
                             ]}
                             backgroundColors={["#009063", "#FFB84D", "#dfdcef"]}
                           />
@@ -267,27 +310,27 @@ const CollapsibleSection = ({
                   )}
 
                   {item.issues.length > 0 ? (
-                    item.issues.map((issue) => {
+                    item.issues.map((issue: LocalIssue) => {
                       const issueId = issue.id || issue._id;
                       const isIssueExpanded = expandedIssue === issueId;
 
                       return (
                         <div
-                          key={issueId}
+                          key={issueId || `issue-${index}`}
                           className="border border-[#dfdcef] rounded-lg overflow-hidden"
                         >
                           <div
                             className="bg-[#fbfbfb] p-5 cursor-pointer hover:bg-[#f5f5f5] transition-all duration-200"
-                            onClick={() => setExpandedIssue(isIssueExpanded ? null : issueId)}
+                            onClick={() => setExpandedIssue(isIssueExpanded ? null : issueId || null)}
                           >
                             <div className="flex items-start justify-between">
                               <div className="flex-1">
                                 <div className="flex items-center space-x-3 mb-3">
-                                  <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(issue.type)}`}>
+                                  <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(issue.type || '')}`}>
                                     {issue.type}
                                   </span>
                                   <h5 className="text-lg font-bold text-[#3b3b3b]">{issue.heading}</h5>
-                                  <span className={`px-3 py-1 text-xs font-semibold rounded border ${getPriorityColor(issue.priority)}`}>
+                                  <span className={`px-3 py-1 text-xs font-semibold rounded border ${getPriorityColor(issue.priority || '')}`}>
                                     {issue.priority}
                                   </span>
                                 </div>
@@ -351,9 +394,9 @@ const CollapsibleSection = ({
 
                               <div className="grid gap-4">
                                 {issue.subTasks && issue.subTasks.length > 0 ? (
-                                  issue.subTasks.map((task) => (
+                                  issue.subTasks.map((task: LocalSubTask) => (
                                     <div
-                                      key={task.id || task._id}
+                                      key={task.id || (task as { _id?: string })._id}
                                       className="bg-[#fbfbfb] border border-[#dfdcef] rounded-lg p-4 hover:shadow-md transition-all duration-200"
                                     >
                                       <div className="flex items-start justify-between mb-3">

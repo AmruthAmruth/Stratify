@@ -29,7 +29,9 @@ const Register: React.FC = () => {
         enqueueSnackbar("Registration successful! OTP sent to your email.", {
           variant: "success",
         })
-        localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()))
+        if (data.time) {
+          localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()))
+        }
         navigate("/verify-otp")
       })
       .catch((err) => {
@@ -92,12 +94,9 @@ const Register: React.FC = () => {
                 </span>
               )
             }
-            buttonClassName={`w-full font-semibold py-4 rounded-xl transition-all duration-300 transform ${loading
-                ? "bg-gray-400 cursor-not-allowed scale-95"
-                : "bg-[#009063] text-white hover:scale-[1.02] active:scale-[0.98]"
-              }`}
             disabled={loading}
           />
+
 
           {/* Footer */}
           <div className="text-center mt-6">

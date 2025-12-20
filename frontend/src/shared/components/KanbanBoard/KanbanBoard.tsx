@@ -1,26 +1,19 @@
 import React from "react";
 import { DndContext, DragEndEvent, useDroppable } from "@dnd-kit/core";
 import SubtaskCard from "./SubtaskCard";
-
-interface Subtask {
-    id: string;
-    title: string;
-    description?: string;
-    estimatedHours?: number;
-    status: string;
-}
+import type { SubTask } from "@/types/types";
 
 interface KanbanBoardProps {
-    subtasks: Subtask[];
+    subtasks: SubTask[];
     onDragEnd: (event: DragEndEvent) => void;
-    onSubtaskClick?: (subtask: Subtask) => void;
+    onSubtaskClick?: (subtask: SubTask) => void;
 }
 
 interface ColumnProps {
     id: string;
     title: string;
-    subtasks: Subtask[];
-    onSubtaskClick?: (subtask: Subtask) => void;
+    subtasks: SubTask[];
+    onSubtaskClick?: (subtask: SubTask) => void;
 }
 
 const Column: React.FC<ColumnProps> = ({ id, title, subtasks, onSubtaskClick }) => {
@@ -65,9 +58,9 @@ const Column: React.FC<ColumnProps> = ({ id, title, subtasks, onSubtaskClick }) 
                         <SubtaskCard
                             key={subtask.id}
                             id={subtask.id}
-                            title={subtask.title}
+                            heading={subtask.heading}
                             description={subtask.description}
-                            estimatedHours={subtask.estimatedHours}
+                            hours={subtask.hours}
                             status={subtask.status}
                             onClick={() => onSubtaskClick?.(subtask)}
                         />

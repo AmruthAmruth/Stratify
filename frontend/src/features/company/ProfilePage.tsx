@@ -18,35 +18,18 @@ import {
 import { useParams } from "react-router-dom";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
 import { getTeamMemberProfile } from "@/services/company";
-
-interface Profile {
-  id: string;
-  name: string;
-  email: string;
-  phone: string;
-  role: string;
-  position: string;
-  companyId: string;
-  departmentId?: string;
-  departmentName?: string;
-  profileImage?: string;
-  dob: string; // string from API
-  gender?: string;
-  joiningDate: string; // string from API
-  experience?: number;
-  age?: number;
-}
+import type { UserProfile } from "@/types/types";
 
 const ProfilePage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
-  const [profile, setProfile] = useState<Profile | null>(null);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
   const [activeTab, setActiveTab] = useState("overview");
 
   useEffect(() => {
     if (id) {
       getTeamMemberProfile(id)
         .then((data) => {
-          setProfile(data.response);
+          setProfile(data);
         })
         .catch((err) => console.error("Error fetching profile:", err));
     }
@@ -59,7 +42,7 @@ const ProfilePage: React.FC = () => {
       </div>
     );
   }
- 
+
   const dob = profile.dob ? new Date(profile.dob) : null;
   const joiningDate = profile.joiningDate ? new Date(profile.joiningDate) : null;
 
@@ -83,8 +66,8 @@ const ProfilePage: React.FC = () => {
               </button>
               <div className="h-6 w-px bg-gray-300"></div>
               <h1 className="text-3xl font-bold text-gray-900">Employee Profile</h1>
-            </div>  
-            
+            </div>
+
           </div>
         </div>
       </div>
@@ -128,7 +111,7 @@ const ProfilePage: React.FC = () => {
 
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
-             
+
               <div className="text-center p-4 bg-gray-50 rounded-xl shadow-sm">
                 <div className="text-gray-500 text-sm">Age</div>
                 <div className="text-gray-900 font-semibold">{profile.age ?? "N/A"} yrs</div>
@@ -171,11 +154,10 @@ const ProfilePage: React.FC = () => {
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${
-                    activeTab === tab
+                  className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${activeTab === tab
                       ? "text-blue-600 bg-blue-50"
                       : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
-                  }`}
+                    }`}
                 >
                   {tab === "overview" && "Complete Overview"}
                   {tab === "performance" && "Performance"}

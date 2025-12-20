@@ -1,8 +1,11 @@
 import React, { useEffect, useState, useMemo } from "react";
 import { listPurchasedCompany } from "@/services/company";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
-import { Table } from "lucide-react";
+import Table from "@/shared/components/Table/Table";
+import type { RowData } from "@/shared/components/Table/tableTypes";
+
 interface PurchasedPlan {
+  id: string;
   companyName: string;
   plan: string;
   validityInMonths: number;
@@ -11,6 +14,7 @@ interface PurchasedPlan {
   endDate: string;
   transactionId?: string;
   status: string;
+  [key: string]: unknown;
 }
 
 export const ListPurchasedPlan: React.FC = () => {
@@ -25,9 +29,13 @@ export const ListPurchasedPlan: React.FC = () => {
 
   useEffect(() => {
     listPurchasedCompany().then((res) => {
-        console.log(res);
-        
-      setData(res || []);
+      console.log(res);
+      // res is CompanyListResponse - extract data array and cast
+      const purchasedPlans = (res.data || []).map((item: unknown, index: number) => ({
+        id: String(index),
+        ...(item as object)
+      })) as PurchasedPlan[];
+      setData(purchasedPlans);
     });
   }, []);
 
@@ -121,14 +129,14 @@ export const ListPurchasedPlan: React.FC = () => {
         currentPage={currentPage}
         totalPages={totalPages}
         onPageChange={setCurrentPage}
-        renderCell={(row, key) => {
+        renderCell={(row: RowData, key: string) => {
           if (key === "startDate" || key === "endDate") {
-            return new Date(row[key]).toLocaleDateString();
+            return new Date(row[key] as string).toLocaleDateString();
           }
           if (key === "amount") {
             return `₹${row[key]}`;
           }
-          return row[key as keyof PurchasedPlan];
+          return row[key] as React.ReactNode;
         }}
       />
     </div>

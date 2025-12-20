@@ -18,12 +18,16 @@ interface Field {
 
 interface AuthFormProps {
   fields: Field[];
-  validationSchema: any;
-  onSubmit: (values: Record<string, unknown>) => void;
-  buttonText: string;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  validationSchema: { safeParse: (data: unknown) => any };
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onSubmit: (values: any) => void | Promise<void>;
+  buttonText: React.ReactNode;
   initialValues?: Record<string, unknown>;
   disabled?: boolean;
-  formRef?: React.RefObject<{ resetForm: () => void }>;
+  formRef?: React.RefObject<{ resetForm: () => void } | null>;
+  buttonClassName?: string;
+  buttonColor?: string;
 }
 
 const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
@@ -35,6 +39,8 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       buttonText,
       initialValues,
       disabled = false,
+      buttonClassName = "",
+      buttonColor = "#009063",
     },
     ref
   ) => {
@@ -42,7 +48,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const [errors, setErrors] = useState<Record<string, string>>({});
     const [preview, setPreview] = useState<Record<string, string | ArrayBuffer | null>>({});
 
-    const initializeFormData = () => {
+    const initializeFormData = React.useCallback(() => {
       const initialData: Record<string, unknown> = {};
       fields.forEach((field) => {
         let defaultValue: unknown;
@@ -71,11 +77,11 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       setFormData(initialData);
       setErrors({});
       setPreview({});
-    };
+    }, [fields, initialValues]);
 
     useEffect(() => {
       initializeFormData();
-    }, [fields, initialValues]);
+    }, [initializeFormData]);
 
     // Expose resetForm method to parent via ref
     useImperativeHandle(ref, () => ({
@@ -85,9 +91,11 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const handleChange = (
       e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>
     ) => {
-      const { name, type, value } = e.target as HTMLInputElement;
-      if (type === "file" && e.target.files?.[0]) {
-        const file = e.target.files[0];
+      const { name, type, value } = e.target;
+      const inputElement = e.target as HTMLInputElement;
+
+      if (type === "file" && inputElement.files?.[0]) {
+        const file = inputElement.files[0];
         setFormData((prev) => ({ ...prev, [name]: file }));
         const reader = new FileReader();
         reader.onload = () => {
@@ -95,7 +103,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         };
         reader.readAsDataURL(file);
       } else {
-        let newValue = value;
+        let newValue: unknown = value;
         if (type === "number") {
           newValue = value.trim() === "" ? null : parseFloat(value);
         }
@@ -343,12 +351,8 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                     onBlur={() => validateField(field.name)}
                     dateFormat="yyyy-MM-dd"
                     placeholderText={`Select ${field.label}`}
-                    className="border rounded-lg px-4 py-2 focus:outline-none transition w-full"
-                    style={{
-                      backgroundColor: "#fbfbfb",
-                      color: "#3b3b3b",
-                      borderColor: errors[field.name] ? "#f87171" : "#dfdcef",
-                    }}
+                    className={`border rounded-lg px-4 py-2 focus:outline-none transition w-full bg-[#fbfbfb] text-[#3b3b3b] ${errors[field.name] ? "border-[#f87171]" : "border-[#dfdcef]"
+                      }`}
                   />
                 ) : field.type === "textarea" ? (
                   <textarea

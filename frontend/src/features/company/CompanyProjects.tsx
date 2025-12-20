@@ -68,7 +68,7 @@ const Projects = () => {
 
   const uniqueStatus = Array.from(
     new Set(projects.projects.map((p: any) => p.status))
-  );
+  ) as string[];
 
 
   const clearFilters = () => {

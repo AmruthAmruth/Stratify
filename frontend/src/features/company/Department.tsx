@@ -12,6 +12,7 @@ import {
   getUnassignedDepartments,
   getUnassignedManager,
 } from "@/services/company";
+import { TeamMember } from "@/types/types";
 import { useSnackbar } from "notistack";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import { useNavigate } from "react-router-dom";
@@ -23,6 +24,7 @@ interface DepartmentDetails {
   description?: string;
   managerName: string;
   numOfEmployees: number;
+  [key: string]: unknown;
 }
 
 interface Manager {
@@ -43,14 +45,14 @@ const Department: React.FC = () => {
   const pageSize = 7;
   const [loading, setLoading] = useState<boolean>(false);
   const [submitLoading, setSubmitLoading] = useState<boolean>(false);
-  
+
   // Separate modal states
   const [isDepartmentModalOpen, setIsDepartmentModalOpen] = useState<boolean>(false);
   const [isManagerModalOpen, setIsManagerModalOpen] = useState<boolean>(false);
-  
+
   const [managers, setManagers] = useState<Manager[]>([]);
   const [unassignedDepartments, setUnassignedDepartments] = useState<UnassignedDepartment[]>([]);
-  
+
   // Search and Filter States
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [filterManager, setFilterManager] = useState<string>("");
@@ -66,12 +68,13 @@ const Department: React.FC = () => {
     try {
       const response = await getUnassignedDepartments();
       console.log("Unassigned Departments Response:", response);
-      
+
       // Handle the response structure based on your API
-      if (response && Array.isArray(response.departments)) {
-        setUnassignedDepartments(response.departments);
-      } else if (response && Array.isArray(response)) {
-        setUnassignedDepartments(response);
+      const deptResp = response as { departments?: UnassignedDepartment[] } | UnassignedDepartment[];
+      if (deptResp && 'departments' in deptResp && Array.isArray(deptResp.departments)) {
+        setUnassignedDepartments(deptResp.departments);
+      } else if (Array.isArray(deptResp)) {
+        setUnassignedDepartments(deptResp);
       } else {
         console.warn("Unexpected unassigned departments response structure:", response);
         setUnassignedDepartments([]);
@@ -111,22 +114,24 @@ const Department: React.FC = () => {
           getAllDepartmentInACompany(),
           getUnassignedManager()
         ]);
-        
+
         // Update departments
-        if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
-          setDepartments(departmentsResponse.response);
-        } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
-          setDepartments(departmentsResponse);
+        const deptData2 = departmentsResponse as { response?: DepartmentDetails[] } | DepartmentDetails[];
+        if (deptData2 && 'response' in deptData2 && Array.isArray(deptData2.response)) {
+          setDepartments(deptData2.response);
+        } else if (Array.isArray(deptData2)) {
+          setDepartments(deptData2 as DepartmentDetails[]);
         }
 
         // Update managers
-        if (Array.isArray(managersResponse?.managers)) {
-          setManagers(managersResponse.managers);
+        const managersData2 = managersResponse as { managers?: TeamMember[] };
+        if (managersData2 && Array.isArray(managersData2.managers)) {
+          setManagers(managersData2.managers);
         }
 
         // Refresh unassigned departments as the new department might be unassigned
         await fetchUnassignedDepartments();
-        
+
       } catch (refreshErr) {
         console.error("Error refreshing data:", refreshErr);
       }
@@ -151,61 +156,63 @@ const Department: React.FC = () => {
   // Add Manager Handler (Updated)
   // ----------------------
   const handleAddManager = async (values: any) => {
-  setSubmitLoading(true);
+    setSubmitLoading(true);
 
-  try {
-    // Build payload
-    const payload = {
-      ...values,
-      ...(values.departmentId?.trim() && { departmentId: values.departmentId }),
-    };
-
-    // Create manager
-    const data = await createManager(payload);
-    console.log("Manager added successfully", data);
-
-    enqueueSnackbar("Manager Added Successfully!", {
-      variant: "success",
-      anchorOrigin: { vertical: "top", horizontal: "right" },
-    });
-
-    // Refresh managers + departments
     try {
-      const [managersResponse, departmentsResponse] = await Promise.all([
-        getUnassignedManager(),
-        getAllDepartmentInACompany(),
-      ]);
+      // Build payload
+      const payload = {
+        ...values,
+        ...(values.departmentId?.trim() && { departmentId: values.departmentId }),
+      };
 
-      if (Array.isArray(managersResponse?.managers)) {
-        setManagers(managersResponse.managers);
+      // Create manager
+      const data = await createManager(payload);
+      console.log("Manager added successfully", data);
+
+      enqueueSnackbar("Manager Added Successfully!", {
+        variant: "success",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+
+      // Refresh managers + departments
+      try {
+        const [managersResponse, departmentsResponse] = await Promise.all([
+          getUnassignedManager(),
+          getAllDepartmentInACompany(),
+        ]);
+
+        const managersData3 = managersResponse as { managers?: TeamMember[] };
+        if (managersData3 && Array.isArray(managersData3.managers)) {
+          setManagers(managersData3.managers);
+        }
+
+        const deptData3 = departmentsResponse as { response?: DepartmentDetails[] } | DepartmentDetails[];
+        if (deptData3 && 'response' in deptData3 && Array.isArray(deptData3.response)) {
+          setDepartments(deptData3.response);
+        } else if (Array.isArray(deptData3)) {
+          setDepartments(deptData3 as DepartmentDetails[]);
+        }
+
+        await fetchUnassignedDepartments();
+      } catch (refreshErr) {
+        console.error("Error refreshing data:", refreshErr);
       }
 
-      if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
-        setDepartments(departmentsResponse.response);
-      } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
-        setDepartments(departmentsResponse);
-      }
+      setIsManagerModalOpen(false);
+    } catch (err: unknown) {
+      console.error("Error while adding manager:", err);
 
-      await fetchUnassignedDepartments();
-    } catch (refreshErr) {
-      console.error("Error refreshing data:", refreshErr);
+      const error = err as { message?: string };
+      const errorMessage = error?.message || "Failed to add manager. Try again.";
+
+      enqueueSnackbar(errorMessage, {
+        variant: "error",
+        anchorOrigin: { vertical: "top", horizontal: "right" },
+      });
+    } finally {
+      setSubmitLoading(false);
     }
-
-    setIsManagerModalOpen(false);
-  } catch (err: unknown) {
-    console.error("Error while adding manager:", err);
-
-    const errorMessage =
-      err?.message || "Failed to add manager. Try again.";
-
-    enqueueSnackbar(errorMessage, {
-      variant: "error",
-      anchorOrigin: { vertical: "top", horizontal: "right" },
-    });
-  } finally {
-    setSubmitLoading(false);
-  }
-};
+  };
 
 
   const navigate = useNavigate();
@@ -228,15 +235,17 @@ const Department: React.FC = () => {
         ]);
 
         // Update managers
-        if (Array.isArray(managersResponse?.managers)) {
-          setManagers(managersResponse.managers);
+        const managersData = managersResponse as { managers?: TeamMember[] };
+        if (managersData && Array.isArray(managersData.managers)) {
+          setManagers(managersData.managers);
         }
 
         // Update departments
-        if (departmentsResponse && Array.isArray(departmentsResponse.response)) {
-          setDepartments(departmentsResponse.response);
-        } else if (departmentsResponse && Array.isArray(departmentsResponse)) {
-          setDepartments(departmentsResponse);
+        const deptData = departmentsResponse as { response?: DepartmentDetails[] } | DepartmentDetails[];
+        if (deptData && 'response' in deptData && Array.isArray(deptData.response)) {
+          setDepartments(deptData.response);
+        } else if (Array.isArray(deptData)) {
+          setDepartments(deptData as DepartmentDetails[]);
         } else {
           console.warn("Unexpected departments response structure:", departmentsResponse);
           setDepartments([]);
@@ -244,7 +253,7 @@ const Department: React.FC = () => {
 
         // Fetch unassigned departments
         await fetchUnassignedDepartments();
-        
+
       } catch (err) {
         console.error("Error fetching initial data:", err);
         setDepartments([]);
@@ -273,7 +282,7 @@ const Department: React.FC = () => {
   // ----------------------
   const filteredDepartments = departments.filter((dept) => {
     // Search filter
-    const matchesSearch = 
+    const matchesSearch =
       dept.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       dept.managerName.toLowerCase().includes(searchTerm.toLowerCase()) ||
       (dept.description && dept.description.toLowerCase().includes(searchTerm.toLowerCase()));
@@ -370,9 +379,9 @@ const Department: React.FC = () => {
       type: "select",
       options: [
         { value: "", label: "No Department" },
-        ...unassignedDepartments.map((dept) => ({ 
-          value: dept.id, 
-          label: dept.name 
+        ...unassignedDepartments.map((dept) => ({
+          value: dept.id,
+          label: dept.name
         })),
       ],
     },
@@ -416,7 +425,7 @@ const Department: React.FC = () => {
           <h2 className="text-2xl font-bold text-gray-800">
             {companyName ? `${companyName} Departments` : "Departments"}
           </h2>
-          
+
           {/* Action Buttons */}
           <div className="flex gap-3">
             <button
@@ -442,7 +451,7 @@ const Department: React.FC = () => {
           setFilterValue={setFilterManager}
           sortOptions={[
             { key: "name", label: "Department Name" },
-            { key: "managerName", label: "Manager Name" },  
+            { key: "managerName", label: "Manager Name" },
             { key: "numOfEmployees", label: "Employee Count" },
           ]}
           sortBy={sortBy}
@@ -559,12 +568,12 @@ const Department: React.FC = () => {
             <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
-        
+
         {/* Show available departments info */}
         {unassignedDepartments.length === 0 ? (
           <div className="mt-4 p-3 bg-yellow-50 border border-yellow-200 rounded-md">
             <p className="text-sm text-yellow-800">
-              ⚠️ All departments currently have managers assigned. 
+              ⚠️ All departments currently have managers assigned.
               You can still add a manager without assigning to a department.
             </p>
             <div className="text-xs text-gray-600 mt-2">

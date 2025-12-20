@@ -119,7 +119,7 @@ const EmployeeList: React.FC<Props> = ({
   const actions = [
     {
       label: "Remove",
-      type: "delete",
+      type: "delete" as const,
       onClick: (row: EmployeeDTO) => handleRemoveEmployee(row),
       disabled: (row: EmployeeDTO) => isRemoving === row.employeeId,
     },
@@ -170,7 +170,7 @@ const EmployeeList: React.FC<Props> = ({
         totalPages={1}
         onPageChange={() => { }}
         actions={actions}
-        renderCell={(row, key) => row[key]}
+        renderCell={(row, key) => row[key] as React.ReactNode}
       />
     </div>
   );

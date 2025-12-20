@@ -3,21 +3,22 @@ import ProjectDetailsLayout from '@/shared/components/Project/ProjectDetailsLayo
 import React, { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { LoadingSpinner } from '@/shared/components/Loading';
+import { ProjectDTO } from '@/shared/components/Project/types';
 
 const ProjectPage = () => {
   const { id } = useParams();
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState<ProjectDTO | null>(null);
 
-  const fetchProjectData = async () => {
+  const fetchProjectData = React.useCallback(async () => {
     if (!id) return;
     const data = await getProjectDetails(id);
     console.log("Project Details:", data);
     setProject(data);
-  };
+  }, [id]);
 
   useEffect(() => {
     fetchProjectData();
-  }, [id]);
+  }, [id, fetchProjectData]);
 
   return (
     <div className="p-6">

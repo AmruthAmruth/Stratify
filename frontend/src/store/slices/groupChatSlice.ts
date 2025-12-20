@@ -7,15 +7,20 @@ export interface IGroupMessage {
     senderName?: string;
     message: string;
     createdAt: string;
+    messageType?: string;
+    fileUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
 }
 
 export interface IGroup {
     id: string;
     name: string;
-    members: string[];
+    members: string[] | Array<{ id: string; name: string }>;
     lastMessage?: string;
     unreadCount?: number;
-    createdAt: string;
+    createdAt?: string;
     updatedAt?: string;
 }
 

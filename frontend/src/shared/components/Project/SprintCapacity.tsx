@@ -48,7 +48,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
                 console.log('[SprintCapacity] Fetching capacity for sprintId:', sprintId);
                 const data = await getSprintCapacity(sprintId);
                 console.log('[SprintCapacity] Received data:', data);
-                setCapacity(data);
+                setCapacity(data as SprintCapacity);
             } catch (err: any) {
                 console.error("[SprintCapacity] Error fetching sprint capacity:", err);
                 setError(err.message || "Failed to load capacity data");

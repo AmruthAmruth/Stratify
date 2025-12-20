@@ -72,7 +72,7 @@ const NotificationBoard = () => {
     } else {
       setIsLoading(false);
     }
-  }, []); // Empty deps - only run once on mount
+  }, [notifications, dispatch]); // Added missing dependencies
 
   const handleToggleRead = async (id: string) => {
     const notification = notifications.find(n => n.id === id);
@@ -154,10 +154,10 @@ const NotificationBoard = () => {
         ) : (
           notifications.map((n) => (
             <NotificationItem
-              key={n.id}
+              key={n.id || Math.random().toString()}
               notification={n}
-              onMarkRead={() => handleToggleRead(n.id)}
-              onDelete={() => handleDelete(n.id)}
+              onMarkRead={() => n.id && handleToggleRead(n.id)}
+              onDelete={() => n.id && handleDelete(n.id)}
             />
           ))
         )}

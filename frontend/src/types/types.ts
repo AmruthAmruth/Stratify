@@ -29,6 +29,18 @@ export interface CompanyAnalytics {
     };
 }
 
+export interface EmployeeDashboardStats {
+    totalAssigned: number;
+    pendingIssues: number;
+    completedIssues: number;
+}
+
+export interface EmployeeChartData {
+    issuesByPriority: ChartData;
+    issuesByStatus: ChartData;
+    issuesByType: ChartData;
+}
+
 // ============================================
 // Department & Team Types
 // ============================================
@@ -41,6 +53,7 @@ export interface Department {
     managerName?: string;
     employeeCount?: number;
     createdAt?: string;
+    [key: string]: unknown;
 }
 
 export interface DepartmentFormData {
@@ -58,6 +71,8 @@ export interface TeamMember {
     departmentId?: string;
     departmentName?: string;
     profileImage?: string;
+    phone?: string;
+    status?: string;
 }
 
 export interface EmployeeFormData {
@@ -128,6 +143,7 @@ export interface ChatMessage {
     fileType?: string;
     isRead: boolean;
     createdAt: string;
+    savedChat?: boolean;
 }
 
 export interface ChatTeamMember {
@@ -159,6 +175,7 @@ export interface GroupChat {
     lastMessage?: string;
     lastMessageTime?: string;
     unreadCount?: number;
+    createdAt?: string;
 }
 
 // ============================================
@@ -204,16 +221,52 @@ export interface Project {
     departmentId: string;
     projectLeadId: string;
     companyId: string;
+    projectName?: string;
+    projectDescription?: string;
     employees?: Array<{ id: string; name: string; position: string }>;
     backlog?: unknown[];
     activeSprints?: unknown[];
     plannedSprints?: unknown[];
     completedSprints?: unknown[];
+    remainingTimeInDays?: number;
+    [key: string]: unknown;
 }
 
 export interface ProjectsResponse {
     projects: Project[];
     total?: number;
+    departmentId?: string;
+    status?: string;
+    counts?: {
+        total: number;
+        planned: number;
+        active: number;
+        completed: number;
+    };
+}
+
+// Response type for manager's department projects
+export interface ManagerProjectsResponse {
+    departmentId: string;
+    projects: Array<{
+        id: string;
+        projectName: string;
+        projectDescription: string;
+        status: string;
+        projectLead?: string;
+        departmentName?: string;
+        remainingTimeInDays?: number;
+        key: string;
+        startDate: string;
+        endDate: string;
+        teamMemberIds: string[];
+    }>;
+    counts: {
+        total: number;
+        planned: number;
+        active: number;
+        completed: number;
+    };
 }
 
 export interface SubTask {
@@ -245,11 +298,15 @@ export interface Issue {
     type: string;
     status: string;
     priority: string;
+    estimatedHours?: number;
+    createdAt?: string;
+    updatedAt?: string;
     assignedTo?: string;
     sprintId?: string;
     subTasks?: SubTask[];
     projectId?: string;
     projectName?: string;
+    [key: string]: unknown;
 }
 
 // ============================================
@@ -270,6 +327,12 @@ export interface PaymentResponse {
     amount: number;
     currency: string;
     key: string;
+    subscription?: {
+        orderId: string;
+        amount: number;
+        currency: string;
+        key: string;
+    };
 }
 
 export interface PaymentVerificationData {
@@ -291,12 +354,17 @@ export interface UserProfile {
     phone?: string;
     role: 'company' | 'manager' | 'employee' | 'superadmin';
     position?: string;
-    departmentId?: string;
+    departmentId?: string | { _id: string; name: string };
     departmentName?: string;
     companyId?: string;
     companyName?: string;
     profileImage?: string;
     createdAt?: string;
+    dob?: string;
+    gender?: string;
+    joiningDate?: string;
+    experience?: number;
+    age?: number;
 }
 
 export interface SuperAdminProfile {
@@ -435,7 +503,8 @@ export interface Company {
 }
 
 export interface CompanyListResponse {
-    companies: Company[];
+    data: Company[];
+    companies?: Company[];
     total: number;
     page: number;
     pageSize: number;
@@ -445,4 +514,14 @@ export interface DepartmentDetails {
     department: Department;
     manager?: TeamMember;
     employees: TeamMember[];
+    // Some APIs wrap the response
+    response?: {
+        departmentName: string;
+        description: string;
+        headOfDepartment: string;
+        headEmail: string;
+        headPhone: string;
+        headPosition: string;
+        teamMembers: TeamMember[];
+    };
 }

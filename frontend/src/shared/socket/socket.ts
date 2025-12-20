@@ -14,7 +14,7 @@ export const connectSocket = (userId: string) => {
     console.log("Connected User", userId);
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket.id);
+      console.log("Socket connected:", socket?.id);
       socket?.emit("register", userId);
     });
 

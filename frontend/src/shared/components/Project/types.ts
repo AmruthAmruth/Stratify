@@ -5,6 +5,8 @@ export interface EmployeeDTO {
   id: string;
   name: string;
   position: string;
+  employeeId?: string;
+  [key: string]: unknown;
 }
 
 export interface SubTaskDTO {
@@ -25,9 +27,11 @@ export interface IssueDTO {
   type: string;
   status: string;
   priority: string;
+  estimatedHours?: number;
   assignedTo: string | null;
   sprintId: string | null;
   subTasks: SubTaskDTO[];
+  [key: string]: unknown;
 }
 
 export interface SprintDTO {
@@ -62,7 +66,50 @@ export interface ProjectDTO {
   activeSprintCount: number;
   plannedSprintCount: number;
   completedSprintCount: number;
+  [key: string]: unknown;
 }
 
 // Alias for backward compatibility
 export type ProjectDetailsDTO = ProjectDTO;
+
+// Allocation details for a project
+export interface AllocationDetails {
+  percentage?: number;
+  hoursPerWeek?: number;
+  allocationPercent?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+// Forecast allocation details
+export interface ForecastAllocationDetails {
+  forecastHours?: number;
+  actualHours?: number;
+  forecastHoursPerWeek?: number;
+  startDate?: string;
+  endDate?: string;
+}
+
+// Forecast vs actual comparison
+export interface ForecastVsActualDetails {
+  variance?: number;
+  status?: string;
+  variancePercent?: number;
+  leaveHours?: number;
+  utilizationPercent?: number;
+}
+
+// Employee with allocation information
+export interface EmployeeWithAllocation {
+  id: string;
+  name: string;
+  position: string;
+  allocationPercentage?: number;
+  hoursPerWeek?: number;
+  totalAllocatedHours?: number;
+  forecastHours?: number;
+  allocation?: AllocationDetails;
+  forecastAllocation?: ForecastAllocationDetails;
+  forecastVsActual?: ForecastVsActualDetails;
+  totalAllocatedPercent?: number;
+}

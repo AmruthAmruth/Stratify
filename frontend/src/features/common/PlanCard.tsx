@@ -5,6 +5,7 @@ interface Plan {
   description: string;
   amount: number;
   durationInMonths: number;
+  [key: string]: unknown;
 }
 
 interface PlanCardProps {

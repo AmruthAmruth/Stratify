@@ -3,14 +3,15 @@ import ProjectDetailsLayout from '@/shared/components/Project/ProjectDetailsLayo
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ArrowLeft } from 'lucide-react';
+import { ProjectDTO } from '@/shared/components/Project/types';
 
 const CompanyProjectDetailsPage = () => {
     const { id } = useParams();
     const navigate = useNavigate();
-    const [project, setProject] = useState(null);
+    const [project, setProject] = useState<ProjectDTO | null>(null);
     const [loading, setLoading] = useState(true);
 
-    const fetchProjectData = async () => {
+    const fetchProjectData = React.useCallback(async () => {
         if (!id) return;
         try {
             setLoading(true);
@@ -23,11 +24,11 @@ const CompanyProjectDetailsPage = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [id]);
 
     useEffect(() => {
         fetchProjectData();
-    }, [id]);
+    }, [id, fetchProjectData]);
 
     if (loading) {
         return (

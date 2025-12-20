@@ -30,14 +30,11 @@ const ChatBox = ({
   const userId = useSelector((state: RootState) => state.auth.userId);
   const dispatch = useDispatch();
 
-  // ✅ Reset chat when new receiver is selected and load initial messages
+  // ✅ Reset chat when new receiver is selected
   useEffect(() => {
     dispatch(clearChat());
-    console.log("Loading initial messages for receiverId:", receiverId, "Messages:", initialMessages);
-    if (initialMessages && initialMessages.length > 0) {
-      initialMessages.forEach((msg) => dispatch(addMessage(msg)));
-    }
-  }, [receiverId, dispatch]); // Removed initialMessages from deps to prevent unnecessary clearing
+    console.log("Loading initial messages for receiverId:", receiverId);
+  }, [receiverId, dispatch]);
 
   // ✅ Update messages when initialMessages changes (without clearing)
   useEffect(() => {

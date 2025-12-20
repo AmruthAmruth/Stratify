@@ -18,6 +18,7 @@ interface Plan {
   description: string;
   amount: number;
   durationInMonths: number;
+  [key: string]: unknown;
 }
 
 interface SubscriptionPlansProps {
@@ -57,7 +58,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
     const fetchPlans = async () => {
       try {
         const data = await listSubscriptionPlan();
-        setPlans(data);
+        setPlans(data as unknown as Plan[]);
       } catch {
         enqueueSnackbar("Failed to load subscription plans.", { variant: "error" });
       } finally {
@@ -67,22 +68,47 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
     fetchPlans();
   }, [enqueueSnackbar]);
 
+  interface RazorpaySubscription {
+    key: string;
+    amount: number;
+    currency: string;
+    orderId: string;
+  }
+
+  interface RazorpayOrderData {
+    subscription: RazorpaySubscription;
+  }
+
+  interface RazorpayResponse {
+    razorpay_order_id: string;
+    razorpay_payment_id: string;
+    razorpay_signature: string;
+  }
+
+  interface RazorpayError {
+    message?: string;
+  }
+
   const handleBuy = async (plan: Plan) => {
     try {
-      let orderData;
+      let orderData: RazorpayOrderData;
 
       // Create subscription based on authentication status
       if (isAuthenticated) {
-        orderData = await createSubscriptionPlan(plan.plan);
+        orderData = (await createSubscriptionPlan(plan.plan)) as unknown as RazorpayOrderData;
       } else {
         if (!companyId) {
           enqueueSnackbar("Company ID is required", { variant: "error" });
           return;
         }
-        orderData = await createSubscriptionPlanForUnauthenticated(plan.plan, companyId);
+        orderData = (await createSubscriptionPlanForUnauthenticated(plan.plan, companyId)) as unknown as RazorpayOrderData;
       }
 
       const subscription = orderData.subscription;
+      if (!subscription) {
+        enqueueSnackbar("No subscription data received", { variant: "error" });
+        return;
+      }
 
       // For unauthenticated users, dynamically load Razorpay SDK
       if (!isAuthenticated) {
@@ -106,7 +132,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
         order_id: subscription.orderId,
         name: "Stratify",
         description: `Purchase ${plan.plan}`,
-        handler: async (response: any) => {
+        handler: async (response: RazorpayResponse) => {
           try {
             // Verify payment based on authentication status
             if (isAuthenticated) {
@@ -122,7 +148,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
                 paymentId: response.razorpay_payment_id,
                 signature: response.razorpay_signature,
                 planName: plan.plan,
-                companyId,
+                companyId: companyId || "",
               });
             }
 
@@ -149,8 +175,9 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
       };
 
       new window.Razorpay(options).open();
-    } catch (err: any) {
-      enqueueSnackbar(err.message || "Payment initiation failed", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as RazorpayError;
+      enqueueSnackbar(error.message || "Payment initiation failed", { variant: "error" });
     }
   };
 

@@ -45,9 +45,9 @@ interface Project {
 }
 
 interface ProjectsData {
-  departmentId: string;
+  departmentId?: string;
   projects: Project[];
-  counts: {
+  counts?: {
     total: number;
     planned: number;
     active: number;
@@ -74,6 +74,7 @@ interface CreateProjectPayload {
   departmentId: string;
   status: "Planned" | "Active" | "Completed" | "Archived";
   teamMemberIds: string[];
+  [key: string]: unknown;
 }
 
 interface UpdateProjectPayload extends CreateProjectPayload {
@@ -140,7 +141,7 @@ const Projects: React.FC = () => {
 
       // Handle projects
       if (projectsResponse && !projectsResponse.status?.includes("error")) {
-        setProjects(projectsResponse);
+        setProjects(projectsResponse as unknown as ProjectsData);
       } else {
         setProjects(INITIAL_PROJECTS_STATE);
         enqueueSnackbar("Failed to fetch projects.", {
@@ -470,27 +471,27 @@ const Projects: React.FC = () => {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             <DashboardCard
               title="Total Projects"
-              value={projects.counts.total}
+              value={projects.counts?.total ?? 0}
               subtitle="All department projects"
-              trend={projects.counts.total > 0 ? "up" : "down"}
+              trend={(projects.counts?.total ?? 0) > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Planned Projects"
-              value={projects.counts.planned}
+              value={projects.counts?.planned ?? 0}
               subtitle="Not started yet"
-              trend={projects.counts.planned > 0 ? "up" : "down"}
+              trend={(projects.counts?.planned ?? 0) > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Active Projects"
-              value={projects.counts.active}
+              value={projects.counts?.active ?? 0}
               subtitle="Currently running"
-              trend={projects.counts.active > 0 ? "up" : "down"}
+              trend={(projects.counts?.active ?? 0) > 0 ? "up" : "down"}
             />
             <DashboardCard
               title="Completed Projects"
-              value={projects.counts.completed}
+              value={projects.counts?.completed ?? 0}
               subtitle="Finished successfully"
-              trend={projects.counts.completed > 0 ? "up" : "down"}
+              trend={(projects.counts?.completed ?? 0) > 0 ? "up" : "down"}
             />
           </div>
 

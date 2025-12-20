@@ -3,12 +3,12 @@ import { ZegoUIKitPrebuilt } from "@zegocloud/zego-uikit-prebuilt";
 
 interface VideoCallProps {
   roomId: string;
-  userName: string;
+  userName: string | null;
 }
 
 export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
   const meetingContainer = useRef<HTMLDivElement>(null);
-  const zpRef = useRef<any>(null); 
+  const zpRef = useRef<any>(null);
 
   useEffect(() => {
     const appID = 1198444485;
@@ -19,10 +19,10 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
       serverSecret,
       roomId,
       Date.now().toString(),
-      userName
+      userName || "Guest"
     );
 
-    
+
     if (zpRef.current) return;
     const zp = ZegoUIKitPrebuilt.create(kitToken);
     zpRef.current = zp;
@@ -42,7 +42,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
 
     return () => {
       try {
-        zpRef.current?.destroy(); 
+        zpRef.current?.destroy();
         zpRef.current = null;
       } catch (err) {
         console.warn("Cleanup error:", err);

@@ -7,6 +7,10 @@ interface AuthState {
   name: string | null;
   companyName: string | null;
   companyLogo: string | null;
+  email: string | null;
+  companyThemeColor: string | null;
+  themeBackgroundColor: string | null;
+  themeTextColor: string | null;
 }
 
 const initialState: AuthState = {
@@ -16,6 +20,10 @@ const initialState: AuthState = {
   name: null,
   companyName: null,
   companyLogo: null,
+  email: null,
+  companyThemeColor: null,
+  themeBackgroundColor: null,
+  themeTextColor: null,
 };
 
 const authSlice = createSlice({

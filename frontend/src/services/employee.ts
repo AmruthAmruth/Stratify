@@ -1,13 +1,14 @@
 import axiosInstance from './axiosInstance';
 import { EMPLOYEE_ROUTES } from '@/constants/routes';
-import type { UserProfile } from '@/types/types';
+import type { UserProfile, EmployeeDashboardStats, EmployeeChartData } from '@/types/types';
 
-export const getEmployeeDashboardStats = async (): Promise<{
-    totalTasks: number;
-    completedTasks: number;
-    pendingTasks: number;
-    upcomingMeetings: number;
-}> => {
+// Dashboard stats response type
+export interface DashboardStatsResponse {
+    stats?: EmployeeDashboardStats;
+    graphs?: EmployeeChartData;
+}
+
+export const getEmployeeDashboardStats = async (): Promise<DashboardStatsResponse> => {
     try {
         const response = await axiosInstance.get('/api/employee/dashboard-stats');
         return response.data;

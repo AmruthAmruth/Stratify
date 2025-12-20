@@ -17,22 +17,7 @@ import { RootState } from "@/store";
 import { getCompanyProfile, updateCompanyProfile } from "@/services/company";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
 import { toast } from "react-hot-toast";
-
-interface Company {
-    id: string;
-    name: string;
-    email: string;
-    phone: string;
-    industry: string;
-    description: string;
-    businessRegNo: string;
-    address: string;
-    city: string;
-    state: string;
-    country: string;
-    zipcode: string;
-    profileImage?: string;
-}
+import type { Company } from "@/types/types";
 
 const CompanyProfile: React.FC = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
@@ -41,13 +26,7 @@ const CompanyProfile: React.FC = () => {
     const [formData, setFormData] = useState<Partial<Company>>({});
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        if (userId) {
-            fetchCompanyProfile();
-        }
-    }, [userId]);
-
-    const fetchCompanyProfile = async () => {
+    const fetchCompanyProfile = React.useCallback(async () => {
         try {
             setLoading(true);
             // Assuming getCompanyProfile takes ID. If user is company, user.id is companyId.
@@ -60,7 +39,13 @@ const CompanyProfile: React.FC = () => {
         } finally {
             setLoading(false);
         }
-    };
+    }, [userId]);
+
+    useEffect(() => {
+        if (userId) {
+            fetchCompanyProfile();
+        }
+    }, [userId, fetchCompanyProfile]);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;

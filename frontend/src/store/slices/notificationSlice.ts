@@ -1,5 +1,17 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { INotification } from "@/shared/components/types"; // adjust path
+
+// Define INotification interface locally to avoid import errors
+interface INotification {
+  id?: string;
+  _id?: string;
+  userId?: string;
+  role?: "company" | "manager" | "employee";
+  title: string;
+  message: string;
+  type?: "info" | "success" | "warning" | "error";
+  isRead: boolean;
+  createdAt: string;
+}
 
 interface NotificationState {
   notifications: INotification[];
@@ -19,7 +31,7 @@ const notificationSlice = createSlice({
     addNotification: (state, action: PayloadAction<INotification>) => {
       // Prevent duplicates by checking if notification already exists
       const exists = state.notifications.some(
-        (n) => n.id === action.payload.id || n.id === action.payload._id
+        (n: INotification) => n.id === action.payload.id || n.id === action.payload._id
       );
       if (!exists) {
         // Add to beginning of array (newest first)
@@ -28,7 +40,7 @@ const notificationSlice = createSlice({
     },
     updateNotification: (state, action: PayloadAction<INotification>) => {
       const index = state.notifications.findIndex(
-        (n) => n.id === action.payload.id
+        (n: INotification) => n.id === action.payload.id
       );
       if (index !== -1) {
         state.notifications[index] = action.payload;
@@ -36,7 +48,7 @@ const notificationSlice = createSlice({
     },
     removeNotification: (state, action: PayloadAction<string>) => {
       state.notifications = state.notifications.filter(
-        (n) => n.id !== action.payload
+        (n: INotification) => n.id !== action.payload
       );
     },
     clearNotifications: (state) => {

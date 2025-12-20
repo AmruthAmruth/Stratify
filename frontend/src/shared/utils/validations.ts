@@ -67,7 +67,7 @@ export const addMemberSchema = z.object({
   position: z.string().min(1, "Position is required"),
   departmentId: z.string().optional(),
   gender: z.enum(["male", "female", "other"], {
-    required_error: "Gender is required",
+    message: "Gender is required",
   }),
 });
 
@@ -123,7 +123,7 @@ export const createProjectSchema = z.object({
     message: "End date is required",
   }),
   status: z.enum(["Planned", "Active", "Completed", "Archived"], {
-    required_error: "Status is required",
+    message: "Status is required",
   }),
 });
 
@@ -138,7 +138,7 @@ export const updateProjectSchema = z.object({
     message: "End date is required",
   }),
   status: z.enum(["Planned", "Active", "Completed", "Archived"], {
-    required_error: "Status is required",
+    message: "Status is required",
   }),
 });
 
@@ -166,9 +166,7 @@ export const createLeaveSchema = z
     }),
 
     type: z.enum(["Casual", "Sick", "Earned"], {
-      errorMap: () => ({
-        message: "Leave type must be Casual, Sick, or Earned",
-      }),
+      message: "Leave type must be Casual, Sick, or Earned",
     }),
     reason: z.string().min(1, "Reason is required"),
   })
@@ -194,10 +192,10 @@ export const createIssueSchema = z.object({
   acceptanceCriteria: z.string().min(1, "Acceptance Criteria is required"),
   size: z.coerce.number().min(1, "Size must be at least 1"),
   type: z.enum(["User Story", "Bug"], {
-    errorMap: () => ({ message: "Type must be either User Story or Bug" }),
+    message: "Type must be either User Story or Bug",
   }),
   priority: z.enum(["Low", "Medium", "High"], {
-    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
+    message: "Priority must be Low, Medium, or High",
   }),
 });
 
@@ -205,7 +203,7 @@ export const createIssueSchema = z.object({
 
 export const updateIssueSchema = z.object({
   priority: z.enum(["Low", "Medium", "High"], {
-    errorMap: () => ({ message: "Priority must be Low, Medium, or High" }),
+    message: "Priority must be Low, Medium, or High",
   }),
 });
 

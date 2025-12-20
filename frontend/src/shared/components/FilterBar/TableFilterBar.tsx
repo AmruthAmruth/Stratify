@@ -7,9 +7,9 @@ interface TableFilterBarProps {
   filterValue?: string;
   setFilterValue?: (val: string) => void;
   sortOptions?: { key: string; label: string }[];
-  sortBy?: string;
+  sortBy?: string | null;
   setSortBy?: (val: string) => void;
-  sortOrder?: "asc" | "desc";
+  sortOrder?: "asc" | "desc" | null;
   setSortOrder?: (val: "asc" | "desc") => void;
   onClearFilters?: () => void;
   searchPlaceholder?: string;
@@ -46,7 +46,7 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
     <div className="relative">
       {/* Main Container */}
       <div className="bg-[#fbfbfb] border border-[#dfdcef] rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 mb-6 relative overflow-hidden">
-        
+
         {/* Header Section */}
         <div className="flex items-center justify-between mb-5 relative z-10">
           <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
               </div>
             )}
           </div>
-          
+
           {onClearFilters && hasActiveFilters && (
             <button
               onClick={onClearFilters}
@@ -73,7 +73,7 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
 
         {/* Filters Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 items-end relative z-10">
-          
+
           {/* Search */}
           <div className="lg:col-span-5">
             <label className="block text-xs font-semibold text-[#3b3b3b] mb-2 tracking-wide uppercase">
@@ -165,21 +165,19 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
                   <div className="flex rounded-xl overflow-hidden shadow-sm border border-[#dfdcef] bg-[#fbfbfb]">
                     <button
                       onClick={() => setSortOrder && setSortOrder("asc")}
-                      className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${
-                        sortOrder === "asc" 
-                          ? "bg-[#009063] text-white" 
+                      className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${sortOrder === "asc"
+                          ? "bg-[#009063] text-white"
                           : "text-[#3b3b3b] hover:bg-[#dfdcef]"
-                      }`}
+                        }`}
                     >
                       ↑
                     </button>
                     <button
                       onClick={() => setSortOrder && setSortOrder("desc")}
-                      className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${
-                        sortOrder === "desc" 
-                          ? "bg-[#009063] text-white" 
+                      className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${sortOrder === "desc"
+                          ? "bg-[#009063] text-white"
                           : "text-[#3b3b3b] hover:bg-[#dfdcef]"
-                      }`}
+                        }`}
                     >
                       ↓
                     </button>

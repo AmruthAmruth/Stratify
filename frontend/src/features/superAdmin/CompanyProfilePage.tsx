@@ -42,7 +42,8 @@ const CompanyProfilePage = () => {
     if (!id) return;
     getCompanyProfile(id)
       .then((data) => {
-        setCompanyData(data.response);
+        // Data comes directly from the API response
+        setCompanyData(data as unknown as CompanyDetails);
         setLoading(false);
       })
       .catch((err) => {
@@ -220,39 +221,38 @@ const CompanyProfilePage = () => {
           </div>
 
           {/* Company Stats */}
-         <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-  <h3 className="text-xl font-semibold text-gray-900 mb-6">
-    Company Overview
-  </h3>
-  <div className="divide-y divide-gray-200">
-    <div className="flex justify-between items-center py-3">
-      <span className="text-gray-600">Status</span>
-      <span
-        className={`font-semibold px-3 py-1 rounded-full text-sm ${
-          companyData.status === "active"
-            ? "bg-green-100 text-green-700"
-            : companyData.status === "pending"
-            ? "bg-yellow-100 text-yellow-700"
-            : "bg-red-100 text-red-700"
-        }`}
-      >
-        {companyData.status}
-      </span>
-    </div>
-    <div className="flex justify-between items-center py-3">
-      <span className="text-gray-600">Industry</span>
-      <span className="font-medium text-gray-900">
-        {companyData.industry}
-      </span>
-    </div>
-    <div className="flex justify-between items-center py-3">
-      <span className="text-gray-600">Location</span>
-      <span className="font-medium text-gray-900 text-right">
-        {companyData.city}, {companyData.state}
-      </span>
-    </div>
-  </div>
-</div>
+          <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
+            <h3 className="text-xl font-semibold text-gray-900 mb-6">
+              Company Overview
+            </h3>
+            <div className="divide-y divide-gray-200">
+              <div className="flex justify-between items-center py-3">
+                <span className="text-gray-600">Status</span>
+                <span
+                  className={`font-semibold px-3 py-1 rounded-full text-sm ${companyData.status === "active"
+                      ? "bg-green-100 text-green-700"
+                      : companyData.status === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : "bg-red-100 text-red-700"
+                    }`}
+                >
+                  {companyData.status}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-3">
+                <span className="text-gray-600">Industry</span>
+                <span className="font-medium text-gray-900">
+                  {companyData.industry}
+                </span>
+              </div>
+              <div className="flex justify-between items-center py-3">
+                <span className="text-gray-600">Location</span>
+                <span className="font-medium text-gray-900 text-right">
+                  {companyData.city}, {companyData.state}
+                </span>
+              </div>
+            </div>
+          </div>
 
 
 

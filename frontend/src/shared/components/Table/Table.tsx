@@ -48,7 +48,7 @@ const Table: React.FC<TableProps> = ({
                       key={col.key}
                       className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap border-b border-gray-100"
                     >
-                      {renderCell ? renderCell(row, col.key) : row[col.key]}
+                      {renderCell ? renderCell(row, col.key) : (row[col.key] as React.ReactNode)}
                     </td>
                   ))}
 
@@ -59,15 +59,14 @@ const Table: React.FC<TableProps> = ({
                           <button
                             key={index}
                             onClick={() => action.onClick(row)}
-                            className={`px-3 py-1 text-xs font-medium rounded-lg shadow-sm transition ${
-                              action.type === "delete"
+                            className={`px-3 py-1 text-xs font-medium rounded-lg shadow-sm transition ${action.type === "delete"
                                 ? "bg-red-100 text-red-600 hover:bg-red-200"
                                 : action.type === "edit"
-                                ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                                : action.type === "approve"
-                                ? "bg-green-100 text-green-600 hover:bg-green-200"
-                                : "bg-gray-100 text-gray-600 hover:bg-gray-200"
-                            }`}
+                                  ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                                  : action.type === "approve"
+                                    ? "bg-green-100 text-green-600 hover:bg-green-200"
+                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              }`}
                           >
                             {action.label}
                           </button>

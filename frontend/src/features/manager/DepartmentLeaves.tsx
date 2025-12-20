@@ -17,7 +17,7 @@ const DepartmentLeaves = () => {
     peadingLeave: 0,
     approvedLeave: 0,
     activeMembers: 0,
-  });   
+  });
   const [leaves, setLeaves] = useState<any[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isRejectLeaveModalOpen, setIsRejectLeaveModalOpen] = useState(false);
@@ -37,8 +37,14 @@ const DepartmentLeaves = () => {
     const fetchLeaves = async () => {
       try {
         const data = await getDepartmentLeave();
-        setLeaveCounts(data.leaveCounts);
-        setLeaves(data.leaves);
+        const leavesList = data.leaves || [];
+        setLeaves(leavesList);
+        setLeaveCounts({
+          totalLeave: leavesList.length,
+          peadingLeave: leavesList.filter((l: any) => l.status === "Pending").length,
+          approvedLeave: leavesList.filter((l: any) => l.status === "Approved").length,
+          activeMembers: 0,
+        });
       } catch (error: any) {
         console.error("Error fetching department leaves:", error);
         enqueueSnackbar(
@@ -109,42 +115,42 @@ const DepartmentLeaves = () => {
 
   // Submit rejection
   const handleRejectSubmit = async (formData: any) => {
-  if (!selectedLeave) return;
-  setSubmitLoading(true);
+    if (!selectedLeave) return;
+    setSubmitLoading(true);
 
-  try {
-    const payload = {
-      leaveId: selectedLeave.leaveId,
-      status: "Rejected",
-      reason: formData.reason, // ✅ send as "reason"
-    };
+    try {
+      const payload = {
+        leaveId: selectedLeave.leaveId,
+        status: "Rejected",
+        reason: formData.reason, // ✅ send as "reason"
+      };
 
-    const res = await leaveStatusUpdate(payload);
+      const res = await leaveStatusUpdate(payload);
 
-    setLeaves((prev) =>
-      prev.map((l) =>
-        l.leaveId === selectedLeave.leaveId
-          ? { ...l, status: "Rejected", rejectedReason: formData.reason } // ✅ keep in UI as rejectedReason
-          : l
-      )
-    );
+      setLeaves((prev) =>
+        prev.map((l) =>
+          l.leaveId === selectedLeave.leaveId
+            ? { ...l, status: "Rejected", rejectedReason: formData.reason } // ✅ keep in UI as rejectedReason
+            : l
+        )
+      );
 
-    setIsRejectLeaveModalOpen(false);
-    setSelectedLeave(null);
+      setIsRejectLeaveModalOpen(false);
+      setSelectedLeave(null);
 
-    enqueueSnackbar(res?.message || "Leave rejected successfully!", {
-      variant: "success",
-    });
-  } catch (error: any) {
-    console.error("Error rejecting leave:", error);
-    enqueueSnackbar(
-      error?.response?.data?.message || "Failed to reject leave",
-      { variant: "error" }
-    );
-  } finally {
-    setSubmitLoading(false);
-  }
-};
+      enqueueSnackbar(res?.message || "Leave rejected successfully!", {
+        variant: "success",
+      });
+    } catch (error: any) {
+      console.error("Error rejecting leave:", error);
+      enqueueSnackbar(
+        error?.response?.data?.message || "Failed to reject leave",
+        { variant: "error" }
+      );
+    } finally {
+      setSubmitLoading(false);
+    }
+  };
   const formattedLeaves = paginatedData.map((leave) => ({
     ...leave,
     startDate: formatDate(leave.startDate),

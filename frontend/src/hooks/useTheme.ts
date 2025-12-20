@@ -11,17 +11,10 @@ export const useTheme = () => {
     const theme = useSelector((state: RootState) => state.theme);
 
     return {
-        primaryColor: theme.primaryColor,
-        secondaryColor: theme.secondaryColor,
-        accentColor: theme.accentColor,
-        backgroundColor: theme.backgroundColor,
-        textColor: theme.textColor,
         mode: theme.mode,
-        themeName: theme.themeName,
-        isCustom: theme.isCustom,
-
+        companyColor: theme.companyColor,
         // Derived colors for common use cases
-        primaryHover: `${theme.primaryColor}dd`, // Slightly transparent for hover
-        accentTransparent: `${theme.accentColor}50`, // 50% transparent accent
+        primaryColor: theme.companyColor || '#009063',
+        primaryHover: `${theme.companyColor || '#009063'}dd`, // Slightly transparent for hover
     };
 };

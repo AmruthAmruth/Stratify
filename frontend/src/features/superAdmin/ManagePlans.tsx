@@ -18,6 +18,7 @@ interface Plan {
   description: string;
   amount: number;
   durationInMonths: number;
+  [key: string]: unknown;
 }
 
 const ManagePlans: React.FC = () => {
@@ -39,7 +40,14 @@ const ManagePlans: React.FC = () => {
     const fetchPlans = async () => {
       try {
         const data = await listSubscriptionPlan();
-        setPlans(data);
+        // Map SubscriptionPlan[] to Plan[]
+        const mappedPlans = data.map((item) => ({
+          plan: item.name,
+          description: item.features.join(', '),
+          amount: item.price,
+          durationInMonths: parseInt(item.duration || '1'),
+        })) as Plan[];
+        setPlans(mappedPlans);
       } catch {
         enqueueSnackbar("Failed to load subscription plans.", { variant: "error" });
       } finally {
@@ -47,27 +55,29 @@ const ManagePlans: React.FC = () => {
       }
     };
     fetchPlans();
-  }, []);
+  }, [enqueueSnackbar]);
 
   // 🔹 Add / Edit Plan Submit Handler
-  const handleSubmit = async (values: Plan) => {
+  const handleSubmit = async (values: Record<string, unknown>) => {
+    const planValues = values as unknown as Plan;
     try {
       setSubmitLoading(true);
 
       if (editingPlan) {
-        await updateSubscription(values);
-        setPlans(plans.map((p) => (p.plan === editingPlan.plan ? values : p)));
+        await updateSubscription(planValues);
+        setPlans(plans.map((p) => (p.plan === editingPlan.plan ? planValues : p)));
         enqueueSnackbar("Plan updated successfully!", { variant: "success" });
       } else {
-        await createSubscription(values);
-        setPlans([...plans, values]);
+        await createSubscription(planValues);
+        setPlans([...plans, planValues]);
         enqueueSnackbar("Plan added successfully!", { variant: "success" });
       }
 
       setIsModalOpen(false);
       setEditingPlan(null);
-    } catch (err: any) {
-      enqueueSnackbar(err.message || "Something went wrong.", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Something went wrong.", { variant: "error" });
     } finally {
       setSubmitLoading(false);
     }

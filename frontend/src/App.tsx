@@ -25,9 +25,26 @@ const App = () => {
       // Load initial notifications on login
       const loadInitialNotifications = async () => {
         try {
-          const data: any = await getNotification();
+          interface INotification {
+            id?: string;
+            _id?: string;
+            userId?: string;
+            role?: "company" | "manager" | "employee";
+            title: string;
+            message: string;
+            type?: "info" | "success" | "warning" | "error";
+            isRead: boolean;
+            createdAt: string;
+            [key: string]: unknown;
+          }
+
+          interface NotificationResponse {
+            response: INotification[];
+          }
+
+          const data = (await getNotification()) as unknown as NotificationResponse;
           if (data?.response?.length) {
-            const notifications = data.response.map((n: any) => ({
+            const notifications = data.response.map((n) => ({
               ...n,
               id: n.id || n._id,
             }));

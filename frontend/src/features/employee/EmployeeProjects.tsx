@@ -5,24 +5,16 @@ import { getEmployeeProjects } from "@/services/projects";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import Table from "@/shared/components/Table/Table";
-
-interface Project {
-    id: string;
-    projectName: string;
-    projectDescription: string;
-    status: string;
-    remainingTimeInDays: number;
-}
+import type { Project } from "@/types/types";
 
 interface ProjectsData {
-    employeeId: string;
+    employeeId?: string;
     projects: Project[];
-    counts: {
+    counts?: {
         total: number;
         planned: number;
         active: number;
         completed: number;
-        archived: number;
     };
 }
 
@@ -93,7 +85,7 @@ const EmployeeProjects: React.FC = () => {
 
     // Filter and sort projects
     const filteredProjects = projectsData.projects
-        .filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+        .filter((p) => (p.projectName || "").toLowerCase().includes(searchTerm.toLowerCase()))
         .filter((p) => !filterStatus || p.status === filterStatus);
 
     const sortedProjects = [...filteredProjects].sort((a, b) => {
@@ -123,36 +115,30 @@ const EmployeeProjects: React.FC = () => {
     return (
         <div className="text-black space-y-6">
             {/* Dashboard Cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <DashboardCard
                     title="Total Projects"
-                    value={projectsData.counts.total}
+                    value={projectsData.counts?.total || 0}
                     subtitle="Assigned to you"
-                    trend={projectsData.counts.total > 0 ? "up" : "down"}
+                    trend={(projectsData.counts?.total || 0) > 0 ? "up" : "down"}
                 />
                 <DashboardCard
                     title="Planned"
-                    value={projectsData.counts.planned}
+                    value={projectsData.counts?.planned || 0}
                     subtitle="Not started"
-                    trend={projectsData.counts.planned > 0 ? "up" : "down"}
+                    trend={(projectsData.counts?.planned || 0) > 0 ? "up" : "down"}
                 />
                 <DashboardCard
                     title="Active"
-                    value={projectsData.counts.active}
+                    value={projectsData.counts?.active || 0}
                     subtitle="In progress"
-                    trend={projectsData.counts.active > 0 ? "up" : "down"}
+                    trend={(projectsData.counts?.active || 0) > 0 ? "up" : "down"}
                 />
                 <DashboardCard
                     title="Completed"
-                    value={projectsData.counts.completed}
+                    value={projectsData.counts?.completed || 0}
                     subtitle="Finished"
-                    trend={projectsData.counts.completed > 0 ? "up" : "down"}
-                />
-                <DashboardCard
-                    title="Archived"
-                    value={projectsData.counts.archived}
-                    subtitle="Archived"
-                    trend={projectsData.counts.archived > 0 ? "up" : "down"}
+                    trend={(projectsData.counts?.completed || 0) > 0 ? "up" : "down"}
                 />
             </div>
 

@@ -14,34 +14,7 @@ import KanbanBoard from "@/shared/components/KanbanBoard/KanbanBoard";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import SimpleCollapsible from "@/shared/components/SimpleCollapsible/SimpleCollapsible";
 import { LoadingSpinner } from "@/shared/components/Loading";
-
-
-interface Subtask {
-  id: string;
-  title: string;
-  description?: string;
-  estimatedHours?: number;
-  status: string;
-}
-
-interface Issue {
-  id: string;
-  heading: string;
-  description: string;
-  acceptanceCriteria: string;
-  size: number;
-  estimatedHours: number;
-  type: string;
-  status: string;
-  priority: string;
-  projectId: string;
-  projectName?: string;
-  sprintId?: string | null;
-  assignedTo: string;
-  subTasks?: Subtask[];
-  createdAt: string;
-  updatedAt: string;
-}
+import type { Issue, SubTask } from "@/types/types";
 
 interface GroupedIssues {
   [projectName: string]: Issue[];
@@ -51,7 +24,7 @@ const Task = () => {
   const [issues, setIssues] = useState<Issue[]>([]);
   const [loading, setLoading] = useState(true);
   const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
-  const [selectedSubtask, setSelectedSubtask] = useState<Subtask | null>(null);
+  const [selectedSubtask, setSelectedSubtask] = useState<SubTask | null>(null);
   const [isCreateSubtaskModalOpen, setIsCreateSubtaskModalOpen] = useState(false);
   const [isEditSubtaskModalOpen, setIsEditSubtaskModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);

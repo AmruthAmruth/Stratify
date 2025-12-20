@@ -15,14 +15,13 @@ const NotificationItem: React.FC<Props> = ({
 }) => {
   return (
     <div
-      className={`p-4 rounded-lg border border-[#dfdcef] flex items-start justify-between transition-all duration-300 hover:shadow-md ${
-        notification.isRead ? "bg-white" : "bg-[#dfdcef]/40 shadow-sm"
-      }`}
+      className={`p-4 rounded-lg border border-[#dfdcef] flex items-start justify-between transition-all duration-300 hover:shadow-md ${notification.isRead ? "bg-white" : "bg-[#dfdcef]/40 shadow-sm"
+        }`}
     >
       {/* Left: Notification content + unread dot */}
       <div
         className="flex items-start gap-4 flex-1 cursor-pointer select-none"
-        onClick={() => onMarkRead?.(notification.id)}
+        onClick={() => notification.id && onMarkRead?.(notification.id)}
       >
         {/* Unread indicator dot */}
         {!notification.isRead && (
@@ -32,9 +31,8 @@ const NotificationItem: React.FC<Props> = ({
         {/* Text content */}
         <div className="space-y-1.5">
           <h4
-            className={`text-base text-[#3b3b3b] ${
-              notification.isRead ? "font-medium" : "font-bold"
-            }`}
+            className={`text-base text-[#3b3b3b] ${notification.isRead ? "font-medium" : "font-bold"
+              }`}
           >
             {notification.title}
           </h4>
@@ -58,7 +56,7 @@ const NotificationItem: React.FC<Props> = ({
         <button
           onClick={(e) => {
             e.stopPropagation(); // Prevent content click
-            onMarkRead?.(notification.id);
+            notification.id && onMarkRead?.(notification.id);
           }}
           className="p-2 hover:bg-[#dfdcef] rounded-full transition-colors duration-200"
           title={notification.isRead ? "Mark as Unread" : "Mark as Read"}
@@ -74,7 +72,7 @@ const NotificationItem: React.FC<Props> = ({
         <button
           onClick={(e) => {
             e.stopPropagation(); // Prevent content click
-            onDelete?.(notification.id);
+            notification.id && onDelete?.(notification.id);
           }}
           className="p-2 hover:bg-red-50 rounded-full transition-colors duration-200 group"
           title="Delete Notification"

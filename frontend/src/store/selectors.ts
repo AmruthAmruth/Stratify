@@ -3,17 +3,12 @@ import { RootState } from "@/store";
 
 const selectChatState = (state: RootState) => state.chat;
 
-export const selectActiveConversationId = createSelector(
+export const selectMessages = createSelector(
   [selectChatState],
-  (chat) => chat.activeConversationId
+  (chat) => chat.messages
 );
 
-export const selectActiveMessages = createSelector(
+export const selectUnreadCounts = createSelector(
   [selectChatState],
-  (chat) => {
-    const id = chat.activeConversationId;
-    if (!id) return [];
-    return chat.messages[id] || [];
-  }
+  (chat) => chat.unreadCounts
 );
-

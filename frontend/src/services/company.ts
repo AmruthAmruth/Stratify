@@ -10,8 +10,18 @@ import type {
   SubscriptionPlan,
   PaymentResponse,
   UserProfile,
+  Company,
 } from "@/types/types";
 
+// Response wrapper types for APIs that return wrapped data
+export interface DepartmentListResponse {
+  response?: Department[];
+  departments?: Department[];
+}
+
+export interface ManagerListResponse {
+  managers?: TeamMember[];
+}
 
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
   try {
@@ -25,7 +35,6 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
   }
 };
 
-
 export const getAllCompanies = (params?: {
   page?: number;
   pageSize?: number;
@@ -34,7 +43,8 @@ export const getAllCompanies = (params?: {
   sort?: Record<string, 1 | -1>;
 }): Promise<CompanyListResponse> => handleRequest(api.get(COMPANY_ROUTES.ALL_COMPANIES, { params }));
 
-export const getAllDepartmentInACompany = (): Promise<Department[]> => handleRequest(api.get(COMPANY_ROUTES.COMPANY_DEPARTMENTS));
+export const getAllDepartmentInACompany = (): Promise<DepartmentListResponse | Department[]> =>
+  handleRequest(api.get(COMPANY_ROUTES.COMPANY_DEPARTMENTS));
 
 export const createDepartment = (data: Record<string, unknown>): Promise<Department> =>
   handleRequest(api.post(COMPANY_ROUTES.CREATE_DEPARTMENT, data));
@@ -47,9 +57,11 @@ export const createManager = (data: Record<string, unknown>): Promise<TeamMember
 
 export const getTeamMember = (): Promise<TeamMember[]> => handleRequest(api.get(COMPANY_ROUTES.TEAM_MEMBERS));
 
-export const getUnassignedManager = (): Promise<TeamMember[]> => handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_MANAGERS));
+export const getUnassignedManager = (): Promise<ManagerListResponse | TeamMember[]> =>
+  handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_MANAGERS));
 
-export const getUnassignedDepartments = (): Promise<Department[]> => handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_DEPARTMENTS));
+export const getUnassignedDepartments = (): Promise<DepartmentListResponse | Department[]> =>
+  handleRequest(api.get(COMPANY_ROUTES.UNASSIGNED_DEPARTMENTS));
 
 export const getDepartmentDetails = (departmentId: string): Promise<DepartmentDetails> =>
   handleRequest(api.get(COMPANY_ROUTES.DEPARTMENT_DETAILS(departmentId)));
@@ -57,7 +69,7 @@ export const getDepartmentDetails = (departmentId: string): Promise<DepartmentDe
 export const getTeamMemberProfile = (profileId: string): Promise<UserProfile> =>
   handleRequest(api.get(COMPANY_ROUTES.TEAM_MEMBER_PROFILE(profileId)));
 
-export const getCompanyProfile = (profileId: string): Promise<UserProfile> =>
+export const getCompanyProfile = (profileId: string): Promise<Company> =>
   handleRequest(api.get(COMPANY_ROUTES.COMPANY_PROFILE(profileId)));
 
 export const listSubscriptionPlan = (): Promise<SubscriptionPlan[]> => handleRequest(api.get(COMPANY_ROUTES.SUBSCRIPTION_PLANS));
@@ -97,6 +109,5 @@ export const listPurchasedCompany = (): Promise<CompanyListResponse> => handleRe
 export const getCompanyAnalytics = (): Promise<CompanyAnalytics> =>
   handleRequest(api.get(COMPANY_ROUTES.COMPANY_ANALYTICS));
 
-export const updateCompanyProfile = (data: Record<string, unknown>): Promise<UserProfile> =>
+export const updateCompanyProfile = (data: Record<string, unknown>): Promise<Company> =>
   handleRequest(api.put(COMPANY_ROUTES.UPDATE_PROFILE, data));
-

@@ -19,7 +19,7 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
 export const superAdminLogin = (data: { email: string; password: string }): Promise<{ accessToken: string }> =>
   handleRequest(api.post(AUTH_ROUTES.SUPER_ADMIN_LOGIN, data));
 
-export const companyRegistration = (data: Record<string, unknown>): Promise<{ message: string; companyId: string }> => {
+export const companyRegistration = (data: Record<string, unknown>): Promise<{ message: string; companyId: string; time?: string }> => {
   const formData = new FormData();
   for (const key in data) {
     if (key === "profileImage" && data.profileImage instanceof File) {
@@ -35,6 +35,7 @@ export const companyRegistration = (data: Record<string, unknown>): Promise<{ me
   );
 };
 
+
 export const verifyOTP = (data: { otp: string; email: string }): Promise<{ message: string; success: boolean }> =>
   handleRequest(api.post(AUTH_ROUTES.COMPANY_VERIFY_OTP, data));
 
@@ -43,8 +44,8 @@ export const companyLogin = (data: { email: string; password: string }): Promise
 
 export const logout = (): Promise<{ message: string }> => handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGOUT));
 
-export const resendOTP = (email: string): Promise<{ message: string }> =>
-  handleRequest(api.post(AUTH_ROUTES.RESEND_OTP, { email }));
+export const resendOTP = (params: { email: string; context?: string }): Promise<{ message: string }> =>
+  handleRequest(api.post(AUTH_ROUTES.RESEND_OTP, { email: params.email }));
 
 export const forgotPassword = (email: string): Promise<{ message: string; time: string }> =>
   handleRequest(api.post(AUTH_ROUTES.FORGOT_PASSWORD, { email }));

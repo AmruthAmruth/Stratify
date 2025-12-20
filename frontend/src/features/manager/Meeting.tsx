@@ -17,7 +17,7 @@ const Meeting: React.FC = () => {
 
   const userName = useSelector((state: RootState) => state.auth.name);
 
-  const fetchMeetings = async () => {
+  const fetchMeetings = React.useCallback(async () => {
     try {
       const data = await getMeetingsByCreator();
       setMeetings(Array.isArray(data) ? data : []);
@@ -25,11 +25,11 @@ const Meeting: React.FC = () => {
       console.error("Error fetching meetings:", error);
       enqueueSnackbar("Failed to fetch meetings", { variant: "error" });
     }
-  };
+  }, [enqueueSnackbar]);
 
   useEffect(() => {
     fetchMeetings();
-  }, []);
+  }, [fetchMeetings]);
 
   const handleCreate = async () => {
     if (!title.trim()) {

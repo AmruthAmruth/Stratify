@@ -35,14 +35,14 @@ export default function Footer() {
             </p>
             <div className="flex space-x-4">
               {socialLinks.map((social) => (
-                <Link
+                <a
                   key={social.label}
                   href={social.href}
                   className="w-10 h-10 bg-[#dfdcef]/50 rounded-lg flex items-center justify-center text-[#3b3b3b] hover:bg-[#009063] hover:text-white transition-all duration-200 border-2 border-[#dfdcef] hover:border-[#009063]"
                   aria-label={social.label}
                 >
                   <social.icon className="w-5 h-5" />
-                </Link>
+                </a>
               ))}
             </div>
           </div>
@@ -55,7 +55,7 @@ export default function Footer() {
                 {links.map((link) => (
                   <li key={link}>
                     <Link
-                      href="#"
+                      to="#"
                       className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200"
                     >
                       {link}
@@ -104,13 +104,13 @@ export default function Footer() {
         <div className="border-t-2 border-[#dfdcef] pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-[#3b3b3b]/70 text-sm">© 2025 Stratify. All rights reserved.</p>
           <div className="flex items-center space-x-6">
-            <Link href="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
+            <Link to="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
               Privacy Policy
             </Link>
-            <Link href="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
+            <Link to="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
               Terms of Service
             </Link>
-            <Link href="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
+            <Link to="#" className="text-[#3b3b3b]/70 hover:text-[#009063] text-sm transition-colors duration-200">
               Cookie Settings
             </Link>
           </div>

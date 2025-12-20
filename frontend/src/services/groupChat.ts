@@ -15,7 +15,7 @@ const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: st
     }
 };
 
-export const createGroup = (data: { name: string; members: string[] }): Promise<GroupChat> =>
+export const createGroup = (data: { name: string; members: string[] }): Promise<{ group: GroupChat }> =>
     handleRequest(api.post(GROUP_CHAT_ROUTES.CREATE_GROUP, data));
 
 export const sendGroupMessage = (data: { groupId: string; message: string; senderName?: string }, file?: File): Promise<GroupChatMessage> => {

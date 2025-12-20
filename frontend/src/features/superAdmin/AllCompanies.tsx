@@ -284,8 +284,8 @@ const AllCompanies = () => {
     }
 
     if (key === "status") {
-      const status = row[key]?.toLowerCase();
-      const statusColors = {
+      const status = row[key]?.toLowerCase() as string;
+      const statusColors: Record<string, string> = {
         approved: "text-green-600 bg-green-100",
         pending: "text-yellow-600 bg-yellow-100",
         rejected: "text-red-600 bg-red-100",

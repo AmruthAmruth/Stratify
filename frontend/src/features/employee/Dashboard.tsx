@@ -3,28 +3,17 @@ import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import ReusableChart from '@/shared/components/Chart/ReusableChart';
 import { getEmployeeDashboardStats } from '@/services/employee';
 import { BarChart3 } from 'lucide-react';
-
-interface DashboardStats {
-    totalAssigned: number;
-    pendingIssues: number;
-    completedIssues: number;
-}
-
-interface ChartData {
-    issuesByPriority: { labels: string[]; data: number[] };
-    issuesByStatus: { labels: string[]; data: number[] };
-    issuesByType: { labels: string[]; data: number[] };
-}
+import type { EmployeeDashboardStats, EmployeeChartData } from '@/types/types';
 
 const EmployeeDashboard = () => {
     const [loading, setLoading] = useState(true);
-    const [stats, setStats] = useState<DashboardStats>({
+    const [stats, setStats] = useState<EmployeeDashboardStats>({
         totalAssigned: 0,
         pendingIssues: 0,
         completedIssues: 0,
     });
 
-    const [chartData, setChartData] = useState<ChartData>({
+    const [chartData, setChartData] = useState<EmployeeChartData>({
         issuesByPriority: { labels: [], data: [] },
         issuesByStatus: { labels: [], data: [] },
         issuesByType: { labels: [], data: [] },

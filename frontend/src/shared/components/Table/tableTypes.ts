@@ -1,26 +1,35 @@
+import React from "react";
+
 interface Column {
   key: string;
   label: string;
 }
 
+// Base row data interface - allows for any additional properties
 interface RowData {
-  [key: string]: string | number | boolean | null;
+  id: string;
+  [key: string]: unknown;
 }
 
 interface TableAction {
   label: string;
   type?: "edit" | "delete" | "approve" | "custom";
-  onClick: (row: RowData) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  onClick: (row: any) => void;
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  disabled?: boolean | ((row: any) => boolean);
 }
 
 interface TableProps {
   columns: Column[];
-  data: RowData[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  data: any[];
   currentPage: number;
   totalPages: number;
   onPageChange: (page: number) => void;
-  renderCell?: (row: RowData, key: string) => React.ReactNode;
-  actions?: TableAction[]; 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  renderCell?: (row: any, key: string) => React.ReactNode;
+  actions?: TableAction[];
 }
 
 export type { TableProps, Column, RowData, TableAction };

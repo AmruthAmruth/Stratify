@@ -26,9 +26,19 @@ export const deleteSubscription = (plan: string): Promise<{ success: boolean; me
   handleRequest(api.delete(SUPER_ADMIN_ROUTES.DELETE_PLAN, { data: { plan } }));
 
 export const getSuperAdminDashboardStats = (): Promise<{
-  totalCompanies: number;
-  activeCompanies: number;
-  pendingApprovals: number;
-  totalRevenue: number;
+  stats?: {
+    totalCompanies: number;
+    approvedCompanies: number;
+    pendingCompanies: number;
+    rejectedCompanies: number;
+    activeSubscriptions: number;
+    totalRevenue: number;
+    monthlyRevenue: number;
+  };
+  graphs?: {
+    companiesByStatus: { labels: string[]; data: number[] };
+    subscriptionsByPlan: { labels: string[]; data: number[] };
+    revenueTrend: { labels: string[]; data: number[] };
+  };
 }> =>
   handleRequest(api.get(SUPER_ADMIN_ROUTES.DASHBOARD_STATS));

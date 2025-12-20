@@ -31,10 +31,10 @@ export const getProjectDetails = (id: string): Promise<ProjectDTO> =>
   handleRequest(api.get(PROJECT_ROUTES.PROJECT_DETAILS(id)));
 
 
-export const createProject = (data: Record<string, unknown>): Promise<Project> =>
+export const createProject = (data: Record<string, unknown>): Promise<Project & { message?: string }> =>
   handleRequest(api.post(PROJECT_ROUTES.CREATE_PROJECT, data));
 
-export const updateProject = (data: Record<string, unknown>): Promise<Project> =>
+export const updateProject = (data: Record<string, unknown>): Promise<Project & { message?: string }> =>
   handleRequest(api.put(PROJECT_ROUTES.UPDATE_PROJECT, data));
 
 export const projectLevelTeamAllocation = (): Promise<unknown> =>
@@ -116,3 +116,7 @@ export const removeEmployeeInProject = (data: Record<string, unknown>): Promise<
 
 // Alias for updateTask - used in Task.tsx
 export const updateSubTask = updateTask;
+
+// Sprint capacity API
+export const getSprintCapacity = (sprintId: string): Promise<unknown> =>
+  handleRequest(api.get(`/projects/sprints/${sprintId}/capacity`));

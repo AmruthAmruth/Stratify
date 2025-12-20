@@ -3,6 +3,20 @@ import api from "./axiosInstance";
 import { AxiosError } from "axios";
 import type { Leave } from "@/types/types";
 
+// Response type for leave endpoints with counts
+export interface LeaveResponse {
+  leaves: Leave[];
+  leaveCounts: {
+    Casual: number;
+    Sick: number;
+    Earned: number;
+  };
+}
+
+// Response type for leave status update
+export interface LeaveUpdateResponse extends Leave {
+  message?: string;
+}
 
 const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
   try {
@@ -16,15 +30,14 @@ const handleRequest = async <T>(request: Promise<{ data: T }>): Promise<T> => {
   }
 };
 
-
-export const getLeaveCurrentMonth = (): Promise<Leave[]> =>
+export const getLeaveCurrentMonth = (): Promise<LeaveResponse> =>
   handleRequest(api.get(LEAVE_ROUTES.GET_EMPLOYEE_CURRENT_MONTHLEAVE));
 
 export const createLeave = (data: Record<string, unknown>): Promise<Leave> =>
   handleRequest(api.post(LEAVE_ROUTES.CREATE_LEAVE, data));
 
-export const getDepartmentLeave = (): Promise<Leave[]> =>
+export const getDepartmentLeave = (): Promise<LeaveResponse> =>
   handleRequest(api.get(LEAVE_ROUTES.GET_DEPARTMENT_LEAVE));
 
-export const leaveStatusUpdate = (data: Record<string, unknown>): Promise<Leave> =>
+export const leaveStatusUpdate = (data: Record<string, unknown>): Promise<LeaveUpdateResponse> =>
   handleRequest(api.post(LEAVE_ROUTES.LEAVE_STATUS_UPDATE, data));

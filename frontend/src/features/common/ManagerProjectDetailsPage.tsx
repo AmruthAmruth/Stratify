@@ -4,7 +4,7 @@ import CollapsibleSection from "@/shared/components/CollapsibleSection/Collapsib
 import ReusableChart from "@/shared/components/Chart/ReusableChart";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import {
-  addEmployeetoProject,
+  addEmployeeProject,
   createIssue,
   createSprint,
   employeeUnderTheProject,
@@ -29,37 +29,92 @@ import * as z from "zod";
 
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
+// Type definitions
+interface ProjectEmployee {
+  employeeId: string;
+  name: string;
+  position: string;
+}
+
+interface Sprint {
+  id?: string;
+  _id?: string;
+  name: string;
+  issues?: Issue[];
+  status?: string;
+}
+
+interface Issue {
+  id?: string;
+  _id?: string;
+  title?: string;
+  heading?: string;
+  type: string;
+  status: string;
+  priority?: string;
+  sprintId?: string;
+  estimatedHours?: number;
+  subTasks?: SubTask[];
+}
+
+interface SubTask {
+  id: string;
+  heading: string;
+  status: string;
+}
+
+interface ProjectData {
+  id?: string;
+  name: string;
+  key: string;
+  description: string;
+  status: string;
+  startDate?: string;
+  endDate?: string;
+  departmentId?: string;
+  teamMemberIds?: string[];
+  backlog?: Issue[];
+  activeSprints?: Sprint[];
+  plannedSprints?: Sprint[];
+  completedSprints?: Sprint[];
+  activeSprintCount?: number;
+}
+
+interface StoryOption {
+  value: string;
+  label: string;
+}
+
 const ManagerProjectDetailsPage = () => {
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState<ProjectData | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [isAssignStoryModalOpen, setIsAssignStoryModalOpen] = useState(false);
+
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [employees, setEmployees] = useState([]);
-  const [expandedBacklog, setExpandedBacklog] = useState(null);
-  const [expandedSprint, setExpandedSprint] = useState(null);
-  const [employeeNotInProject, setEmployeeNotInProject] = useState([]);
-  const [assignModalSprintId, setAssignModalSprintId] = useState(null);
-  const [assignModalStoryOptions, setAssignModalStoryOptions] = useState([]);
-  const { id } = useParams();
+  const [employees, setEmployees] = useState<ProjectEmployee[]>([]);
+  const [expandedBacklog, setExpandedBacklog] = useState<string | null>(null);
+  const [expandedSprint, setExpandedSprint] = useState<string | null>(null);
+  const [employeeNotInProject, setEmployeeNotInProject] = useState<ProjectEmployee[]>([]);
+
+  const { id } = useParams<{ id: string }>();
 
   useEffect(() => {
-    const fetchProjectData = async (id) => {
+    const fetchProjectData = async (projectId: string) => {
       try {
         setLoading(true);
-        const data = await getProjectDetails(id);
-        const employeeData = await employeeUnderTheProject(id);
-        const employeesNotInProject = await getEmployeesNotInProject(id);
-        setEmployeeNotInProject(employeesNotInProject);
+        const data = await getProjectDetails(projectId);
+        const employeeData = await employeeUnderTheProject(projectId);
+        const employeesNotInProject = await getEmployeesNotInProject(projectId);
+        setEmployeeNotInProject(employeesNotInProject as unknown as ProjectEmployee[]);
 
-        if (employeeData && employeeData.employee) {
-          setEmployees(employeeData.employee);
+        if (employeeData && Array.isArray(employeeData)) {
+          setEmployees(employeeData as unknown as ProjectEmployee[]);
         }
-        setProject(data);
+        setProject(data as unknown as ProjectData);
         setError(null);
       } catch (err) {
         console.error("Error fetching project details:", err);
@@ -69,7 +124,9 @@ const ManagerProjectDetailsPage = () => {
       }
     };
 
-    fetchProjectData(id);
+    if (id) {
+      fetchProjectData(id);
+    }
   }, [id]);
 
   const statusOptions = [
@@ -128,14 +185,14 @@ const ManagerProjectDetailsPage = () => {
 
   const initialEditValues = project
     ? {
-        name: project.name || "",
-        key: project.key || "",
-        description: project.description || "",
-        startDate: project.startDate ? new Date(project.startDate).toISOString() : "",
-        endDate: project.endDate ? new Date(project.endDate).toISOString() : "",
-        status: project.status || "Planned",
-        teamMemberIds: project.teamMemberIds || [],
-      }
+      name: project.name || "",
+      key: project.key || "",
+      description: project.description || "",
+      startDate: project.startDate ? new Date(project.startDate).toISOString() : "",
+      endDate: project.endDate ? new Date(project.endDate).toISOString() : "",
+      status: project.status || "Planned",
+      teamMemberIds: project.teamMemberIds || [],
+    }
     : undefined;
 
   const freeBacklogOptions = useMemo(() => {
@@ -147,18 +204,9 @@ const ManagerProjectDetailsPage = () => {
       }));
   }, [project?.backlog]);
 
-  const handleAssignIssue = (sprintId) => {
-    const options = freeBacklogOptions;
-    if (options.length === 0) {
-      enqueueSnackbar("No free backlog items to assign.", { variant: "info" });
-      return;
-    }
-    setAssignModalSprintId(sprintId);
-    setAssignModalStoryOptions(options);
-    setIsAssignStoryModalOpen(true);
-  };
 
-  const handleUpdateProject = async (values) => {
+
+  const handleUpdateProject = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
     try {
       const payload = {
@@ -168,18 +216,21 @@ const ManagerProjectDetailsPage = () => {
         description: values.description,
         startDate: values.startDate,
         endDate: values.endDate,
-        departmentId: project.departmentId,
+        departmentId: project?.departmentId,
         status: values.status,
-        teamMemberIds: values.teamMemberIds || [],
+        teamMemberIds: (values.teamMemberIds as string[]) || [],
       };
       await updateProject(payload);
       enqueueSnackbar("Project updated successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
+      if (id) {
+        const updatedProject = await getProjectDetails(id);
+        setProject(updatedProject as unknown as ProjectData);
+      }
       setIsEditModalOpen(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to update project.", {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to update project.", {
         variant: "error",
       });
     } finally {
@@ -187,18 +238,21 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const handleCreateIssue = async (values) => {
+  const handleCreateIssue = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
     try {
       const payload = { ...values, projectId: id };
       await createIssue(payload);
       enqueueSnackbar("Issue created successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
+      if (id) {
+        const updatedProject = await getProjectDetails(id);
+        setProject(updatedProject as unknown as ProjectData);
+      }
       setIsBacklogModalOpen(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to create issue.", {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to create issue.", {
         variant: "error",
       });
     } finally {
@@ -241,18 +295,21 @@ const ManagerProjectDetailsPage = () => {
     employeeId: z.string().min(1, "Please select an employee"),
   });
 
-  const handleCreateSprint = async (values) => {
+  const handleCreateSprint = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
     try {
       const payload = { ...values, projectId: id };
       await createSprint(payload);
       enqueueSnackbar("Sprint created successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
+      if (id) {
+        const updatedProject = await getProjectDetails(id);
+        setProject(updatedProject as unknown as ProjectData);
+      }
       setIsStoryModalOpen(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to create sprint.", {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to create sprint.", {
         variant: "error",
       });
     } finally {
@@ -260,24 +317,27 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const handleAddEmployee = async (values) => {
+  const handleAddEmployee = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
     try {
-      const payload = { employeeId: values.employeeId, projectId: id };
-      await addEmployeetoProject(payload);
+      const payload = { employeeId: values.employeeId as string, projectId: id };
+      await addEmployeeProject(payload);
       enqueueSnackbar("Employee added successfully!", { variant: "success" });
-      const updatedProject = await getProjectDetails(id);
-      setProject(updatedProject);
-      const employeeData = await employeeUnderTheProject(id);
-      if (employeeData && employeeData.employee) {
-        setEmployees(employeeData.employee);
+      if (id) {
+        const updatedProject = await getProjectDetails(id);
+        setProject(updatedProject as unknown as ProjectData);
+        const employeeData = await employeeUnderTheProject(id);
+        if (employeeData && Array.isArray(employeeData)) {
+          setEmployees(employeeData as unknown as ProjectEmployee[]);
+        }
+        const employeesNotInProject = await getEmployeesNotInProject(id);
+        setEmployeeNotInProject(employeesNotInProject as unknown as ProjectEmployee[]);
       }
-      const employeesNotInProject = await getEmployeesNotInProject(id);
-      setEmployeeNotInProject(employeesNotInProject);
       setIsEmployeeModalOpen(false);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error(err);
-      enqueueSnackbar(err.message || "Failed to add employee.", {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to add employee.", {
         variant: "error",
       });
     } finally {
@@ -301,65 +361,9 @@ const ManagerProjectDetailsPage = () => {
     setIsEditModalOpen(true);
   };
 
-  const assignStoryFormFields = useMemo(() => {
-    const sprintOptions = [
-      { value: "", label: "Select Sprint" },
-      ...(project?.activeSprints || []).map((sprint) => ({
-        value: sprint.id || sprint._id,
-        label: `${sprint.name} (Active)`,
-      })),
-      ...(project?.plannedSprints || []).map((sprint) => ({
-        value: sprint.id || sprint._id,
-        label: `${sprint.name} (Planned)`,
-      })),
-    ];
 
-    const issueOptions = [
-      { value: "", label: "Select Issue" },
-      ...(assignModalSprintId ? assignModalStoryOptions : freeBacklogOptions),
-    ];
 
-    const fields = [
-      ...(assignModalSprintId
-        ? []
-        : [
-            {
-              name: "sprintId",
-              label: "Select Sprint",
-              type: "select",
-              required: true,
-              options: sprintOptions,
-            },
-          ]
-        ),
-      {
-        name: "storyId",
-        label: "Select Backlog Issue",
-        type: "select",
-        required: true,
-        options: issueOptions,
-      },
-    ];
-
-    return fields;
-  }, [
-    project?.activeSprints,
-    project?.plannedSprints,
-    assignModalSprintId,
-    assignModalStoryOptions,
-    freeBacklogOptions,
-  ]);
-
-  const assignStorySchemaDynamic = assignModalSprintId 
-    ? z.object({
-        storyId: z.string().min(1, "Please select an issue"),
-      })
-    : z.object({
-        sprintId: z.string().min(1, "Please select a sprint"),
-        storyId: z.string().min(1, "Please select an issue"),
-      });
-
-  const getStatusColor = (status) => {
+  const getStatusColor = (status: string) => {
     switch (status) {
       case "Completed":
       case "Done":
@@ -375,7 +379,7 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const getPriorityColor = (priority) => {
+  const getPriorityColor = (priority: string) => {
     switch (priority) {
       case "High":
         return "text-red-700 bg-red-50 border-red-300";
@@ -388,7 +392,7 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  const getTypeColor = (type) => {
+  const getTypeColor = (type: string) => {
     switch (type) {
       case "Bug":
         return "text-red-700 bg-red-50 border-red-300";
@@ -486,11 +490,7 @@ const ManagerProjectDetailsPage = () => {
     .filter((i) => i.status === "Done" || i.status === "Completed")
     .reduce((sum, i) => sum + (i.estimatedHours || 0), 0);
 
-  const selectedSprintName = assignModalSprintId
-    ? project.activeSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
-      project.plannedSprints?.find(s => (s.id || s._id) === assignModalSprintId)?.name ||
-      "Unknown Sprint"
-    : null;
+
 
   return (
     <div className="min-h-screen bg-[#fbfbfb]">
@@ -634,8 +634,8 @@ const ManagerProjectDetailsPage = () => {
                 value={
                   allIssues.length > 0
                     ? `${Math.round(
-                        (issueCounts.Done / allIssues.length) * 100
-                      )}%`
+                      (issueCounts.Done / allIssues.length) * 100
+                    )}%`
                     : "0%"
                 }
                 subtitle="Issues"
@@ -646,8 +646,8 @@ const ManagerProjectDetailsPage = () => {
                 value={
                   totalEstimatedHours > 0
                     ? `${Math.round(
-                        (completedEstimatedHours / totalEstimatedHours) * 100
-                      )}%`
+                      (completedEstimatedHours / totalEstimatedHours) * 100
+                    )}%`
                     : "0%"
                 }
                 subtitle="Hours"
@@ -693,10 +693,10 @@ const ManagerProjectDetailsPage = () => {
               <p className="text-base font-semibold text-[#3b3b3b]">
                 {project.startDate
                   ? new Date(project.startDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
                   : "Not set"}
               </p>
             </div>
@@ -707,10 +707,10 @@ const ManagerProjectDetailsPage = () => {
               <p className="text-base font-semibold text-[#3b3b3b]">
                 {project.endDate
                   ? new Date(project.endDate).toLocaleDateString("en-US", {
-                      year: "numeric",
-                      month: "long",
-                      day: "numeric",
-                    })
+                    year: "numeric",
+                    month: "long",
+                    day: "numeric",
+                  })
                   : "Not set"}
               </p>
             </div>
@@ -808,7 +808,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-            onAssignIssue={handleAssignIssue}
+
           />
         )}
 
@@ -833,7 +833,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-            onAssignIssue={handleAssignIssue}
+
           />
         )}
 

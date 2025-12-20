@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from "react";
-import { 
-  Mail, 
-  Phone, 
-  Award, 
+import {
+  Mail,
+  Phone,
+  Award,
   ArrowLeft,
   Users,
   Building2
@@ -44,8 +44,8 @@ interface DepartmentResponse {
 interface Department {
   id: string;
   name: string;
-  memberCount: number;
-  status: string;
+  memberCount?: number;
+  status?: string;
 }
 
 interface DepartmentDetailsPageProps {
@@ -82,7 +82,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
       setLoading(true);
       getManagerDepartments(managerId)
         .then((data) => {
-          setDepartments(data || []);
+          setDepartments((data || []) as Department[]);
           if (data && data.length > 0 && !selectedDepartmentId) {
             setSelectedDepartmentId(data[0].id);
           }
@@ -99,15 +99,18 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     const departmentId = role === "company" ? id : selectedDepartmentId;
     if (departmentId && !loading) {
       getDepartmentDetails(departmentId)
-        .then((data) => setDepartment(data.response))
+        .then((data) => setDepartment((data.response as unknown) as DepartmentResponse || null))
         .catch(() => enqueueSnackbar("Failed to fetch department details", { variant: "error" }));
     }
   }, [id, selectedDepartmentId, role, loading, enqueueSnackbar]);
 
   /** Add member handler */
-  const handleAddMember = (values: any) => {
+  const handleAddMember = (values: Record<string, unknown>) => {
     const departmentId = role === "company" ? id : selectedDepartmentId;
-    if (!departmentId) return enqueueSnackbar("No department selected", { variant: "error" });
+    if (!departmentId) {
+      enqueueSnackbar("No department selected", { variant: "error" });
+      return;
+    }
 
     setSubmitLoading(true);
     createEmployee({ ...values, departmentId })
@@ -116,7 +119,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
         setIsModalOpen(false);
         return getDepartmentDetails(departmentId);
       })
-      .then((refreshed) => setDepartment(refreshed.response))
+      .then((refreshed) => setDepartment((refreshed.response as unknown) as DepartmentResponse || null))
       .catch(() => enqueueSnackbar("Failed to add member. Please try again.", { variant: "error" }))
       .finally(() => setSubmitLoading(false));
   };
@@ -131,17 +134,17 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
   /** Dynamic data */
   const departmentData = department
     ? {
-        name: department.departmentName,
-        description: department.description,
-        head: {
-          name: department.headOfDepartment,
-          email: department.headEmail,
-          phone: department.headPhone,
-          position: department.headPosition,
-          avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(department.headOfDepartment)}`,
-          experience: 5,
-        },
-      }
+      name: department.departmentName,
+      description: department.description,
+      head: {
+        name: department.headOfDepartment,
+        email: department.headEmail,
+        phone: department.headPhone,
+        position: department.headPosition,
+        avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(department.headOfDepartment)}`,
+        experience: 5,
+      },
+    }
     : null;
 
   const employeeData = useMemo(() => {
@@ -216,17 +219,16 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
     { key: "status", label: "Status" },
   ];
 
-  const renderCell = (row: any, key: string) => {
+  const renderCell = (row: TeamMember, key: string) => {
     if (key === "status") {
       return (
-        <span className={`px-3 py-1 text-xs font-medium rounded-full ${
-          row[key] === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
-        }`}>
-          {row[key]}
+        <span className={`px-3 py-1 text-xs font-medium rounded-full ${row.status === "Active" ? "bg-green-100 text-green-800" : "bg-red-100 text-red-800"
+          }`}>
+          {row.status}
         </span>
       );
     }
-    return row[key];
+    return (row as any)[key];
   };
 
   const handleBackToDepartments = () => {
@@ -257,7 +259,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">No Departments Assigned</h2>
           <p className="text-gray-600">You are not assigned to manage any departments yet.</p>
-          <button 
+          <button
             onClick={handleBackToDepartments}
             className="mt-4 bg-[#009063] text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
@@ -275,7 +277,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-gray-900 mb-2">Department Not Found</h2>
           <p className="text-gray-600">The requested department details could not be loaded.</p>
-          <button 
+          <button
             onClick={handleBackToDepartments}
             className="mt-4 bg-[#009063] text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
           >
@@ -295,7 +297,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           <div className="flex items-center justify-between py-6">
             {/* Back Button */}
             <div className="flex items-center space-x-4">
-              <button 
+              <button
                 onClick={handleBackToDepartments}
                 className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
               >
@@ -336,9 +338,8 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                       <button
                         key={dept.id}
                         onClick={() => handleDepartmentChange(dept.id)}
-                        className={`w-full text-left px-4 py-3 hover:bg-[#f5f5f5] transition-colors ${
-                          selectedDepartmentId === dept.id ? "bg-blue-50 text-blue-700" : "text-gray-700"
-                        }`}
+                        className={`w-full text-left px-4 py-3 hover:bg-[#f5f5f5] transition-colors ${selectedDepartmentId === dept.id ? "bg-blue-50 text-blue-700" : "text-gray-700"
+                          }`}
                       >
                         <div className="font-medium">{dept.name}</div>
                         <div className="text-sm text-gray-500 flex items-center mt-1">
@@ -362,9 +363,9 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
           <div className="flex flex-col gap-6">
             <div className="flex items-center mb-4">
               <div className="w-2 h-8 bg-gradient-to-b from-[#009063] to-purple-500 rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold text-gray-900">{departmentData.name}</h2>
+              <h2 className="text-3xl font-bold text-gray-900">{departmentData?.name}</h2>
             </div>
-            <p className="text-gray-700 leading-relaxed">{departmentData.description}</p>
+            <p className="text-gray-700 leading-relaxed">{departmentData?.description}</p>
           </div>
         </div>
 
@@ -376,11 +377,10 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 <button
                   key={tab}
                   onClick={() => setActiveTab(tab)}
-                  className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${
-                    activeTab === tab
-                      ? "text-[#009063] bg-[#e6f6f0]"
-                      : "text-gray-500 hover:text-gray-700 hover:bg-[#f5f5f5]"
-                  }`}
+                  className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${activeTab === tab
+                    ? "text-[#009063] bg-[#e6f6f0]"
+                    : "text-gray-500 hover:text-gray-700 hover:bg-[#f5f5f5]"
+                    }`}
                 >
                   {tab === "overview" ? "Overview" : "Team Members"}
                   {activeTab === tab && <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-[#009063]"></div>}
@@ -402,12 +402,12 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
 
                 {/* Performance Chart */}
                 <div className="bg-white rounded-xl p-6 shadow-sm">
-                  <ReusableChart 
-                    type="bar" 
-                    labels={performanceChartData.labels} 
-                    data={performanceChartData.data} 
-                    title="Performance Metrics" 
-                    backgroundColors={performanceChartData.backgroundColors} 
+                  <ReusableChart
+                    type="bar"
+                    labels={performanceChartData.labels}
+                    data={performanceChartData.data}
+                    title="Performance Metrics"
+                    backgroundColors={performanceChartData.backgroundColors}
                   />
                 </div>
               </div>
@@ -419,21 +419,21 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 <div className="bg-gradient-to-r from-green-50 via-blue-50 to-purple-50 rounded-2xl p-8 border border-green-100 shadow-sm">
                   <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
                     <div className="relative">
-                      <img src={departmentData.head.avatar} alt={departmentData.head.name} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
+                      <img src={departmentData?.head.avatar} alt={departmentData?.head.name} className="w-24 h-24 rounded-full object-cover border-4 border-white shadow-lg" />
                       <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-green-500 rounded-full border-4 border-white flex items-center justify-center">
                         <Award className="w-4 h-4 text-white" />
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-2xl font-bold text-gray-900 mb-2">{departmentData.head.name}</h4>
+                      <h4 className="text-2xl font-bold text-gray-900 mb-2">{departmentData?.head.name}</h4>
                       <p className="text-green-600 font-semibold mb-4">
-                        {departmentData.head.position}
+                        {departmentData?.head.position}
                         <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Department Head</span>
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Mail className="w-4 h-4 mr-3 text-blue-500" />{departmentData.head.email}</div>
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Phone className="w-4 h-4 mr-3 text-green-500" />{departmentData.head.phone}</div>
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Award className="w-4 h-4 mr-3 text-yellow-500" />{departmentData.head.experience} years</div>
+                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Mail className="w-4 h-4 mr-3 text-blue-500" />{departmentData?.head.email}</div>
+                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Phone className="w-4 h-4 mr-3 text-green-500" />{departmentData?.head.phone}</div>
+                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Award className="w-4 h-4 mr-3 text-yellow-500" />{departmentData?.head.experience} years</div>
                       </div>
                     </div>
                   </div>

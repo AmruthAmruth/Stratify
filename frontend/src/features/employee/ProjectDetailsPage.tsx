@@ -3,14 +3,16 @@ import { useParams } from "react-router-dom";
 import { getProjectDetails } from "@/services/projects";
 import ProjectDetailsLayout from "@/shared/components/Project/ProjectDetailsLayout";
 import { LoadingSpinner } from "@/shared/components/Loading";
+import { ProjectDTO } from "@/shared/components/Project/types";
 
 const EmployeeProjectDetailsPage = () => {
-  const [project, setProject] = useState(null);
+  const [project, setProject] = useState<ProjectDTO | null>(null);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
   const { id } = useParams();
 
-  const fetchProjectData = async () => {
+  const fetchProjectData = React.useCallback(async () => {
+    if (!id) return;
     try {
       setLoading(true);
       console.log("Fetching project details for ID:", id);
@@ -18,19 +20,20 @@ const EmployeeProjectDetailsPage = () => {
       console.log("Project data received:", data);
       setProject(data);
       setError(null);
-    } catch (err) {
+    } catch (err: unknown) {
       console.error("Error fetching project details:", err);
-      setError(err?.message || "Failed to load project details");
+      const errorObj = err as { message?: string };
+      setError(errorObj?.message || "Failed to load project details");
     } finally {
       setLoading(false);
     }
-  };
+  }, [id]);
 
   useEffect(() => {
     if (id) {
       fetchProjectData();
     }
-  }, [id]);
+  }, [id, fetchProjectData]);
 
   if (loading) {
     return (
