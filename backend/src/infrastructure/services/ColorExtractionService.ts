@@ -1,4 +1,6 @@
-import * as Vibrant from "node-vibrant";
+// node-vibrant requires require() style import due to its module structure
+// eslint-disable-next-line @typescript-eslint/no-require-imports
+const Vibrant = require("node-vibrant");
 
 export interface ExtractedColors {
     backgroundColor: string;
@@ -6,26 +8,19 @@ export interface ExtractedColors {
 }
 
 export class ColorExtractionService {
-    
-
-
-
 
     async extractColorsFromImage(imageBuffer: Buffer): Promise<ExtractedColors> {
         try {
-            
             const palette = await Vibrant.from(imageBuffer).getPalette();
 
-            
             const backgroundColor =
                 palette.Vibrant?.hex ||
                 palette.DarkVibrant?.hex ||
                 palette.Muted?.hex ||
                 palette.DarkMuted?.hex ||
                 palette.LightVibrant?.hex ||
-                "#3B82F6"; 
+                "#3B82F6";
 
-            
             const textColor = this.getContrastColor(backgroundColor);
 
             return {
@@ -34,7 +29,6 @@ export class ColorExtractionService {
             };
         } catch (error) {
             console.error("Error extracting colors from image:", error);
-            
             return {
                 backgroundColor: "#3B82F6",
                 textColor: "#FFFFFF",
@@ -42,40 +36,21 @@ export class ColorExtractionService {
         }
     }
 
-    
-
-
-
-
     private getContrastColor(hexColor: string): string {
-        
         const hex = hexColor.replace(/^#/, "");
 
-        
         const r = parseInt(hex.substring(0, 2), 16);
         const g = parseInt(hex.substring(2, 4), 16);
         const b = parseInt(hex.substring(4, 6), 16);
 
-        
         const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
 
-        
         return luminance > 0.5 ? "#000000" : "#FFFFFF";
     }
-
-    
-
-
-
 
     isValidHexColor(color: string): boolean {
         return /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/.test(color);
     }
-
-    
-
-
-
 
     async extractColorsFromUrl(imageUrl: string): Promise<ExtractedColors> {
         try {

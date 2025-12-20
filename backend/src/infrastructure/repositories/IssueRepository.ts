@@ -104,7 +104,7 @@ export class IssueRepository implements IIssueRepository {
       const objectId = new mongoose.Types.ObjectId(userId);
       console.log(`[IssueRepository] Converted to ObjectId: ${objectId}`);
 
-      
+
       const results = await IssueModel.aggregate([
         {
           $match: { assignedTo: objectId }
@@ -119,8 +119,8 @@ export class IssueRepository implements IIssueRepository {
         },
         {
           $match: {
-            sprintId: { $ne: null },  
-            'sprint.status': 'Active'  
+            sprintId: { $ne: null },
+            'sprint.status': 'Active'
           }
         },
         {
@@ -168,14 +168,14 @@ export class IssueRepository implements IIssueRepository {
           $project: {
             project: 0,
             subtasks: 0,
-            sprint: 0  
+            sprint: 0
           }
         }
       ]);
 
       console.log(`[IssueRepository] Found ${results.length} issues with project names and subtasks`);
 
-      
+
       return results.map(doc => ({
         id: doc._id.toString(),
         heading: doc.heading,
@@ -202,13 +202,19 @@ export class IssueRepository implements IIssueRepository {
 
 
 
-   async countPoints(employeeId:string,sprintId:string):Promise<number>{
-    const issues= await IssueModel.find({assignedTo:employeeId,sprintId})
-    const totalPoint= issues.reduce((acc,cur)=>cur.size+acc,0);
+  async countPoints(employeeId: string, sprintId: string): Promise<number> {
+    const issues = await IssueModel.find({ assignedTo: employeeId, sprintId })
+    const totalPoint = issues.reduce((acc, cur) => cur.size + acc, 0);
     return totalPoint
-   }
+  }
 
 
 
-
+  async findBySprintAndAssignee(sprintId: string, assigneeId: string): Promise<Issue[]> {
+    const docs = await IssueModel.find({
+      sprintId: new mongoose.Types.ObjectId(sprintId),
+      assignedTo: new mongoose.Types.ObjectId(assigneeId),
+    });
+    return IssueMapper.toEntities(docs);
+  }
 }

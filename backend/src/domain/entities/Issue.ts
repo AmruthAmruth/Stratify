@@ -13,6 +13,7 @@ export class Issue {
     public assignedTo?: string | null,
     public createdAt: Date = new Date(),
     public updatedAt: Date = new Date(),
+    public estimatedHours: number = 0,
   ) { }
 
   updateStatus(newStatus: "Planned" | "In Progress" | "Done" | "Blocked") {

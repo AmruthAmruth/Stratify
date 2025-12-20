@@ -1,6 +1,7 @@
 import { ISprintRepository } from "../../../domain/repositories/ISprintRepository";
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
+import { Sprint } from "../../../domain/entities/Sprint";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
@@ -16,20 +17,20 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
     ) { }
 
     async execute(employeeId: string, startDate: Date, endDate: Date): Promise<LeaveImpactDTO> {
-        
+
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
             throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        
+
         const employeeIssues = await this._issueRepo.findByUserId(employeeId);
 
-        
+
         const projectIds = [...new Set(employeeIssues.map(issue => issue.projectId))];
 
-        
-        const allSprints: unknown[] = [];
+
+        const allSprints: Sprint[] = [];
         for (const projectId of projectIds) {
             const projectSprints = await this._sprintRepo.findByProject(projectId);
             allSprints.push(...projectSprints);
@@ -44,24 +45,24 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
             );
         });
 
-        
+
         const affectedSprints: AffectedSprint[] = [];
         let totalImpactHours = 0;
 
         for (const sprint of overlappingSprints) {
-            
+
             const assignedIssues = await this._issueRepo.findBySprintAndAssignee(
-                (sprint as { id?: string }).id!,
+                sprint.id!,
                 employeeId
             );
 
             if (assignedIssues.length > 0) {
-                
+
                 const overlap = DateUtils.getOverlapDays(
                     startDate,
                     endDate,
-                    (sprint as { startDate: Date }).startDate,
-                    (sprint as { endDate: Date }).endDate
+                    sprint.startDate,
+                    sprint.endDate
                 );
 
                 const leaveDays = overlap
@@ -69,7 +70,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
                     : 0;
 
                 const impactHours = leaveDays * 8;
-                const estimatedHours = assignedIssues.reduce((sum: number, issue: { estimatedHours: number }) => sum + issue.estimatedHours, 0);
+                const estimatedHours = assignedIssues.reduce((sum: number, issue) => sum + issue.estimatedHours, 0);
 
                 totalImpactHours += impactHours;
 
@@ -84,10 +85,10 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
             }
         }
 
-        
+
         const requiresReassignment = affectedSprints.length > 0;
 
-        
+
         const suggestions: string[] = [];
 
         if (affectedSprints.length === 0) {
@@ -101,7 +102,7 @@ export class AnalyzeLeaveImpactUseCase implements IAnalyzeLeaveImpactUseCase {
                 suggestions.push("Or adjust sprint commitments to account for reduced capacity");
             }
 
-            
+
             affectedSprints.forEach(sprint => {
                 suggestions.push(
                     `Sprint "${sprint.sprintName}": ${sprint.assignedIssues} task(s), ${sprint.estimatedHours}h total work`

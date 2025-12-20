@@ -7,15 +7,27 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
     async create(theme: CompanyTheme): Promise<CompanyTheme> {
         const doc = await CompanyThemeModel.create({
             companyId: theme.companyId,
+            themeName: theme.themeName,
+            themeMode: theme.themeMode,
+            primaryColor: theme.primaryColor,
+            secondaryColor: theme.secondaryColor,
+            accentColor: theme.accentColor,
             backgroundColor: theme.backgroundColor,
             textColor: theme.textColor,
+            isCustom: theme.isCustom,
         });
 
         return new CompanyTheme(
             (doc._id as mongoose.Types.ObjectId).toString(),
             doc.companyId,
+            doc.themeName,
+            doc.themeMode,
+            doc.primaryColor,
+            doc.secondaryColor,
+            doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.isCustom,
             doc.createdAt,
             doc.updatedAt
         );
@@ -28,8 +40,14 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
         return new CompanyTheme(
             (doc._id as mongoose.Types.ObjectId).toString(),
             doc.companyId,
+            doc.themeName,
+            doc.themeMode,
+            doc.primaryColor,
+            doc.secondaryColor,
+            doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.isCustom,
             doc.createdAt,
             doc.updatedAt
         );
@@ -39,8 +57,14 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
         const doc = await CompanyThemeModel.findOneAndUpdate(
             { companyId: theme.companyId },
             {
+                themeName: theme.themeName,
+                themeMode: theme.themeMode,
+                primaryColor: theme.primaryColor,
+                secondaryColor: theme.secondaryColor,
+                accentColor: theme.accentColor,
                 backgroundColor: theme.backgroundColor,
                 textColor: theme.textColor,
+                isCustom: theme.isCustom,
             },
             { new: true }
         );
@@ -52,8 +76,14 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
         return new CompanyTheme(
             (doc._id as mongoose.Types.ObjectId).toString(),
             doc.companyId,
+            doc.themeName,
+            doc.themeMode,
+            doc.primaryColor,
+            doc.secondaryColor,
+            doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.isCustom,
             doc.createdAt,
             doc.updatedAt
         );
