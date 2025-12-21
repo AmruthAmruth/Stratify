@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
 import ChatBox from "@/shared/components/Chat/ChatBox";
 import { getTeamMemeberList, getChatHistory, markMessagesAsRead } from "@/services/chat";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
 import { LoadingSpinner } from "@/shared/components/Loading";
+import { ChatMessage } from "@/types/types";
 
 interface Member {
   id: string;
@@ -15,14 +16,19 @@ interface Member {
   unreadCount?: number;
 }
 
+interface SocketMessage {
+  senderId: string;
+  message: string;
+  createdAt: string;
+}
+
 const ChatPage = () => {
   const [members, setMembers] = useState<Member[]>([]);
   const [selectedMember, setSelectedMember] = useState<Member | null>(null);
-  const [chatHistory, setChatHistory] = useState<any[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
   const userId = useSelector((state: RootState) => state.auth.userId);
-  const dispatch = useDispatch();
 
   // ✅ Fetch team members with enriched data (includes lastMessage, unreadCount, etc.)
   useEffect(() => {
@@ -49,10 +55,10 @@ const ChatPage = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    const handleReceiveMessage = (msg: any) => {
+    const handleReceiveMessage = (msg: SocketMessage) => {
       if (msg.senderId !== userId) {
         setMembers((prev) => {
-          let updated = [...prev];
+          const updated = [...prev];
           const index = updated.findIndex((m) => m.id === msg.senderId);
           if (index !== -1) {
             const member = { ...updated[index] };

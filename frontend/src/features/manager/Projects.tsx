@@ -209,7 +209,8 @@ const Projects: React.FC = () => {
 
       await fetchProjectsAndEmployees();
     } catch (err: unknown) {
-      enqueueSnackbar((err as any)?.response?.data?.message || (err as Error)?.message || "Failed to delete project.", {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
+      enqueueSnackbar(error?.response?.data?.message || error?.message || "Failed to delete project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
       });

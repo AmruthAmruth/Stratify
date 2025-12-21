@@ -1,7 +1,6 @@
 // pages/project/[id].tsx (or app/project/[id]/page.tsx depending on your routing)
 import { ProjectDTO } from "@/shared/components/Project/types";
 import ProjectDetailsLayout from "@/shared/components/Project/ProjectDetailsLayout";
-import { useEffect } from "react";
 
 export default function ProjectPage() {
   const userRole = "company"; // dynamic based on login

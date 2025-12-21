@@ -8,6 +8,7 @@ import { createRejectLeaveSchema } from "@/shared/utils/validations";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
 import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
 import { useSnackbar } from "notistack";
+import { Leave } from "@/types/types";
 
 const DepartmentLeaves = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -18,10 +19,10 @@ const DepartmentLeaves = () => {
     approvedLeave: 0,
     activeMembers: 0,
   });
-  const [leaves, setLeaves] = useState<any[]>([]);
+  const [leaves, setLeaves] = useState<Leave[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [isRejectLeaveModalOpen, setIsRejectLeaveModalOpen] = useState(false);
-  const [selectedLeave, setSelectedLeave] = useState<any>(null);
+  const [selectedLeave, setSelectedLeave] = useState<Leave | null>(null);
   const [submitLoading, setSubmitLoading] = useState(false);
 
   const [confirmDialog, setConfirmDialog] = useState<{
@@ -41,14 +42,15 @@ const DepartmentLeaves = () => {
         setLeaves(leavesList);
         setLeaveCounts({
           totalLeave: leavesList.length,
-          peadingLeave: leavesList.filter((l: any) => l.status === "Pending").length,
-          approvedLeave: leavesList.filter((l: any) => l.status === "Approved").length,
+          peadingLeave: leavesList.filter((l: Leave) => l.status === "pending").length,
+          approvedLeave: leavesList.filter((l: Leave) => l.status === "approved").length,
           activeMembers: 0,
         });
-      } catch (error: any) {
+      } catch (error) {
+        const err = error as { response?: { data?: { message?: string } }; message?: string };
         console.error("Error fetching department leaves:", error);
         enqueueSnackbar(
-          error?.response?.data?.message || "Failed to fetch leaves",
+          err?.response?.data?.message || "Failed to fetch leaves",
           { variant: "error" }
         );
       }
@@ -71,10 +73,10 @@ const DepartmentLeaves = () => {
     });
 
   // Approve leave with confirmation
-  const handleApprove = (leave: any) => {
+  const handleApprove = (leave: Leave) => {
     const payload = {
-      leaveId: leave.leaveId,
-      status: "Approved",
+      leaveId: leave.leaveId || leave.id,
+      status: "approved",
     };
 
     setConfirmDialog({
@@ -86,17 +88,18 @@ const DepartmentLeaves = () => {
 
           setLeaves((prev) =>
             prev.map((l) =>
-              l.leaveId === leave.leaveId ? { ...l, status: "Approved" } : l
+              (l.leaveId || l.id) === (leave.leaveId || leave.id) ? { ...l, status: "approved" as const } : l
             )
           );
 
           enqueueSnackbar(res?.message || "Leave approved successfully!", {
             variant: "success",
           });
-        } catch (error: any) {
+        } catch (error) {
+          const err = error as { response?: { data?: { message?: string } }; message?: string };
           console.error("Error approving leave:", error);
           enqueueSnackbar(
-            error?.response?.data?.message || "Failed to approve leave",
+            err?.response?.data?.message || "Failed to approve leave",
             { variant: "error" }
           );
         } finally {
@@ -108,20 +111,20 @@ const DepartmentLeaves = () => {
   };
 
   // Open reject modal
-  const handleReject = (leave: any) => {
+  const handleReject = (leave: Leave) => {
     setSelectedLeave(leave);
     setIsRejectLeaveModalOpen(true);
   };
 
   // Submit rejection
-  const handleRejectSubmit = async (formData: any) => {
+  const handleRejectSubmit = async (formData: Record<string, unknown>) => {
     if (!selectedLeave) return;
     setSubmitLoading(true);
 
     try {
       const payload = {
-        leaveId: selectedLeave.leaveId,
-        status: "Rejected",
+        leaveId: selectedLeave.leaveId || selectedLeave.id,
+        status: "rejected",
         reason: formData.reason, // ✅ send as "reason"
       };
 
@@ -129,8 +132,8 @@ const DepartmentLeaves = () => {
 
       setLeaves((prev) =>
         prev.map((l) =>
-          l.leaveId === selectedLeave.leaveId
-            ? { ...l, status: "Rejected", rejectedReason: formData.reason } // ✅ keep in UI as rejectedReason
+          (l.leaveId || l.id) === (selectedLeave.leaveId || selectedLeave.id)
+            ? { ...l, status: "rejected" as const, rejectedReason: formData.reason }
             : l
         )
       );
@@ -141,10 +144,11 @@ const DepartmentLeaves = () => {
       enqueueSnackbar(res?.message || "Leave rejected successfully!", {
         variant: "success",
       });
-    } catch (error: any) {
+    } catch (error) {
+      const err = error as { response?: { data?: { message?: string } }; message?: string };
       console.error("Error rejecting leave:", error);
       enqueueSnackbar(
-        error?.response?.data?.message || "Failed to reject leave",
+        err?.response?.data?.message || "Failed to reject leave",
         { variant: "error" }
       );
     } finally {

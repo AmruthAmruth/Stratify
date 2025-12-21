@@ -103,6 +103,7 @@ export interface AddMemberFormData {
 
 export interface Leave {
     id: string;
+    leaveId?: string; // Backend sometimes returns leaveId instead of id
     employeeId: string;
     employeeName?: string;
     departmentId?: string;

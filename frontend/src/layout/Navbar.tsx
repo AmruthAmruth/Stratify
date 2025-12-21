@@ -14,7 +14,6 @@ const Navbar = () => {
 
   // Get auth data from Redux
   const name = useSelector((state: RootState) => state.auth.name);
-  const userId = useSelector((state: RootState) => state.auth.userId);
 
   // Just read from Redux - NotificationListener handles socket updates
   const notifications = useSelector((state: RootState) => state.notification.notifications);
@@ -24,7 +23,8 @@ const Navbar = () => {
     try {
       const result = await logout();
       enqueueSnackbar(result.message || "Logout successful!", { variant: "success" });
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { message?: string };
       enqueueSnackbar(error?.message || "Logout failed!", { variant: "error" });
     } finally {
       dispatch(clearCredentials());

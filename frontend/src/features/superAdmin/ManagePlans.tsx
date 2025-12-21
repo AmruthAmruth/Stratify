@@ -112,8 +112,9 @@ const ManagePlans: React.FC = () => {
       await deleteSubscription(confirmDialog.plan.plan);
       setPlans(plans.filter((p) => p.plan !== confirmDialog.plan!.plan));
       enqueueSnackbar("Plan deleted successfully!", { variant: "success" });
-    } catch (err: any) {
-      enqueueSnackbar(err.message || "Failed to delete plan.", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to delete plan.", { variant: "error" });
     } finally {
       setConfirmDialog({ isOpen: false });
     }

@@ -26,7 +26,7 @@ const SuperAdminProfile = () => {
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const response: any = await getSuperAdminProfile();
+            const response = await getSuperAdminProfile();
             setProfile(response);
             if (response.profileImage) {
                 setImagePreview(response.profileImage);
@@ -67,7 +67,8 @@ const SuperAdminProfile = () => {
             await updateSuperAdminProfile(formData);
             enqueueSnackbar('Profile picture updated successfully!', { variant: 'success' });
             await fetchProfile();
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as { message?: string };
             console.error('Error uploading image:', error);
             enqueueSnackbar(error?.message || 'Failed to upload profile picture', { variant: 'error' });
         } finally {
@@ -86,7 +87,8 @@ const SuperAdminProfile = () => {
             enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
             await fetchProfile();
             setActiveTab('view');
-        } catch (error: any) {
+        } catch (err: unknown) {
+            const error = err as { message?: string };
             console.error('Error updating profile:', error);
             enqueueSnackbar(error?.message || 'Failed to update profile', { variant: 'error' });
         }

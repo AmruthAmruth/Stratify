@@ -6,6 +6,7 @@ import { RootState } from "@/store";
 import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
 import { LoadingSpinner } from "@/shared/components/Loading";
+import { ChatMessage } from "@/types/types";
 
 interface Employee {
   id: string;
@@ -15,10 +16,16 @@ interface Employee {
   unreadCount?: number;
 }
 
+interface SocketMessage {
+  senderId: string;
+  message: string;
+  createdAt: string;
+}
+
 const ChatPage = () => {
   const [employees, setEmployees] = useState<Employee[]>([]);
   const [selectedEmployee, setSelectedEmployee] = useState<Employee | null>(null);
-  const [chatHistory, setChatHistory] = useState<any[]>([]);
+  const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
   const [loading, setLoading] = useState(true);
   const [chatLoading, setChatLoading] = useState(false);
   const userId = useSelector((state: RootState) => state.auth.userId);
@@ -48,11 +55,11 @@ const ChatPage = () => {
     const socket = getSocket();
     if (!socket) return;
 
-    const handleReceiveMessage = (msg: any) => {
+    const handleReceiveMessage = (msg: SocketMessage) => {
       // If the current chat is open, don't increment unread
       if (msg.senderId !== userId) {
         setEmployees((prev) => {
-          let updated = [...prev];
+          const updated = [...prev];
           const index = updated.findIndex((e) => e.id === msg.senderId);
           if (index !== -1) {
             const emp = { ...updated[index] };

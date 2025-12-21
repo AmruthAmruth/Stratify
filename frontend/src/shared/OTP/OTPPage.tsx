@@ -4,26 +4,18 @@ import { Users } from "lucide-react";
 import { forgotPasswordVerifyOTP, resendOTP, verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
-import { useDispatch } from "react-redux";
-import { setCredentials } from "@/store/slices/authSlice";
 
 interface OTPProps {
   context: "register" | "forgotPassword";
 }
 
-interface DecodedToken {
-  id: string;
-  role: string;
-  exp: number;
-}
+
 
 const OTPPage: React.FC<OTPProps> = ({ context }) => {
   const [otp, setOtp] = useState("");
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const dispatch = useDispatch();
 
   // Load expiry from localStorage
   useEffect(() => {
@@ -63,8 +55,9 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
         enqueueSnackbar("OTP verified! You can now reset your password.", { variant: "success" });
         navigate("/reset-password");
       }
-    } catch (err: any) {
-      enqueueSnackbar(err?.message || "OTP verification failed", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error?.message || "OTP verification failed", { variant: "error" });
     }
   };
 
@@ -147,9 +140,8 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
             <button
               onClick={handleVerify}
               disabled={timeLeft <= 0}
-              className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${
-                timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-[#009063] hover:bg-green-700"
-              }`}
+              className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-[#009063] hover:bg-green-700"
+                }`}
             >
               Verify OTP
             </button>
@@ -159,11 +151,10 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
               <p className="text-[#3b3b3b]">
                 Didn't receive the code?{" "}
                 <span
-                  className={`font-medium cursor-pointer ${
-                    timeLeft > 0
-                      ? "text-gray-400 cursor-not-allowed"
-                      : "text-[#009063] hover:underline"
-                  }`}
+                  className={`font-medium cursor-pointer ${timeLeft > 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-[#009063] hover:underline"
+                    }`}
                   onClick={() => {
                     if (timeLeft <= 0) handleResendOTP();
                   }}

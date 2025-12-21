@@ -43,7 +43,7 @@ const GroupChatPage = () => {
                     const formattedDeptGroup: IGroup = {
                         id: deptGroup.id,
                         name: `🏢 ${deptGroup.name}`,
-                        members: deptGroup.members.map((m: any) => m.id),
+                        members: deptGroup.members.map((m: { id: string; name: string }) => m.id),
                         createdAt: deptGroup.createdAt,
                     };
                     setDepartmentGroup(formattedDeptGroup);

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Briefcase, Building2, Shield, Edit, Lock, Camera } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Briefcase, Building2, Shield, Camera } from 'lucide-react';
 import { getManagerProfile, updateManagerProfile, changeManagerPassword } from '@/services/authApi';
 import DynamicForm from '@/shared/components/Forms/DynamicForm';
 import { z } from 'zod';
@@ -38,7 +38,7 @@ const Profile = () => {
     const fetchProfile = async () => {
         try {
             setLoading(true);
-            const response: any = await getManagerProfile();
+            const response: { manager?: ManagerProfile; profileImage?: string } & ManagerProfile = await getManagerProfile();
             setProfile(response.manager || response);
             if (response.manager?.profileImage || response.profileImage) {
                 setImagePreview(response.manager?.profileImage || response.profileImage);
@@ -80,9 +80,10 @@ const Profile = () => {
             await updateManagerProfile({ profileImage: file });
             enqueueSnackbar('Profile picture updated successfully!', { variant: 'success' });
             await fetchProfile();
-        } catch (error: any) {
+        } catch (error) {
+            const err = error as { message?: string };
             console.error('Error uploading image:', error);
-            enqueueSnackbar(error?.message || 'Failed to upload profile picture', { variant: 'error' });
+            enqueueSnackbar(err?.message || 'Failed to upload profile picture', { variant: 'error' });
         } finally {
             setUploading(false);
         }
@@ -94,9 +95,10 @@ const Profile = () => {
             enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
             await fetchProfile();
             setActiveTab('view');
-        } catch (error: any) {
+        } catch (error) {
+            const err = error as { message?: string };
             console.error('Error updating profile:', error);
-            enqueueSnackbar(error?.message || 'Failed to update profile', { variant: 'error' });
+            enqueueSnackbar(err?.message || 'Failed to update profile', { variant: 'error' });
         }
     };
 
@@ -108,9 +110,10 @@ const Profile = () => {
             });
             enqueueSnackbar('Password changed successfully!', { variant: 'success' });
             setActiveTab('view');
-        } catch (error: any) {
+        } catch (error) {
+            const err = error as { message?: string };
             console.error('Error changing password:', error);
-            enqueueSnackbar(error?.message || 'Failed to change password', { variant: 'error' });
+            enqueueSnackbar(err?.message || 'Failed to change password', { variant: 'error' });
         }
     };
 

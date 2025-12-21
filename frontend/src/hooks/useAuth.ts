@@ -56,9 +56,10 @@ export const useAuth = () => {
                 } catch (decodeError) {
                     console.error('Failed to decode token:', decodeError);
                 }
-            } catch (error: any) {
-                const status = error.response?.status;
-                const isNetworkError = !error.response && error.message === 'Network Error';
+            } catch (error: unknown) {
+                const err = error as { response?: { status?: number }; message?: string };
+                const status = err.response?.status;
+                const isNetworkError = !err.response && err.message === 'Network Error';
 
                 // Handle different error types
                 if (status === 404 || status === 401) {
@@ -74,7 +75,7 @@ export const useAuth = () => {
                     console.error('Server error during session restoration:', status);
                 } else {
                     // Other errors
-                    console.error('Session restoration error:', error.message);
+                    console.error('Session restoration error:', err.message);
                 }
             } finally {
                 // Only set initialized if we're not going to retry

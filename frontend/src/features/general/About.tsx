@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useEffect } from "react"
 import {
   ArrowRight,
   Users,
@@ -24,13 +24,10 @@ import {
   Coffee,
 } from "lucide-react"
 import { Navbar } from "./Navbar"
-import Footer from "./Footer"
 
 const AboutPage = () => {
-  const [isVisible, setIsVisible] = useState(false)
-
   useEffect(() => {
-    setIsVisible(true)
+    // Component mounted
   }, [])
 
   const stats = [
@@ -215,75 +212,75 @@ const AboutPage = () => {
 
       {/* Hero Section */}
       <section className="relative z-40 max-w-7xl mx-auto px-6 lg:px-12 pt-20 lg:pt-28 pb-20 lg:pb-28">
-  {/* Background */}
-  <div className="absolute inset-0 bg-gradient-to-b from-white via-blue-50/40 to-white -z-10"></div>
+        {/* Background */}
+        <div className="absolute inset-0 bg-gradient-to-b from-white via-blue-50/40 to-white -z-10"></div>
 
-  <div className="text-center max-w-4xl mx-auto space-y-10">
-    {/* Tagline */}
-    <div className="inline-flex items-center space-x-3 bg-white/90 backdrop-blur-md border border-blue-200/70 px-5 py-2.5 rounded-full shadow-md">
-      <Award className="w-5 h-5 text-blue-600" />
-      <span className="text-sm font-semibold text-gray-800 tracking-wide">
-        The Future of Company Management
-      </span>
-      <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
-    </div>
+        <div className="text-center max-w-4xl mx-auto space-y-10">
+          {/* Tagline */}
+          <div className="inline-flex items-center space-x-3 bg-white/90 backdrop-blur-md border border-blue-200/70 px-5 py-2.5 rounded-full shadow-md">
+            <Award className="w-5 h-5 text-blue-600" />
+            <span className="text-sm font-semibold text-gray-800 tracking-wide">
+              The Future of Company Management
+            </span>
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+          </div>
 
-    {/* Main Heading */}
-    <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
-      Empowering Companies with{" "}
-      <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
-        Smart Management
-      </span>
-    </h1>
+          {/* Main Heading */}
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-tight bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+            Empowering Companies with{" "}
+            <span className="bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 bg-clip-text text-transparent">
+              Smart Management
+            </span>
+          </h1>
 
-    {/* Subheading */}
-    <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light leading-relaxed">
-      Stratify helps businesses streamline{" "}
-      <span className="font-semibold text-blue-600">employees</span>,{" "}
-      <span className="font-semibold text-purple-600">projects</span>, and{" "}
-      <span className="font-semibold text-cyan-600">growth</span> — all in one
-      powerful platform.
-    </p>
+          {/* Subheading */}
+          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light leading-relaxed">
+            Stratify helps businesses streamline{" "}
+            <span className="font-semibold text-blue-600">employees</span>,{" "}
+            <span className="font-semibold text-purple-600">projects</span>, and{" "}
+            <span className="font-semibold text-cyan-600">growth</span> — all in one
+            powerful platform.
+          </p>
 
-    {/* Features */}
-    <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
-      <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-        <Users className="w-8 h-8 text-blue-600 mb-4" />
-        <h3 className="font-semibold text-lg">Employee Hub</h3>
-        <p className="text-sm text-gray-500 mt-2">
-          Centralize employee profiles, roles & performance tracking.
-        </p>
-      </div>
-      <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-        <Building2 className="w-8 h-8 text-purple-600 mb-4" />
-        <h3 className="font-semibold text-lg">Project Control</h3>
-        <p className="text-sm text-gray-500 mt-2">
-          Assign, monitor, and deliver projects with clarity & speed.
-        </p>
-      </div>
-      <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-        <Globe className="w-8 h-8 text-cyan-600 mb-4" />
-        <h3 className="font-semibold text-lg">Global Scalability</h3>
-        <p className="text-sm text-gray-500 mt-2">
-          Built to support businesses across countries and cultures.
-        </p>
-      </div>
-    </div>
+          {/* Features */}
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
+            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
+              <Users className="w-8 h-8 text-blue-600 mb-4" />
+              <h3 className="font-semibold text-lg">Employee Hub</h3>
+              <p className="text-sm text-gray-500 mt-2">
+                Centralize employee profiles, roles & performance tracking.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
+              <Building2 className="w-8 h-8 text-purple-600 mb-4" />
+              <h3 className="font-semibold text-lg">Project Control</h3>
+              <p className="text-sm text-gray-500 mt-2">
+                Assign, monitor, and deliver projects with clarity & speed.
+              </p>
+            </div>
+            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
+              <Globe className="w-8 h-8 text-cyan-600 mb-4" />
+              <h3 className="font-semibold text-lg">Global Scalability</h3>
+              <p className="text-sm text-gray-500 mt-2">
+                Built to support businesses across countries and cultures.
+              </p>
+            </div>
+          </div>
 
-    {/* Stats */}
-    <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
-      {stats.map((stat, index) => (
-        <div
-          key={index}
-          className="bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all"
-        >
-          <div className="text-3xl font-extrabold">{stat.number}</div>
-          <div className="text-sm mt-2 opacity-90">{stat.label}</div>
+          {/* Stats */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mt-16">
+            {stats.map((stat, index) => (
+              <div
+                key={index}
+                className="bg-gradient-to-br from-blue-600 via-purple-600 to-cyan-600 p-6 rounded-2xl text-white shadow-lg hover:shadow-2xl transform hover:-translate-y-2 transition-all"
+              >
+                <div className="text-3xl font-extrabold">{stat.number}</div>
+                <div className="text-sm mt-2 opacity-90">{stat.label}</div>
+              </div>
+            ))}
+          </div>
         </div>
-      ))}
-    </div>
-  </div>
-</section>
+      </section>
 
 
       {/* Company Story Section */}
@@ -576,7 +573,7 @@ const AboutPage = () => {
           </div>
         </div>
       </section>
-      
+
     </div>
   )
 }

@@ -11,9 +11,19 @@ import { rejectionFormFields } from "@/shared/components/Forms/formFields";
 import { rejectionValidationSchema } from "@/shared/utils/validations";
 import { LoadingSpinner } from "@/shared/components/Loading";
 
+interface Company {
+  id: string;
+  name?: string;
+  email?: string;
+  phone?: string;
+  status?: string;
+  city?: string;
+  [key: string]: unknown;
+}
+
 const AllCompanies = () => {
-  const [companies, setCompanies] = useState<any[]>([]);
-  const [allCompanies, setAllCompanies] = useState<any[]>([]);
+  const [companies, setCompanies] = useState<Company[]>([]);
+  const [allCompanies, setAllCompanies] = useState<Company[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
@@ -41,10 +51,6 @@ const AllCompanies = () => {
     isOpen: boolean;
     companyId?: string;
   }>({ isOpen: false });
-
-
-
-
 
   useEffect(() => {
     const fetchAllCompanies = async () => {
@@ -172,7 +178,7 @@ const AllCompanies = () => {
 
       await approveCompany(companyId);
 
-      const updateStatus = (prev: any[]) =>
+      const updateStatus = (prev: Company[]) =>
         prev.map(c =>
           c.id === companyId
             ? { ...c, status: "Approved" }
@@ -206,7 +212,7 @@ const AllCompanies = () => {
       // Pass both companyId and rejection reason to backend
       await unapproveCompany(companyId, formData.reason);
 
-      const updateStatus = (prev: any[]) =>
+      const updateStatus = (prev: Company[]) =>
         prev.map(c =>
           c.id === companyId
             ? { ...c, status: "Rejected", rejectionReason: formData.reason }
@@ -240,7 +246,7 @@ const AllCompanies = () => {
     { key: "actions", label: "Actions" },
   ];
 
-  const renderCell = (row: any, key: string) => {
+  const renderCell = (row: Company, key: string) => {
     if (key === "actions") {
       const status = row.status?.toLowerCase();
       const isActionLoading = loadingActions[row.id];
@@ -259,8 +265,8 @@ const AllCompanies = () => {
               onClick={() => openApprovalConfirmDialog(row.id)}
               disabled={isActionLoading}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${isActionLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-green-500 hover:bg-green-600 text-white"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-green-500 hover:bg-green-600 text-white"
                 }`}
             >
               {isActionLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Approve"}
@@ -272,8 +278,8 @@ const AllCompanies = () => {
               onClick={() => openRejectionModal(row.id)}
               disabled={isActionLoading}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${isActionLoading
-                  ? "bg-gray-400 cursor-not-allowed"
-                  : "bg-red-500 hover:bg-red-600 text-white"
+                ? "bg-gray-400 cursor-not-allowed"
+                : "bg-red-500 hover:bg-red-600 text-white"
                 }`}
             >
               {isActionLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Reject"}

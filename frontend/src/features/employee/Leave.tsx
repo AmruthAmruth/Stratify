@@ -8,13 +8,15 @@ import { createLeaveSchema } from '@/shared/utils/validations';
 import React, { useEffect, useState } from 'react';
 import { enqueueSnackbar } from 'notistack';
 
+import { Leave as LeaveType } from '@/types/types';
+
 const Leave = () => {
   const [leaveCounts, setLeaveCounts] = useState({
     Casual: 0,
     Sick: 0,
     Earned: 0,
   });
-  const [leaveRecords, setLeaveRecords] = useState<any[]>([]);
+  const [leaveRecords, setLeaveRecords] = useState<LeaveType[]>([]);
   const [isLeaveModalOpen, setIsLeaveModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -43,7 +45,7 @@ const Leave = () => {
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map((record) => ({
       id: record.employeeId + record.startDate, // unique id
-      type: record.type,
+      type: record.leaveType,
       startDate: new Date(record.startDate).toLocaleDateString(),
       endDate: new Date(record.endDate).toLocaleDateString(),
       status: record.status,
@@ -56,15 +58,16 @@ const Leave = () => {
     alert(`Viewing details for leave ${id}`);
   };
 
-  const handleCreateLeave = async (values: any) => {
+  const handleCreateLeave = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
     try {
       await createLeave(values);
       enqueueSnackbar("Leave created successfully!", { variant: "success" });
       setIsLeaveModalOpen(false);
       await fetchLeaves(); // refresh table
-    } catch (err: any) {
-      enqueueSnackbar(err?.message || "Failed to create leave", { variant: "error" });
+    } catch (err) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error?.message || "Failed to create leave", { variant: "error" });
     } finally {
       setSubmitLoading(false);
     }
@@ -119,7 +122,7 @@ const Leave = () => {
         totalPages={totalPages}
         onPageChange={(page) => setCurrentPage(page)}
         actions={[
-          { label: "View", type: "custom", onClick: (row) => handleViewLeave(row.id) },
+          { label: "View", type: "custom", onClick: (row: { id: string }) => handleViewLeave(row.id) },
         ]}
       />
 

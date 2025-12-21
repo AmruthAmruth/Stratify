@@ -1,9 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
     Building,
-    Mail,
-    Phone,
-    MapPin,
     User,
     Edit3,
     Save,

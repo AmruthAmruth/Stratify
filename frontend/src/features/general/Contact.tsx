@@ -1,11 +1,11 @@
 import React from 'react';
-import { Shield, Eye, Lock, Activity, Users, FileText, Bell, CreditCard, CheckCircle, AlertTriangle, Database, Server, Layers } from 'lucide-react';
+import { Shield, Eye, Lock, CheckCircle, AlertTriangle, Layers, Bell, CreditCard, FileText } from 'lucide-react';
 
 export default function ContactPage() {
   return (
     <div className="w-full h-screen max-h-screen bg-slate-950 flex items-center justify-center p-6 overflow-hidden">
       <div className="w-full max-w-6xl h-full flex flex-col justify-between py-4">
-        
+
         {/* Header Section */}
         <div className="text-center mb-6">
           <div className="inline-block relative mb-3">
@@ -21,7 +21,7 @@ export default function ContactPage() {
 
         {/* Main Control Grid */}
         <div className="grid grid-cols-3 gap-4 mb-6">
-          
+
           {/* Card 1 - Company Approvals */}
           <div className="bg-gradient-to-br from-slate-900 to-slate-800 rounded-xl p-5 border-2 border-emerald-500/50 hover:border-emerald-400 transition-all hover:shadow-xl hover:shadow-emerald-500/20 group">
             <div className="bg-emerald-500/10 w-12 h-12 rounded-lg flex items-center justify-center mb-3 group-hover:scale-110 transition-transform">

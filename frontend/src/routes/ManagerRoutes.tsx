@@ -1,4 +1,3 @@
-import ManagerProjectDetailsPage from "@/features/common/ManagerProjectDetailsPage";
 import ProjectPage from "@/features/common/ProjectPage";
 import DepartmentLeaves from "@/features/manager/DepartmentLeaves";
 import ChatPage from "@/features/manager/ChatPage";
