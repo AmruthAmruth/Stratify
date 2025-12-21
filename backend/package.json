@@ -4,11 +4,12 @@
   "description": "",
   "main": "main.js",
   "scripts": {
-    "lint": "eslint . --ext .ts",
-    "lint:fix": "eslint . --ext .ts --fix",
-    "start": "npm run lint && nodemon",
-    "format": "prettier --write 'src/**/*.{js,ts,jsx,tsx,json,css,md}'"
-  },
+  "lint": "eslint . --ext .ts",
+  "build": "tsc",
+  "start": "node dist/main.js",
+  "dev": "ts-node-dev --respawn src/main.ts",
+  "format": "prettier --write 'src/**/*.{js,ts,jsx,tsx,json,css,md}'"
+},
   "keywords": [],
   "author": "",
   "license": "ISC",
