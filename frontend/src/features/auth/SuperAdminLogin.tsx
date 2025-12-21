@@ -20,15 +20,16 @@ const SuperAdminLogin: React.FC = () => {
     id: string;
     role: string;
     exp: number;
-    name:string
+    name: string
   }
 
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { enqueueSnackbar } = useSnackbar();
 
-  const handleLogin = (values: LoginValues) => {
-    superAdminLogin(values)
+  const handleLogin = (values: Record<string, unknown>) => {
+    const loginValues = values as unknown as LoginValues;
+    superAdminLogin(loginValues)
       .then((data) => {
         if (data.accessToken) {
           const decoded: DecodedToken = jwtDecode(data.accessToken);
@@ -37,7 +38,7 @@ const SuperAdminLogin: React.FC = () => {
               accessToken: data.accessToken,
               role: decoded.role,
               userId: decoded.id,
-              name:decoded.name || "Super Admin",
+              name: decoded.name || "Super Admin",
             })
           );
 
@@ -87,7 +88,6 @@ const SuperAdminLogin: React.FC = () => {
               validationSchema={loginSchema}
               onSubmit={handleLogin}
               buttonText="Login"
-              buttonClassName="bg-[#009063] hover:bg-green-700 text-white font-semibold py-3 rounded-xl shadow-md transition-all duration-200"
             />
           </div>
 

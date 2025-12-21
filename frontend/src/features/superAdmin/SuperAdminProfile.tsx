@@ -4,13 +4,7 @@ import { getSuperAdminProfile, updateSuperAdminProfile } from '@/services/superA
 import DynamicForm from '@/shared/components/Forms/DynamicForm';
 import { z } from 'zod';
 import { enqueueSnackbar } from 'notistack';
-
-interface SuperAdminProfile {
-    id: string;
-    name: string;
-    email: string;
-    profileImage?: string;
-}
+import type { SuperAdminProfile } from '@/types/types';
 
 const SuperAdminProfile = () => {
     const [loading, setLoading] = useState(true);

@@ -41,7 +41,7 @@ const Profile = () => {
             const response: { manager?: ManagerProfile; profileImage?: string } & ManagerProfile = await getManagerProfile();
             setProfile(response.manager || response);
             if (response.manager?.profileImage || response.profileImage) {
-                setImagePreview(response.manager?.profileImage || response.profileImage);
+                setImagePreview(response.manager?.profileImage || response.profileImage || null);
             }
         } catch (error) {
             console.error('Error fetching profile:', error);

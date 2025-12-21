@@ -198,24 +198,23 @@ const AllCompanies = () => {
     }
   };
 
-  // Handle rejection with reason
-  const handleRejectionSubmit = async (formData: { reason: string }) => {
+  // Handle rejection submission
+  const handleRejectionSubmit = async (data: Record<string, unknown>) => {
     if (!rejectionModal.companyId) return;
 
     const { companyId } = rejectionModal;
+    const reason = typeof data.reason === 'string' ? data.reason : '';
 
     try {
       setSubmitLoading(true);
       setLoadingActions(prev => ({ ...prev, [companyId]: true }));
-      console.log(formData.reason);
 
-      // Pass both companyId and rejection reason to backend
-      await unapproveCompany(companyId, formData.reason);
+      await unapproveCompany(companyId, reason);
 
       const updateStatus = (prev: Company[]) =>
         prev.map(c =>
           c.id === companyId
-            ? { ...c, status: "Rejected", rejectionReason: formData.reason }
+            ? { ...c, status: "Rejected", rejectionReason: reason }
             : c
         );
 

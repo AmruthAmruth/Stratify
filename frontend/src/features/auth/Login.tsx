@@ -41,10 +41,11 @@ const Login: React.FC = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleLogin = async (values: LoginValues) => {
-    console.log("Login Data:", values);
+  const handleLogin = async (values: Record<string, unknown>) => {
+    const loginValues = values as unknown as LoginValues;
+    console.log("Login Data:", loginValues);
     try {
-      const data = await companyLogin(values);
+      const data = await companyLogin(loginValues);
       console.log("Login Successful", data);
 
       enqueueSnackbar("Login successful!", { variant: "success" });
@@ -160,7 +161,6 @@ const Login: React.FC = () => {
               validationSchema={loginSchema}
               onSubmit={handleLogin}
               buttonText="Login"
-              buttonColor="#009063"
             />
 
             {/* Links */}

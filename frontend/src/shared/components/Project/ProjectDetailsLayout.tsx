@@ -31,6 +31,7 @@ import {
 import ReusableChart from "../Chart/ReusableChart";
 import DashboardCard from "../DashboardCards/Cards";
 import { enqueueSnackbar } from "notistack";
+import type { TeamMember } from "@/types/types";
 
 interface Props {
   project: ProjectDetailsDTO; // Changed from ProjectDTO
@@ -60,7 +61,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   // ────────────────────────────────
   // AVAILABLE EMPLOYEES STATE
   // ────────────────────────────────
-  const [employeeList, setEmployeeList] = useState<Array<{ employeeId?: string; id?: string; name: string; position: string }>>([]);
+  const [employeeList, setEmployeeList] = useState<TeamMember[]>([]);
 
   useEffect(() => {
     getEmployeesNotInProject(project.id).then((data) => {
@@ -219,7 +220,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       placeholder: "Choose employee",
       options: employeeList.map((emp) => ({
         label: `${emp.name} — ${emp.position} `,
-        value: emp.employeeId,
+        value: emp.id,
       })),
     },
   ];

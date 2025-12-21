@@ -393,6 +393,7 @@ export interface SuperAdminProfile {
     name: string;
     email: string;
     role: 'superadmin';
+    profileImage?: string;
     createdAt?: string;
 }
 
@@ -521,6 +522,7 @@ export interface Company {
     status: string;
     profileImage?: string;
     createdAt?: string;
+    [key: string]: unknown;
 }
 
 export interface CompanyListResponse {

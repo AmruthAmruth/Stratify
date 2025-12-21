@@ -224,8 +224,9 @@ const Projects: React.FC = () => {
   // FORM SUBMISSION HANDLERS
   // ============================================================================
 
-  const handleUpdateProject = async (formValues: CreateProjectFormValues) => {
-    console.log("Form values", formValues);
+  const handleUpdateProject = async (formValues: Record<string, unknown>) => {
+    const values = formValues as unknown as CreateProjectFormValues;
+    console.log("Form values", values);
 
     if (!editingProject || !departmentId) return;
 
@@ -234,14 +235,14 @@ const Projects: React.FC = () => {
       // Dates are sent as full ISO strings - backend should handle
       const payload: UpdateProjectPayload = {
         id: editingProject.id,
-        name: formValues.name,
-        key: formValues.key,
-        description: formValues.description,
-        startDate: formValues.startDate,
-        endDate: formValues.endDate,
+        name: values.name,
+        key: values.key,
+        description: values.description,
+        startDate: values.startDate,
+        endDate: values.endDate,
         departmentId: departmentId,
-        status: formValues.status || editingProject.status as CreateProjectFormValues["status"],
-        teamMemberIds: formValues.teamMemberIds || [],
+        status: values.status || editingProject.status as CreateProjectFormValues["status"],
+        teamMemberIds: values.teamMemberIds || [],
       };
 
       console.log("UPDATE PAYLOAD", payload);
@@ -265,7 +266,8 @@ const Projects: React.FC = () => {
     }
   };
 
-  const handleCreateProject = async (formValues: CreateProjectFormValues) => {
+  const handleCreateProject = async (formValues: Record<string, unknown>) => {
+    const values = formValues as unknown as CreateProjectFormValues;
     if (!departmentId) {
       enqueueSnackbar("Department not available. Cannot create project.", {
         variant: "error",
@@ -277,14 +279,14 @@ const Projects: React.FC = () => {
     setSubmitLoading(true);
     try {
       const payload: CreateProjectPayload = {
-        name: formValues.name,
-        key: formValues.key,
-        description: formValues.description,
-        startDate: formValues.startDate,
-        endDate: formValues.endDate,
+        name: values.name,
+        key: values.key,
+        description: values.description,
+        startDate: values.startDate,
+        endDate: values.endDate,
         departmentId: departmentId,
-        status: formValues.status || "Planned",
-        teamMemberIds: formValues.teamMemberIds || [],
+        status: values.status || "Planned",
+        teamMemberIds: values.teamMemberIds || [],
       };
 
       console.log("PAYLOAD", payload);
@@ -568,7 +570,6 @@ const Projects: React.FC = () => {
                 onSubmit={editingProject ? handleUpdateProject : handleCreateProject}
                 buttonText={editingProject ? "Update Project" : "Create Project"}
                 disabled={submitLoading}
-                formRef={formRef}
                 initialValues={initialFormValues}
               />
             </div>

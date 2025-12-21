@@ -8,6 +8,7 @@ import React, {
 } from "react";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { z } from "zod";
 
 /* ---------- Types ---------- */
 
@@ -24,24 +25,9 @@ interface Field {
   options?: (string | SelectOption)[];
 }
 
-interface ZodFormattedError {
-  _errors?: string[];
-}
-
-interface SafeParseError {
-  format: () => Record<string, ZodFormattedError>;
-}
-
-interface SafeParseResult {
-  success: boolean;
-  error?: SafeParseError;
-}
-
 interface AuthFormProps {
   fields: Field[];
-  validationSchema: {
-    safeParse: (data: unknown) => SafeParseResult;
-  };
+  validationSchema: z.ZodTypeAny;
   onSubmit: (values: Record<string, unknown>) => void | Promise<void>;
   buttonText: React.ReactNode;
   initialValues?: Record<string, unknown>;
@@ -143,8 +129,8 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const validateField = (name: string) => {
       const result = validationSchema.safeParse(formData);
 
-      if (!result.success && result.error) {
-        const formatted = result.error.format();
+      if (!result.success) {
+        const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
         setErrors((prev) => ({
           ...prev,
           [name]: formatted[name]?._errors?.[0] ?? "",
@@ -158,12 +144,13 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       e.preventDefault();
 
       const result = validationSchema.safeParse(formData);
-      if (!result.success || !result.error) {
+      if (result.success) {
         onSubmit(formData);
         return;
       }
 
-      const formatted = result.error.format();
+      // TypeScript now knows result.success is false, so error exists
+      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
       const fieldErrors: Record<string, string> = {};
 
       fields.forEach((field) => {

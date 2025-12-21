@@ -7,6 +7,7 @@ import { getSocket } from "@/shared/socket/socket";
 import { formatChatTime } from "@/utils/dateUtils";
 import { useSearchParams } from "react-router-dom";
 import { LoadingSpinner } from "@/shared/components/Loading";
+import type { ChatMessage } from "@/types/types";
 
 interface TeamMember {
     id: string;
@@ -20,7 +21,7 @@ const ChatPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
     const [selectedMember, setSelectedMember] = useState<TeamMember | null>(null);
-    const [chatHistory, setChatHistory] = useState<unknown[]>([]);
+    const [chatHistory, setChatHistory] = useState<ChatMessage[]>([]);
     const [loading, setLoading] = useState(true);
     const [chatLoading, setChatLoading] = useState(false);
     const userId = useSelector((state: RootState) => state.auth.userId);

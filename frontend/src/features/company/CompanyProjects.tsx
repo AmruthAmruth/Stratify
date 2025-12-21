@@ -134,7 +134,7 @@ const Projects = () => {
           { key: 'departmentName', label: 'Department' },
           { key: 'remainingTimeInDays', label: 'Remaining Days' },
         ]}
-        sortBy={sortBy}
+        sortBy={sortBy ? String(sortBy) : null}
         setSortBy={setSortBy}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}

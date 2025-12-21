@@ -102,7 +102,7 @@ const JoinMeeting: React.FC = () => {
       );
     }
 
-    return row[key] ?? "";
+    return (row[key] ?? "") as React.ReactNode;
   };
 
   return (
