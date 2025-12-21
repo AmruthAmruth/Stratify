@@ -245,7 +245,7 @@ const AllCompanies = () => {
     { key: "actions", label: "Actions" },
   ];
 
-  const renderCell = (row: Company, key: string) => {
+  const renderCell = (row: Company, key: string): React.ReactNode => {
     if (key === "actions") {
       const status = row.status?.toLowerCase();
       const isActionLoading = loadingActions[row.id];
@@ -306,7 +306,7 @@ const AllCompanies = () => {
       );
     }
 
-    return row[key] || "-";
+    return String(row[key] || "-");
   };
 
   if (isLoading) {
