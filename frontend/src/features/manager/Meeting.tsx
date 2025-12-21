@@ -5,12 +5,13 @@ import { RootState } from "@/store";
 import { VideoCall } from "@/shared/components/Meetings/VideoCall";
 import Table from "@/shared/components/Table/Table";
 import { useSnackbar } from "notistack";
+import { Meeting } from "@/types/types";
 
-const Meeting: React.FC = () => {
+const ManagerMeeting: React.FC = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   const [title, setTitle] = useState("");
-  const [meetings, setMeetings] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [activeRoomId, setActiveRoomId] = useState<string | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
@@ -21,7 +22,7 @@ const Meeting: React.FC = () => {
     try {
       const data = await getMeetingsByCreator();
       setMeetings(Array.isArray(data) ? data : []);
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error fetching meetings:", error);
       enqueueSnackbar("Failed to fetch meetings", { variant: "error" });
     }
@@ -42,13 +43,14 @@ const Meeting: React.FC = () => {
       setTitle("");
       fetchMeetings();
       enqueueSnackbar("Meeting created successfully!", { variant: "success" });
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error creating meeting:", error);
-      enqueueSnackbar(error.message || "Failed to create meeting", { variant: "error" });
+      const errorMessage = (error as Error)?.message || "Failed to create meeting";
+      enqueueSnackbar(errorMessage, { variant: "error" });
     }
   };
 
-  const handleJoin = (meeting: any) => {
+  const handleJoin = (meeting: Meeting) => {
     setActiveRoomId(meeting.roomId);
   };
 
@@ -57,7 +59,7 @@ const Meeting: React.FC = () => {
       await closeMeeting(roomId);
       enqueueSnackbar("Meeting closed successfully!", { variant: "success" });
       fetchMeetings(); // Refresh the list to update status
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error("Error closing meeting:", error);
       enqueueSnackbar("Failed to close meeting", { variant: "error" });
     }
@@ -83,9 +85,10 @@ const Meeting: React.FC = () => {
     { key: "createdAt", label: "Created At" },
   ];
 
-  const renderCell = (row: any, key: string) => {
+  const renderCell = (row: Meeting, key: string) => {
     if (key === "createdAt" || key === "scheduledDate") {
-      const date = row[key] ? new Date(row[key]) : null;
+      const dateString = row[key] as string;
+      const date = dateString ? new Date(dateString) : null;
       return date ? date.toLocaleString("en-GB", {
         day: "2-digit",
         month: "short",
@@ -129,22 +132,22 @@ const Meeting: React.FC = () => {
       );
     }
 
-    return row[key] || ""; // Handle null/undefined
+    return (row[key] as React.ReactNode) || ""; // Handle null/undefined
   };
 
   // Table Actions (Join + Close)
-  const actions: { label: string; type: "approve" | "delete"; onClick: (row: any) => void; show: (row: any) => boolean }[] = [
+  const actions: { label: string; type: "approve" | "delete"; onClick: (row: Meeting) => void; show: (row: Meeting) => boolean }[] = [
     {
       label: "Join",
       type: "approve",
-      onClick: (row: any) => handleJoin(row),
-      show: (row: any) => row.status === "open", // Only show join for open meetings
+      onClick: (row: Meeting) => handleJoin(row),
+      show: (row: Meeting) => row.status === "open", // Only show join for open meetings
     },
     {
       label: "Close",
       type: "delete",
-      onClick: (row: any) => handleCloseMeeting(row.roomId),
-      show: (row: any) => row.status === "open", // Only show close for open meetings
+      onClick: (row: Meeting) => handleCloseMeeting(row.roomId),
+      show: (row: Meeting) => row.status === "open", // Only show close for open meetings
     },
   ];
 
@@ -193,4 +196,4 @@ const Meeting: React.FC = () => {
   );
 };
 
-export default Meeting;
+export default ManagerMeeting;

@@ -201,15 +201,20 @@ export interface Meeting {
     id: string;
     title: string;
     description?: string;
-    meetingType: string;
-    startTime: string;
-    endTime: string;
+    meetingType?: string;
+    startTime?: string;
+    endTime?: string;
     meetingLink?: string;
-    createdBy: string;
+    createdBy?: string;
     createdByName?: string;
-    participants: string[];
-    status?: 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
-    createdAt?: string;
+    participants?: string[];
+    status: 'open' | 'closed' | 'scheduled' | 'ongoing' | 'completed' | 'cancelled';
+    createdAt: string;
+    roomId: string;
+    isRecurring?: boolean;
+    projectId?: string;
+    scheduledDate?: string;
+    [key: string]: unknown;
 }
 
 export interface MeetingFormData {

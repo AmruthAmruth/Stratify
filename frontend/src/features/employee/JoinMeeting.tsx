@@ -5,9 +5,10 @@ import { VideoCall } from "@/shared/components/Meetings/VideoCall";
 import Table from "@/shared/components/Table/Table";
 import { RootState } from "@/store";
 import { enqueueSnackbar } from "notistack";
+import { Meeting } from "@/types/types";
 
 const JoinMeeting: React.FC = () => {
-  const [meetings, setMeetings] = useState<any[]>([]);
+  const [meetings, setMeetings] = useState<Meeting[]>([]);
   const [joined, setJoined] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
@@ -57,9 +58,10 @@ const JoinMeeting: React.FC = () => {
     return <VideoCall roomId={roomId} userName={userName} />;
   }
 
-  const renderCell = (row: any, key: string) => {
+  const renderCell = (row: Meeting, key: string) => {
     if (key === "createdAt" || key === "scheduledDate") {
-      const date = row[key] ? new Date(row[key]) : null;
+      const dateString = row[key] as string;
+      const date = dateString ? new Date(dateString) : null;
       return date ? date.toLocaleString("en-GB", {
         day: "2-digit",
         month: "short",
@@ -103,7 +105,7 @@ const JoinMeeting: React.FC = () => {
       );
     }
 
-    return row[key] || ""; // Handle null/undefined
+    return (row[key] as React.ReactNode) || ""; // Handle null/undefined
   };
 
   return (
