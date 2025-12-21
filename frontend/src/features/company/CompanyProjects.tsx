@@ -8,34 +8,47 @@ import Table from '@/shared/components/Table/Table';
 import { LoadingSpinner } from '@/shared/components/Loading';
 import { Project, ProjectsResponse } from '@/types/types';
 
+type SortKey = keyof Project | '';
+
 const Projects = () => {
   const [projects, setProjects] = useState<ProjectsResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
-  const [sortBy, setSortBy] = useState('');
+  const [sortBy, setSortBy] = useState<SortKey>('');
   const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
-  const itemsPerPage = 5;
 
+  const itemsPerPage = 5;
   const navigate = useNavigate();
 
+  /**
+   * Fetch projects
+   * (defined inside useEffect to satisfy exhaustive-deps rule)
+   */
   useEffect(() => {
-    getCompanyProjects().then((data) => {
+    const fetchProjects = async () => {
+      const data = await getCompanyProjects();
       setProjects(data);
-    });
+    };
+
+    fetchProjects();
   }, []);
 
   if (!projects) {
-    return <LoadingSpinner fullScreen={true} text="Loading projects..." />;
+    return <LoadingSpinner fullScreen text="Loading projects..." />;
   }
 
+  /** Filter projects */
   const filteredProjects = projects.projects
-    .filter((p: Project) =>
-      (p.projectName || p.name).toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((p) =>
+      (p.projectName || p.name)
+        .toLowerCase()
+        .includes(searchTerm.toLowerCase())
     )
-    .filter((p: Project) => (filterStatus ? p.status === filterStatus : true));
+    .filter((p) => (filterStatus ? p.status === filterStatus : true));
 
-  const sortedProjects = [...filteredProjects].sort((a: Project, b: Project) => {
+  /** Sort projects */
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
     if (!sortBy) return 0;
 
     const aValue = a[sortBy];
@@ -54,6 +67,7 @@ const Projects = () => {
     return 0;
   });
 
+  /** Pagination */
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -61,9 +75,10 @@ const Projects = () => {
     startIndex + itemsPerPage
   );
 
+  /** Status filter options */
   const uniqueStatus = Array.from(
-    new Set(projects.projects.map((p: Project) => p.status))
-  ) as string[];
+    new Set(projects.projects.map((p) => p.status))
+  );
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -72,7 +87,6 @@ const Projects = () => {
     setSortOrder('asc');
   };
 
-  // Navigate to project details
   const handleViewProject = (projectId: string) => {
     navigate(`/project/${projectId}`);
   };
@@ -83,27 +97,27 @@ const Projects = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard
           title="Total Projects"
-          value={projects.counts?.total || 0}
+          value={projects.counts?.total ?? 0}
           subtitle="All company projects"
-          trend={(projects.counts?.total || 0) > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.total ?? 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Planned Projects"
-          value={projects.counts?.planned || 0}
+          value={projects.counts?.planned ?? 0}
           subtitle="Not started yet"
-          trend={(projects.counts?.planned || 0) > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.planned ?? 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Active Projects"
-          value={projects.counts?.active || 0}
+          value={projects.counts?.active ?? 0}
           subtitle="Currently running"
-          trend={(projects.counts?.active || 0) > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.active ?? 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Completed Projects"
-          value={projects.counts?.completed || 0}
+          value={projects.counts?.completed ?? 0}
           subtitle="Finished successfully"
-          trend={(projects.counts?.completed || 0) > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.completed ?? 0) > 0 ? 'up' : 'down'}
         />
       </div>
 
@@ -140,22 +154,24 @@ const Projects = () => {
         data={paginatedData}
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
         actions={[
           {
             label: 'View More',
             type: 'custom',
-            onClick: (row) => handleViewProject(row.id),
+            onClick: (row: Project) => handleViewProject(row.id),
           },
           {
             label: 'Edit',
             type: 'edit',
-            onClick: (row) => alert(`Editing ${row.projectName}`),
+            onClick: (row: Project) =>
+              alert(`Editing ${row.projectName}`),
           },
           {
             label: 'Archive',
             type: 'delete',
-            onClick: (row) => alert(`Archiving ${row.projectName}`),
+            onClick: (row: Project) =>
+              alert(`Archiving ${row.projectName}`),
           },
         ]}
       />
