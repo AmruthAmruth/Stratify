@@ -12,18 +12,19 @@ const JoinMeeting: React.FC = () => {
   const [joined, setJoined] = useState(false);
   const [roomId, setRoomId] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
+
   const itemsPerPage = 6;
 
   const userName = useSelector((state: RootState) => state.auth.name);
 
-  // Fetch all available meetings for the employee
+  // Fetch meetings
   useEffect(() => {
     const fetchMeetings = async () => {
       try {
         const data = await employeeMeetings();
         setMeetings(data || []);
-      } catch (err) {
-        console.error("Failed to fetch meetings:", err);
+      } catch (error) {
+        console.error("Failed to fetch meetings:", error);
         enqueueSnackbar("Failed to load meetings", { variant: "error" });
       }
     };
@@ -31,44 +32,39 @@ const JoinMeeting: React.FC = () => {
     fetchMeetings();
   }, []);
 
-  // Paginate the meetings
-  const paginatedData = meetings
-    .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
-    .map((meeting) => ({
-      id: meeting.id,
-      title: meeting.title,
-      status: meeting.status,
-      createdAt: meeting.createdAt,
-      scheduledDate: meeting.scheduledDate,
-      isRecurring: meeting.isRecurring,
-      projectId: meeting.projectId,
-      roomId: meeting.roomId,
-    }));
+  // Pagination
+  const paginatedData = meetings.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   const totalPages = Math.ceil(meetings.length / itemsPerPage);
 
-  // Handle joining the meeting
   const handleJoinMeeting = (roomId: string) => {
     setRoomId(roomId);
     setJoined(true);
   };
 
-  // If user joined a meeting, show VideoCall component
   if (joined) {
     return <VideoCall roomId={roomId} userName={userName} />;
   }
 
-  const renderCell = (row: Meeting, key: string) => {
+  const renderCell = (
+    row: Meeting,
+    key: keyof Meeting | "type"
+  ): React.ReactNode => {
     if (key === "createdAt" || key === "scheduledDate") {
-      const dateString = row[key] as string;
-      const date = dateString ? new Date(dateString) : null;
-      return date ? date.toLocaleString("en-GB", {
+      const value = row[key];
+      if (!value) return "-";
+
+      const date = new Date(value);
+      return date.toLocaleString("en-GB", {
         day: "2-digit",
         month: "short",
         year: "numeric",
         hour: "2-digit",
         minute: "2-digit",
-      }) : "-";
+      });
     }
 
     if (key === "type") {
@@ -98,6 +94,7 @@ const JoinMeeting: React.FC = () => {
         row.status === "open"
           ? "bg-green-100 text-green-700"
           : "bg-red-100 text-red-700";
+
       return (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
           {row.status}
@@ -105,13 +102,15 @@ const JoinMeeting: React.FC = () => {
       );
     }
 
-    return (row[key] as React.ReactNode) || ""; // Handle null/undefined
+    return row[key] ?? "";
   };
 
   return (
     <div className="bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-2">Available Meetings</h2>
+        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-2">
+          Available Meetings
+        </h2>
         <p className="text-sm text-[#3b3b3b]/60">
           Join ongoing or scheduled meetings with your team and stay connected.
         </p>
@@ -128,13 +127,13 @@ const JoinMeeting: React.FC = () => {
         data={paginatedData}
         currentPage={currentPage}
         totalPages={totalPages}
-        onPageChange={(page) => setCurrentPage(page)}
+        onPageChange={setCurrentPage}
         renderCell={renderCell}
         actions={[
           {
             label: "Join",
-            type: "custom" as const,
-            onClick: (row) => handleJoinMeeting(row.roomId),
+            type: "custom",
+            onClick: (row: Meeting) => handleJoinMeeting(row.roomId),
           },
         ]}
       />
