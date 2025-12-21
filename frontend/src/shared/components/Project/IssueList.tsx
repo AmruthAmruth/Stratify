@@ -26,7 +26,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
   const [currentIssue, setCurrentIssue] = useState<IssueDTO | null>(null);
 
   const [updateSubTaskModalOpen, setUpdateSubTaskModalOpen] = useState(false);
-  const [currentSubTask, setCurrentSubTask] = useState<any | null>(null);
+  const [currentSubTask, setCurrentSubTask] = useState<{ id?: string; _id?: string; heading: string; description?: string; status: string; hours?: number; assignedToId?: string } | null>(null);
 
   const [confirmDialog, setConfirmDialog] = useState<{
     isOpen: boolean;
@@ -92,7 +92,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
     setCurrentIssue(null);
   }, []);
 
-  const openUpdateSubTaskModal = useCallback((subTask: any) => {
+  const openUpdateSubTaskModal = useCallback((subTask: { id?: string; _id?: string; heading: string; description?: string; status: string; hours?: number; assignedToId?: string }) => {
     setCurrentSubTask(subTask);
     setUpdateSubTaskModalOpen(true);
   }, []);
@@ -104,7 +104,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
   }, []);
 
   const handleCreateSubtask = useCallback(
-    async (values: Record<string, any>) => {
+    async (values: Record<string, unknown>) => {
       if (!currentIssueId) {
         enqueueSnackbar("No issue selected", { variant: "error" });
         return;
@@ -116,15 +116,16 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
         enqueueSnackbar("Subtask created successfully!", { variant: "success" });
         closeSubtaskModal();
         if (onRefresh) await onRefresh();
-      } catch (err: any) {
-        enqueueSnackbar(err.message || "Failed to create subtask", { variant: "error" });
+      } catch (err: unknown) {
+        const error = err as { message?: string };
+        enqueueSnackbar(error?.message || "Failed to create subtask", { variant: "error" });
       }
     },
     [currentIssueId, closeSubtaskModal, onRefresh]
   );
 
   const handleUpdateIssue = useCallback(
-    async (values: Record<string, any>) => {
+    async (values: Record<string, unknown>) => {
       if (!currentIssue) {
         enqueueSnackbar("No issue selected", { variant: "error" });
         return;
@@ -142,8 +143,9 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
         enqueueSnackbar("Issue updated successfully!", { variant: "success" });
         closeUpdateIssueModal();
-      } catch (err: any) {
-        enqueueSnackbar(err.message || "Failed to update issue", { variant: "error" });
+      } catch (err: unknown) {
+        const error = err as { message?: string };
+        enqueueSnackbar(error?.message || "Failed to create issue", { variant: "error" });
       }
     },
     [currentIssue, closeUpdateIssueModal, onRefresh]
@@ -161,8 +163,9 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
           await deleteIssue(issueId);
           enqueueSnackbar("Issue deleted successfully!", { variant: "success" });
           if (onRefresh) await onRefresh();
-        } catch (err: any) {
-          enqueueSnackbar(err.message || "Failed to delete issue", { variant: "error" });
+        } catch (err: unknown) {
+          const error = err as { message?: string };
+          enqueueSnackbar(error?.message || "Failed to delete issue", { variant: "error" });
         }
       },
     });
@@ -170,7 +173,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
   // Update Subtask
   const handleUpdateSubTask = useCallback(
-    async (values: Record<string, any>) => {
+    async (values: Record<string, unknown>) => {
       if (!currentSubTask) {
         enqueueSnackbar("No subtask selected", { variant: "error" });
         return;
@@ -182,8 +185,9 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
         enqueueSnackbar("Subtask updated successfully!", { variant: "success" });
         closeUpdateSubTaskModal();
         if (onRefresh) await onRefresh();
-      } catch (err: any) {
-        enqueueSnackbar(err.message || "Failed to update subtask", { variant: "error" });
+      } catch (err: unknown) {
+        const error = err as { message?: string };
+        enqueueSnackbar(error?.message || "Failed to update subtask", { variant: "error" });
       }
     },
     [currentSubTask, closeUpdateSubTaskModal, onRefresh]
@@ -201,8 +205,9 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
           await deleteSubTask(subTaskId);
           enqueueSnackbar("Subtask deleted successfully!", { variant: "success" });
           if (onRefresh) await onRefresh();
-        } catch (err: any) {
-          enqueueSnackbar(err.message || "Failed to delete subtask", { variant: "error" });
+        } catch (err: unknown) {
+          const error = err as { message?: string };
+          enqueueSnackbar(error?.message || "Failed to delete subtask", { variant: "error" });
         }
       },
     });

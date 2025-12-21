@@ -12,7 +12,7 @@ import { setCompanyInfo } from "@/store/slices/authSlice";
 import api from "@/services/axiosInstance";
 
 const getIcon = (iconName: string) => {
-  return (Icons as any)[iconName] || Icons.Circle;
+  return (Icons as unknown as Record<string, React.ComponentType<{ className?: string }>>)[iconName] || Icons.Circle;
 };
 
 const Sidebar: React.FC = () => {

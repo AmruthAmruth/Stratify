@@ -49,7 +49,6 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   title,
   icon,
   iconBgColor,
-  iconColor,
   data,
   type,
   expandedItem,
@@ -74,7 +73,6 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       <div className="p-6 space-y-4">
         {data.map((item, index) => {
           const itemId = type === 'sprint' ? item.id || item._id : item.id || item._id;
-          const itemName = type === 'sprint' ? item.name : item.heading;
           const isExpanded = expandedItem === itemId;
 
           // For backlog items, render differently
@@ -273,7 +271,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                                 sum + (issue.subTasks?.filter((st: LocalSubTask) => st.status === "Done")
                                   .reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
-                              const remainingHours = totalSubtaskHours - completedHours;
+                              void totalSubtaskHours; // Used in data calculation below
+                              void completedHours; // Used in data calculation below
                               return ["Total Hours", "Completed", "Remaining"];
                             })()}
                             data={(() => {

@@ -8,7 +8,7 @@ interface VideoCallProps {
 
 export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
   const meetingContainer = useRef<HTMLDivElement>(null);
-  const zpRef = useRef<any>(null);
+  const zpRef = useRef<unknown>(null);
 
   useEffect(() => {
     const appID = 1198444485;
@@ -42,7 +42,7 @@ export const VideoCall: React.FC<VideoCallProps> = ({ roomId, userName }) => {
 
     return () => {
       try {
-        zpRef.current?.destroy();
+        (zpRef.current as { destroy?: () => void })?.destroy?.();
         zpRef.current = null;
       } catch (err) {
         console.warn("Cleanup error:", err);

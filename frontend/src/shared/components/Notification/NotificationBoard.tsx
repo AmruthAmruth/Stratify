@@ -17,6 +17,15 @@ import {
 } from "@/services/notification";
 import { LoadingSpinner } from "@/shared/components/Loading";
 
+interface Notification {
+  id?: string;
+  _id?: string;
+  title: string;
+  message: string;
+  isRead: boolean;
+  createdAt: string;
+}
+
 const NotificationBoard = () => {
   const dispatch = useDispatch();
   const notifications = useSelector((state: RootState) => state.notification.notifications);
@@ -28,9 +37,9 @@ const NotificationBoard = () => {
     const fetchNotifications = async () => {
       try {
         setIsLoading(true);
-        const data: any = await getNotification();
+        const data = await getNotification() as { response?: Notification[] };
         if (data?.response?.length) {
-          const apiNotifications = data.response.map((n: any) => ({
+          const apiNotifications = data.response.map((n: Notification) => ({
             ...n,
             id: n.id || n._id, // Normalize ID field
           }));
@@ -38,7 +47,7 @@ const NotificationBoard = () => {
           // Merge API data with existing socket notifications
           const existingIds = new Set(notifications.map(n => n.id));
           const newFromApi = apiNotifications.filter(
-            (n: any) => !existingIds.has(n.id)
+            (n: Notification) => !existingIds.has(n.id || n._id)
           );
 
           // Combine and sort all notifications

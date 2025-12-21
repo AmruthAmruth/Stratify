@@ -56,7 +56,7 @@ const NotificationItem: React.FC<Props> = ({
         <button
           onClick={(e) => {
             e.stopPropagation(); // Prevent content click
-            notification.id && onMarkRead?.(notification.id);
+            void (notification.id && onMarkRead?.(notification.id));
           }}
           className="p-2 hover:bg-[#dfdcef] rounded-full transition-colors duration-200"
           title={notification.isRead ? "Mark as Unread" : "Mark as Read"}
@@ -72,7 +72,7 @@ const NotificationItem: React.FC<Props> = ({
         <button
           onClick={(e) => {
             e.stopPropagation(); // Prevent content click
-            notification.id && onDelete?.(notification.id);
+            void (notification.id && onDelete?.(notification.id));
           }}
           className="p-2 hover:bg-red-50 rounded-full transition-colors duration-200 group"
           title="Delete Notification"

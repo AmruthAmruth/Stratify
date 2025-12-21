@@ -27,11 +27,20 @@ ChartJS.register(
 
 type ChartType = "pie" | "doughnut" | "line" | "bar";
 
+interface ChartDataset {
+  label?: string;
+  data: number[];
+  backgroundColor?: string | string[];
+  borderColor?: string | string[];
+  borderWidth?: number;
+  [key: string]: unknown;
+}
+
 interface ChartProps {
   type: ChartType;
   labels: string[];
   data?: number[];
-  datasets?: any[];
+  datasets?: ChartDataset[];
   title?: string;
   backgroundColors?: string[];
 }

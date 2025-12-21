@@ -41,7 +41,7 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
         const email = localStorage.getItem("email");
         if (!email) throw new Error("Email not found, please register again.");
 
-        await verifyOTP({ email, otp }).then((data) => {
+        await verifyOTP({ email, otp }).then(() => {
           enqueueSnackbar("OTP verified! Registration complete.", { variant: "success" });
           navigate("/company-pending-approval");
         });

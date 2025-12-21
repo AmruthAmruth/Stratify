@@ -9,9 +9,22 @@ import { Paperclip, X } from "lucide-react";
 import MediaMessage from "./MediaMessage";
 import { LoadingSpinner } from "@/shared/components/Loading";
 
+interface Message {
+  id?: string;
+  senderId: string;
+  receiverId: string;
+  message: string;
+  createdAt: string;
+  messageType?: string;
+  fileUrl?: string;
+  fileName?: string;
+  fileSize?: number;
+  mimeType?: string;
+}
+
 interface ChatBoxProps {
   receiverId: string;
-  initialMessages?: any[];
+  initialMessages?: Message[];
   loading?: boolean;
 }
 
@@ -49,7 +62,7 @@ const ChatBox = ({
     const socket = getSocket();
     if (!socket) return;
 
-    const handleReceiveMessage = (msg: any) => {
+    const handleReceiveMessage = (msg: Message) => {
       console.log("📨 ChatBox received message:", msg);
       console.log("Current chat - userId:", userId, "receiverId:", receiverId);
 

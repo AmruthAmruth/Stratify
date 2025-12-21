@@ -46,7 +46,6 @@ interface AuthFormProps {
   buttonText: React.ReactNode;
   initialValues?: Record<string, unknown>;
   disabled?: boolean;
-  buttonClassName?: string;
 }
 
 /* ---------- Component ---------- */
@@ -60,15 +59,11 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       buttonText,
       initialValues,
       disabled = false,
-      buttonClassName = "",
     },
     ref
   ) => {
     const [formData, setFormData] = useState<Record<string, unknown>>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
-    const [preview, setPreview] = useState<
-      Record<string, string | ArrayBuffer | null>
-    >({});
 
     /* ---------- Initialize Form ---------- */
 
@@ -91,7 +86,6 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
 
       setFormData(initialData);
       setErrors({});
-      setPreview({});
     }, [fields, initialValues]);
 
     useEffect(() => {
@@ -121,8 +115,9 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         setFormData((prev) => ({ ...prev, [name]: file }));
 
         const reader = new FileReader();
-        reader.onload = () =>
-          setPreview((prev) => ({ ...prev, [name]: reader.result }));
+        reader.onloadend = () => {
+          // Preview is generated but not used in the component
+        };
         reader.readAsDataURL(file);
         return;
       }
@@ -255,8 +250,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         <button
           type="submit"
           disabled={disabled}
-          className={`w-full py-3 rounded text-white ${buttonClassName}`}
-          style={{ backgroundColor: "#009063" }}
+          className="w-full py-3 rounded text-white bg-[#009063]"
         >
           {buttonText}
         </button>

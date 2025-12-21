@@ -60,7 +60,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   // ────────────────────────────────
   // AVAILABLE EMPLOYEES STATE
   // ────────────────────────────────
-  const [employeeList, setEmployeeList] = useState<any[]>([]);
+  const [employeeList, setEmployeeList] = useState<Array<{ employeeId?: string; id?: string; name: string; position: string }>>([]);
 
   useEffect(() => {
     getEmployeesNotInProject(project.id).then((data) => {
@@ -91,33 +91,33 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   // ────────────────────────────────
   // FORM SUBMIT HANDLERS
   // ────────────────────────────────
-  const handleSubmitIssue = async (values: Record<string, any>) => {
+  const handleSubmitIssue = async (values: Record<string, unknown>) => {
     try {
       await createIssue({ ...values, projectId: project.id });
       enqueueSnackbar("Issue created successfully!", { variant: "success" });
       issueFormRef.current?.resetForm();
       setIsIssueModalOpen(false);
       if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to create issue", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error?.message || "Failed to create issue", { variant: "error" });
     }
   };
 
-  const handleSubmitSprint = async (values: Record<string, any>) => {
+  const handleSubmitSprint = async (values: Record<string, unknown>) => {
     try {
       await createSprint({ ...values, projectId: project.id });
       enqueueSnackbar("Sprint created successfully!", { variant: "success" });
       sprintFormRef.current?.resetForm();
       setIsSprintModalOpen(false);
       if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to create sprint", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      enqueueSnackbar(error?.message || "Failed to create sprint", { variant: "error" });
     }
   };
 
-  const handleSubmitEmployee = async (values: Record<string, any>) => {
+  const handleSubmitEmployee = async (values: Record<string, unknown>) => {
     try {
       await addEmployeeProject({ projectId: project.id, employeeId: values.employeeId }); // Changed function name
       enqueueSnackbar("Employee assigned successfully!", { variant: "success" });
@@ -126,13 +126,13 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       // Refetch available employees
       getEmployeesNotInProject(project.id).then(setEmployeeList);
       if (onRefresh) await onRefresh();
-    } catch (error: any) {
-      console.error(error);
-      enqueueSnackbar(error.message || "Failed to assign employee", { variant: "error" });
+    } catch (error: unknown) {
+      const err = error as { message?: string };
+      enqueueSnackbar(err?.message || "Failed to add employee", { variant: "error" });
     }
   };
 
-  const handleSubmitUpdateProject = async (values: Record<string, any>) => { // Changed function name
+  const handleSubmitUpdateProject = async (values: Record<string, unknown>) => { // Changed function name
     try {
       const updatedData = { ...values, departmentId: project.departmentId, id: project.id };
       await updateProject(updatedData);
@@ -140,14 +140,15 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       updateProjectFormRef.current?.resetForm(); // Changed ref
       setIsUpdateProjectModalOpen(false); // Changed modal state
       if (onRefresh) await onRefresh();
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
       console.error("Failed to update project:", error);
       const message = error?.response?.data?.message || error?.message || "Something went wrong.";
       enqueueSnackbar(`Update failed: ${message} `, { variant: "error" });
     }
   };
 
-  const handleSubmitAssignSprint = async (values: Record<string, any>) => {
+  const handleSubmitAssignSprint = async (values: Record<string, unknown>) => {
     try {
       const selectedIssue = backlog.find((issue) => issue.id === values.issueId);
       if (!selectedIssue) {
@@ -171,9 +172,10 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       assignSprintFormRef.current?.resetForm();
       setIsAssignSprintModalOpen(false);
       if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to assign issue", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      console.error(error);
+      enqueueSnackbar(error?.message || "Failed to assign issue", { variant: "error" });
     }
   };
 
@@ -199,9 +201,10 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
 
       // Refresh project data to show updated state
       if (onRefresh) await onRefresh();
-    } catch (err: any) {
-      console.error(err);
-      enqueueSnackbar(err.message || "Failed to assign issue to sprint", { variant: "error" });
+    } catch (err: unknown) {
+      const error = err as { message?: string };
+      console.error(error);
+      enqueueSnackbar(error?.message || "Failed to assign issue to sprint", { variant: "error" });
     }
   };
 

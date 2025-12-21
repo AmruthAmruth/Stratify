@@ -54,11 +54,16 @@ const EmployeeList: React.FC<Props> = ({
     }
 
     if (sortBy) {
-      data.sort((a: any, b: any) =>
-        sortOrder === "asc"
-          ? a[sortBy].localeCompare(b[sortBy])
-          : b[sortBy].localeCompare(a[sortBy])
-      );
+      data.sort((a: EmployeeDTO, b: EmployeeDTO) => {
+        const aValue = a[sortBy as keyof EmployeeDTO];
+        const bValue = b[sortBy as keyof EmployeeDTO];
+        if (typeof aValue === 'string' && typeof bValue === 'string') {
+          return sortOrder === "asc"
+            ? aValue.localeCompare(bValue)
+            : bValue.localeCompare(aValue);
+        }
+        return 0;
+      });
     }
 
     return data;
@@ -104,7 +109,8 @@ const EmployeeList: React.FC<Props> = ({
       enqueueSnackbar(`${employeeName} has been removed from the project`, { variant: "success" });
       onRemoveSuccess?.();
 
-    } catch (error: any) {
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } }; message?: string };
       console.error("Failed to remove employee:", error);
       const message =
         error?.response?.data?.message ||

@@ -8,10 +8,24 @@ import { Paperclip, X } from "lucide-react";
 import MediaMessage from "./MediaMessage";
 import { LoadingSpinner } from "@/shared/components/Loading";
 
+interface GroupMessage {
+    id?: string;
+    groupId: string;
+    senderId: string;
+    senderName?: string;
+    message: string;
+    createdAt: string;
+    messageType?: string;
+    fileUrl?: string;
+    fileName?: string;
+    fileSize?: number;
+    mimeType?: string;
+}
+
 interface GroupChatBoxProps {
     groupId: string;
     groupName: string;
-    initialMessages?: any[];
+    initialMessages?: GroupMessage[];
     loading?: boolean;
 }
 
