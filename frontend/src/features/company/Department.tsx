@@ -38,6 +38,19 @@ interface UnassignedDepartment {
   description?: string;
 }
 
+interface DepartmentFormValues {
+  name: string;
+  description?: string;
+  managerId?: string;
+}
+
+interface ManagerFormValues {
+  name: string;
+  email: string;
+  departmentId?: string;
+  [key: string]: unknown;
+}
+
 const Department: React.FC = () => {
   const [departments, setDepartments] = useState<DepartmentDetails[]>([]);
   const [companyName, setCompanyName] = useState<string>("");
@@ -88,11 +101,6 @@ const Department: React.FC = () => {
   // ----------------------
   // Add Department Handler
   // ----------------------
-  interface DepartmentFormValues {
-    name: string;
-    description?: string;
-    managerId?: string;
-  }
 
   const handleAddDepartment = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
@@ -164,12 +172,6 @@ const Department: React.FC = () => {
   // ----------------------
   // Add Manager Handler (Updated)
   // ----------------------
-  interface ManagerFormValues {
-    name: string;
-    email: string;
-    departmentId?: string;
-    [key: string]: unknown;
-  }
 
   const handleAddManager = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);

@@ -1,7 +1,7 @@
 import { GROUP_CHAT_ROUTES } from "@/constants/routes";
 import { AxiosError } from "axios";
 import api from "./axiosInstance";
-import type { GroupChat, GroupChatMessage } from "@/types/types";
+import type { GroupChat, GroupChatMessage, DepartmentGroup } from "@/types/types";
 
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
     try {
@@ -56,7 +56,7 @@ export const addMemberToGroup = (groupId: string, data: { newMemberId: string; n
 export const removeMemberFromGroup = (groupId: string, memberId: string, data: { memberName: string }): Promise<{ success: boolean; message: string }> =>
     handleRequest(api.delete(GROUP_CHAT_ROUTES.REMOVE_MEMBER(groupId, memberId), { data }));
 
-export const getDepartmentGroups = (): Promise<GroupChat[]> =>
+export const getDepartmentGroups = (): Promise<DepartmentGroup[]> =>
     handleRequest(api.get(GROUP_CHAT_ROUTES.DEPARTMENT_GROUPS));
 
 export const getMyDepartmentGroup = (): Promise<GroupChat> =>

@@ -4,19 +4,7 @@ import { getDepartmentGroups, getGroupMessages } from "@/services/groupChat";
 import { setGroups, setActiveGroup, setGroupMessages, IGroupMessage } from "@/store/slices/groupChatSlice";
 import { joinGroupRoom, leaveGroupRoom } from "@/shared/socket/socket";
 import GroupChatBox from "@/shared/components/Chat/GroupChatBox";
-
-interface DepartmentGroup {
-    id: string;
-    name: string;
-    members: MemberInfo[];
-    departmentId: string;
-}
-
-interface MemberInfo {
-    id: string;
-    name: string;
-    role: "manager" | "employee";
-}
+import { DepartmentGroup } from "@/types/types";
 
 const CompanyGroupChatPage = () => {
     const [loading, setLoading] = useState(true);
@@ -30,11 +18,11 @@ const CompanyGroupChatPage = () => {
     // Fetch department groups on mount
     useEffect(() => {
         getDepartmentGroups()
-            .then((data: unknown) => {
+            .then((data) => {
                 if (data && Array.isArray(data)) {
-                    setDepartmentGroups(data as DepartmentGroup[]);
+                    setDepartmentGroups(data);
                     // Also set in Redux for compatibility with GroupChatBox
-                    const formattedGroups = (data as DepartmentGroup[]).map((group: DepartmentGroup) => ({
+                    const formattedGroups = data.map((group) => ({
                         id: group.id,
                         name: group.name,
                         members: group.members.map(m => m.id),
@@ -65,8 +53,8 @@ const CompanyGroupChatPage = () => {
 
         setChatLoading(true);
         getGroupMessages(selectedGroup.id)
-            .then((messages: unknown) => {
-                const typedMessages = (messages as IGroupMessage[]) || [];
+            .then((messages) => {
+                const typedMessages = messages || [];
                 dispatch(setGroupMessages({ groupId: selectedGroup.id, messages: typedMessages }));
                 setGroupMessagesState(prev => ({
                     ...prev,

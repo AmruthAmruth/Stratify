@@ -6,30 +6,10 @@ import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
 import Table from '@/shared/components/Table/Table';
 import { LoadingSpinner } from '@/shared/components/Loading';
-
-interface LocalProject {
-  id: string;
-  projectName: string;
-  projectDescription: string;
-  departmentName: string;
-  projectLead: string;
-  status: string;
-  remainingTimeInDays: number;
-  [key: string]: unknown;
-}
-
-interface LocalProjectsResponse {
-  projects: LocalProject[];
-  counts: {
-    total: number;
-    planned: number;
-    active: number;
-    completed: number;
-  };
-}
+import { Project, ProjectsResponse } from '@/types/types';
 
 const Projects = () => {
-  const [projects, setProjects] = useState<LocalProjectsResponse | null>(null);
+  const [projects, setProjects] = useState<ProjectsResponse | null>(null);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -41,7 +21,7 @@ const Projects = () => {
 
   useEffect(() => {
     getCompanyProjects().then((data) => {
-      setProjects(data as unknown as LocalProjectsResponse);
+      setProjects(data);
     });
   }, []);
 
@@ -49,20 +29,17 @@ const Projects = () => {
     return <LoadingSpinner fullScreen={true} text="Loading projects..." />;
   }
 
-
   const filteredProjects = projects.projects
-    .filter((p: LocalProject) =>
-      p.projectName.toLowerCase().includes(searchTerm.toLowerCase())
+    .filter((p: Project) =>
+      (p.projectName || p.name).toLowerCase().includes(searchTerm.toLowerCase())
     )
-    .filter((p: LocalProject) => (filterStatus ? p.status === filterStatus : true));
+    .filter((p: Project) => (filterStatus ? p.status === filterStatus : true));
 
-
-
-  const sortedProjects = [...filteredProjects].sort((a: LocalProject, b: LocalProject) => {
+  const sortedProjects = [...filteredProjects].sort((a: Project, b: Project) => {
     if (!sortBy) return 0;
 
-    const aValue = a[sortBy] || '';
-    const bValue = b[sortBy] || '';
+    const aValue = a[sortBy];
+    const bValue = b[sortBy];
 
     if (typeof aValue === 'string' && typeof bValue === 'string') {
       return sortOrder === 'asc'
@@ -77,8 +54,6 @@ const Projects = () => {
     return 0;
   });
 
-
-
   const totalPages = Math.ceil(sortedProjects.length / itemsPerPage);
   const startIndex = (currentPage - 1) * itemsPerPage;
   const paginatedData = sortedProjects.slice(
@@ -86,11 +61,9 @@ const Projects = () => {
     startIndex + itemsPerPage
   );
 
-
   const uniqueStatus = Array.from(
-    new Set(projects.projects.map((p: LocalProject) => p.status))
+    new Set(projects.projects.map((p: Project) => p.status))
   ) as string[];
-
 
   const clearFilters = () => {
     setSearchTerm('');
@@ -110,27 +83,27 @@ const Projects = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard
           title="Total Projects"
-          value={projects.counts.total}
+          value={projects.counts?.total || 0}
           subtitle="All company projects"
-          trend={projects.counts.total > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.total || 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Planned Projects"
-          value={projects.counts.planned}
+          value={projects.counts?.planned || 0}
           subtitle="Not started yet"
-          trend={projects.counts.planned > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.planned || 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Active Projects"
-          value={projects.counts.active}
+          value={projects.counts?.active || 0}
           subtitle="Currently running"
-          trend={projects.counts.active > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.active || 0) > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Completed Projects"
-          value={projects.counts.completed}
+          value={projects.counts?.completed || 0}
           subtitle="Finished successfully"
-          trend={projects.counts.completed > 0 ? 'up' : 'down'}
+          trend={(projects.counts?.completed || 0) > 0 ? 'up' : 'down'}
         />
       </div>
 

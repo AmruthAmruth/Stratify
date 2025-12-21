@@ -178,6 +178,21 @@ export interface GroupChat {
     createdAt?: string;
 }
 
+export interface MemberInfo {
+    id: string;
+    name: string;
+    role: "manager" | "employee";
+}
+
+export interface DepartmentGroup {
+    id: string;
+    name: string;
+    members: MemberInfo[];
+    departmentId: string;
+    createdAt?: string;
+    updatedAt?: string;
+}
+
 // ============================================
 // Meeting Types
 // ============================================
