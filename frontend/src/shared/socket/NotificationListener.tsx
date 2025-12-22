@@ -9,13 +9,14 @@ const NotificationListener = () => {
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useDispatch();
   const userId = useSelector((state: RootState) => state.auth.userId);
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
 
   useEffect(() => {
-    if (!userId) return;
+    if (!userId || !accessToken) return;
 
     let socket = getSocket();
     if (!socket) {
-      connectSocket(userId);
+      connectSocket(userId, accessToken);
       socket = getSocket();
     }
 
@@ -34,7 +35,6 @@ const NotificationListener = () => {
 
     const handleNewNotification = (data: unknown) => {
       const notificationData = data as SocketNotificationData;
-      console.log("Received notification:", notificationData);
 
       // Normalize the notification data structure
       const normalizedNotification = {

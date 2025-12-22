@@ -12,9 +12,14 @@ import chatRouter from "./interfaces/routes/ChatRoutes";
 import groupChatRouter from "./interfaces/routes/GroupChatRoutes";
 import managerRouter from "./interfaces/routes/ManagerRoutes";
 import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
+import { apiLimiter } from "./config/RateLimiter";
 
 const router = Router();
 
+// Apply global API rate limiting
+router.use(apiLimiter);
+
+// Routes (auth routes have their own stricter rate limiting applied in AuthRouter)
 router.use("/auth", authRouter);
 router.use("/company", companyRouter);
 router.use("/department", departmentRouter);
@@ -28,4 +33,5 @@ router.use('/chat', chatRouter)
 router.use('/group-chat', groupChatRouter)
 router.use('/manager', managerRouter)
 router.use('/super-admin', superAdminRouter)
+
 export default router;

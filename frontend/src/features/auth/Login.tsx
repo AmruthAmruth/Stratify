@@ -43,17 +43,14 @@ const Login: React.FC = () => {
 
   const handleLogin = async (values: Record<string, unknown>) => {
     const loginValues = values as unknown as LoginValues;
-    console.log("Login Data:", loginValues);
     try {
       const data = await companyLogin(loginValues);
-      console.log("Login Successful", data);
 
       enqueueSnackbar("Login successful!", { variant: "success" });
 
       if (data.accessToken) {
         try {
           const decoded: DecodedToken = jwtDecode(data.accessToken);
-          console.log("decoded", decoded);
 
           // Validate token payload
           if (!decoded.id || !decoded.role || !decoded.exp) {
@@ -74,18 +71,16 @@ const Login: React.FC = () => {
             })
           );
 
-          connectSocket(decoded.id);
+          connectSocket(decoded.id, data.accessToken);
 
           navigate("/dashboard");
         } catch (decodeError) {
-          console.error("Token decode/validation error:", decodeError);
           enqueueSnackbar("Authentication error. Please try again.", { variant: "error" });
         }
       } else {
         enqueueSnackbar("No access token received", { variant: "error" });
       }
     } catch (err) {
-      console.error("Login failed:", err);
 
       const error = err as { message?: string; details?: { companyId?: string } };
       const errorMessage = error?.message || "Login failed";

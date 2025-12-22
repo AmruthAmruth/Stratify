@@ -5,21 +5,26 @@ const SOCKET_URL = import.meta.env.VITE_SOCKET_URL || "http://localhost:7000";
 
 let socket: Socket | null = null;
 
-export const connectSocket = (userId: string) => {
+export const connectSocket = (userId: string, token: string) => {
   if (!socket) {
     socket = io(SOCKET_URL, {
       transports: ["websocket"],
       withCredentials: true,
+      auth: {
+        token: token, // Pass JWT token for authentication
+      },
     });
-    console.log("Connected User", userId);
 
     socket.on("connect", () => {
-      console.log("Socket connected:", socket?.id);
       socket?.emit("register", userId);
     });
 
     socket.on("disconnect", () => {
-      console.log("Socket disconnected");
+      // Socket disconnected
+    });
+
+    socket.on("connect_error", (error) => {
+      console.error("Socket connection error:", error.message);
     });
   }
   return socket;
@@ -38,14 +43,12 @@ export const disconnectSocket = () => {
 export const joinGroupRoom = (groupId: string) => {
   if (socket) {
     socket.emit("join-group", groupId);
-    console.log(`Joined group room: ${groupId}`);
   }
 };
 
 export const leaveGroupRoom = (groupId: string) => {
   if (socket) {
     socket.emit("leave-group", groupId);
-    console.log(`Left group room: ${groupId}`);
   }
 };
 

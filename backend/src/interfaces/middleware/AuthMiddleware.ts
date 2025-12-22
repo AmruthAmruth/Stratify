@@ -1,6 +1,7 @@
 import { NextFunction, Response, Request } from "express";
 import { Messages } from "../../shared/constants/messages";
 import jwt from "jsonwebtoken";
+import logger from "../../shared/utils/logger";
 
 export interface AuthRequest extends Request {
   userId?: string;
@@ -37,10 +38,10 @@ export const authMiddleware = (
       req.role = decoded.role;
       req.userId = decoded.id;
 
-      console.log("Token Verification Successfull:", decoded.role);
+      logger.debug(`Token verified for user ${decoded.id} with role ${decoded.role}`);
       next();
     } catch (err) {
-      console.error("Auth error:", err);
+      logger.error("Auth middleware error", { error: err });
       return next({ status: 401, message: Messages.UNAUTHORIZED_ACCESS });
     }
   };

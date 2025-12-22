@@ -14,13 +14,12 @@ import { setNotifications } from "./store/slices/notificationSlice";
 
 const App = () => {
   const userId = useSelector((state: RootState) => state.auth.userId);
+  const accessToken = useSelector((state: RootState) => state.auth.accessToken);
   const dispatch = useDispatch();
 
   useEffect(() => {
-    console.log("Im running", userId);
-
-    if (userId) {
-      connectSocket(userId);
+    if (userId && accessToken) {
+      connectSocket(userId, accessToken);
 
       // Load initial notifications on login
       const loadInitialNotifications = async () => {
@@ -51,13 +50,13 @@ const App = () => {
             dispatch(setNotifications(notifications));
           }
         } catch (err) {
-          console.error("Failed to load notifications:", err);
+          // Failed to load notifications
         }
       };
 
       loadInitialNotifications();
     }
-  }, [userId, dispatch]);
+  }, [userId, accessToken, dispatch]);
 
   return (
     <SnackbarProvider maxSnack={3}>

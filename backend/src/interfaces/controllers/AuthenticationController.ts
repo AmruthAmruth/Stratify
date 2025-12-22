@@ -15,6 +15,7 @@ import { StatusCodes } from "../../shared/constants/statusCodes";
 import { CookieConfig } from "../../config/CookieConfig";
 import { ILoginUseCase } from "../../application/interfaces/authentication/ILoginUseCase";
 import { IRefreashTokenUseCase } from "../../application/interfaces/authentication/IRefreashTokenUseCase";
+import logger from "../../shared/utils/logger";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -81,29 +82,27 @@ export class AuthenticationController {
 
   register = async (req: MulterRequest, res: Response): Promise<void> => {
     try {
-      console.log("Registration request received");
-      console.log("File uploaded:", req.file ? "Yes" : "No");
+      logger.info("Registration request received");
 
       if (req.file) {
-        console.log("File details:", {
+        logger.debug("File uploaded", {
           filename: req.file.filename,
           size: req.file.size,
           mimetype: req.file.mimetype,
-          path: req.file.path
         });
         req.body.profileImage = req.file.path;
       }
 
-      console.log("Executing registration use case...");
+      logger.debug("Executing registration use case");
       const otpExpiresAt = await this._registerUseCase.execute(req.body);
 
-      console.log("Registration successful, OTP sent");
+      logger.info("Registration successful, OTP sent");
       res
         .status(StatusCodes.OK)
         .json({ message: Messages.OTP_SENT, time: otpExpiresAt });
     } catch (error) {
-      console.error("Registration error:", error);
-      throw error; 
+      logger.error("Registration error", { error });
+      throw error;
     }
   };
 

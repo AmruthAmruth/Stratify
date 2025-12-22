@@ -8,10 +8,13 @@ import fs from "fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
+import helmet from "helmet";
 
 
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
+import { validateEnv } from "./config/validateEnv";
+import logger from "./shared/utils/logger";
 
 
 import { initSocket } from "./infrastructure/socket/SocketServer";
@@ -25,17 +28,32 @@ import { NotificationRepository } from "./infrastructure/repositories/Notificati
 
 dotenv.config();
 
+// Validate environment variables before starting
+validateEnv();
+
 const app = express();
+
+// Security headers
+app.use(helmet({
+  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow Cloudinary images
+}));
+
+// CORS configuration
+const isProduction = process.env.NODE_ENV === 'production';
+const allowedOrigins = isProduction
+  ? [process.env.FRONTEND_URL!]
+  : ["http://localhost:5173", "thunder-client://"];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      const allowed = ["http://localhost:5173", "thunder-client://"];
+      // Allow requests with no origin (mobile apps, Postman, etc.)
       if (!origin) return callback(null, true);
-      const hostname = new URL(origin).hostname;
-      if (allowed.includes(origin) || /\.trycloudflare\.com$/.test(hostname)) {
+
+      if (allowedOrigins.includes(origin)) {
         callback(null, true);
       } else {
+        logger.warn(`CORS blocked request from origin: ${origin}`);
         callback(new Error("Not allowed by CORS"));
       }
     },
@@ -58,14 +76,29 @@ const accessLogStream = rfs.createStream("access.log", {
 });
 
 app.use(morgan("combined", { stream: accessLogStream }));
-app.use(morgan("dev"));
+if (!isProduction) {
+  app.use(morgan("dev"));
+}
 
 
 connectDB()
-  .then(() => console.log("✅ MongoDB Connected"))
-  .catch((err) => console.error("❌ MongoDB connection failed:", err));
+  .then(() => logger.info("✅ MongoDB Connected"))
+  .catch((err) => {
+    logger.error("❌ MongoDB connection failed", { error: err });
+    process.exit(1);
+  });
 
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+
+// Health check endpoint
+app.get('/health', (_req, res) => {
+  res.json({
+    status: 'ok',
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime(),
+    environment: process.env.NODE_ENV || 'development',
+  });
+});
 
 app.use("/api", router);
 
@@ -86,10 +119,11 @@ meetingScheduler.start();
 
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`🚀 Server running on http://localhost:${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
 });
 
 
-server.timeout = 30000; 
+server.timeout = 30000;
 
 export { io };
