@@ -12,23 +12,23 @@ const Table: React.FC<TableProps> = ({
   actions,
 }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-xl shadow-md overflow-hidden">
+    <div className="bg-bg border-2 border-primary rounded-xl shadow-md overflow-hidden">
       {/* Table Container */}
       <div className="overflow-x-auto">
         <table className="min-w-full divide-y divide-gray-200">
           {/* Table Header */}
-          <thead className="bg-gray-100">
+          <thead className="bg-accent">
             <tr>
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-6 py-4 text-left text-sm font-semibold text-gray-600 uppercase tracking-wide"
+                  className="px-6 py-4 text-left text-sm font-semibold text-text uppercase tracking-wide"
                 >
                   {col.label}
                 </th>
               ))}
               {actions && (
-                <th className="px-6 py-4 text-center text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                <th className="px-6 py-4 text-center text-sm font-semibold text-text uppercase tracking-wide">
                   Actions
                 </th>
               )}
@@ -36,36 +36,36 @@ const Table: React.FC<TableProps> = ({
           </thead>
 
           {/* Table Body */}
-          <tbody className="bg-white divide-y divide-gray-100">
+          <tbody className="bg-bg divide-y divide-accent">
             {data.length > 0 ? (
               data.map((row, idx) => (
                 <tr
                   key={idx}
-                  className="hover:bg-gray-50 transition-colors duration-150"
+                  className="hover:bg-accent transition-colors duration-150"
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
-                      className="px-6 py-4 text-sm text-gray-800 whitespace-nowrap border-b border-gray-100"
+                      className="px-6 py-4 text-sm text-text whitespace-nowrap border-b border-accent"
                     >
                       {renderCell ? renderCell(row, col.key) : (row[col.key] as React.ReactNode)}
                     </td>
                   ))}
 
                   {actions && (
-                    <td className="px-6 py-4 text-center border-b border-gray-100">
+                    <td className="px-6 py-4 text-center border-b border-accent">
                       <div className="flex items-center justify-center gap-2">
                         {actions.map((action, index) => (
                           <button
                             key={index}
                             onClick={() => action.onClick(row)}
                             className={`px-3 py-1 text-xs font-medium rounded-lg shadow-sm transition ${action.type === "delete"
-                                ? "bg-red-100 text-red-600 hover:bg-red-200"
-                                : action.type === "edit"
-                                  ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
-                                  : action.type === "approve"
-                                    ? "bg-green-100 text-primary hover:bg-green-200"
-                                    : "bg-gray-100 text-gray-600 hover:bg-gray-200"
+                              ? "bg-red-100 text-red-600 hover:bg-red-200"
+                              : action.type === "edit"
+                                ? "bg-blue-100 text-blue-600 hover:bg-blue-200"
+                                : action.type === "approve"
+                                  ? "bg-green-100 text-primary hover:bg-green-200"
+                                  : "bg-gray-100 text-gray-600 hover:bg-gray-200"
                               }`}
                           >
                             {action.label}
@@ -80,12 +80,12 @@ const Table: React.FC<TableProps> = ({
               <tr>
                 <td
                   colSpan={columns.length + (actions ? 1 : 0)}
-                  className="px-6 py-12 text-center text-sm text-gray-500"
+                  className="px-6 py-12 text-center text-sm text-muted"
                 >
                   <div className="flex flex-col items-center space-y-2">
-                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center">
+                    <div className="w-12 h-12 bg-accent rounded-full flex items-center justify-center">
                       <svg
-                        className="w-6 h-6 text-gray-400"
+                        className="w-6 h-6 text-muted"
                         fill="none"
                         stroke="currentColor"
                         viewBox="0 0 24 24"
@@ -99,7 +99,7 @@ const Table: React.FC<TableProps> = ({
                       </svg>
                     </div>
                     <span className="font-medium">No data available</span>
-                    <span className="text-xs text-gray-400">
+                    <span className="text-xs text-muted">
                       There are no records to display
                     </span>
                   </div>
@@ -112,7 +112,7 @@ const Table: React.FC<TableProps> = ({
 
       {/* Footer with Pagination */}
       {totalPages > 1 && (
-        <div className="px-6 py-4 border-t border-gray-200 bg-gray-50">
+        <div className="px-6 py-4 border-t border-accent bg-surface">
           <Pagination
             currentPage={currentPage}
             totalPages={totalPages}

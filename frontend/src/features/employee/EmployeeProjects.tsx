@@ -74,7 +74,7 @@ const EmployeeProjects: React.FC = () => {
 
     if (!projectsData || projectsData.projects.length === 0) {
         return (
-            <div className="text-black space-y-6">
+            <div className="text-text space-y-6">
                 <div className="flex flex-col items-center justify-center py-20 text-gray-600">
                     <p className="text-lg mb-4">You are not assigned to any projects yet.</p>
                     <p className="text-sm">Please contact your manager for project assignments.</p>
@@ -113,7 +113,7 @@ const EmployeeProjects: React.FC = () => {
     const uniqueStatus = Array.from(new Set(projectsData.projects.map((p) => p.status)));
 
     return (
-        <div className="text-black space-y-6">
+        <div className="text-text space-y-6">
             {/* Dashboard Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                 <DashboardCard

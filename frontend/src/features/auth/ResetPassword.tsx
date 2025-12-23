@@ -40,7 +40,7 @@ const ResetPassword: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-gray-50">
+    <div className="min-h-screen flex flex-col bg-bg">
       {/* Navbar */}
       <Navbar />
 
@@ -75,7 +75,7 @@ const ResetPassword: React.FC = () => {
 
         {/* Reset Password Form */}
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
-          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300">
+          <div className="bg-surface shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300">
             {/* Badge */}
             <div className="flex justify-center mb-6">
               <span className="bg-indigo-100 text-indigo-700 px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
@@ -103,7 +103,7 @@ const ResetPassword: React.FC = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-base text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 pr-12 bg-surface border border-accent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-base text-text placeholder-text/50"
                     placeholder="Enter new password"
                   />
                   <button
@@ -130,7 +130,7 @@ const ResetPassword: React.FC = () => {
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     required
-                    className="w-full px-4 py-3 pr-12 bg-white border border-gray-300 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all duration-200 text-base text-gray-900 placeholder-gray-500"
+                    className="w-full px-4 py-3 pr-12 bg-surface border border-accent rounded-xl focus:ring-2 focus:ring-primary focus:border-transparent transition-all duration-200 text-base text-text placeholder-text/50"
                     placeholder="Re-enter new password"
                   />
                   <button

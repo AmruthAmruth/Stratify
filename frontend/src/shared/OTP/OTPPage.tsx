@@ -103,7 +103,7 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
 
         {/* Right Side */}
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
-          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-accent">
+          <div className="bg-surface shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-accent">
             <div className="flex justify-center mb-6">
               <span className="bg-accent text-text px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
                 {context === "register" ? "Account Verification" : "Password Reset Verification"}

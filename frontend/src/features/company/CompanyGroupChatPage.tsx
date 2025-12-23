@@ -73,7 +73,7 @@ const CompanyGroupChatPage = () => {
     return (
         <div className="flex h-screen bg-bg text-text">
             {/* Sidebar - Department Group List */}
-            <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+            <div className="w-1/3 md:w-1/4 bg-surface border-r border-accent flex flex-col transition-all duration-300">
                 <div className="p-4 border-b border-accent bg-primary text-white shadow-sm">
                     <h2 className="text-lg font-semibold">Department Groups</h2>
                     <p className="text-sm text-white/80 mt-1">Company Communication</p>

@@ -25,7 +25,7 @@ const UserFeedback = () => {
   return (
       <div className="mt-16 sm:mt-20 lg:mt-24 mb-16 ps-16 pe-16">
           <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 mb-4 animate-fade-in">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-heading mb-4 animate-fade-in">
               What Our Customers Say
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: "0.2s" }}>
@@ -52,7 +52,7 @@ const UserFeedback = () => {
                     </div>
                   </div>
                   <div>
-                    <h4 className="font-bold text-gray-900">{testimonial.name}</h4>
+                    <h4 className="font-bold text-heading">{testimonial.name}</h4>
                     <p className="text-gray-600 text-sm">{testimonial.role}</p>
                   </div>
                 </div>

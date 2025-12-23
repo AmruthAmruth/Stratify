@@ -287,7 +287,7 @@ const AboutPage = () => {
       <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-8">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-8">
               Our{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Story</span>
             </h2>
@@ -311,7 +311,7 @@ const AboutPage = () => {
       <section className="relative z-40 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Our{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
                 Foundation
@@ -337,7 +337,7 @@ const AboutPage = () => {
                   >
                     <value.icon className="w-8 h-8 text-white" />
                   </div>
-                  <h3 className="text-2xl font-bold text-gray-900 mb-4">{value.title}</h3>
+                  <h3 className="text-2xl font-bold text-heading mb-4">{value.title}</h3>
                   <p className="text-gray-600 leading-relaxed">{value.description}</p>
                 </div>
               </div>
@@ -349,7 +349,7 @@ const AboutPage = () => {
       <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               What Our{" "}
               <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
                 Clients Say
@@ -374,7 +374,7 @@ const AboutPage = () => {
                 <Quote className="w-8 h-8 text-blue-600 mb-4" />
                 <p className="text-gray-700 leading-relaxed mb-6 italic">"{testimonial.quote}"</p>
                 <div className="border-t pt-4">
-                  <p className="font-bold text-gray-900">{testimonial.author}</p>
+                  <p className="font-bold text-heading">{testimonial.author}</p>
                   <p className="text-blue-600 text-sm">{testimonial.role}</p>
                   <p className="text-gray-500 text-sm">{testimonial.company}</p>
                 </div>
@@ -387,7 +387,7 @@ const AboutPage = () => {
       <section className="relative z-40 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Awards &{" "}
               <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
                 Recognition
@@ -409,7 +409,7 @@ const AboutPage = () => {
                 >
                   <award.icon className="w-8 h-8 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{award.title}</h3>
+                <h3 className="text-lg font-bold text-heading mb-2">{award.title}</h3>
                 <p className="text-gray-600 text-sm">{award.organization}</p>
               </div>
             ))}
@@ -421,7 +421,7 @@ const AboutPage = () => {
       <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               What We{" "}
               <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Offer</span>
             </h2>
@@ -443,7 +443,7 @@ const AboutPage = () => {
                       <feature.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
-                      <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
+                      <h3 className="text-2xl font-bold text-heading mb-4">{feature.title}</h3>
                       <p className="text-gray-600 leading-relaxed mb-6">{feature.description}</p>
                       <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full">
                         <CheckCircle className="w-4 h-4 text-primary" />
@@ -461,7 +461,7 @@ const AboutPage = () => {
       <section className="relative z-40 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Our{" "}
               <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Culture</span>
             </h2>
@@ -480,7 +480,7 @@ const AboutPage = () => {
                 <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2">{item.title}</h3>
+                <h3 className="text-lg font-bold text-heading mb-2">{item.title}</h3>
                 <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
               </div>
             ))}
@@ -492,7 +492,7 @@ const AboutPage = () => {
       <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
-            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Meet Our{" "}
               <span className="bg-gradient-to-r from-pink-600 to-blue-600 bg-clip-text text-transparent">Leaders</span>
             </h2>
@@ -521,7 +521,7 @@ const AboutPage = () => {
                       <Star className="w-4 h-4 text-white" />
                     </div>
                   </div>
-                  <h3 className="text-xl font-bold text-gray-900 mb-2">{member.name}</h3>
+                  <h3 className="text-xl font-bold text-heading mb-2">{member.name}</h3>
                   <p className="text-blue-600 font-semibold mb-4">{member.role}</p>
                   <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
                 </div>

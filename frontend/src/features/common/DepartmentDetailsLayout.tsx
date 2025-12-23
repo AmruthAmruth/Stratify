@@ -257,7 +257,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="text-center">
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">No Departments Assigned</h2>
+          <h2 className="text-2xl font-bold text-heading mb-2">No Departments Assigned</h2>
           <p className="text-gray-600">You are not assigned to manage any departments yet.</p>
           <button
             onClick={handleBackToDepartments}
@@ -275,7 +275,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
       <div className="min-h-screen flex items-center justify-center bg-bg">
         <div className="text-center">
           <Building2 className="w-16 h-16 text-gray-400 mx-auto mb-4" />
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Department Not Found</h2>
+          <h2 className="text-2xl font-bold text-heading mb-2">Department Not Found</h2>
           <p className="text-gray-600">The requested department details could not be loaded.</p>
           <button
             onClick={handleBackToDepartments}
@@ -292,14 +292,14 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
   return (
     <div className="min-h-screen bg-bg">
       {/* Header */}
-      <div className="bg-white border-b border-accent sticky top-0 z-40 shadow-sm">
+      <div className="bg-surface border-b border-accent sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-6">
             {/* Back Button */}
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleBackToDepartments}
-                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
+                className="flex items-center text-gray-600 hover:text-heading transition-colors duration-200 group"
               >
                 <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                 Back to Departments
@@ -308,7 +308,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
               <div className="h-6 w-px bg-accent"></div>
 
               <div className="flex items-center space-x-3">
-                <h1 className="text-3xl font-bold text-gray-900">Department Details</h1>
+                <h1 className="text-3xl font-bold text-heading">Department Details</h1>
                 <span className={`px-3 py-1 text-sm font-medium rounded-full ${role === "company" ? "bg-blue-100 text-blue-800" : "bg-green-100 text-green-800"}`}>
                   {role === "company" ? "Company View" : "Manager View"}
                 </span>
@@ -320,7 +320,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
               <div className="relative">
                 <button
                   onClick={() => setIsDepartmentSelectorOpen(!isDepartmentSelectorOpen)}
-                  className="flex items-center space-x-2 bg-white border border-accent rounded-lg px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors"
+                  className="flex items-center space-x-2 bg-surface border border-accent rounded-lg px-4 py-2 text-sm font-medium text-text hover:bg-accent transition-colors"
                 >
                   <Building2 className="w-4 h-4" />
                   <span>{currentDepartmentName}</span>
@@ -330,7 +330,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 </button>
 
                 {isDepartmentSelectorOpen && (
-                  <div className="absolute right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-accent py-2 z-50">
+                  <div className="absolute right-0 mt-2 w-64 bg-surface rounded-lg shadow-lg border border-accent py-2 z-50">
                     <div className="px-4 py-2 text-xs font-semibold text-gray-500 uppercase tracking-wide">
                       Select Department
                     </div>
@@ -359,18 +359,18 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
       {/* Page Content */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Department Info */}
-        <div className="bg-white rounded-2xl shadow-sm border border-accent p-8 mb-8 hover:shadow-md transition-shadow duration-300">
+        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-8 mb-8 hover:shadow-md transition-shadow duration-300">
           <div className="flex flex-col gap-6">
             <div className="flex items-center mb-4">
               <div className="w-2 h-8 bg-gradient-to-b from-primary to-purple-500 rounded-full mr-4"></div>
-              <h2 className="text-3xl font-bold text-gray-900">{departmentData?.name}</h2>
+              <h2 className="text-3xl font-bold text-heading">{departmentData?.name}</h2>
             </div>
             <p className="text-gray-700 leading-relaxed">{departmentData?.description}</p>
           </div>
         </div>
 
         {/* Tabs & Content */}
-        <div className="bg-white rounded-2xl shadow-sm border border-accent mb-8 overflow-hidden">
+        <div className="bg-surface rounded-2xl shadow-sm border border-accent mb-8 overflow-hidden">
           <div className="border-b border-accent">
             <nav className="flex space-x-0">
               {["overview", "team"].map((tab) => (
@@ -401,7 +401,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 </div>
 
                 {/* Performance Chart */}
-                <div className="bg-white rounded-xl p-6 shadow-sm">
+                <div className="bg-surface rounded-xl p-6 shadow-sm">
                   <ReusableChart
                     type="bar"
                     labels={performanceChartData.labels}
@@ -425,15 +425,15 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                       </div>
                     </div>
                     <div className="flex-1">
-                      <h4 className="text-2xl font-bold text-gray-900 mb-2">{departmentData?.head.name}</h4>
+                      <h4 className="text-2xl font-bold text-heading mb-2">{departmentData?.head.name}</h4>
                       <p className="text-primary font-semibold mb-4">
                         {departmentData?.head.position}
                         <span className="ml-2 text-xs bg-green-100 text-green-800 px-2 py-1 rounded-full">Department Head</span>
                       </p>
                       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Mail className="w-4 h-4 mr-3 text-blue-500" />{departmentData?.head.email}</div>
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Phone className="w-4 h-4 mr-3 text-primary" />{departmentData?.head.phone}</div>
-                        <div className="flex items-center text-gray-700 bg-white rounded-lg p-3 shadow-sm"><Award className="w-4 h-4 mr-3 text-yellow-500" />{departmentData?.head.experience} years</div>
+                        <div className="flex items-center text-text bg-surface rounded-lg p-3 shadow-sm"><Mail className="w-4 h-4 mr-3 text-blue-500" />{departmentData?.head.email}</div>
+                        <div className="flex items-center text-text bg-surface rounded-lg p-3 shadow-sm"><Phone className="w-4 h-4 mr-3 text-primary" />{departmentData?.head.phone}</div>
+                        <div className="flex items-center text-text bg-surface rounded-lg p-3 shadow-sm"><Award className="w-4 h-4 mr-3 text-yellow-500" />{departmentData?.head.experience} years</div>
                       </div>
                     </div>
                   </div>
@@ -442,7 +442,7 @@ const DepartmentDetailsPage: React.FC<DepartmentDetailsPageProps> = ({ role }) =
                 {/* Team Table */}
                 <div>
                   <div className="flex items-center justify-between mb-8">
-                    <h3 className="text-2xl font-bold text-gray-900">Team Members</h3>
+                    <h3 className="text-2xl font-bold text-heading">Team Members</h3>
                     <div className="flex items-center gap-4">
                       <div className="ml-4 px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">{filteredEmployees.length} Members</div>
                       <button

@@ -51,21 +51,21 @@ const ProfilePage: React.FC = () => {
   const handleEditProfile = () => console.log("Edit profile");
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-bg">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 sticky top-0 z-40 shadow-sm">
+      <div className="bg-surface border-b border-accent sticky top-0 z-40 shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center justify-between py-6">
             <div className="flex items-center space-x-4">
               <button
                 onClick={handleBackToEmployees}
-                className="flex items-center text-gray-600 hover:text-gray-900 transition-colors duration-200 group"
+                className="flex items-center text-gray-600 hover:text-heading transition-colors duration-200 group"
               >
                 <ArrowLeft className="w-5 h-5 mr-2 group-hover:-translate-x-1 transition-transform" />
                 Back to Team
               </button>
               <div className="h-6 w-px bg-gray-300"></div>
-              <h1 className="text-3xl font-bold text-gray-900">Employee Profile</h1>
+              <h1 className="text-3xl font-bold text-heading">Employee Profile</h1>
             </div>
 
           </div>
@@ -74,7 +74,7 @@ const ProfilePage: React.FC = () => {
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Profile Header Card */}
-        <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8 flex flex-col lg:flex-row items-center gap-8">
+        <div className="bg-surface rounded-2xl shadow-lg border border-accent p-8 mb-8 flex flex-col lg:flex-row items-center gap-8">
           {/* Profile Image */}
           <div className="flex-shrink-0 relative">
             <img
@@ -90,7 +90,7 @@ const ProfilePage: React.FC = () => {
 
           {/* Profile Info */}
           <div className="flex-1 flex flex-col justify-center gap-3">
-            <h2 className="text-3xl font-bold text-gray-900">{profile.name || "N/A"}</h2>
+            <h2 className="text-3xl font-bold text-heading">{profile.name || "N/A"}</h2>
             <p className="text-lg text-gray-600">{profile.position || "N/A"}</p>
 
             {/* Badges */}
@@ -112,15 +112,15 @@ const ProfilePage: React.FC = () => {
             {/* Quick Stats */}
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 mt-4">
 
-              <div className="text-center p-4 bg-gray-50 rounded-xl shadow-sm">
+              <div className="text-center p-4 bg-accent rounded-xl shadow-sm">
                 <div className="text-gray-500 text-sm">Age</div>
-                <div className="text-gray-900 font-semibold">{profile.age ?? "N/A"} yrs</div>
+                <div className="text-heading font-semibold">{profile.age ?? "N/A"} yrs</div>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-xl shadow-sm">
+              <div className="text-center p-4 bg-accent rounded-xl shadow-sm">
                 <div className="text-gray-500 text-sm">Experience</div>
-                <div className="text-gray-900 font-semibold">{profile.experience ?? 0} yrs</div>
+                <div className="text-heading font-semibold">{profile.experience ?? 0} yrs</div>
               </div>
-              <div className="text-center p-4 bg-gray-50 rounded-xl shadow-sm">
+              <div className="text-center p-4 bg-accent rounded-xl shadow-sm">
                 <div className="text-gray-500 text-sm">Status</div>
                 <div className="text-primary font-semibold">Active</div>
               </div>
@@ -138,7 +138,7 @@ const ProfilePage: React.FC = () => {
             </button>
             <button
               onClick={handleEditProfile}
-              className="flex items-center justify-center gap-2 px-6 py-3 border border-gray-300 text-gray-700 font-semibold rounded-xl shadow-sm hover:bg-gray-50 transition"
+              className="flex items-center justify-center gap-2 px-6 py-3 border border-accent text-text font-semibold rounded-xl shadow-sm hover:bg-accent transition"
             >
               <Edit3 className="w-5 h-5" />
               Edit Profile
@@ -147,7 +147,7 @@ const ProfilePage: React.FC = () => {
         </div>
 
         {/* Tabs Section */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 mb-8 overflow-hidden">
+        <div className="bg-surface rounded-2xl shadow-sm border border-accent mb-8 overflow-hidden">
           <div className="border-b border-gray-200">
             <nav className="flex space-x-0">
               {["overview", "performance", "projects"].map((tab) => (
@@ -155,8 +155,8 @@ const ProfilePage: React.FC = () => {
                   key={tab}
                   onClick={() => setActiveTab(tab)}
                   className={`flex-1 py-4 px-8 font-semibold text-sm transition-all duration-200 relative ${activeTab === tab
-                      ? "text-blue-600 bg-blue-50"
-                      : "text-gray-500 hover:text-gray-700 hover:bg-gray-50"
+                    ? "text-blue-600 bg-blue-50"
+                    : "text-muted hover:text-text hover:bg-accent"
                     }`}
                 >
                   {tab === "overview" && "Complete Overview"}
@@ -174,7 +174,7 @@ const ProfilePage: React.FC = () => {
             {/* Overview Tab */}
             {activeTab === "overview" && (
               <div>
-                <h3 className="text-xl font-bold text-gray-900 mb-6">Employee Information</h3>
+                <h3 className="text-xl font-bold text-heading mb-6">Employee Information</h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                   {/* Email */}
                   <InfoCard
@@ -266,11 +266,11 @@ const ProfilePage: React.FC = () => {
                 <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <BarChart3 className="w-12 h-12 text-primary" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Performance & Analytics</h3>
+                <h3 className="text-xl font-bold text-heading mb-2">Performance & Analytics</h3>
                 <p className="text-gray-600 mb-6">
                   This section will show performance metrics, reviews, and achievements.
                 </p>
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8">
+                <div className="bg-accent border-2 border-dashed border-accent rounded-xl p-8">
                   <p className="text-gray-500">
                     Coming Soon - Performance tracking and analytics will be available here.
                   </p>
@@ -284,11 +284,11 @@ const ProfilePage: React.FC = () => {
                 <div className="w-24 h-24 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                   <FolderKanban className="w-12 h-12 text-blue-600" />
                 </div>
-                <h3 className="text-xl font-bold text-gray-900 mb-2">Projects & Tasks</h3>
+                <h3 className="text-xl font-bold text-heading mb-2">Projects & Tasks</h3>
                 <p className="text-gray-600 mb-6">
                   This section will display assigned projects, tasks, and work assignments.
                 </p>
-                <div className="bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl p-8">
+                <div className="bg-accent border-2 border-dashed border-accent rounded-xl p-8">
                   <p className="text-gray-500">
                     Coming Soon - Project assignments and task management will be available here.
                   </p>

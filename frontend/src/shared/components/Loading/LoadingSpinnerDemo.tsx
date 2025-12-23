@@ -112,7 +112,7 @@ const LoadingSpinnerDemo: React.FC = () => {
             </section>
 
             {/* Fullscreen Demo */}
-            <section className="bg-white p-6 rounded-lg shadow">
+            <section className="bg-surface p-6 rounded-lg shadow">
                 <h2 className="text-2xl font-semibold mb-6 text-gray-700">
                     Fullscreen Mode
                 </h2>

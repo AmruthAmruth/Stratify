@@ -149,7 +149,7 @@ const CompanyDashboard = () => {
         {/* Row 1 - First 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
           {/* Chart 1: Department Distribution - Doughnut */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Department Distribution</h3>
             {hasChartData(chartData.departmentDistribution.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -166,7 +166,7 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 2: Project Status - Pie */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Project Status Distribution</h3>
             {hasChartData(chartData.projectStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -183,7 +183,7 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 3: Employee by Department - Bar */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Employees by Department</h3>
             {hasChartData(chartData.employeeByDepartment.data) ? (
               <div className="h-64">
@@ -203,7 +203,7 @@ const CompanyDashboard = () => {
         {/* Row 2 - Next 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Chart 4: Leave Status - Pie */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Leave Request Status</h3>
             {hasChartData(chartData.leaveStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -220,7 +220,7 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 5: Meeting Types - Bar */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Meeting Types</h3>
             {hasChartData(chartData.meetingTypes.data) ? (
               <div className="h-64">
@@ -237,7 +237,7 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 6: Company Activity Timeline - Line */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Company Activity Timeline</h3>
             {hasChartData(chartData.companyActivity.data) ? (
               <div className="h-64">
@@ -256,7 +256,7 @@ const CompanyDashboard = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-8 p-4 bg-white border border-accent rounded-xl">
+      <div className="mt-8 p-4 bg-surface border border-accent rounded-xl">
         <p className="text-sm text-text/70 text-center">
           Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
         </p>

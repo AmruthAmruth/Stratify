@@ -130,7 +130,7 @@ const ChatPage = () => {
     return (
         <div className="flex h-screen bg-bg text-text">
             {/* Sidebar */}
-            <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+            <div className="w-1/3 md:w-1/4 bg-surface border-r border-accent flex flex-col transition-all duration-300">
                 <div className="p-4 border-b border-accent bg-primary text-white shadow-sm">
                     <h2 className="text-lg font-semibold">Team Members</h2>
                     <p className="text-sm text-white/80 mt-1">Managers & Employees</p>
@@ -194,7 +194,7 @@ const ChatPage = () => {
                 {selectedMember ? (
                     <>
                         {/* Chat Header */}
-                        <div className="flex items-center gap-3 p-4 bg-white shadow-sm border-b border-accent transition-all duration-200">
+                        <div className="flex items-center gap-3 p-4 bg-surface shadow-sm border-b border-accent transition-all duration-200">
                             <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                                 {selectedMember.name.charAt(0).toUpperCase()}
                             </div>

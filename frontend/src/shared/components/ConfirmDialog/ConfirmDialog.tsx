@@ -31,7 +31,7 @@ const ConfirmDialog: React.FC<ConfirmDialogProps> = ({
       <div className="flex justify-end gap-3">
         <button
           onClick={handleCancel}
-          className="py-2 px-5 rounded-full border border-gray-300 bg-white text-gray-700 font-medium hover:bg-gray-100 transition shadow-sm"
+          className="py-2 px-5 rounded-full border border-accent bg-bg text-text font-medium hover:bg-accent/30 transition shadow-sm"
         >
           {cancelText}
         </button>

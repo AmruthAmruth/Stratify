@@ -86,15 +86,15 @@ const EmployeeProfile: React.FC = () => {
     const departmentName = typeof employee?.departmentId === 'object' ? employee.departmentId.name : 'N/A';
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header Card */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
+                <div className="bg-surface rounded-2xl shadow-lg border border-accent p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-primary to-primaryHover opacity-10"></div>
 
                     {/* Logo */}
                     <div className="flex-shrink-0 relative z-10">
-                        <div className="w-32 h-32 rounded-full bg-white shadow-md flex items-center justify-center border-4 border-white overflow-hidden">
+                        <div className="w-32 h-32 rounded-full bg-surface shadow-md flex items-center justify-center border-4 border-accent overflow-hidden">
                             {employee.profileImage ? (
                                 <img
                                     src={employee.profileImage}
@@ -106,7 +106,7 @@ const EmployeeProfile: React.FC = () => {
                             )}
                         </div>
                         {isEditing && (
-                            <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-primary transition">
+                            <button className="absolute bottom-0 right-0 p-2 bg-surface rounded-full shadow-md border border-accent text-muted hover:text-primary transition">
                                 <Camera className="w-4 h-4" />
                             </button>
                         )}
@@ -114,7 +114,7 @@ const EmployeeProfile: React.FC = () => {
 
                     {/* Info */}
                     <div className="flex-1 flex flex-col justify-center gap-2 z-10 text-center lg:text-left">
-                        <h1 className="text-3xl font-bold text-gray-900">{employee?.name}</h1>
+                        <h1 className="text-3xl font-bold text-heading">{employee?.name}</h1>
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-gray-600">
                             <span className="flex items-center gap-1">
@@ -144,7 +144,7 @@ const EmployeeProfile: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={handleCancel}
-                                    className="flex items-center gap-2 px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm"
+                                    className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
                                 >
                                     <X className="w-4 h-4" /> Cancel
                                 </button>
@@ -152,7 +152,7 @@ const EmployeeProfile: React.FC = () => {
                         ) : (
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm"
+                                className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
                             >
                                 <Edit3 className="w-4 h-4" /> Edit Profile
                             </button>
@@ -164,14 +164,14 @@ const EmployeeProfile: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
                     {/* Personal Info */}
                     <div className="space-y-8">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                            <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
                                 <User className="w-5 h-5 text-blue-600" /> Personal Information
                             </h3>
                             <div className="space-y-4">
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</label>
-                                    <p className="text-gray-900 font-medium">{employee?.email}</p>
+                                    <p className="text-heading font-medium">{employee?.email}</p>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Phone</label>
@@ -184,17 +184,17 @@ const EmployeeProfile: React.FC = () => {
                                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                         />
                                     ) : (
-                                        <p className="text-gray-900 font-medium">{employee?.phone}</p>
+                                        <p className="text-heading font-medium">{employee?.phone}</p>
                                     )}
                                 </div>
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Date of Birth</label>
-                                        <p className="text-gray-900 font-medium">{employee?.dob ? new Date(employee.dob).toLocaleDateString() : 'N/A'}</p>
+                                        <p className="text-heading font-medium">{employee?.dob ? new Date(employee.dob).toLocaleDateString() : 'N/A'}</p>
                                     </div>
                                     <div>
                                         <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Gender</label>
-                                        <p className="text-gray-900 font-medium capitalize">{employee?.gender || "N/A"}</p>
+                                        <p className="text-heading font-medium capitalize">{employee?.gender || "N/A"}</p>
                                     </div>
                                 </div>
                             </div>
@@ -203,8 +203,8 @@ const EmployeeProfile: React.FC = () => {
 
                     {/* Employment Info */}
                     <div className="space-y-8">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                            <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
                                 <Briefcase className="w-5 h-5 text-purple-600" /> Employment Details
                             </h3>
                             <div className="space-y-4">
@@ -226,11 +226,11 @@ const EmployeeProfile: React.FC = () => {
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Department</label>
-                                    <p className="text-gray-900 font-medium">{departmentName}</p>
+                                    <p className="text-heading font-medium">{departmentName}</p>
                                 </div>
                                 <div>
                                     <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Position</label>
-                                    <p className="text-gray-900 font-medium">{employee.position}</p>
+                                    <p className="text-heading font-medium">{employee.position}</p>
                                 </div>
                             </div>
                         </div>

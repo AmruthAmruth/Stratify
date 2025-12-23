@@ -102,7 +102,7 @@ const EmployeeDashboard = () => {
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
                     {/* Chart 1: Issues by Priority */}
-                    <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Priority</h3>
                         {hasChartData(chartData.issuesByPriority.data) ? (
                             <div className="h-64 flex items-center justify-center">
@@ -119,7 +119,7 @@ const EmployeeDashboard = () => {
                     </div>
 
                     {/* Chart 2: Issues by Status */}
-                    <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Status</h3>
                         {hasChartData(chartData.issuesByStatus.data) ? (
                             <div className="h-64">
@@ -136,7 +136,7 @@ const EmployeeDashboard = () => {
                     </div>
 
                     {/* Chart 3: Issues by Type */}
-                    <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                    <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Type</h3>
                         {hasChartData(chartData.issuesByType.data) ? (
                             <div className="h-64 flex items-center justify-center">
@@ -154,7 +154,7 @@ const EmployeeDashboard = () => {
                 </div>
             </div>
 
-            <div className="mt-8 p-4 bg-white border border-accent rounded-xl">
+            <div className="mt-8 p-4 bg-surface border border-accent rounded-xl">
                 <p className="text-sm text-text/70 text-center">
                     Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
                 </p>

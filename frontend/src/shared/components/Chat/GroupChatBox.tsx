@@ -124,7 +124,7 @@ const GroupChatBox = ({
     };
 
     return (
-        <div className="flex flex-col h-full bg-white border border-accent rounded-lg overflow-hidden shadow-sm">
+        <div className="flex flex-col h-full bg-bg border border-accent rounded-lg overflow-hidden shadow-sm">
             {/* Group Header */}
             <div className="p-4 border-b border-accent bg-primary text-white">
                 <h3 className="font-semibold text-lg">{groupName}</h3>
@@ -187,7 +187,7 @@ const GroupChatBox = ({
             <div className="border-t border-accent bg-bg p-4 space-y-2">
                 {/* File Preview */}
                 {selectedFile && (
-                    <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-accent">
+                    <div className="flex items-center gap-2 p-2 bg-bg rounded-lg border border-accent">
                         {filePreview ? (
                             <img src={filePreview} alt="Preview" className="w-16 h-16 object-cover rounded" />
                         ) : (
@@ -231,7 +231,7 @@ const GroupChatBox = ({
                         onKeyDown={(e) => e.key === "Enter" && !isUploading && sendMessage()}
                         placeholder="Type a message..."
                         disabled={isUploading}
-                        className="flex-1 border border-accent rounded-2xl px-4 py-3 outline-none text-text bg-white placeholder:text-text/40 transition-all duration-200 focus:border-primary/50 focus:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 border border-accent rounded-2xl px-4 py-3 outline-none text-text bg-bg placeholder:text-text/40 transition-all duration-200 focus:border-primary/50 focus:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                         onClick={sendMessage}

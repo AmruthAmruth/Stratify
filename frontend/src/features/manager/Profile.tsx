@@ -227,7 +227,7 @@ const Profile = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Profile Card */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white border border-accent rounded-2xl p-8 shadow-sm">
+                        <div className="bg-surface border border-accent rounded-2xl p-8 shadow-sm">
                             <div className="flex flex-col items-center">
                                 {/* Avatar */}
                                 <div className="relative group">
@@ -286,7 +286,7 @@ const Profile = () => {
                     {/* Information Cards */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Personal Information */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
                             <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
                                 <User className="w-5 h-5 text-primary" />
                                 Personal Information
@@ -332,7 +332,7 @@ const Profile = () => {
                         </div>
 
                         {/* Professional Information */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
                             <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
                                 <Briefcase className="w-5 h-5 text-primary" />
                                 Professional Information
@@ -393,7 +393,7 @@ const Profile = () => {
             {/* Change Password Tab */}
             {activeTab === 'password' && (
                 <div className="max-w-2xl mx-auto">
-                    <div className="bg-white border border-accent rounded-2xl p-6 mb-6">
+                    <div className="bg-surface border border-accent rounded-2xl p-6 mb-6">
                         <h3 className="text-lg font-semibold text-text mb-3">Password Requirements:</h3>
                         <ul className="space-y-2 text-sm text-text/70">
                             <li className="flex items-center gap-2">

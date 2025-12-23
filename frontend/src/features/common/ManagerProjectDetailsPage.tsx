@@ -486,7 +486,7 @@ const ManagerProjectDetailsPage = () => {
     <div className="min-h-screen bg-bg">
       <div className="bg-bg py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="rounded-2xl bg-surface backdrop-blur-sm border border-accent shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="p-8">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
                 <div className="space-y-4">
@@ -550,7 +550,7 @@ const ManagerProjectDetailsPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+            <div className="bg-surface rounded-lg shadow-md border border-accent p-6">
               <h3 className="text-xl font-bold text-text mb-4">
                 Issue Distribution
               </h3>
@@ -571,7 +571,7 @@ const ManagerProjectDetailsPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+            <div className="bg-surface rounded-lg shadow-md border border-accent p-6">
               <h3 className="text-xl font-bold text-text mb-4">
                 SubTask Progress
               </h3>
@@ -592,7 +592,7 @@ const ManagerProjectDetailsPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+            <div className="bg-surface rounded-lg shadow-md border border-accent p-6">
               <h3 className="text-xl font-bold text-text mb-4">
                 Sprint Overview
               </h3>
@@ -614,7 +614,7 @@ const ManagerProjectDetailsPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-accent">
+          <div className="bg-surface rounded-lg p-6 lg:p-8 shadow-md border border-accent">
             <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-text tracking-tight">
               Project Progress Summary
             </h3>
@@ -659,7 +659,7 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md border border-accent p-6 lg:p-8">
+        <div className="bg-surface rounded-lg shadow-md border border-accent p-6 lg:p-8">
           <h3 className="text-xl lg:text-2xl font-bold text-text mb-6 flex items-center">
             <div className="w-7 h-7 bg-accent rounded flex items-center justify-center mr-2">
               <svg

@@ -47,7 +47,7 @@ const DraggableIssueCard: React.FC<DraggableIssueCardProps> = ({
             {...attributes}
             onClick={onClick}
             className={`
-        bg-white border-2 border-accent rounded-xl p-4 
+        bg-surface border-2 border-accent rounded-xl p-4 
         cursor-grab active:cursor-grabbing
         hover:shadow-lg hover:border-primary 
         transition-all duration-200

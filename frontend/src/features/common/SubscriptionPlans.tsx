@@ -187,11 +187,11 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
   // Use different layouts based on authentication status
   const containerClass = isAuthenticated
     ? "max-w-6xl mx-auto mt-12 px-4"
-    : "w-full h-screen bg-white flex flex-col items-center justify-center px-6 py-12";
+    : "w-full h-screen bg-surface flex flex-col items-center justify-center px-6 py-12";
 
   const titleClass = isAuthenticated
     ? "text-4xl font-extrabold text-center mb-12 text-gray-800"
-    : "text-4xl font-extrabold text-center mb-16 text-black";
+    : "text-4xl font-extrabold text-center mb-16 text-text";
 
   const gridClass = isAuthenticated
     ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
@@ -199,7 +199,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
 
   const cardWrapperClass = isAuthenticated
     ? ""
-    : "w-full h-full bg-white border border-gray-200 rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col justify-between";
+    : "w-full h-full bg-surface border border-accent rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col justify-between";
 
   return (
     <div className={containerClass}>

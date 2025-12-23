@@ -451,7 +451,7 @@ const Projects: React.FC = () => {
   }
 
   return (
-    <div className="text-black space-y-6">
+    <div className="text-text space-y-6">
       {/* Create Project Button */}
       <div className="flex justify-end mb-4">
         <button
@@ -562,7 +562,7 @@ const Projects: React.FC = () => {
           title={editingProject ? "Edit Project" : "Create Project"}
         >
           <div className="space-y-4">
-            <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-gray-50">
+            <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-surface">
               <AuthForm
                 key={editingProject?.id || 'new'}
                 fields={createProjectFormFields}

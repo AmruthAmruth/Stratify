@@ -416,7 +416,7 @@ const Department: React.FC = () => {
   // Render
   // ----------------------
   return (
-    <div className="p-6 bg-gray-100">
+    <div className="p-6 bg-bg">
       {/* Dashboard Cards */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
         <DashboardCard
@@ -440,7 +440,7 @@ const Department: React.FC = () => {
       </div>
 
       {/* Table Section */}
-      <div className="max-w-8xl mx-auto bg-white shadow-lg rounded-xl p-6">
+      <div className="max-w-8xl mx-auto bg-surface shadow-lg rounded-xl p-6">
         <div className="flex justify-between items-center mb-6">
           <h2 className="text-2xl font-bold text-gray-800">
             {companyName ? `${companyName} Departments` : "Departments"}

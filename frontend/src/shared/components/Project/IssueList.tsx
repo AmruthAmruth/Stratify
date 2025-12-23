@@ -294,7 +294,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
               {/* Expanded view for editing */}
               {isExpanded && (
-                <div className="mt-2 bg-white rounded-xl border-2 border-primary/20 p-6 space-y-4">
+                <div className="mt-2 bg-surface rounded-xl border-2 border-primary/20 p-6 space-y-4">
                   <div>
                     <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                       Description
@@ -314,7 +314,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                   {/* Action Buttons */}
                   <div className="flex gap-3 pt-2 border-t">
                     <button
-                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-gray-50"
+                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-accent"
                       onClick={() => openUpdateIssueModal(issue)}
                     >
                       Edit Issue
@@ -396,22 +396,22 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
                 {/* Details */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                  <div className="bg-white border rounded-lg p-3">
+                  <div className="bg-surface border rounded-lg p-3">
                     <span className="text-xs text-text/60">Type</span>
                     <span className="block text-sm font-medium capitalize">{issue.type}</span>
                   </div>
-                  <div className="bg-white border rounded-lg p-3">
+                  <div className="bg-surface border rounded-lg p-3">
                     <span className="text-xs text-text/60">Status</span>
                     <span className="block text-sm font-semibold text-primary capitalize">
                       {issue.status}
                     </span>
                   </div>
-                  <div className="bg-white border rounded-lg p-3">
+                  <div className="bg-surface border rounded-lg p-3">
                     <span className="text-xs text-text/60">Size</span>
                     <span className="block text-sm font-medium">{issue.size}</span>
                   </div>
 
-                  <div className="bg-white border rounded-lg p-3">
+                  <div className="bg-surface border rounded-lg p-3">
                     <span className="text-xs text-text/60">Assigned To</span>
                     <span className="block text-sm font-medium">
                       {employees?.find((e) => e.id === issue.assignedTo)?.name || "Unassigned"}
@@ -423,7 +423,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                 {canEdit && (
                   <div className="flex gap-3 pt-2 border-t">
                     <button
-                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-gray-50"
+                      className="flex-1 text-sm border rounded-lg px-4 py-2.5 hover:bg-accent"
                       onClick={() => openUpdateIssueModal(issue)}
                     >
                       Edit Issue
@@ -456,7 +456,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
                         {hasSubtasks(issue) && (
                           <button
-                            className="text-sm border rounded-lg px-6 py-2.5 hover:bg-gray-50"
+                            className="text-sm border rounded-lg px-6 py-2.5 hover:bg-accent"
                             onClick={() => toggleExpanded(issue.id)}
                           >
                             {isExpanded ? "− Hide" : "+ Show"} Subtasks
@@ -469,7 +469,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                     {hasSubtasks(issue) ? (
                       <div className="space-y-4 pt-4 border-t">
                         {issue.subTasks!.map((sub) => (
-                          <div key={sub.id} className="bg-white border rounded-lg p-6 space-y-3">
+                          <div key={sub.id} className="bg-surface border rounded-lg p-6 space-y-3">
                             <div className="flex justify-between items-start">
                               <p className="text-lg font-medium">{sub.heading}</p>
                               <span className="text-xs font-semibold bg-primary/80 text-white px-3 py-1 rounded-full">
@@ -487,7 +487,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                               {canEdit && (
                                 <div className="flex gap-2">
                                   <button
-                                    className="text-xs border rounded px-3 py-1.5 hover:bg-gray-50"
+                                    className="text-xs border rounded px-3 py-1.5 hover:bg-accent"
                                     onClick={() => openUpdateSubTaskModal(sub)}
                                   >
                                     Edit

@@ -15,7 +15,7 @@ const NotificationItem: React.FC<Props> = ({
 }) => {
   return (
     <div
-      className={`p-4 rounded-lg border border-accent flex items-start justify-between transition-all duration-300 hover:shadow-md ${notification.isRead ? "bg-white" : "bg-accent/40 shadow-sm"
+      className={`p-4 rounded-lg border border-accent flex items-start justify-between transition-all duration-300 hover:shadow-md ${notification.isRead ? "bg-bg" : "bg-accent/40 shadow-sm"
         }`}
     >
       {/* Left: Notification content + unread dot */}

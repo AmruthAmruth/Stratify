@@ -61,7 +61,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
   return (
-    <div className="bg-white rounded-lg shadow-md border border-accent overflow-hidden">
+    <div className="bg-bg rounded-lg shadow-md border border-accent overflow-hidden">
       <div className="bg-bg p-6 border-b border-accent">
         <h3 className="text-2xl font-bold text-text flex items-center">
           <div className={`w-8 h-8 ${iconBgColor} rounded flex items-center justify-center mr-3`}>
@@ -83,7 +83,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                 className="border border-accent rounded-lg overflow-hidden hover:shadow-md transition-all duration-200"
               >
                 <div
-                  className="bg-bg p-5 cursor-pointer hover:bg-gray-100 transition-all duration-200"
+                  className="bg-bg p-5 cursor-pointer hover:bg-accent transition-all duration-200"
                   onClick={() => setExpandedItem(isExpanded ? null : itemId)}
                 >
                   <div className="flex items-start justify-between">
@@ -138,7 +138,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                   </div>
                 </div>
                 {isExpanded && (
-                  <div className="p-6 bg-white border-t border-accent">
+                  <div className="p-6 bg-bg border-t border-accent">
                     <div className="space-y-4">
                       <div>
                         <h5 className="text-sm font-semibold text-text mb-2">Acceptance Criteria</h5>
@@ -166,7 +166,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
               className="border-2 border-accent rounded-lg overflow-hidden hover:shadow-lg transition-all duration-300"
             >
               <div
-                className={`bg-bg p-6 cursor-pointer hover:bg-gray-100 transition-all duration-300`}
+                className={`bg-bg p-6 cursor-pointer hover:bg-accent transition-all duration-300`}
                 onClick={() => setExpandedItem(isExpanded ? null : itemId)}
               >
                 <div className="flex items-start justify-between">
@@ -219,7 +219,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                 </div>
               </div>
               {isExpanded && (
-                <div className="p-6 space-y-6 bg-white border-t border-accent">
+                <div className="p-6 space-y-6 bg-bg border-t border-accent">
                   <div className="flex justify-end mb-4">
                     {onAssignIssue && (
                       <button
@@ -319,7 +319,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                           className="border border-accent rounded-lg overflow-hidden"
                         >
                           <div
-                            className="bg-bg p-5 cursor-pointer hover:bg-gray-100 transition-all duration-200"
+                            className="bg-bg p-5 cursor-pointer hover:bg-accent transition-all duration-200"
                             onClick={() => setExpandedIssue(isIssueExpanded ? null : issueId || null)}
                           >
                             <div className="flex items-start justify-between">
@@ -378,7 +378,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                             </div>
                           </div>
                           {isIssueExpanded && (
-                            <div className="p-6 bg-white border-t border-accent">
+                            <div className="p-6 bg-bg border-t border-accent">
                               <div className="mb-4">
                                 <h6 className="text-sm font-semibold text-text mb-2">Acceptance Criteria</h6>
                                 <p className="text-sm text-text opacity-80 leading-relaxed">{issue.acceptanceCriteria}</p>

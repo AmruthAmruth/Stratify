@@ -276,7 +276,7 @@ const Tasks = () => {
     }
 
     return (
-        <div className="p-6 space-y-6 text-black">
+        <div className="p-6 space-y-6 text-text">
             {/* Header */}
             <div className="flex items-center justify-between">
                 <div>
@@ -318,7 +318,7 @@ const Tasks = () => {
             {/* Data Visualization Graphs */}
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                 {/* Issues by Status - Pie Chart */}
-                <div className="bg-white border border-accent rounded-xl p-6 shadow-sm">
+                <div className="bg-surface border border-accent rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-heading mb-4">Issues by Status</h3>
                     <div className="h-64 flex items-center justify-center">
                         <Pie
@@ -357,7 +357,7 @@ const Tasks = () => {
                 </div>
 
                 {/* Issues by Priority - Bar Chart */}
-                <div className="bg-white border border-accent rounded-xl p-6 shadow-sm">
+                <div className="bg-surface border border-accent rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-heading mb-4">Issues by Priority</h3>
                     <div className="h-64">
                         <Bar
@@ -399,7 +399,7 @@ const Tasks = () => {
                 </div>
 
                 {/* Sprint Progress - Line Chart */}
-                <div className="bg-white border border-accent rounded-xl p-6 shadow-sm">
+                <div className="bg-surface border border-accent rounded-xl p-6 shadow-sm">
                     <h3 className="text-lg font-bold text-heading mb-4">Sprint Progress</h3>
                     <div className="h-64">
                         <Line
@@ -442,7 +442,7 @@ const Tasks = () => {
                                 {projectIssues.map((issue) => (
                                     <div
                                         key={issue.id}
-                                        className="bg-white border border-accent rounded-xl p-6 shadow-sm"
+                                        className="bg-surface border border-accent rounded-xl p-6 shadow-sm"
                                     >
                                         {/* Issue Header */}
                                         <div className="flex items-start justify-between mb-4">

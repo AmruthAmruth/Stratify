@@ -118,7 +118,7 @@
 //         </div>
 //         <div>
 //           <p className="text-sm font-semibold text-gray-800 uppercase tracking-wide">{title}</p>
-//           <p className="text-3xl font-bold text-gray-900 mt-1">{value}</p>
+//           <p className="text-3xl font-bold text-heading mt-1">{value}</p>
 //           <p className="text-sm text-gray-600 mt-1">{subtitle}</p>
 //         </div>
 //       </div>
@@ -241,7 +241,7 @@
 //         <div className="mb-8">
 //           <div className="flex items-center justify-between">
 //             <div>
-//               <h1 className="text-3xl font-bold text-gray-900 mb-2">Team Management</h1>
+//               <h1 className="text-3xl font-bold text-heading mb-2">Team Management</h1>
 //               <p className="text-gray-700">Manage your company's team members and organizational structure</p>
 //             </div>
 //             <div className="flex items-center space-x-3">
@@ -305,7 +305,7 @@
 //               <input
 //                 type="text"
 //                 placeholder="Search members by name or email..."
-//                 className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium transition-all duration-200"
+//                 className="w-full pl-12 pr-4 py-4 bg-white border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-heading font-medium transition-all duration-200"
 //                 value={searchTerm}
 //                 onChange={(e) => {
 //                   setSearchTerm(e.target.value);
@@ -322,7 +322,7 @@
 //               </div>
               
 //               <select
-//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium min-w-[140px] transition-all duration-200"
+//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-heading font-medium min-w-[140px] transition-all duration-200"
 //                 value={filterRole}
 //                 onChange={(e) => {
 //                   setFilterRole(e.target.value);
@@ -335,7 +335,7 @@
 //               </select>
 
 //               <select
-//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium min-w-[140px] transition-all duration-200"
+//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-heading font-medium min-w-[140px] transition-all duration-200"
 //                 value={filterTeam}
 //                 onChange={(e) => {
 //                   setFilterTeam(e.target.value);
@@ -351,7 +351,7 @@
 //               </select>
 
 //               <select
-//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-gray-900 font-medium min-w-[140px] transition-all duration-200"
+//                 className="bg-white border-2 border-gray-200 rounded-xl px-4 py-4 focus:outline-none focus:ring-4 focus:ring-blue-100 focus:border-blue-500 text-heading font-medium min-w-[140px] transition-all duration-200"
 //                 value={filterStatus}
 //                 onChange={(e) => {
 //                   setFilterStatus(e.target.value);
@@ -366,7 +366,7 @@
 
 //               <button
 //                 onClick={resetFilters}
-//                 className="px-6 py-4 text-sm font-bold text-gray-700 hover:text-gray-900 bg-white border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
+//                 className="px-6 py-4 text-sm font-bold text-gray-700 hover:text-heading bg-white border-2 border-gray-200 rounded-xl hover:border-gray-300 hover:bg-gray-50 transition-all duration-200"
 //               >
 //                 Reset
 //               </button>
@@ -378,8 +378,8 @@
 //         <div className="flex items-center justify-between mb-8">
 //           <div className="flex items-center space-x-4">
 //             <p className="text-gray-800 font-medium">
-//               Showing <span className="font-bold text-gray-900 text-lg">{filteredData.length}</span> of{" "}
-//               <span className="font-bold text-gray-900 text-lg">{teamMembers.length}</span> members
+//               Showing <span className="font-bold text-heading text-lg">{filteredData.length}</span> of{" "}
+//               <span className="font-bold text-heading text-lg">{teamMembers.length}</span> members
 //             </p>
 //             {(searchTerm || filterRole !== "All" || filterTeam !== "All" || filterStatus !== "All") && (
 //               <span className="bg-blue-100 text-blue-800 px-4 py-2 rounded-full text-sm font-bold border-2 border-blue-200">
@@ -392,14 +392,14 @@
 //         {/* Team Members Table */}
 //         <div className="bg-white rounded-2xl shadow-xl border-2 border-gray-100 overflow-hidden">
 //           <div className="p-8 border-b-2 border-gray-100">
-//             <h2 className="text-2xl font-bold text-gray-900">Team Members</h2>
+//             <h2 className="text-2xl font-bold text-heading">Team Members</h2>
 //             <p className="text-gray-700 mt-2 font-medium">Manage and view all team member information</p>
 //           </div>
 
 //           {filteredData.length === 0 ? (
 //             <div className="text-center py-16">
 //               <Users className="h-20 w-20 text-gray-400 mx-auto mb-6" />
-//               <h3 className="text-xl font-bold text-gray-900 mb-3">No team members found</h3>
+//               <h3 className="text-xl font-bold text-heading mb-3">No team members found</h3>
 //               <p className="text-gray-700 mb-6 font-medium">Try adjusting your search or filter criteria</p>
 //               <button
 //                 onClick={resetFilters}
@@ -432,7 +432,7 @@
 //                           }`}></div>
 //                         </div>
 //                         <div>
-//                           <div className="text-sm font-bold text-gray-900">{member.name}</div>
+//                           <div className="text-sm font-bold text-heading">{member.name}</div>
 //                           <div className="text-sm font-medium text-gray-600">{member.department}</div>
 //                         </div>
 //                       </div>
@@ -459,7 +459,7 @@
 //                     label: "Contact",
 //                     render: (member) => (
 //                       <div className="space-y-1">
-//                         <div className="flex items-center space-x-2 text-sm text-gray-900">
+//                         <div className="flex items-center space-x-2 text-sm text-heading">
 //                           <Mail className="h-3 w-3 text-gray-400" />
 //                           <span>{member.email}</span>
 //                         </div>

@@ -18,7 +18,7 @@ interface PlanCardProps {
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan, mode, onBuy, onEdit, onDelete }) => {
   return (
-    <div className="bg-white border border-gray-200 rounded-3xl p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+    <div className="bg-surface border border-accent rounded-3xl p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
       <div>
         <h2 className="text-2xl font-bold text-gray-800 mb-2">{plan.plan}</h2>
         <p className="text-gray-600 mb-4">{plan.description}</p>

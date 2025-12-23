@@ -154,7 +154,7 @@ const MyTeam = () => {
                     <h2 className="text-2xl font-bold text-text mb-6">Team Analytics</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Position Distribution Chart */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                             <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                                 <Briefcase className="w-5 h-5 text-primary" />
                                 Position Distribution
@@ -176,7 +176,7 @@ const MyTeam = () => {
                         </div>
 
                         {/* Project Allocation Chart */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                             <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                                 <TrendingUp className="w-5 h-5 text-primary" />
                                 Project Allocation
@@ -192,7 +192,7 @@ const MyTeam = () => {
                         </div>
 
                         {/* Gender Diversity Chart */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                             <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                                 <Users className="w-5 h-5 text-primary" />
                                 Gender Diversity
@@ -212,7 +212,7 @@ const MyTeam = () => {
                         </div>
 
                         {/* Team Status Overview */}
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                             <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
                                 <UserCheck className="w-5 h-5 text-primary" />
                                 Team Status Overview

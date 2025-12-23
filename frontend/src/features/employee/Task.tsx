@@ -210,7 +210,7 @@ const Task = () => {
   }
 
   return (
-    <div className="p-6 space-y-6 text-black">
+    <div className="p-6 space-y-6 text-text">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
@@ -268,7 +268,7 @@ const Task = () => {
                 {projectIssues.map((issue) => (
                   <div
                     key={issue.id}
-                    className="bg-white border border-accent rounded-xl p-6 shadow-sm"
+                    className="bg-surface border border-accent rounded-xl p-6 shadow-sm"
                   >
                     {/* Issue Header */}
                     <div className="flex items-start justify-between mb-4">

@@ -7,7 +7,7 @@ const CompanyPendingApproval: React.FC = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-blue-50 via-white to-blue-100 px-4">
-      <div className="max-w-lg w-full bg-white rounded-2xl shadow-2xl p-10 text-center">
+      <div className="max-w-lg w-full bg-surface rounded-2xl shadow-2xl p-10 text-center">
         {/* Icon Section */}
         <div className="flex justify-center mb-6">
           <ShieldCheck className="w-20 h-20 text-blue-600 animate-bounce" />
@@ -20,7 +20,7 @@ const CompanyPendingApproval: React.FC = () => {
 
         {/* Description */}
         <p className="text-gray-600 text-lg mb-6">
-          Thank you for registering your company with us.  
+          Thank you for registering your company with us.
           Your request is <span className="font-semibold text-blue-600">pending approval</span> from the <span className="font-semibold text-blue-600">Statify Team</span>.
         </p>
 

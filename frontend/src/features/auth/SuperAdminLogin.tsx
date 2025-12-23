@@ -65,7 +65,7 @@ const SuperAdminLogin: React.FC = () => {
 
       {/* Right Panel */}
       <div className="flex w-full lg:w-1/2 justify-center items-center px-6">
-        <div className="bg-white shadow-2xl rounded-3xl p-14 w-full max-w-3xl border border-accent">
+        <div className="bg-surface shadow-2xl rounded-3xl p-14 w-full max-w-3xl border border-accent">
           {/* Badge */}
           <div className="flex justify-center mb-8 ">
             <span className="bg-primary text-white px-5 py-1.5 rounded-full text-sm font-medium shadow-sm">

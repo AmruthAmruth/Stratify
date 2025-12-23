@@ -63,7 +63,7 @@ const CompanyProjectDetailsPage = () => {
             {/* Back Button */}
             <button
                 onClick={() => navigate('/projects')}
-                className="flex items-center gap-2 mb-4 px-4 py-2 rounded-lg hover:bg-white transition-colors text-primary"
+                className="flex items-center gap-2 mb-4 px-4 py-2 rounded-lg hover:bg-surface transition-colors text-primary"
             >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="font-medium">Back to Projects</span>

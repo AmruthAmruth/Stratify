@@ -36,7 +36,7 @@ const SubtaskCard: React.FC<SubtaskCardProps> = ({
             {...listeners}
             {...attributes}
             onClick={onClick}
-            className={`bg-white border border-accent rounded-lg p-4 mb-3 cursor-move hover:shadow-md transition-all ${isDragging ? "shadow-lg ring-2 ring-primary" : ""
+            className={`bg-surface border border-accent rounded-lg p-4 mb-3 cursor-move hover:shadow-md transition-all ${isDragging ? "shadow-lg ring-2 ring-primary" : ""
                 }`}
         >
             <h4 className="font-semibold text-heading text-sm mb-2">{heading}</h4>

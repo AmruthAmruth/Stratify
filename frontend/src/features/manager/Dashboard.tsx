@@ -382,7 +382,7 @@ const Dashboard = () => {
         {/* Row 1 - First 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
           {/* Chart 1: Project Status - Doughnut */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Project Status Distribution</h3>
             {hasChartData(chartData.projectStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -399,7 +399,7 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 2: Leave Status - Pie */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Leave Request Status</h3>
             {hasChartData(chartData.leaveStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -416,7 +416,7 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 3: Meeting Types - Bar */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Meeting Types</h3>
             {hasChartData(chartData.meetingTypes.data) ? (
               <div className="h-64">
@@ -436,7 +436,7 @@ const Dashboard = () => {
         {/* Row 2 - Next 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Chart 4: Project Timeline - Line */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Project Creation Timeline</h3>
             {hasChartData(chartData.employeePerformance.data) ? (
               <div className="h-64">
@@ -453,7 +453,7 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 5: Task Distribution - Bar */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Task Status Distribution</h3>
             {hasChartData(chartData.taskDistribution.data) ? (
               <div className="h-64">
@@ -470,7 +470,7 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 6: Department Activity - Doughnut */}
-          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
             <h3 className="text-lg font-semibold text-text mb-4">Department Activity Overview</h3>
             {hasChartData(chartData.departmentActivity.data) ? (
               <div className="h-64 flex items-center justify-center">
@@ -489,7 +489,7 @@ const Dashboard = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-8 p-4 bg-white border border-accent rounded-xl">
+      <div className="mt-8 p-4 bg-surface border border-accent rounded-xl">
         <p className="text-sm text-text/70 text-center">
           Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
         </p>

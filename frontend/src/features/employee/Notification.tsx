@@ -4,7 +4,7 @@ import React from 'react'
 const Notification = () => {
   return (
      <div className="p-4">
-      <h1 className="text-2xl font-bold mb-4 text-black">Employee Dashboard</h1>
+      <h1 className="text-2xl font-bold mb-4 text-text">Employee Dashboard</h1>
       <NotificationBoard />
     </div>
   )

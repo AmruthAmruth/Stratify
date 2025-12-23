@@ -154,7 +154,7 @@ const SuperAdminProfile = () => {
             {activeTab === 'view' && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-1">
-                        <div className="bg-white border border-accent rounded-2xl p-8 shadow-sm">
+                        <div className="bg-surface border border-accent rounded-2xl p-8 shadow-sm">
                             <div className="flex flex-col items-center">
                                 <div className="relative group">
                                     <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center text-white text-3xl font-bold shadow-lg">
@@ -192,7 +192,7 @@ const SuperAdminProfile = () => {
                     </div>
 
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
                             <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
                                 <User className="w-5 h-5 text-primary" />
                                 Personal Information

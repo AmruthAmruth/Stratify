@@ -74,7 +74,7 @@ const Leave = () => {
   };
 
   return (
-    <div className="bg-white text-black p-4">
+    <div className="bg-bg text-text p-4">
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h2 className="text-xl font-bold">Leave Dashboard</h2>

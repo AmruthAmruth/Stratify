@@ -67,7 +67,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
 
     if (loading) {
         return (
-            <div className="bg-white rounded-lg shadow-md border border-accent p-6 animate-pulse">
+            <div className="bg-surface rounded-lg shadow-md border border-accent p-6 animate-pulse">
                 <div className="h-6 bg-accent rounded w-1/3 mb-4"></div>
                 <div className="h-4 bg-bg rounded w-full mb-2"></div>
                 <div className="h-4 bg-bg rounded w-2/3"></div>
@@ -124,7 +124,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
             </div>
 
             {/* Capacity Summary */}
-            <div className="bg-white/50 rounded-lg p-4 mb-4 border border-accent/30">
+            <div className="bg-surface/50 rounded-lg p-4 mb-4 border border-accent/30">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
                         <p className="text-xs text-text/60 uppercase tracking-wide mb-1">
@@ -154,7 +154,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
                     {employees.map((employee) => (
                         <div
                             key={employee.employeeId}
-                            className="bg-white rounded-lg border border-accent/50 p-3 hover:border-primary/30 transition-colors duration-200"
+                            className="bg-surface rounded-lg border border-accent/50 p-3 hover:border-primary/30 transition-colors duration-200"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">

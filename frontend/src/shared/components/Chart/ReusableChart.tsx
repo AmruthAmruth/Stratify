@@ -64,7 +64,7 @@ const ReusableChart: React.FC<ChartProps> = ({
         label: title || "Dataset",
         data: data || [],
         backgroundColor: backgroundColors,
-        borderColor: "#3b3b3b",
+        borderColor: "#1f2937",
         borderWidth: 1,
       },
     ],
@@ -72,42 +72,42 @@ const ReusableChart: React.FC<ChartProps> = ({
 
   const options = {
     responsive: true,
-    backgroundColor: "#fbfbfb",
+    backgroundColor: "transparent",
     plugins: {
       tooltip: {
-        backgroundColor: "#fbfbfb",
-        titleColor: "#3b3b3b",
-        bodyColor: "#3b3b3b",
-        borderColor: "#dfdcef",
+        backgroundColor: "#111827",
+        titleColor: "#e5e7eb",
+        bodyColor: "#e5e7eb",
+        borderColor: "#1f2937",
         borderWidth: 1,
       },
       legend: {
         position: "bottom" as const,
         labels: {
-          color: "#3b3b3b",
+          color: "#e5e7eb",
         },
       },
       title: {
         display: !!title,
         text: title,
-        color: "#3b3b3b",
+        color: "#e5e7eb",
       },
     },
     scales: type === "line" || type === "bar" ? {
       x: {
         ticks: {
-          color: "#3b3b3b",
+          color: "#e5e7eb",
         },
         grid: {
-          color: "#dfdcef",
+          color: "#1f2937",
         },
       },
       y: {
         ticks: {
-          color: "#3b3b3b",
+          color: "#e5e7eb",
         },
         grid: {
-          color: "#dfdcef",
+          color: "#1f2937",
         },
       },
     } : undefined,

@@ -168,7 +168,7 @@ const ManagerMeeting: React.FC = () => {
           placeholder="Enter meeting title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 border border-accent rounded-lg px-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text/60 bg-white"
+          className="flex-1 border border-accent rounded-lg px-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text/60 bg-surface"
         />
         <button
           onClick={handleCreate}
@@ -179,8 +179,8 @@ const ManagerMeeting: React.FC = () => {
       </div>
 
       {/* Meetings Table */}
-      <div className="bg-white p-6 rounded-xl shadow-md border border-gray-100">
-        <h2 className="text-lg font-semibold mb-4 text-gray-900">Your Meetings</h2>
+      <div className="bg-surface p-6 rounded-xl shadow-md border border-accent">
+        <h2 className="text-lg font-semibold mb-4 text-heading">Your Meetings</h2>
 
         <Table
           columns={columns}

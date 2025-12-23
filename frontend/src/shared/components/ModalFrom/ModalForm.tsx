@@ -13,7 +13,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-      <div className="bg-white rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] p-8 relative animate-fadeIn flex flex-col">
+      <div className="bg-bg rounded-2xl shadow-2xl w-full max-w-4xl max-h-[90vh] p-8 relative animate-fadeIn flex flex-col">
         {/* Close button */}
         <button
           className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 transition"
@@ -23,7 +23,7 @@ const Modal: React.FC<ModalProps> = ({ isOpen, onClose, title, children }) => {
         </button>
 
         {/* Title */}
-        <h2 className="text-2xl font-bold text-gray-900 mb-4 text-center border-b pb-3">
+        <h2 className="text-2xl font-bold text-heading mb-4 text-center border-b pb-3">
           {title}
         </h2>
 

@@ -85,15 +85,15 @@ const CompanyProfile: React.FC = () => {
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8 px-4 sm:px-6 lg:px-8">
+        <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header Card */}
-                <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
+                <div className="bg-surface rounded-2xl shadow-lg border border-accent p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
                     <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-600 to-indigo-700 opacity-10"></div>
 
                     {/* Logo */}
                     <div className="flex-shrink-0 relative z-10">
-                        <div className="w-32 h-32 rounded-2xl bg-white shadow-md flex items-center justify-center border-4 border-white overflow-hidden">
+                        <div className="w-32 h-32 rounded-2xl bg-surface shadow-md flex items-center justify-center border-4 border-surface overflow-hidden">
                             {company.profileImage ? (
                                 <img
                                     src={company.profileImage}
@@ -105,7 +105,7 @@ const CompanyProfile: React.FC = () => {
                             )}
                         </div>
                         {isEditing && (
-                            <button className="absolute -bottom-2 -right-2 p-2 bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-blue-600 transition">
+                            <button className="absolute -bottom-2 -right-2 p-2 bg-surface rounded-full shadow-md border border-accent text-text hover:text-primary transition">
                                 <Camera className="w-4 h-4" />
                             </button>
                         )}
@@ -119,11 +119,11 @@ const CompanyProfile: React.FC = () => {
                                 name="name"
                                 value={formData.name || ""}
                                 onChange={handleInputChange}
-                                className="text-3xl font-bold text-gray-900 border-b-2 border-blue-500 focus:outline-none bg-transparent"
+                                className="text-3xl font-bold text-heading border-b-2 border-blue-500 focus:outline-none bg-transparent"
                                 placeholder="Company Name"
                             />
                         ) : (
-                            <h1 className="text-3xl font-bold text-gray-900">{company.name}</h1>
+                            <h1 className="text-3xl font-bold text-heading">{company.name}</h1>
                         )}
 
                         <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-gray-600">
@@ -161,7 +161,7 @@ const CompanyProfile: React.FC = () => {
                                 </button>
                                 <button
                                     onClick={handleCancel}
-                                    className="flex items-center gap-2 px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm"
+                                    className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
                                 >
                                     <X className="w-4 h-4" /> Cancel
                                 </button>
@@ -169,7 +169,7 @@ const CompanyProfile: React.FC = () => {
                         ) : (
                             <button
                                 onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-6 py-2 bg-white text-gray-700 border border-gray-300 rounded-lg hover:bg-gray-50 transition shadow-sm"
+                                className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
                             >
                                 <Edit3 className="w-4 h-4" /> Edit Profile
                             </button>
@@ -181,8 +181,8 @@ const CompanyProfile: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Contact & Address */}
                     <div className="lg:col-span-1 space-y-8">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                            <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
                                 <Phone className="w-5 h-5 text-blue-600" /> Contact Info
                             </h3>
                             <div className="space-y-4">
@@ -197,7 +197,7 @@ const CompanyProfile: React.FC = () => {
                                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     ) : (
-                                        <p className="text-gray-900 font-medium">{company.email}</p>
+                                        <p className="text-heading font-medium">{company.email}</p>
                                     )}
                                 </div>
                                 <div>
@@ -211,7 +211,7 @@ const CompanyProfile: React.FC = () => {
                                             className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                                         />
                                     ) : (
-                                        <p className="text-gray-900 font-medium">{company.phone}</p>
+                                        <p className="text-heading font-medium">{company.phone}</p>
                                     )}
                                 </div>
                                 <div>
@@ -221,8 +221,8 @@ const CompanyProfile: React.FC = () => {
                             </div>
                         </div>
 
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                            <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-primary" /> Address
                             </h3>
                             <div className="space-y-4">
@@ -275,9 +275,9 @@ const CompanyProfile: React.FC = () => {
                                     </>
                                 ) : (
                                     <>
-                                        <p className="text-gray-900">{company.address}</p>
-                                        <p className="text-gray-900">{company.city}, {company.state}</p>
-                                        <p className="text-gray-900">{company.country} - {company.zipcode}</p>
+                                        <p className="text-heading">{company.address}</p>
+                                        <p className="text-heading">{company.city}, {company.state}</p>
+                                        <p className="text-heading">{company.country} - {company.zipcode}</p>
                                     </>
                                 )}
                             </div>
@@ -286,8 +286,8 @@ const CompanyProfile: React.FC = () => {
 
                     {/* Right Column: About & Details */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-8">
+                            <h3 className="text-xl font-bold text-heading mb-6 flex items-center gap-2">
                                 <FileText className="w-6 h-6 text-purple-600" /> About Company
                             </h3>
                             {isEditing ? (
@@ -306,8 +306,8 @@ const CompanyProfile: React.FC = () => {
                             )}
                         </div>
 
-                        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-                            <h3 className="text-xl font-bold text-gray-900 mb-6 flex items-center gap-2">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-8">
+                            <h3 className="text-xl font-bold text-heading mb-6 flex items-center gap-2">
                                 <Globe className="w-6 h-6 text-orange-600" /> Business Details
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

@@ -96,7 +96,7 @@ const CompanyProfilePage = () => {
                 </div>
               </div>
               <div>
-                <h1 className="text-3xl lg:text-4xl font-bold text-gray-900 mb-2">
+                <h1 className="text-3xl lg:text-4xl font-bold text-heading mb-2">
                   {companyData.name}
                 </h1>
                 <div className="flex flex-wrap items-center gap-4 text-gray-600">
@@ -134,7 +134,7 @@ const CompanyProfilePage = () => {
         <div className="lg:col-span-8 space-y-8">
           {/* About Section */}
           <div className="bg-white rounded-2xl shadow-sm p-8">
-            <h2 className="text-2xl font-semibold text-gray-900 mb-6">
+            <h2 className="text-2xl font-semibold text-heading mb-6">
               About Company
             </h2>
             <p className="text-gray-700 leading-relaxed text-lg">
@@ -197,7 +197,7 @@ const CompanyProfilePage = () => {
         <div className="lg:col-span-4 space-y-8">
           {/* Contact Information */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100">
-            <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            <h3 className="text-xl font-semibold text-heading mb-6">
               Contact Information
             </h3>
             <InfoCard
@@ -222,7 +222,7 @@ const CompanyProfilePage = () => {
 
           {/* Company Stats */}
           <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-200">
-            <h3 className="text-xl font-semibold text-gray-900 mb-6">
+            <h3 className="text-xl font-semibold text-heading mb-6">
               Company Overview
             </h3>
             <div className="divide-y divide-gray-200">
@@ -241,13 +241,13 @@ const CompanyProfilePage = () => {
               </div>
               <div className="flex justify-between items-center py-3">
                 <span className="text-gray-600">Industry</span>
-                <span className="font-medium text-gray-900">
+                <span className="font-medium text-heading">
                   {companyData.industry}
                 </span>
               </div>
               <div className="flex justify-between items-center py-3">
                 <span className="text-gray-600">Location</span>
-                <span className="font-medium text-gray-900 text-right">
+                <span className="font-medium text-heading text-right">
                   {companyData.city}, {companyData.state}
                 </span>
               </div>

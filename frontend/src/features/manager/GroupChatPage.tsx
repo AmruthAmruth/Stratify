@@ -92,12 +92,12 @@ const GroupChatPage = () => {
     return (
         <div className="flex h-screen bg-bg text-text">
             {/* Sidebar - Group List */}
-            <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+            <div className="w-1/3 md:w-1/4 bg-surface border-r border-accent flex flex-col transition-all duration-300">
                 <div className="p-4 border-b border-accent bg-primary text-white shadow-sm flex justify-between items-center">
                     <h2 className="text-lg font-semibold">Group Chats</h2>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-white text-primary px-3 py-1 rounded-lg text-sm font-medium hover:bg-white/90 transition-colors"
+                        className="bg-surface text-primary px-3 py-1 rounded-lg text-sm font-medium hover:bg-surface/90 transition-colors"
                     >
                         + New
                     </button>
@@ -122,7 +122,7 @@ const GroupChatPage = () => {
                         {/* Department Group */}
                         {departmentGroup && (
                             <>
-                                <li className="px-4 py-2 bg-gray-100 border-b border-accent">
+                                <li className="px-4 py-2 bg-accent border-b border-accent">
                                     <p className="text-xs font-semibold text-text/60 uppercase tracking-wide">Department</p>
                                 </li>
                                 <li
@@ -149,7 +149,7 @@ const GroupChatPage = () => {
                         {/* Custom Groups */}
                         {groups.length > 0 && (
                             <>
-                                <li className="px-4 py-2 bg-gray-100 border-b border-accent mt-2">
+                                <li className="px-4 py-2 bg-accent border-b border-accent mt-2">
                                     <p className="text-xs font-semibold text-text/60 uppercase tracking-wide">Custom Groups</p>
                                 </li>
                                 {groups.map((group) => (

@@ -17,7 +17,7 @@ const MainLayout: React.FC = () => {
       <Sidebar />
       <div className="flex-1 flex flex-col">
         <Navbar />
-        <main className="p-4 bg-gray-50 flex-1 overflow-y-auto">
+        <main className="p-4 bg-bg flex-1 overflow-y-auto">
           <Outlet />
         </main>
       </div>

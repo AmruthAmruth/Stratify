@@ -46,7 +46,7 @@ const EmployeeAllocationCard: React.FC<Props> = ({ employee, onManageAllocation,
     };
 
     return (
-        <div className="bg-white rounded-lg border border-accent p-5 hover:shadow-md transition-all duration-200">
+        <div className="bg-surface rounded-lg border border-accent p-5 hover:shadow-md transition-all duration-200">
             {/* Employee Info */}
             <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">

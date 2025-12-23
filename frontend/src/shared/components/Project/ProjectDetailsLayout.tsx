@@ -262,7 +262,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
   // RENDER
   // ────────────────────────────────
   return (
-    <div className="space-y-6 p-4 text-black">
+    <div className="space-y-6 p-4 text-text">
       {/* --- HEADER --- */}
       <ProjectHeader
         name={project.name}

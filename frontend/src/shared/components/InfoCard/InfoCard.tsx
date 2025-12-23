@@ -22,7 +22,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
 
       {/* Main card */}
       <div className={`
-        relative bg-white backdrop-blur-sm
+        relative bg-surface backdrop-blur-sm
         p-6 rounded-2xl border border-gray-100/60
         shadow-sm hover:shadow-lg hover:shadow-gray-200/50
         transition-all duration-300 ease-out
@@ -50,7 +50,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
           `}>
             <div className="relative z-10 flex items-center justify-center">
               {React.cloneElement(icon as React.ReactElement<{ className?: string }>, {
-                className: "w-5 h-5 text-gray-700 group-hover:text-gray-900 transition-colors duration-300"
+                className: "w-5 h-5 text-text group-hover:text-heading transition-colors duration-300"
               })}
             </div>
 
@@ -63,7 +63,7 @@ const InfoCard: React.FC<InfoCardProps> = ({
             <p className="text-xs font-semibold text-gray-500 mb-2 uppercase tracking-wider letter-spacing-wide group-hover:text-gray-600 transition-colors duration-300">
               {label}
             </p>
-            <p className="text-lg font-bold text-gray-900 group-hover:text-gray-800 transition-colors duration-300 truncate">
+            <p className="text-lg font-bold text-heading group-hover:text-heading transition-colors duration-300 truncate">
               {value}
             </p>
 

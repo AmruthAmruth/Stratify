@@ -45,7 +45,7 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
   return (
     <div className="relative">
       {/* Main Container */}
-      <div className="bg-bg border border-accent rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 mb-6 relative overflow-hidden">
+      <div className="bg-bg border-2 border-primary rounded-2xl shadow-sm hover:shadow-md transition-all duration-300 p-6 mb-6 relative overflow-hidden">
 
         {/* Header Section */}
         <div className="flex items-center justify-between mb-5 relative z-10">
@@ -166,8 +166,8 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
                     <button
                       onClick={() => setSortOrder && setSortOrder("asc")}
                       className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${sortOrder === "asc"
-                          ? "bg-primary text-white"
-                          : "text-text hover:bg-accent"
+                        ? "bg-primary text-white"
+                        : "text-text hover:bg-accent"
                         }`}
                     >
                       ↑
@@ -175,8 +175,8 @@ const TableFilterBar: React.FC<TableFilterBarProps> = ({
                     <button
                       onClick={() => setSortOrder && setSortOrder("desc")}
                       className={`flex-1 px-3 py-3 text-xs font-medium transition-all duration-200 flex items-center justify-center ${sortOrder === "desc"
-                          ? "bg-primary text-white"
-                          : "text-text hover:bg-accent"
+                        ? "bg-primary text-white"
+                        : "text-text hover:bg-accent"
                         }`}
                     >
                       ↓

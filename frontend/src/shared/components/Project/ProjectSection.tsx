@@ -21,7 +21,7 @@ const ProjectSection: React.FC<Props> = ({
 
   return (
     <div
-      className={`border rounded-xl p-4 shadow-sm bg-white ${className}`}
+      className={`border rounded-xl p-4 shadow-sm bg-surface ${className}`}
       aria-labelledby={`project-section-${title.replace(/\s+/g, "-")}`}
     >
       <button
