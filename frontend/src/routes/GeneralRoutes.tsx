@@ -6,12 +6,10 @@ import SuperAdminLogin from "@/features/auth/SuperAdminLogin";
 import ForgotPassword from "../features/auth/ForgotPassword";
 import AboutPage from "@/features/general/About";
 import ContactPage from "@/features/general/Contact";
+import PricingPage from "@/features/general/Pricing";
 import OTPPage from "@/shared/OTP/OTPPage";
 import ResetPassword from "@/features/auth/ResetPassword";
-import CompanyProfilePage from "@/features/superAdmin/CompanyProfilePage";
-import CompanyPendingApproval from "@/features/general/CompanyPendingApproval";
-import SubscriptionPlans from "@/features/general/SubscriptionPurchase";
-import ProjectDetails from "@/features/general/ProjectDetails";
+
 const generalRoutes: RouteObject[] = [
   {
     path: "/",
@@ -54,21 +52,10 @@ const generalRoutes: RouteObject[] = [
     element: <ContactPage />,
   },
   {
-    path: "/company-profile",
-    element: <CompanyProfilePage />,
-  },
-  {
-    path: "/company-pending-approval",
-    element: <CompanyPendingApproval />,
-  },
-  {
-    path: "/subscription-purchase/:companyId",
-    element: <SubscriptionPlans />,
-  },
-  {
-    path: "/project-details",
-    element: <ProjectDetails />,
+    path: "/pricing",
+    element: <PricingPage />,
   },
 ];
 
 export default generalRoutes;
+

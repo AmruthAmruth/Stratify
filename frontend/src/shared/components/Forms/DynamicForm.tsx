@@ -1,4 +1,3 @@
-// components/Forms/DynamicForm.tsx
 import React, {
   useState,
   useEffect,
@@ -9,6 +8,7 @@ import React, {
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { z } from "zod";
+import { motion, AnimatePresence } from "framer-motion";
 
 /* ---------- Types ---------- */
 
@@ -21,6 +21,7 @@ interface Field {
   name: string;
   label: string;
   type: string;
+  placeholder?: string;
   multiple?: boolean;
   options?: (string | SelectOption)[];
 }
@@ -33,6 +34,26 @@ interface AuthFormProps {
   initialValues?: Record<string, unknown>;
   disabled?: boolean;
 }
+
+/* ---------- Animations ---------- */
+
+const formVariants = {
+  hidden: { opacity: 0, y: 30 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.4, ease: "easeOut" },
+  },
+};
+
+const fieldVariants = {
+  hidden: { opacity: 0, y: 15 },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: { delay: i * 0.05 },
+  }),
+};
 
 /* ---------- Component ---------- */
 
@@ -51,23 +72,19 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
     const [formData, setFormData] = useState<Record<string, unknown>>({});
     const [errors, setErrors] = useState<Record<string, string>>({});
 
-    /* ---------- Initialize Form ---------- */
-
     const initializeFormData = useCallback(() => {
       const initialData: Record<string, unknown> = {};
 
       fields.forEach((field) => {
-        if (field.type === "file") {
-          initialData[field.name] = null;
-        } else if (field.type === "date") {
-          const value = initialValues?.[field.name];
+        if (field.type === "file") initialData[field.name] = null;
+        else if (field.type === "date")
           initialData[field.name] =
-            typeof value === "string" ? value : null;
-        } else if (field.type === "select" && field.multiple) {
+            typeof initialValues?.[field.name] === "string"
+              ? initialValues?.[field.name]
+              : null;
+        else if (field.type === "select" && field.multiple)
           initialData[field.name] = initialValues?.[field.name] ?? [];
-        } else {
-          initialData[field.name] = initialValues?.[field.name] ?? "";
-        }
+        else initialData[field.name] = initialValues?.[field.name] ?? "";
       });
 
       setFormData(initialData);
@@ -78,39 +95,19 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       initializeFormData();
     }, [initializeFormData]);
 
-    useImperativeHandle(
-      ref,
-      () => ({
-        resetForm: initializeFormData,
-      }),
-      [initializeFormData]
-    );
+    useImperativeHandle(ref, () => ({
+      resetForm: initializeFormData,
+    }));
 
     /* ---------- Handlers ---------- */
 
     const handleChange = (
-      e: React.ChangeEvent<
-        HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
-      >
+      e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
     ) => {
-      const { name, type, value } = e.target;
-      const input = e.target as HTMLInputElement;
-
-      if (type === "file" && input.files?.[0]) {
-        const file = input.files[0];
-        setFormData((prev) => ({ ...prev, [name]: file }));
-
-        const reader = new FileReader();
-        reader.onloadend = () => {
-          // Preview is generated but not used in the component
-        };
-        reader.readAsDataURL(file);
-        return;
-      }
-
+      const { name, value, type } = e.target;
       setFormData((prev) => ({
         ...prev,
-        [name]: type === "number" ? Number(value) || null : value,
+        [name]: type === "number" ? Number(value) || "" : value,
       }));
     };
 
@@ -128,9 +125,11 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
 
     const validateField = (name: string) => {
       const result = validationSchema.safeParse(formData);
-
       if (!result.success) {
-        const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
+        const formatted = result.error.format() as Record<
+          string,
+          { _errors?: string[] }
+        >;
         setErrors((prev) => ({
           ...prev,
           [name]: formatted[name]?._errors?.[0] ?? "",
@@ -142,37 +141,49 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
 
     const handleSubmit = (e: React.FormEvent) => {
       e.preventDefault();
-
       const result = validationSchema.safeParse(formData);
+
       if (result.success) {
         onSubmit(formData);
         return;
       }
 
-      // TypeScript now knows result.success is false, so error exists
-      const formatted = result.error.format() as Record<string, { _errors?: string[] }>;
-      const fieldErrors: Record<string, string> = {};
+      const formatted = result.error.format() as Record<
+        string,
+        { _errors?: string[] }
+      >;
 
-      fields.forEach((field) => {
-        fieldErrors[field.name] =
-          formatted[field.name]?._errors?.[0] ?? "";
+      const newErrors: Record<string, string> = {};
+      fields.forEach((f) => {
+        newErrors[f.name] = formatted[f.name]?._errors?.[0] ?? "";
       });
-
-      setErrors(fieldErrors);
+      setErrors(newErrors);
     };
 
     /* ---------- Render ---------- */
 
     return (
-      <form
+      <motion.form
+        variants={formVariants}
+        initial="hidden"
+        animate="visible"
         onSubmit={handleSubmit}
-        className="shadow-lg rounded-xl p-8 space-y-6 max-w-4xl mx-auto"
-        style={{ backgroundColor: "#fbfbfb" }}
+        className="max-w-4xl mx-auto rounded-2xl bg-white p-8 space-y-6
+                   shadow-lg border border-gray-200"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {fields.map((field) => (
-            <div key={field.name} className="flex flex-col">
-              <label className="font-medium mb-2">{field.label}</label>
+          {fields.map((field, i) => (
+            <motion.div
+              key={field.name}
+              custom={i}
+              variants={fieldVariants}
+              initial="hidden"
+              animate="visible"
+              className="flex flex-col"
+            >
+              <label className="mb-2 text-sm font-medium text-gray-700">
+                {field.label}
+              </label>
 
               {field.type === "select" && field.multiple ? (
                 <div className="space-y-2">
@@ -185,13 +196,17 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                       );
 
                     return (
-                      <label key={value} className="flex items-center gap-2">
+                      <label
+                        key={value}
+                        className="flex items-center gap-2 text-sm text-gray-700"
+                      >
                         <input
                           type="checkbox"
                           checked={selected}
                           onChange={() =>
                             handleMultiSelectChange(field.name, value)
                           }
+                          className="h-4 w-4 bg-white accent-emerald-600"
                         />
                         {label}
                       </label>
@@ -211,37 +226,66 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                       [field.name]: date?.toISOString() ?? null,
                     }))
                   }
+                  placeholderText={field.placeholder}
                   onBlur={() => validateField(field.name)}
-                  className="border px-3 py-2 rounded"
+                  className="w-full rounded-lg border border-gray-300
+                             bg-white text-black px-3 py-2
+                             placeholder-gray-400
+                             focus:outline-none focus:ring-2
+                             focus:ring-emerald-500
+                             focus:border-emerald-500
+                             transition-all duration-200"
                 />
               ) : (
                 <input
                   type={field.type}
                   name={field.name}
                   value={(formData[field.name] as string) || ""}
+                  placeholder={field.placeholder}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
-                  className="border px-3 py-2 rounded"
+                  className="rounded-lg border border-gray-300
+                             bg-white text-black px-3 py-2
+                             placeholder-gray-400
+                             focus:outline-none focus:ring-2
+                             focus:ring-emerald-500
+                             focus:border-emerald-500
+                             transition-all duration-200
+                             focus:scale-[1.01]"
                 />
               )}
 
-              {errors[field.name] && (
-                <p className="text-red-500 text-xs mt-1">
-                  {errors[field.name]}
-                </p>
-              )}
-            </div>
+              <AnimatePresence>
+                {errors[field.name] && (
+                  <motion.p
+                    initial={{ opacity: 0, y: -4 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0 }}
+                    className="mt-1 text-xs text-red-500"
+                  >
+                    {errors[field.name]}
+                  </motion.p>
+                )}
+              </AnimatePresence>
+            </motion.div>
           ))}
         </div>
 
-        <button
+        <motion.button
           type="submit"
           disabled={disabled}
-          className="w-full py-3 rounded text-white bg-[#009063]"
+          whileHover={{ scale: 1.02 }}
+          whileTap={{ scale: 0.98 }}
+          className="w-full rounded-lg bg-emerald-600 py-3
+                     text-white font-medium
+                     hover:bg-emerald-700
+                     transition
+                     disabled:opacity-50
+                     disabled:cursor-not-allowed"
         >
           {buttonText}
-        </button>
-      </form>
+        </motion.button>
+      </motion.form>
     );
   }
 );

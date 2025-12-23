@@ -1,12 +1,11 @@
 "use client"
 
 import { useState } from "react"
-import { Menu, X, ChevronDown } from "lucide-react"
+import { Menu, X } from "lucide-react"
 import { Link } from "react-router-dom"
 
 export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
-  const [isDropdownOpen, setIsDropdownOpen] = useState(false)
 
   return (
     <div className="fixed top-0 left-0 right-0 z-50 bg-[#fbfbfb]/95 backdrop-blur-md border-b border-[#dfdcef] shadow-lg p-5">
@@ -31,51 +30,6 @@ export const Navbar = () => {
             >
               Home
             </Link>
-
-            <div className="relative">
-              <button
-                className="flex items-center space-x-1 px-4 py-2 text-[#3b3b3b] hover:text-[#009063] font-medium transition-all duration-200 rounded-lg hover:bg-[#dfdcef]/30"
-                onMouseEnter={() => setIsDropdownOpen(true)}
-                onMouseLeave={() => setIsDropdownOpen(false)}
-              >
-                <span>Solutions</span>
-                <ChevronDown
-                  className={`w-4 h-4 transition-transform duration-200 ${
-                    isDropdownOpen ? "rotate-180" : ""
-                  }`}
-                />
-              </button>
-              {isDropdownOpen && (
-                <div
-                  className="absolute top-full left-0 mt-2 w-56 bg-[#fbfbfb]/95 backdrop-blur-md rounded-xl shadow-xl border border-[#dfdcef] py-2 z-50 animate-in slide-in-from-top-2 duration-200"
-                  onMouseEnter={() => setIsDropdownOpen(true)}
-                  onMouseLeave={() => setIsDropdownOpen(false)}
-                >
-                  <Link
-                    to="/analytics"
-                    className="block px-4 py-3 text-[#3b3b3b] hover:bg-[#dfdcef]/50 hover:text-[#009063] transition-all duration-200 mx-2 rounded-lg"
-                  >
-                    <div className="font-medium">Analytics</div>
-                    <div className="text-sm text-gray-500">Data insights & reports</div>
-                  </Link>
-                  <Link
-                    to="/automation"
-                    className="block px-4 py-3 text-[#3b3b3b] hover:bg-[#dfdcef]/50 hover:text-[#009063] transition-all duration-200 mx-2 rounded-lg"
-                  >
-                    <div className="font-medium">Automation</div>
-                    <div className="text-sm text-gray-500">Streamline workflows</div>
-                  </Link>
-                  <Link
-                    to="/integration"
-                    className="block px-4 py-3 text-[#3b3b3b] hover:bg-[#dfdcef]/50 hover:text-[#009063] transition-all duration-200 mx-2 rounded-lg"
-                  >
-                    <div className="font-medium">Integration</div>
-                    <div className="text-sm text-gray-500">Connect your tools</div>
-                  </Link>
-                </div>
-              )}
-            </div>
-
             <Link
               to="/pricing"
               className="px-4 py-2 text-[#3b3b3b] hover:text-[#009063] font-medium transition-all duration-200 rounded-lg hover:bg-[#dfdcef]/30"
@@ -105,7 +59,7 @@ export const Navbar = () => {
               Sign In
             </Link>
             <Link
-              to="/get-started"
+              to="/register"
               className="relative px-6 py-2.5 bg-[#009063] text-white rounded-lg font-medium shadow-md hover:shadow-lg transform hover:scale-105 transition-all duration-300 overflow-hidden group"
             >
               <span className="relative z-10">Get Started</span>
@@ -145,13 +99,6 @@ export const Navbar = () => {
               Home
             </Link>
             <Link
-              to="/solutions"
-              className="block px-4 py-3 text-[#3b3b3b] hover:text-[#009063] hover:bg-[#dfdcef]/50 font-medium rounded-lg transition-all duration-200"
-              onClick={() => setIsOpen(false)}
-            >
-              Solutions
-            </Link>
-            <Link
               to="/pricing"
               className="block px-4 py-3 text-[#3b3b3b] hover:text-[#009063] hover:bg-[#dfdcef]/50 font-medium rounded-lg transition-all duration-200"
               onClick={() => setIsOpen(false)}
@@ -175,14 +122,14 @@ export const Navbar = () => {
 
             <div className="pt-4 mt-4 border-t border-[#dfdcef] space-y-3">
               <Link
-                to="/signin"
+                to="/login"
                 className="block px-4 py-3 text-[#3b3b3b] hover:text-[#009063] hover:bg-[#dfdcef]/50 font-medium rounded-lg transition-all duration-200"
                 onClick={() => setIsOpen(false)}
               >
                 Sign In
               </Link>
               <Link
-                to="/get-started"
+                to="/register"
                 className="block w-full bg-[#009063] text-white px-6 py-3 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-300 text-center"
                 onClick={() => setIsOpen(false)}
               >
