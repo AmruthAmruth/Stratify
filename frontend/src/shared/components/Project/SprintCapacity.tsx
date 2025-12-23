@@ -67,10 +67,10 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
 
     if (loading) {
         return (
-            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6 animate-pulse">
-                <div className="h-6 bg-[#dfdcef] rounded w-1/3 mb-4"></div>
-                <div className="h-4 bg-[#fbfbfb] rounded w-full mb-2"></div>
-                <div className="h-4 bg-[#fbfbfb] rounded w-2/3"></div>
+            <div className="bg-white rounded-lg shadow-md border border-accent p-6 animate-pulse">
+                <div className="h-6 bg-accent rounded w-1/3 mb-4"></div>
+                <div className="h-4 bg-bg rounded w-full mb-2"></div>
+                <div className="h-4 bg-bg rounded w-2/3"></div>
             </div>
         );
     }
@@ -92,7 +92,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
 
     // Determine color based on capacity
     const getCapacityColor = (percentage: number) => {
-        if (percentage >= 90) return { bg: "bg-green-50", border: "border-green-300", text: "text-green-700", badge: "bg-green-500" };
+        if (percentage >= 90) return { bg: "bg-green-50", border: "border-green-300", text: "text-primaryHover", badge: "bg-primary" };
         if (percentage >= 70) return { bg: "bg-yellow-50", border: "border-yellow-300", text: "text-yellow-700", badge: "bg-yellow-500" };
         return { bg: "bg-red-50", border: "border-red-300", text: "text-red-700", badge: "bg-red-500" };
     };
@@ -100,7 +100,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
     const colorScheme = getCapacityColor(percent);
 
     const getEmployeeColor = (percentage: number) => {
-        if (percentage >= 90) return "text-green-700";
+        if (percentage >= 90) return "text-primaryHover";
         if (percentage >= 70) return "text-yellow-700";
         return "text-red-700";
     };
@@ -111,7 +111,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
         >
             {/* Header */}
             <div className="flex items-center justify-between mb-4">
-                <h3 className="text-xl font-bold text-[#3b3b3b] flex items-center gap-2">
+                <h3 className="text-xl font-bold text-text flex items-center gap-2">
                     <span className={`inline-block w-2 h-2 rounded-full ${colorScheme.badge}`}></span>
                     📊 Sprint Capacity
                 </h3>
@@ -119,23 +119,23 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
                     <span className={`text-2xl font-bold ${colorScheme.text}`}>
                         {Math.round(percent)}%
                     </span>
-                    <span className="text-sm text-[#3b3b3b]/70">Available</span>
+                    <span className="text-sm text-text/70">Available</span>
                 </div>
             </div>
 
             {/* Capacity Summary */}
-            <div className="bg-white/50 rounded-lg p-4 mb-4 border border-[#dfdcef]/30">
+            <div className="bg-white/50 rounded-lg p-4 mb-4 border border-accent/30">
                 <div className="grid grid-cols-2 gap-4">
                     <div>
-                        <p className="text-xs text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                        <p className="text-xs text-text/60 uppercase tracking-wide mb-1">
                             Available Hours
                         </p>
-                        <p className="text-lg font-bold text-[#3b3b3b]">
+                        <p className="text-lg font-bold text-text">
                             {teamSummary.availableCapacity} / {teamSummary.totalCapacity}
                         </p>
                     </div>
                     <div>
-                        <p className="text-xs text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                        <p className="text-xs text-text/60 uppercase tracking-wide mb-1">
                             Leave Loss
                         </p>
                         <p className="text-lg font-bold text-red-600">
@@ -148,25 +148,25 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
             {/* Employee List */}
             {employees.length > 0 ? (
                 <div className="space-y-3">
-                    <p className="text-sm font-semibold text-[#3b3b3b]/80 mb-2">
+                    <p className="text-sm font-semibold text-text/80 mb-2">
                         Team Members:
                     </p>
                     {employees.map((employee) => (
                         <div
                             key={employee.employeeId}
-                            className="bg-white rounded-lg border border-[#dfdcef]/50 p-3 hover:border-[#009063]/30 transition-colors duration-200"
+                            className="bg-white rounded-lg border border-accent/50 p-3 hover:border-primary/30 transition-colors duration-200"
                         >
                             <div className="flex items-center justify-between">
                                 <div className="flex-1">
-                                    <p className="font-semibold text-[#3b3b3b]">
+                                    <p className="font-semibold text-text">
                                         👤 {employee.name}
                                     </p>
-                                    <p className="text-xs text-[#3b3b3b]/60">
+                                    <p className="text-xs text-text/60">
                                         {employee.position}
                                     </p>
                                 </div>
                                 <div className="text-right">
-                                    <p className="text-sm font-semibold text-[#3b3b3b]">
+                                    <p className="text-sm font-semibold text-text">
                                         {employee.availableHours}/{employee.totalHours}h
                                     </p>
                                     <p
@@ -181,12 +181,12 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
 
                             {/* Show leave details if employee has leaves */}
                             {employee.leaves && employee.leaves.length > 0 && (
-                                <div className="mt-2 pt-2 border-t border-[#dfdcef]/30">
-                                    <p className="text-xs text-[#3b3b3b]/70 mb-1">
+                                <div className="mt-2 pt-2 border-t border-accent/30">
+                                    <p className="text-xs text-text/70 mb-1">
                                         🏖️ On leave ({employee.leaveHours}h):
                                     </p>
                                     {employee.leaves.map((leave, idx) => (
-                                        <p key={idx} className="text-xs text-[#3b3b3b]/60 ml-4">
+                                        <p key={idx} className="text-xs text-text/60 ml-4">
                                             • {new Date(leave.startDate).toLocaleDateString()} -{" "}
                                             {new Date(leave.endDate).toLocaleDateString()} (
                                             {leave.type})
@@ -198,7 +198,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
                     ))}
                 </div>
             ) : (
-                <p className="text-sm text-[#3b3b3b]/60 text-center py-4">
+                <p className="text-sm text-text/60 text-center py-4">
                     No team members assigned to this sprint
                 </p>
             )}

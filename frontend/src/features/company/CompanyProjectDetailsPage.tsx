@@ -32,10 +32,10 @@ const CompanyProjectDetailsPage = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fbfbfb' }}>
+            <div className="flex items-center justify-center min-h-screen bg-bg">
                 <div className="text-center">
-                    <div className="w-16 h-16 border-4 border-t-[#009063] border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
-                    <p style={{ color: '#6b6b6b' }}>Loading project details...</p>
+                    <div className="w-16 h-16 border-4 border-t-primary border-gray-200 rounded-full animate-spin mx-auto mb-4"></div>
+                    <p className="text-muted">Loading project details...</p>
                 </div>
             </div>
         );
@@ -43,14 +43,13 @@ const CompanyProjectDetailsPage = () => {
 
     if (!project) {
         return (
-            <div className="flex items-center justify-center min-h-screen" style={{ backgroundColor: '#fbfbfb' }}>
+            <div className="flex items-center justify-center min-h-screen bg-bg">
                 <div className="text-center">
-                    <h2 className="text-2xl font-semibold mb-2" style={{ color: '#3b3b3b' }}>Project Not Found</h2>
-                    <p className="mb-4" style={{ color: '#6b6b6b' }}>The project you're looking for doesn't exist.</p>
+                    <h2 className="text-2xl font-semibold mb-2 text-text">Project Not Found</h2>
+                    <p className="mb-4 text-muted">The project you're looking for doesn't exist.</p>
                     <button
                         onClick={() => navigate('/projects')}
-                        className="px-6 py-2 rounded-lg font-medium"
-                        style={{ backgroundColor: '#009063', color: 'white' }}
+                        className="px-6 py-2 rounded-lg font-medium bg-primary text-white hover:bg-primaryHover transition-colors"
                     >
                         Back to Projects
                     </button>
@@ -60,12 +59,11 @@ const CompanyProjectDetailsPage = () => {
     }
 
     return (
-        <div className="min-h-screen p-6" style={{ backgroundColor: '#fbfbfb' }}>
+        <div className="min-h-screen p-6 bg-bg">
             {/* Back Button */}
             <button
                 onClick={() => navigate('/projects')}
-                className="flex items-center gap-2 mb-4 px-4 py-2 rounded-lg hover:bg-white transition-colors"
-                style={{ color: '#009063' }}
+                className="flex items-center gap-2 mb-4 px-4 py-2 rounded-lg hover:bg-white transition-colors text-primary"
             >
                 <ArrowLeft className="w-4 h-4" />
                 <span className="font-medium">Back to Projects</span>

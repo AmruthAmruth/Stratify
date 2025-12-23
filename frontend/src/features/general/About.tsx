@@ -96,7 +96,7 @@ const AboutPage = () => {
       icon: Shield,
       title: "ISO 27001 Certified",
       organization: "Security & Compliance",
-      gradient: "from-green-400 to-emerald-500",
+      gradient: "from-primary to-primary",
     },
     {
       icon: Star,
@@ -222,7 +222,7 @@ const AboutPage = () => {
             <span className="text-sm font-semibold text-gray-800 tracking-wide">
               The Future of Company Management
             </span>
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
+            <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
           </div>
 
           {/* Main Heading */}
@@ -446,7 +446,7 @@ const AboutPage = () => {
                       <h3 className="text-2xl font-bold text-gray-900 mb-4">{feature.title}</h3>
                       <p className="text-gray-600 leading-relaxed mb-6">{feature.description}</p>
                       <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full">
-                        <CheckCircle className="w-4 h-4 text-green-600" />
+                        <CheckCircle className="w-4 h-4 text-primary" />
                         <span className="text-sm font-semibold text-gray-700">{feature.stats}</span>
                       </div>
                     </div>
@@ -463,7 +463,7 @@ const AboutPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-gray-900 mb-6">
               Our{" "}
-              <span className="bg-gradient-to-r from-green-600 to-blue-600 bg-clip-text text-transparent">Culture</span>
+              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Culture</span>
             </h2>
             <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
               We believe that great products come from great people working in an environment that fosters creativity

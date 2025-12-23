@@ -166,10 +166,10 @@ const Profile = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+            <div className="flex items-center justify-center min-h-screen bg-bg">
                 <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
-                    <p className="mt-4 text-[#3b3b3b] font-medium">Loading Profile...</p>
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                    <p className="mt-4 text-text font-medium">Loading Profile...</p>
                 </div>
             </div>
         );
@@ -177,27 +177,27 @@ const Profile = () => {
 
     if (!profile) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
-                <p className="text-[#3b3b3b]">Profile not found</p>
+            <div className="flex items-center justify-center min-h-screen bg-bg">
+                <p className="text-text">Profile not found</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#fbfbfb] p-6">
+        <div className="min-h-screen bg-bg p-6">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2">My Profile</h1>
-                <p className="text-[#3b3b3b]/70">Manage your personal information and settings</p>
+                <h1 className="text-4xl font-bold text-text mb-2">My Profile</h1>
+                <p className="text-text/70">Manage your personal information and settings</p>
             </div>
 
             {/* Tabs */}
-            <div className="flex gap-4 mb-6 border-b border-[#dfdcef]">
+            <div className="flex gap-4 mb-6 border-b border-accent">
                 <button
                     onClick={() => setActiveTab('view')}
                     className={`px-6 py-3 font-medium transition-all ${activeTab === 'view'
-                        ? 'text-[#009063] border-b-2 border-[#009063]'
-                        : 'text-[#3b3b3b]/60 hover:text-[#3b3b3b]'
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-text/60 hover:text-text'
                         }`}
                 >
                     View Profile
@@ -205,8 +205,8 @@ const Profile = () => {
                 <button
                     onClick={() => setActiveTab('edit')}
                     className={`px-6 py-3 font-medium transition-all ${activeTab === 'edit'
-                        ? 'text-[#009063] border-b-2 border-[#009063]'
-                        : 'text-[#3b3b3b]/60 hover:text-[#3b3b3b]'
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-text/60 hover:text-text'
                         }`}
                 >
                     Edit Profile
@@ -214,8 +214,8 @@ const Profile = () => {
                 <button
                     onClick={() => setActiveTab('password')}
                     className={`px-6 py-3 font-medium transition-all ${activeTab === 'password'
-                        ? 'text-[#009063] border-b-2 border-[#009063]'
-                        : 'text-[#3b3b3b]/60 hover:text-[#3b3b3b]'
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-text/60 hover:text-text'
                         }`}
                 >
                     Change Password
@@ -227,11 +227,11 @@ const Profile = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     {/* Profile Card */}
                     <div className="lg:col-span-1">
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-8 shadow-sm">
+                        <div className="bg-white border border-accent rounded-2xl p-8 shadow-sm">
                             <div className="flex flex-col items-center">
                                 {/* Avatar */}
                                 <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-[#009063] to-[#007a52] flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                                         {imagePreview ? (
                                             <img src={imagePreview} alt={profile.name} className="w-full h-full object-cover" />
                                         ) : (
@@ -240,7 +240,7 @@ const Profile = () => {
                                     </div>
                                     <label
                                         htmlFor="avatar-upload"
-                                        className="absolute bottom-0 right-0 bg-[#009063] text-white p-2 rounded-full cursor-pointer hover:bg-[#007a52] transition shadow-lg"
+                                        className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primaryHover transition shadow-lg"
                                     >
                                         <Camera className="w-5 h-5" />
                                         <input
@@ -260,22 +260,22 @@ const Profile = () => {
                                 </div>
 
                                 {/* Name and Role */}
-                                <h2 className="mt-6 text-2xl font-bold text-[#3b3b3b]">{profile.name}</h2>
-                                <p className="text-[#3b3b3b]/70 font-medium mt-1">{profile.role || 'Manager'}</p>
+                                <h2 className="mt-6 text-2xl font-bold text-text">{profile.name}</h2>
+                                <p className="text-text/70 font-medium mt-1">{profile.role || 'Manager'}</p>
                                 {profile.employeeId && (
-                                    <p className="text-sm text-[#3b3b3b]/50 mt-1">ID: {profile.employeeId}</p>
+                                    <p className="text-sm text-text/50 mt-1">ID: {profile.employeeId}</p>
                                 )}
 
                                 {/* Quick Stats */}
-                                <div className="w-full mt-6 pt-6 border-t border-[#dfdcef]">
+                                <div className="w-full mt-6 pt-6 border-t border-accent">
                                     <div className="grid grid-cols-2 gap-4 text-center">
                                         <div>
-                                            <p className="text-2xl font-bold text-[#009063]">{profile.projectsManaged || 0}</p>
-                                            <p className="text-xs text-[#3b3b3b]/60 mt-1">Projects</p>
+                                            <p className="text-2xl font-bold text-primary">{profile.projectsManaged || 0}</p>
+                                            <p className="text-xs text-text/60 mt-1">Projects</p>
                                         </div>
                                         <div>
-                                            <p className="text-2xl font-bold text-[#009063]">{profile.teamSize || 0}</p>
-                                            <p className="text-xs text-[#3b3b3b]/60 mt-1">Team Members</p>
+                                            <p className="text-2xl font-bold text-primary">{profile.teamSize || 0}</p>
+                                            <p className="text-xs text-text/60 mt-1">Team Members</p>
                                         </div>
                                     </div>
                                 </div>
@@ -286,34 +286,34 @@ const Profile = () => {
                     {/* Information Cards */}
                     <div className="lg:col-span-2 space-y-6">
                         {/* Personal Information */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-xl font-bold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+                                <User className="w-5 h-5 text-primary" />
                                 Personal Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex items-start gap-3">
-                                    <Mail className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                    <Mail className="w-5 h-5 text-text/50 mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Email</p>
-                                        <p className="text-[#3b3b3b] font-medium">{profile.email}</p>
+                                        <p className="text-xs text-text/50 uppercase tracking-wide">Email</p>
+                                        <p className="text-text font-medium">{profile.email}</p>
                                     </div>
                                 </div>
                                 {profile.phone && (
                                     <div className="flex items-start gap-3">
-                                        <Phone className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                        <Phone className="w-5 h-5 text-text/50 mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Phone</p>
-                                            <p className="text-[#3b3b3b] font-medium">{profile.phone}</p>
+                                            <p className="text-xs text-text/50 uppercase tracking-wide">Phone</p>
+                                            <p className="text-text font-medium">{profile.phone}</p>
                                         </div>
                                     </div>
                                 )}
                                 {profile.dateOfBirth && (
                                     <div className="flex items-start gap-3">
-                                        <Calendar className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                        <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Date of Birth</p>
-                                            <p className="text-[#3b3b3b] font-medium">
+                                            <p className="text-xs text-text/50 uppercase tracking-wide">Date of Birth</p>
+                                            <p className="text-text font-medium">
                                                 {new Date(profile.dateOfBirth).toLocaleDateString()}
                                             </p>
                                         </div>
@@ -321,10 +321,10 @@ const Profile = () => {
                                 )}
                                 {profile.address && (
                                     <div className="flex items-start gap-3 md:col-span-2">
-                                        <MapPin className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                        <MapPin className="w-5 h-5 text-text/50 mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Address</p>
-                                            <p className="text-[#3b3b3b] font-medium">{profile.address}</p>
+                                            <p className="text-xs text-text/50 uppercase tracking-wide">Address</p>
+                                            <p className="text-text font-medium">{profile.address}</p>
                                         </div>
                                     </div>
                                 )}
@@ -332,34 +332,34 @@ const Profile = () => {
                         </div>
 
                         {/* Professional Information */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-xl font-bold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <Briefcase className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+                                <Briefcase className="w-5 h-5 text-primary" />
                                 Professional Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 {profile.department && (
                                     <div className="flex items-start gap-3">
-                                        <Building2 className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                        <Building2 className="w-5 h-5 text-text/50 mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Department</p>
-                                            <p className="text-[#3b3b3b] font-medium">{profile.department.name}</p>
+                                            <p className="text-xs text-text/50 uppercase tracking-wide">Department</p>
+                                            <p className="text-text font-medium">{profile.department.name}</p>
                                         </div>
                                     </div>
                                 )}
                                 <div className="flex items-start gap-3">
-                                    <Shield className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                    <Shield className="w-5 h-5 text-text/50 mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Role</p>
-                                        <p className="text-[#3b3b3b] font-medium">{profile.role || 'Manager'}</p>
+                                        <p className="text-xs text-text/50 uppercase tracking-wide">Role</p>
+                                        <p className="text-text font-medium">{profile.role || 'Manager'}</p>
                                     </div>
                                 </div>
                                 {profile.joinDate && (
                                     <div className="flex items-start gap-3">
-                                        <Calendar className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                        <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
                                         <div>
-                                            <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Join Date</p>
-                                            <p className="text-[#3b3b3b] font-medium">
+                                            <p className="text-xs text-text/50 uppercase tracking-wide">Join Date</p>
+                                            <p className="text-text font-medium">
                                                 {new Date(profile.joinDate).toLocaleDateString()}
                                             </p>
                                         </div>
@@ -393,27 +393,27 @@ const Profile = () => {
             {/* Change Password Tab */}
             {activeTab === 'password' && (
                 <div className="max-w-2xl mx-auto">
-                    <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 mb-6">
-                        <h3 className="text-lg font-semibold text-[#3b3b3b] mb-3">Password Requirements:</h3>
-                        <ul className="space-y-2 text-sm text-[#3b3b3b]/70">
+                    <div className="bg-white border border-accent rounded-2xl p-6 mb-6">
+                        <h3 className="text-lg font-semibold text-text mb-3">Password Requirements:</h3>
+                        <ul className="space-y-2 text-sm text-text/70">
                             <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#009063]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                 At least 8 characters long
                             </li>
                             <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#009063]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                 Contains at least one uppercase letter
                             </li>
                             <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#009063]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                 Contains at least one lowercase letter
                             </li>
                             <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#009063]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                 Contains at least one number
                             </li>
                             <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-[#009063]"></span>
+                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
                                 Contains at least one special character
                             </li>
                         </ul>

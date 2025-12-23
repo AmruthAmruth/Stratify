@@ -106,10 +106,10 @@ const SuperAdminProfile = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+            <div className="flex items-center justify-center min-h-screen bg-bg">
                 <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
-                    <p className="mt-4 text-[#3b3b3b] font-medium">Loading Profile...</p>
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                    <p className="mt-4 text-text font-medium">Loading Profile...</p>
                 </div>
             </div>
         );
@@ -117,25 +117,25 @@ const SuperAdminProfile = () => {
 
     if (!profile) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
-                <p className="text-[#3b3b3b]">Profile not found</p>
+            <div className="flex items-center justify-center min-h-screen bg-bg">
+                <p className="text-text">Profile not found</p>
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-[#fbfbfb] p-6">
+        <div className="min-h-screen bg-bg p-6">
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2">My Profile</h1>
-                <p className="text-[#3b3b3b]/70">Manage your personal information</p>
+                <h1 className="text-4xl font-bold text-text mb-2">My Profile</h1>
+                <p className="text-text/70">Manage your personal information</p>
             </div>
 
-            <div className="flex gap-4 mb-6 border-b border-[#dfdcef]">
+            <div className="flex gap-4 mb-6 border-b border-accent">
                 <button
                     onClick={() => setActiveTab('view')}
                     className={`px-6 py-3 font-medium transition-all ${activeTab === 'view'
-                        ? 'text-[#009063] border-b-2 border-[#009063]'
-                        : 'text-[#3b3b3b]/60 hover:text-[#3b3b3b]'
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-text/60 hover:text-text'
                         }`}
                 >
                     View Profile
@@ -143,8 +143,8 @@ const SuperAdminProfile = () => {
                 <button
                     onClick={() => setActiveTab('edit')}
                     className={`px-6 py-3 font-medium transition-all ${activeTab === 'edit'
-                        ? 'text-[#009063] border-b-2 border-[#009063]'
-                        : 'text-[#3b3b3b]/60 hover:text-[#3b3b3b]'
+                        ? 'text-primary border-b-2 border-primary'
+                        : 'text-text/60 hover:text-text'
                         }`}
                 >
                     Edit Profile
@@ -154,10 +154,10 @@ const SuperAdminProfile = () => {
             {activeTab === 'view' && (
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
                     <div className="lg:col-span-1">
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-8 shadow-sm">
+                        <div className="bg-white border border-accent rounded-2xl p-8 shadow-sm">
                             <div className="flex flex-col items-center">
                                 <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-[#009063] to-[#007a52] flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center text-white text-3xl font-bold shadow-lg">
                                         {imagePreview ? (
                                             <img src={imagePreview} alt={profile.name} className="w-full h-full object-cover" />
                                         ) : (
@@ -166,7 +166,7 @@ const SuperAdminProfile = () => {
                                     </div>
                                     <label
                                         htmlFor="avatar-upload"
-                                        className="absolute bottom-0 right-0 bg-[#009063] text-white p-2 rounded-full cursor-pointer hover:bg-[#007a52] transition shadow-lg"
+                                        className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primaryHover transition shadow-lg"
                                     >
                                         <Camera className="w-5 h-5" />
                                         <input
@@ -185,31 +185,31 @@ const SuperAdminProfile = () => {
                                     )}
                                 </div>
 
-                                <h2 className="mt-6 text-2xl font-bold text-[#3b3b3b]">{profile.name || 'Super Admin'}</h2>
-                                <p className="text-[#3b3b3b]/70 font-medium mt-1">Super Administrator</p>
+                                <h2 className="mt-6 text-2xl font-bold text-text">{profile.name || 'Super Admin'}</h2>
+                                <p className="text-text/70 font-medium mt-1">Super Administrator</p>
                             </div>
                         </div>
                     </div>
 
                     <div className="lg:col-span-2 space-y-6">
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-xl font-bold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm">
+                            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+                                <User className="w-5 h-5 text-primary" />
                                 Personal Information
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                 <div className="flex items-start gap-3">
-                                    <Mail className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                    <Mail className="w-5 h-5 text-text/50 mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Email</p>
-                                        <p className="text-[#3b3b3b] font-medium">{profile.email}</p>
+                                        <p className="text-xs text-text/50 uppercase tracking-wide">Email</p>
+                                        <p className="text-text font-medium">{profile.email}</p>
                                     </div>
                                 </div>
                                 <div className="flex items-start gap-3">
-                                    <Shield className="w-5 h-5 text-[#3b3b3b]/50 mt-0.5" />
+                                    <Shield className="w-5 h-5 text-text/50 mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-[#3b3b3b]/50 uppercase tracking-wide">Role</p>
-                                        <p className="text-[#3b3b3b] font-medium">Super Admin</p>
+                                        <p className="text-xs text-text/50 uppercase tracking-wide">Role</p>
+                                        <p className="text-text font-medium">Super Admin</p>
                                     </div>
                                 </div>
                             </div>

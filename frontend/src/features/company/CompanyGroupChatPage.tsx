@@ -71,22 +71,22 @@ const CompanyGroupChatPage = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#fbfbfb] text-[#3b3b3b]">
+        <div className="flex h-screen bg-bg text-text">
             {/* Sidebar - Department Group List */}
-            <div className="w-1/3 md:w-1/4 bg-white border-r border-[#dfdcef] flex flex-col transition-all duration-300">
-                <div className="p-4 border-b border-[#dfdcef] bg-[#009063] text-white shadow-sm">
+            <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+                <div className="p-4 border-b border-accent bg-primary text-white shadow-sm">
                     <h2 className="text-lg font-semibold">Department Groups</h2>
                     <p className="text-sm text-white/80 mt-1">Company Communication</p>
                 </div>
 
                 {loading ? (
-                    <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">
+                    <p className="p-4 text-text/50 text-center animate-pulse">
                         Loading departments...
                     </p>
                 ) : departmentGroups.length === 0 ? (
                     <div className="p-4 text-center">
-                        <p className="text-[#3b3b3b]/50 mb-3">No departments found.</p>
-                        <p className="text-sm text-[#3b3b3b]/40">
+                        <p className="text-text/50 mb-3">No departments found.</p>
+                        <p className="text-sm text-text/40">
                             Create departments to enable group chats.
                         </p>
                     </div>
@@ -96,23 +96,23 @@ const CompanyGroupChatPage = () => {
                             <li
                                 key={group.id}
                                 onClick={() => handleSelectGroup(group)}
-                                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${selectedGroup?.id === group.id
-                                    ? "bg-[#009063]/10 shadow-sm"
+                                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-accent transition-all duration-200 hover:bg-accent/30 ${selectedGroup?.id === group.id
+                                    ? "bg-primary/10 shadow-sm"
                                     : ""
                                     }`}
                             >
                                 {/* Department Avatar */}
-                                <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                                <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                                     {group.name.charAt(0).toUpperCase()}
                                 </div>
 
                                 {/* Department Info */}
                                 <div className="flex-1">
-                                    <p className="font-medium text-[#3b3b3b]">{group.name}</p>
-                                    <p className="text-sm text-[#3b3b3b]/60">
+                                    <p className="font-medium text-text">{group.name}</p>
+                                    <p className="text-sm text-text/60">
                                         {group.members.length} {group.members.length === 1 ? "member" : "members"}
                                     </p>
-                                    <p className="text-xs text-[#3b3b3b]/40 mt-0.5">
+                                    <p className="text-xs text-text/40 mt-0.5">
                                         {group.members.filter(m => m.role === "manager").length} manager
                                         {group.members.filter(m => m.role === "manager").length !== 1 ? "s" : ""}, {" "}
                                         {group.members.filter(m => m.role === "employee").length} employee
@@ -126,7 +126,7 @@ const CompanyGroupChatPage = () => {
             </div>
 
             {/* Chat Section */}
-            <div className="flex-1 flex flex-col bg-[#fbfbfb]">
+            <div className="flex-1 flex flex-col bg-bg">
                 {selectedGroup ? (
                     <div className="flex-1 overflow-hidden">
                         <GroupChatBox
@@ -137,14 +137,14 @@ const CompanyGroupChatPage = () => {
                         />
                     </div>
                 ) : (
-                    <div className="flex flex-1 flex-col items-center justify-center text-[#3b3b3b]/50">
+                    <div className="flex flex-1 flex-col items-center justify-center text-text/50">
                         <div className="text-center max-w-md px-4">
-                            <div className="w-20 h-20 rounded-full bg-[#009063]/10 flex items-center justify-center mx-auto mb-4">
-                                <svg className="w-10 h-10 text-[#009063]" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="w-20 h-20 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                                <svg className="w-10 h-10 text-primary" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
                                 </svg>
                             </div>
-                            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-2">
+                            <h3 className="text-lg font-semibold text-text mb-2">
                                 Select a Department
                             </h3>
                             <p className="text-sm">

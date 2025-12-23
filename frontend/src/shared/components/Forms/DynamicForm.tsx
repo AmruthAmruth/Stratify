@@ -42,7 +42,6 @@ const formVariants = {
   visible: {
     opacity: 1,
     y: 0,
-    transition: { duration: 0.4, ease: "easeOut" },
   },
 };
 
@@ -167,9 +166,10 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
         variants={formVariants}
         initial="hidden"
         animate="visible"
+        transition={{ duration: 0.4 }}
         onSubmit={handleSubmit}
-        className="max-w-4xl mx-auto rounded-2xl bg-white p-8 space-y-6
-                   shadow-lg border border-gray-200"
+        className="max-w-4xl mx-auto rounded-2xl bg-bg p-8 space-y-6
+                   shadow-lg border border-accent"
       >
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {fields.map((field, i) => (
@@ -181,7 +181,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
               animate="visible"
               className="flex flex-col"
             >
-              <label className="mb-2 text-sm font-medium text-gray-700">
+              <label className="mb-2 text-sm font-medium text-text">
                 {field.label}
               </label>
 
@@ -198,7 +198,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                     return (
                       <label
                         key={value}
-                        className="flex items-center gap-2 text-sm text-gray-700"
+                        className="flex items-center gap-2 text-sm text-text"
                       >
                         <input
                           type="checkbox"
@@ -206,7 +206,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                           onChange={() =>
                             handleMultiSelectChange(field.name, value)
                           }
-                          className="h-4 w-4 bg-white accent-emerald-600"
+                          className="h-4 w-4 bg-bg accent-primary"
                         />
                         {label}
                       </label>
@@ -228,12 +228,12 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                   }
                   placeholderText={field.placeholder}
                   onBlur={() => validateField(field.name)}
-                  className="w-full rounded-lg border border-gray-300
-                             bg-white text-black px-3 py-2
-                             placeholder-gray-400
+                  className="w-full rounded-lg border border-accent
+                             bg-bg text-text px-3 py-2
+                             placeholder-muted
                              focus:outline-none focus:ring-2
-                             focus:ring-emerald-500
-                             focus:border-emerald-500
+                             focus:ring-primary
+                             focus:border-primary
                              transition-all duration-200"
                 />
               ) : (
@@ -244,12 +244,12 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                   placeholder={field.placeholder}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
-                  className="rounded-lg border border-gray-300
-                             bg-white text-black px-3 py-2
-                             placeholder-gray-400
+                  className="rounded-lg border border-accent
+                             bg-bg text-text px-3 py-2
+                             placeholder-muted
                              focus:outline-none focus:ring-2
-                             focus:ring-emerald-500
-                             focus:border-emerald-500
+                             focus:ring-primary
+                             focus:border-primary
                              transition-all duration-200
                              focus:scale-[1.01]"
                 />
@@ -276,9 +276,9 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
           disabled={disabled}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          className="w-full rounded-lg bg-emerald-600 py-3
-                     text-white font-medium
-                     hover:bg-emerald-700
+          className="w-full rounded-lg bg-primary py-3
+                     text-bg font-medium
+                     hover:bg-primaryHover
                      transition
                      disabled:opacity-50
                      disabled:cursor-not-allowed"

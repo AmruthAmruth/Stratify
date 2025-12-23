@@ -82,7 +82,7 @@ const ProfilePage: React.FC = () => {
               alt={profile.name || "Employee"}
               className="w-32 h-32 rounded-full object-cover border-4 border-white shadow-md"
             />
-            <div className="absolute bottom-1 right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+            <div className="absolute bottom-1 right-1 w-4 h-4 bg-primary rounded-full border-2 border-white"></div>
             <button className="absolute top-2 right-2 p-2 bg-black/50 rounded-full text-white hover:bg-black/70 transition">
               <Camera className="w-4 h-4" />
             </button>
@@ -98,7 +98,7 @@ const ProfilePage: React.FC = () => {
               <span className="flex items-center px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm font-medium">
                 <Shield className="w-4 h-4 mr-1" /> {profile.role || "N/A"}
               </span>
-              <span className="flex items-center px-3 py-1 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+              <span className="flex items-center px-3 py-1 bg-green-100 text-primaryHover rounded-full text-sm font-medium">
                 <Building className="w-4 h-4 mr-1" /> {profile.departmentName || "N/A"}
               </span>
               <span className="flex items-center px-3 py-1 bg-purple-100 text-purple-700 rounded-full text-sm font-medium">
@@ -122,7 +122,7 @@ const ProfilePage: React.FC = () => {
               </div>
               <div className="text-center p-4 bg-gray-50 rounded-xl shadow-sm">
                 <div className="text-gray-500 text-sm">Status</div>
-                <div className="text-green-600 font-semibold">Active</div>
+                <div className="text-primary font-semibold">Active</div>
               </div>
             </div>
           </div>
@@ -187,7 +187,7 @@ const ProfilePage: React.FC = () => {
 
                   {/* Phone */}
                   <InfoCard
-                    icon={<Phone className="w-6 h-6 text-green-600" />}
+                    icon={<Phone className="w-6 h-6 text-primary" />}
                     label="Phone Number"
                     value={profile.phone}
                     bgColor="bg-green-100"
@@ -214,11 +214,11 @@ const ProfilePage: React.FC = () => {
 
                   {/* Department */}
                   <InfoCard
-                    icon={<Building className="w-6 h-6 text-emerald-600" />}
+                    icon={<Building className="w-6 h-6 text-primary" />}
                     label="Department"
                     value={profile.departmentName || "N/A"}
-                    bgColor="bg-emerald-100"
-                    hoverColor="group-hover:bg-emerald-200"
+                    bgColor="bg-primary/10"
+                    hoverColor="group-hover:bg-primary/20"
                   />
 
                   {/* DOB */}
@@ -264,7 +264,7 @@ const ProfilePage: React.FC = () => {
             {activeTab === "performance" && (
               <div className="text-center py-12">
                 <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <BarChart3 className="w-12 h-12 text-green-600" />
+                  <BarChart3 className="w-12 h-12 text-primary" />
                 </div>
                 <h3 className="text-xl font-bold text-gray-900 mb-2">Performance & Analytics</h3>
                 <p className="text-gray-600 mb-6">

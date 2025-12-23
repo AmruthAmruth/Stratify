@@ -87,15 +87,15 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#fbfbfb]">
+    <div className="min-h-screen flex flex-col bg-bg">
       <div className="flex flex-1 flex-col lg:flex-row pt-20">
         {/* Left Side */}
-        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#009063] to-[#3b3b3b] text-white flex-col justify-center items-center p-16 text-left">
+        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-primary to-text text-white flex-col justify-center items-center p-16 text-left">
           <Users className="w-20 h-20 mb-6 text-white" />
           <h1 className="text-5xl font-bold mb-4 leading-snug">
             {context === "register" ? "Verify Your Account" : "Reset Your Password"}
           </h1>
-          <p className="text-lg text-[#dfdcef] max-w-md">
+          <p className="text-lg text-accent max-w-md">
             Enter the 6-digit code sent to your email to{" "}
             {context === "register" ? "activate your account" : "reset your password"}.
           </p>
@@ -103,14 +103,14 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
 
         {/* Right Side */}
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
-          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-[#dfdcef]">
+          <div className="bg-white shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-accent">
             <div className="flex justify-center mb-6">
-              <span className="bg-[#dfdcef] text-[#3b3b3b] px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
+              <span className="bg-accent text-text px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
                 {context === "register" ? "Account Verification" : "Password Reset Verification"}
               </span>
             </div>
 
-            <h2 className="text-3xl md:text-4xl font-bold text-[#3b3b3b] text-center mb-3">
+            <h2 className="text-3xl md:text-4xl font-bold text-text text-center mb-3">
               Enter OTP
             </h2>
             <p className="text-center text-gray-500 mb-8 md:mb-10 text-base">
@@ -127,9 +127,9 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
             {/* Timer */}
             <div className="text-center mb-4">
               {timeLeft > 0 ? (
-                <p className="text-[#3b3b3b] text-sm">
+                <p className="text-text text-sm">
                   OTP will expire in{" "}
-                  <span className="font-semibold text-[#009063]">{formatTime(timeLeft)}</span>
+                  <span className="font-semibold text-primary">{formatTime(timeLeft)}</span>
                 </p>
               ) : (
                 <p className="text-red-500 text-sm font-medium">OTP expired. Please resend.</p>
@@ -140,7 +140,7 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
             <button
               onClick={handleVerify}
               disabled={timeLeft <= 0}
-              className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-[#009063] hover:bg-green-700"
+              className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"
                 }`}
             >
               Verify OTP
@@ -148,12 +148,12 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
 
             {/* Resend */}
             <div className="mt-6 text-center text-sm md:text-base">
-              <p className="text-[#3b3b3b]">
+              <p className="text-text">
                 Didn't receive the code?{" "}
                 <span
                   className={`font-medium cursor-pointer ${timeLeft > 0
                     ? "text-gray-400 cursor-not-allowed"
-                    : "text-[#009063] hover:underline"
+                    : "text-primary hover:underline"
                     }`}
                   onClick={() => {
                     if (timeLeft <= 0) handleResendOTP();

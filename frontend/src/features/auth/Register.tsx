@@ -58,8 +58,8 @@ const Register: React.FC = () => {
           }}
         >
           {/* Minimal background shapes */}
-          <div className="absolute -top-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-r from-[#009063] to-[#dfdcef] opacity-10"></div>
-          <div className="absolute -bottom-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-r from-[#009063] to-[#dfdcef] opacity-10"></div>
+          <div className="absolute -top-16 -left-16 w-40 h-40 rounded-full bg-gradient-to-r from-primary to-accent opacity-10"></div>
+          <div className="absolute -bottom-16 -right-16 w-40 h-40 rounded-full bg-gradient-to-r from-primary to-accent opacity-10"></div>
 
           {/* Header */}
           <div className="text-center mb-6">
@@ -104,7 +104,7 @@ const Register: React.FC = () => {
               Already have an account?{" "}
               <a
                 href="/login"
-                className="font-semibold text-[#009063] hover:underline"
+                className="font-semibold text-primary hover:underline"
               >
                 Sign in here
               </a>

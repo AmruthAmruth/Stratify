@@ -300,10 +300,10 @@ const Dashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+      <div className="flex items-center justify-center min-h-screen bg-bg">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
-          <p className="mt-4 text-[#3b3b3b] font-medium">Loading Dashboard...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="mt-4 text-text font-medium">Loading Dashboard...</p>
         </div>
       </div>
     );
@@ -316,7 +316,7 @@ const Dashboard = () => {
 
   // Empty state component
   const EmptyChartState = ({ message }: { message: string }) => (
-    <div className="h-64 flex flex-col items-center justify-center text-[#3b3b3b]/50">
+    <div className="h-64 flex flex-col items-center justify-center text-text/50">
       <BarChart3 className="w-16 h-16 mb-3 opacity-30" />
       <p className="text-sm font-medium">{message}</p>
       <p className="text-xs mt-1">Data will appear once available</p>
@@ -324,11 +324,11 @@ const Dashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#fbfbfb] p-6">
+    <div className="min-h-screen bg-bg p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2">Manager Dashboard</h1>
-        <p className="text-[#3b3b3b]/70">Overview of your department's performance and activities</p>
+        <h1 className="text-4xl font-bold text-text mb-2">Manager Dashboard</h1>
+        <p className="text-text/70">Overview of your department's performance and activities</p>
       </div>
 
       {/* Statistics Cards */}
@@ -377,13 +377,13 @@ const Dashboard = () => {
 
       {/* Charts Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-6">Analytics & Insights</h2>
+        <h2 className="text-2xl font-bold text-text mb-6">Analytics & Insights</h2>
 
         {/* Row 1 - First 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
           {/* Chart 1: Project Status - Doughnut */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Project Status Distribution</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Project Status Distribution</h3>
             {hasChartData(chartData.projectStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -399,8 +399,8 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 2: Leave Status - Pie */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Leave Request Status</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Leave Request Status</h3>
             {hasChartData(chartData.leaveStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -416,8 +416,8 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 3: Meeting Types - Bar */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Meeting Types</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Meeting Types</h3>
             {hasChartData(chartData.meetingTypes.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -436,8 +436,8 @@ const Dashboard = () => {
         {/* Row 2 - Next 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Chart 4: Project Timeline - Line */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Project Creation Timeline</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Project Creation Timeline</h3>
             {hasChartData(chartData.employeePerformance.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -453,8 +453,8 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 5: Task Distribution - Bar */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Task Status Distribution</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Task Status Distribution</h3>
             {hasChartData(chartData.taskDistribution.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -470,8 +470,8 @@ const Dashboard = () => {
           </div>
 
           {/* Chart 6: Department Activity - Doughnut */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Department Activity Overview</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Department Activity Overview</h3>
             {hasChartData(chartData.departmentActivity.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -489,8 +489,8 @@ const Dashboard = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-8 p-4 bg-white border border-[#dfdcef] rounded-xl">
-        <p className="text-sm text-[#3b3b3b]/70 text-center">
+      <div className="mt-8 p-4 bg-white border border-accent rounded-xl">
+        <p className="text-sm text-text/70 text-center">
           Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
         </p>
       </div>

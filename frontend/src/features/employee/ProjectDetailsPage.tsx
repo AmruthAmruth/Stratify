@@ -37,10 +37,10 @@ const EmployeeProjectDetailsPage = () => {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
           <LoadingSpinner variant="spinner" size="large" />
-          <p className="mt-4 text-lg text-[#3b3b3b]">
+          <p className="mt-4 text-lg text-text">
             Loading project details...
           </p>
         </div>
@@ -50,7 +50,7 @@ const EmployeeProjectDetailsPage = () => {
 
   if (error || !project) {
     return (
-      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
           <div className="bg-red-50 border border-red-300 text-red-700 px-6 py-4 rounded-lg max-w-md">
             <strong className="font-bold">Error!</strong>
@@ -60,7 +60,7 @@ const EmployeeProjectDetailsPage = () => {
           </div>
           <button
             onClick={fetchProjectData}
-            className="mt-4 bg-[#009063] hover:bg-[#007a52] text-white font-bold py-2 px-4 rounded"
+            className="mt-4 bg-primary hover:bg-primaryHover text-white font-bold py-2 px-4 rounded"
           >
             Try Again
           </button>
@@ -70,7 +70,7 @@ const EmployeeProjectDetailsPage = () => {
   }
 
   return (
-    <div className="min-h-screen bg-[#fbfbfb]">
+    <div className="min-h-screen bg-bg">
       <ProjectDetailsLayout
         project={project}
         role="employee"

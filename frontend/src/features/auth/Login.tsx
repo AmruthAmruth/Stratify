@@ -106,7 +106,7 @@ const Login: React.FC = () => {
 
 
   return (
-    <div className="min-h-screen flex flex-col" style={{ backgroundColor: '#fbfbfb' }}>
+    <div className="min-h-screen flex flex-col bg-bg">
       {/* Navbar */}
       <Navbar />
 
@@ -114,14 +114,13 @@ const Login: React.FC = () => {
       <div className="flex flex-1 flex-col lg:flex-row pt-20">
         {/* Branding (only visible on lg+) */}
         <div
-          className="hidden lg:flex w-1/2 flex-col justify-center items-center p-16 text-left"
-          style={{ background: 'linear-gradient(to bottom right, #009063, #3b3b3b)', color: '#fbfbfb' }}
+          className="hidden lg:flex w-1/2 flex-col justify-center items-center p-16 text-left bg-gradient-to-br from-primary to-text text-bg"
         >
           <Users className="w-20 h-20 mb-6" />
           <h1 className="text-5xl font-bold mb-4 leading-snug">
             Welcome to Stratify
           </h1>
-          <p className="text-lg max-w-md" style={{ color: '#dfdcef' }}>
+          <p className="text-lg max-w-md text-accent">
             Secure login for{" "}
             <span className="font-semibold">Companies, Managers, and Teams</span>.
             Collaborate, manage, and achieve your goals together.
@@ -130,23 +129,21 @@ const Login: React.FC = () => {
 
         <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
           <div
-            className="shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300"
-            style={{ backgroundColor: '#fbfbfb', border: '1px solid #dfdcef' }}
+            className="shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 bg-bg border border-accent"
           >
             <div className="flex justify-center mb-6">
               <span
-                className="px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm"
-                style={{ backgroundColor: '#009063', color: '#fbfbfb' }}
+                className="px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm bg-primary text-bg"
               >
                 Login Portal
               </span>
             </div>
 
             {/* Title */}
-            <h2 className="text-3xl md:text-4xl font-bold text-center mb-3" style={{ color: '#3b3b3b' }}>
+            <h2 className="text-3xl md:text-4xl font-bold text-center mb-3 text-text">
               Sign in to Continue
             </h2>
-            <p className="text-center mb-8 md:mb-10 text-base" style={{ color: '#3b3b3b' }}>
+            <p className="text-center mb-8 md:mb-10 text-base text-text">
               Enter your details to access your account
             </p>
 
@@ -160,15 +157,15 @@ const Login: React.FC = () => {
 
             {/* Links */}
             <div className="mt-6 text-center text-sm md:text-base">
-              <p style={{ color: '#3b3b3b' }}>
+              <p className="text-text">
                 Forgot your password?{" "}
-                <a href="/forgot-password" className="hover:underline" style={{ color: '#009063' }}>
+                <a href="/forgot-password" className="hover:underline text-primary">
                   Reset it
                 </a>
               </p>
-              <p className="mt-3" style={{ color: '#3b3b3b' }}>
+              <p className="mt-3 text-text">
                 Don’t have an account?{" "}
-                <a href="/register" className="hover:underline" style={{ color: '#009063' }}>
+                <a href="/register" className="hover:underline text-primary">
                   Sign up
                 </a>
               </p>

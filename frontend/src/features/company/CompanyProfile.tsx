@@ -223,7 +223,7 @@ const CompanyProfile: React.FC = () => {
 
                         <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
                             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <MapPin className="w-5 h-5 text-green-600" /> Address
+                                <MapPin className="w-5 h-5 text-primary" /> Address
                             </h3>
                             <div className="space-y-4">
                                 {isEditing ? (

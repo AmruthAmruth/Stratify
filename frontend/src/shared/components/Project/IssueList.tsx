@@ -215,8 +215,8 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
   if (!issues.length) {
     return (
-      <div className="text-center py-16 bg-[#fbfbfb] rounded-2xl border border-[#dfdcef] shadow-sm">
-        <p className="text-xl text-[#3b3b3b]/60 font-light">No issues found.</p>
+      <div className="text-center py-16 bg-bg rounded-2xl border border-accent shadow-sm">
+        <p className="text-xl text-text/60 font-light">No issues found.</p>
       </div>
     );
   }
@@ -294,20 +294,20 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
               {/* Expanded view for editing */}
               {isExpanded && (
-                <div className="mt-2 bg-white rounded-xl border-2 border-[#009063]/20 p-6 space-y-4">
+                <div className="mt-2 bg-white rounded-xl border-2 border-primary/20 p-6 space-y-4">
                   <div>
-                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                    <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                       Description
                     </p>
-                    <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
+                    <p className="text-base text-text/80">{issue.description}</p>
                   </div>
 
                   {issue.acceptanceCriteria && (
                     <div>
-                      <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                      <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                         Acceptance Criteria
                       </p>
-                      <p className="text-base text-[#3b3b3b]/80">{issue.acceptanceCriteria}</p>
+                      <p className="text-base text-text/80">{issue.acceptanceCriteria}</p>
                     </div>
                   )}
 
@@ -337,7 +337,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
         return (
           <section
             key={issue.id}
-            className="bg-[#fbfbfb] rounded-2xl border border-[#dfdcef] shadow-sm overflow-hidden"
+            className="bg-bg rounded-2xl border border-accent shadow-sm overflow-hidden"
           >
             {/* Compact header (clickable) */}
             <div
@@ -354,13 +354,13 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
             >
               <div>
                 <h3 className="text-lg font-semibold">{issue.heading}</h3>
-                <p className="text-xs text-[#3b3b3b]/60 mt-1">
+                <p className="text-xs text-text/60 mt-1">
                   {issue.type} • {issue.size} • Est. {issue.estimatedHours}h • Assigned: {employees?.find((e) => e.id === issue.assignedTo)?.name || "Unassigned"}
                 </p>
               </div>
 
               <div className="flex items-center gap-4">
-                <span className="text-xs font-semibold bg-[#009063] text-white px-3 py-1 rounded-full capitalize">
+                <span className="text-xs font-semibold bg-primary text-white px-3 py-1 rounded-full capitalize">
                   {issue.priority}
                 </span>
 
@@ -379,40 +379,40 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
             {isExpanded && (
               <div className="p-8 space-y-6 border-t">
                 <div>
-                  <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                  <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                     Description
                   </p>
-                  <p className="text-base text-[#3b3b3b]/80">{issue.description}</p>
+                  <p className="text-base text-text/80">{issue.description}</p>
                 </div>
 
                 {issue.acceptanceCriteria && (
                   <div>
-                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                    <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                       Acceptance Criteria
                     </p>
-                    <p className="text-base text-[#3b3b3b]/80">{issue.acceptanceCriteria}</p>
+                    <p className="text-base text-text/80">{issue.acceptanceCriteria}</p>
                   </div>
                 )}
 
                 {/* Details */}
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="bg-white border rounded-lg p-3">
-                    <span className="text-xs text-[#3b3b3b]/60">Type</span>
+                    <span className="text-xs text-text/60">Type</span>
                     <span className="block text-sm font-medium capitalize">{issue.type}</span>
                   </div>
                   <div className="bg-white border rounded-lg p-3">
-                    <span className="text-xs text-[#3b3b3b]/60">Status</span>
-                    <span className="block text-sm font-semibold text-[#009063] capitalize">
+                    <span className="text-xs text-text/60">Status</span>
+                    <span className="block text-sm font-semibold text-primary capitalize">
                       {issue.status}
                     </span>
                   </div>
                   <div className="bg-white border rounded-lg p-3">
-                    <span className="text-xs text-[#3b3b3b]/60">Size</span>
+                    <span className="text-xs text-text/60">Size</span>
                     <span className="block text-sm font-medium">{issue.size}</span>
                   </div>
 
                   <div className="bg-white border rounded-lg p-3">
-                    <span className="text-xs text-[#3b3b3b]/60">Assigned To</span>
+                    <span className="text-xs text-text/60">Assigned To</span>
                     <span className="block text-sm font-medium">
                       {employees?.find((e) => e.id === issue.assignedTo)?.name || "Unassigned"}
                     </span>
@@ -447,7 +447,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                       <div className="flex gap-3">
                         {canEdit && (
                           <button
-                            className="text-sm bg-[#009063] text-white rounded-lg px-6 py-2.5 hover:bg-[#007a52]"
+                            className="text-sm bg-primary text-white rounded-lg px-6 py-2.5 hover:bg-primaryHover"
                             onClick={() => openSubtaskModal(issue.id)}
                           >
                             + Create Subtask
@@ -472,15 +472,15 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                           <div key={sub.id} className="bg-white border rounded-lg p-6 space-y-3">
                             <div className="flex justify-between items-start">
                               <p className="text-lg font-medium">{sub.heading}</p>
-                              <span className="text-xs font-semibold bg-[#009063]/80 text-white px-3 py-1 rounded-full">
+                              <span className="text-xs font-semibold bg-primary/80 text-white px-3 py-1 rounded-full">
                                 {sub.status}
                               </span>
                             </div>
 
-                            <p className="text-sm text-[#3b3b3b]/80">{sub.description}</p>
+                            <p className="text-sm text-text/80">{sub.description}</p>
 
                             <div className="flex justify-between items-center border-t pt-2">
-                              <span className="text-sm text-[#3b3b3b]/70">
+                              <span className="text-sm text-text/70">
                                 Hours: <span className="font-semibold">{sub.hours}</span>
                               </span>
 
@@ -506,7 +506,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
                         ))}
                       </div>
                     ) : (
-                      canEdit && <p className="text-sm text-[#3b3b3b]/60 pt-2">No subtasks yet.</p>
+                      canEdit && <p className="text-sm text-text/60 pt-2">No subtasks yet.</p>
                     )}
                   </div>
                 )}

@@ -52,9 +52,9 @@ const SuperAdminLogin: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen flex bg-[#fbfbfb]">
+    <div className="min-h-screen flex bg-bg">
       {/* Left Panel */}
-      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-[#009063] to-[#3b3b3b] text-white flex-col justify-center items-center p-12 rounded-r-3xl shadow-lg">
+      <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-primary to-text text-white flex-col justify-center items-center p-12 rounded-r-3xl shadow-lg">
         <ShieldCheck className="w-20 h-20 mb-6 text-white" />
         <h1 className="text-4xl font-bold mb-4">Stratify Admin Portal</h1>
         <p className="text-lg text-gray-200 max-w-md text-center">
@@ -65,16 +65,16 @@ const SuperAdminLogin: React.FC = () => {
 
       {/* Right Panel */}
       <div className="flex w-full lg:w-1/2 justify-center items-center px-6">
-        <div className="bg-white shadow-2xl rounded-3xl p-14 w-full max-w-3xl border border-[#dfdcef]">
+        <div className="bg-white shadow-2xl rounded-3xl p-14 w-full max-w-3xl border border-accent">
           {/* Badge */}
           <div className="flex justify-center mb-8 ">
-            <span className="bg-[#009063] text-[#ffffff] px-5 py-1.5 rounded-full text-sm font-medium shadow-sm">
+            <span className="bg-primary text-white px-5 py-1.5 rounded-full text-sm font-medium shadow-sm">
               Super Admin Login
             </span>
           </div>
 
           {/* Title */}
-          <h2 className="text-4xl font-bold text-[#3b3b3b] text-center mb-4">
+          <h2 className="text-4xl font-bold text-text text-center mb-4">
             Welcome Back 👋
           </h2>
           <p className="text-center text-gray-500 mb-10 text-lg">
@@ -97,7 +97,7 @@ const SuperAdminLogin: React.FC = () => {
               Forgot your password?{" "}
               <a
                 href="/forgot-password"
-                className="text-[#009063] hover:underline font-medium"
+                className="text-primary hover:underline font-medium"
               >
                 Reset it
               </a>

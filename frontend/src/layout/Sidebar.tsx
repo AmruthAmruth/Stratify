@@ -137,13 +137,13 @@ const Sidebar: React.FC = () => {
 
       <aside
         className={`
-          fixed lg:static top-0 left-0 h-screen bg-[#fbfbfb] shadow-xl border-r border-[#dfdcef]
+          fixed lg:static top-0 left-0 h-screen bg-bg shadow-xl border-r border-accent
           flex flex-col transition-all duration-300 ease-in-out z-50
           ${isCollapsed ? "-translate-x-full lg:translate-x-0 lg:w-20" : "translate-x-0 w-72"}
         `}
       >
         {/* Header */}
-        <div className="flex items-center justify-between p-6 border-b border-[#dfdcef]">
+        <div className="flex items-center justify-between p-6 border-b border-accent">
           {!isCollapsed ? (
             <div className="flex items-center space-x-3">
               {companyLogo ? (
@@ -153,11 +153,11 @@ const Sidebar: React.FC = () => {
                   className="w-10 h-10 rounded-xl object-cover shadow-md"
                 />
               ) : (
-                <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center shadow-md">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center shadow-md">
                   <span className="text-white font-bold text-lg">{getCompanyInitial()}</span>
                 </div>
               )}
-              <h1 className="text-2xl font-bold text-[#3b3b3b] tracking-tight">{displayName}</h1>
+              <h1 className="text-2xl font-bold text-text tracking-tight">{displayName}</h1>
             </div>
           ) : (
             <>
@@ -168,7 +168,7 @@ const Sidebar: React.FC = () => {
                   className="w-10 h-10 rounded-xl object-cover mx-auto shadow-md"
                 />
               ) : (
-                <div className="w-10 h-10 bg-[#009063] rounded-xl flex items-center justify-center mx-auto shadow-md">
+                <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center mx-auto shadow-md">
                   <span className="text-white font-bold text-lg">{getCompanyInitial()}</span>
                 </div>
               )}
@@ -180,13 +180,13 @@ const Sidebar: React.FC = () => {
         <button
           onClick={toggleSidebar}
           className={`
-            absolute -right-4 top-8 w-8 h-8 bg-white border-2 border-[#dfdcef]
+            absolute -right-4 top-8 w-8 h-8 bg-white border-2 border-accent
             rounded-full flex items-center justify-center shadow-md hover:shadow-lg 
-            transition-all duration-200 hover:border-[#009063] group z-10
+            transition-all duration-200 hover:border-primary group z-10
             ${isCollapsed ? "rotate-180" : ""}
           `}
         >
-          <Icons.Menu className="w-4 h-4 text-[#3b3b3b] group-hover:text-[#009063]" />
+          <Icons.Menu className="w-4 h-4 text-text group-hover:text-primary" />
         </button>
 
         {/* Menu Items */}
@@ -207,8 +207,8 @@ const Sidebar: React.FC = () => {
                       w-full flex items-center px-4 py-3.5 rounded-xl font-medium transition-all duration-200
                       group relative overflow-hidden text-left
                       ${isActive
-                        ? "bg-[#dfdcef] text-[#009063] shadow-sm border border-[#009063]/20"
-                        : "text-[#3b3b3b] hover:bg-[#f2f2f2] hover:text-[#009063]"
+                        ? "bg-accent text-primary shadow-sm border border-primary/20"
+                        : "text-text hover:bg-[#f2f2f2] hover:text-primary"
                       }
                       ${isCollapsed ? "justify-center px-3" : ""}
                     `}
@@ -216,14 +216,14 @@ const Sidebar: React.FC = () => {
                   >
                     {/* Active indicator */}
                     {isActive && (
-                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-[#009063] rounded-r-full" />
+                      <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary rounded-r-full" />
                     )}
 
                     <div className="relative">
                       <IconComponent
                         className={`
                           w-5 h-5 transition-colors duration-200 flex-shrink-0
-                          ${isActive ? "text-[#009063]" : "text-gray-500 group-hover:text-[#009063]"}
+                          ${isActive ? "text-primary" : "text-gray-500 group-hover:text-primary"}
                           ${isCollapsed ? "" : "mr-4"}
                         `}
                       />
@@ -242,7 +242,7 @@ const Sidebar: React.FC = () => {
                           </span>
                         )}
                         {isActive && (
-                          <Icons.ChevronRight className="w-4 h-4 text-[#009063] ml-2" />
+                          <Icons.ChevronRight className="w-4 h-4 text-primary ml-2" />
                         )}
                       </>
                     )}

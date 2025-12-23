@@ -123,7 +123,7 @@ const ManagerMeeting: React.FC = () => {
     if (key === "status") {
       const color =
         row.status === "open"
-          ? "bg-green-100 text-green-700"
+          ? "bg-green-100 text-primaryHover"
           : "bg-red-100 text-red-700";
       return (
         <span className={`px-2 py-1 rounded-full text-xs font-medium ${color}`}>
@@ -154,25 +154,25 @@ const ManagerMeeting: React.FC = () => {
   return (
     <div className="p-8 text-gray-800">
       {/* Header */}
-      <div className="mb-8 bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
-        <h1 className="text-2xl font-bold text-[#3b3b3b] mb-2">Manager Meetings</h1>
-        <p className="text-sm text-[#3b3b3b]/60">
+      <div className="mb-8 bg-bg p-6 rounded-xl border border-accent shadow-sm">
+        <h1 className="text-2xl font-bold text-text mb-2">Manager Meetings</h1>
+        <p className="text-sm text-text/60">
           Create and manage your meetings with your team.
         </p>
       </div>
 
       {/* Create Meeting */}
-      <div className="bg-[#fbfbfb] p-6 rounded-xl shadow-lg mb-8 flex items-center gap-4 border border-[#dfdcef]">
+      <div className="bg-bg p-6 rounded-xl shadow-lg mb-8 flex items-center gap-4 border border-accent">
         <input
           type="text"
           placeholder="Enter meeting title..."
           value={title}
           onChange={(e) => setTitle(e.target.value)}
-          className="flex-1 border border-[#dfdcef] rounded-lg px-4 py-2 text-sm text-[#3b3b3b] focus:outline-none focus:ring-2 focus:ring-[#009063] placeholder:text-[#3b3b3b]/60 bg-white"
+          className="flex-1 border border-accent rounded-lg px-4 py-2 text-sm text-text focus:outline-none focus:ring-2 focus:ring-primary placeholder:text-text/60 bg-white"
         />
         <button
           onClick={handleCreate}
-          className="bg-[#009063] text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-[#007a4d] transition-all hover:shadow-lg hover:scale-105"
+          className="bg-primary text-white px-5 py-2 rounded-lg text-sm font-medium shadow-md hover:bg-primaryHover transition-all hover:shadow-lg hover:scale-105"
         >
           + Create Meeting
         </button>

@@ -47,7 +47,7 @@ const UserFeedback = () => {
                       alt={testimonial.name}
                       className="w-16 h-16 rounded-full object-cover shadow-lg"
                     />
-                    <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-green-500 rounded-full border-2 border-white flex items-center justify-center">
+                    <div className="absolute -bottom-2 -right-2 w-6 h-6 bg-primary rounded-full border-2 border-white flex items-center justify-center">
                       <CheckCircle className="w-3 h-3 text-white" />
                     </div>
                   </div>

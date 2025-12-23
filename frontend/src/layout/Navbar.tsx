@@ -36,9 +36,9 @@ const Navbar = () => {
   // REMOVED: The useEffect with socket listener - NotificationListener handles this globally
 
   return (
-    <header className="w-full bg-white shadow px-6 py-6 flex justify-between items-center border-b border-[#dfdcef]">
+    <header className="w-full bg-white shadow px-6 py-6 flex justify-between items-center border-b border-accent">
       <h1 className="text-xl font-semibold text-gray-900">
-        Welcome, <span className="text-[#009063]">{name || 'User'}</span>
+        Welcome, <span className="text-primary">{name || 'User'}</span>
       </h1>
 
       <div className="flex items-center space-x-6">
@@ -57,7 +57,7 @@ const Navbar = () => {
 
         <button
           onClick={handleLogout}
-          className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-green-700 transition-colors duration-200"
+          className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200"
         >
           Logout
         </button>

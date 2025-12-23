@@ -91,7 +91,7 @@ const CompanyProfilePage = () => {
                   alt="Company Logo"
                   className="w-20 h-20 lg:w-24 lg:h-24 rounded-full object-cover ring-4 ring-white shadow-lg"
                 />
-                <div className="absolute -bottom-1 -right-1 bg-green-500 w-6 h-6 rounded-full border-3 border-white flex items-center justify-center">
+                <div className="absolute -bottom-1 -right-1 bg-primary w-6 h-6 rounded-full border-3 border-white flex items-center justify-center">
                   <CheckCircle className="w-4 h-4 text-white" />
                 </div>
               </div>
@@ -230,7 +230,7 @@ const CompanyProfilePage = () => {
                 <span className="text-gray-600">Status</span>
                 <span
                   className={`font-semibold px-3 py-1 rounded-full text-sm ${companyData.status === "active"
-                      ? "bg-green-100 text-green-700"
+                      ? "bg-green-100 text-primaryHover"
                       : companyData.status === "pending"
                         ? "bg-yellow-100 text-yellow-700"
                         : "bg-red-100 text-red-700"

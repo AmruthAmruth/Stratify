@@ -124,9 +124,9 @@ const GroupChatBox = ({
     };
 
     return (
-        <div className="flex flex-col h-full bg-white border border-[#dfdcef] rounded-lg overflow-hidden shadow-sm">
+        <div className="flex flex-col h-full bg-white border border-accent rounded-lg overflow-hidden shadow-sm">
             {/* Group Header */}
-            <div className="p-4 border-b border-[#dfdcef] bg-[#009063] text-white">
+            <div className="p-4 border-b border-accent bg-primary text-white">
                 <h3 className="font-semibold text-lg">{groupName}</h3>
                 <p className="text-sm opacity-90">Group Chat</p>
             </div>
@@ -146,8 +146,8 @@ const GroupChatBox = ({
                         >
                             <div
                                 className={`p-3 px-4 rounded-3xl max-w-[80%] transition-all duration-200 ${msg.senderId === userId
-                                    ? "bg-[#009063] text-white shadow-lg hover:shadow-xl"
-                                    : "bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]/30 shadow-sm hover:shadow-md"
+                                    ? "bg-primary text-white shadow-lg hover:shadow-xl"
+                                    : "bg-bg text-text border border-accent/30 shadow-sm hover:shadow-md"
                                     }`}
                             >
                                 {msg.senderId !== userId && (
@@ -176,7 +176,7 @@ const GroupChatBox = ({
                         </div>
                     ))
                 ) : (
-                    <p className="text-center text-[#3b3b3b]/40 font-medium">
+                    <p className="text-center text-text/40 font-medium">
                         No messages yet. Start the conversation!
                     </p>
                 )}
@@ -184,10 +184,10 @@ const GroupChatBox = ({
             </div>
 
             {/* Message Input */}
-            <div className="border-t border-[#dfdcef] bg-[#fbfbfb] p-4 space-y-2">
+            <div className="border-t border-accent bg-bg p-4 space-y-2">
                 {/* File Preview */}
                 {selectedFile && (
-                    <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-[#dfdcef]">
+                    <div className="flex items-center gap-2 p-2 bg-white rounded-lg border border-accent">
                         {filePreview ? (
                             <img src={filePreview} alt="Preview" className="w-16 h-16 object-cover rounded" />
                         ) : (
@@ -221,9 +221,9 @@ const GroupChatBox = ({
                     <button
                         onClick={() => fileInputRef.current?.click()}
                         disabled={isUploading}
-                        className="flex-shrink-0 p-3 border border-[#dfdcef] rounded-2xl hover:bg-[#009063]/10 hover:border-[#009063]/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-shrink-0 p-3 border border-accent rounded-2xl hover:bg-primary/10 hover:border-primary/50 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
                     >
-                        <Paperclip className="w-5 h-5 text-[#009063]" />
+                        <Paperclip className="w-5 h-5 text-primary" />
                     </button>
                     <input
                         value={message}
@@ -231,12 +231,12 @@ const GroupChatBox = ({
                         onKeyDown={(e) => e.key === "Enter" && !isUploading && sendMessage()}
                         placeholder="Type a message..."
                         disabled={isUploading}
-                        className="flex-1 border border-[#dfdcef] rounded-2xl px-4 py-3 outline-none text-[#3b3b3b] bg-white placeholder:text-[#3b3b3b]/40 transition-all duration-200 focus:border-[#009063]/50 focus:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="flex-1 border border-accent rounded-2xl px-4 py-3 outline-none text-text bg-white placeholder:text-text/40 transition-all duration-200 focus:border-primary/50 focus:shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
                     />
                     <button
                         onClick={sendMessage}
                         disabled={(!message.trim() && !selectedFile) || isUploading}
-                        className="bg-[#009063] hover:bg-[#009063]/90 disabled:bg-[#009063]/50 text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:cursor-not-allowed disabled:transform-none"
+                        className="bg-primary hover:bg-primary/90 disabled:bg-primary/50 text-white px-6 py-3 rounded-2xl transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105 disabled:cursor-not-allowed disabled:transform-none"
                     >
                         {isUploading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Send"}
                     </button>

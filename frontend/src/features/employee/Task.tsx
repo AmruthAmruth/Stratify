@@ -179,7 +179,7 @@ const Task = () => {
       case "Medium":
         return "bg-yellow-100 text-yellow-700 border-yellow-300";
       case "Low":
-        return "bg-green-100 text-green-700 border-green-300";
+        return "bg-green-100 text-primaryHover border-green-300";
       default:
         return "bg-gray-100 text-gray-700 border-gray-300";
     }
@@ -188,11 +188,11 @@ const Task = () => {
   const getStatusColor = (status: string) => {
     switch (status) {
       case "Done":
-        return "bg-[#e6f7f0] text-[#009063] border-[#009063]";
+        return "bg-primary/10 text-primary border-primary";
       case "In Progress":
-        return "bg-[#fff4e6] text-[#ff9800] border-[#ff9800]";
+        return "bg-orange-50 text-orange-500 border-orange-500";
       case "Planned":
-        return "bg-[#dfdcef] text-[#3b3b3b] border-[#9b8dc9]";
+        return "bg-accent text-text border-purple-400";
       default:
         return "bg-gray-100 text-gray-700 border-gray-300";
     }
@@ -203,7 +203,7 @@ const Task = () => {
       <div className="flex items-center justify-center py-20">
         <div className="text-center">
           <LoadingSpinner variant="spinner" size="large" />
-          <p className="mt-4 text-lg text-[#3b3b3b]">Loading your tasks...</p>
+          <p className="mt-4 text-lg text-text">Loading your tasks...</p>
         </div>
       </div>
     );
@@ -214,8 +214,8 @@ const Task = () => {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-[#2f2f2f]">My Tasks</h1>
-          <p className="text-[#3b3b3b]/80 mt-1">
+          <h1 className="text-3xl font-bold text-heading">My Tasks</h1>
+          <p className="text-text/80 mt-1">
             Manage your assigned issues and subtasks
           </p>
         </div>
@@ -268,28 +268,28 @@ const Task = () => {
                 {projectIssues.map((issue) => (
                   <div
                     key={issue.id}
-                    className="bg-white border border-[#dfdcef] rounded-xl p-6 shadow-sm"
+                    className="bg-white border border-accent rounded-xl p-6 shadow-sm"
                   >
                     {/* Issue Header */}
                     <div className="flex items-start justify-between mb-4">
                       <div className="flex-1">
-                        <h3 className="text-xl font-bold text-[#2f2f2f] mb-2">
+                        <h3 className="text-xl font-bold text-heading mb-2">
                           {issue.heading}
                         </h3>
                         <div className="mb-3">
-                          <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                          <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                             Description
                           </p>
-                          <p className="text-sm text-[#3b3b3b]/80">
+                          <p className="text-sm text-text/80">
                             {issue.description}
                           </p>
                         </div>
                         {issue.acceptanceCriteria && (
                           <div className="mb-3">
-                            <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide mb-1">
+                            <p className="text-xs font-semibold text-text/60 uppercase tracking-wide mb-1">
                               Acceptance Criteria
                             </p>
-                            <p className="text-sm text-[#3b3b3b]/80">
+                            <p className="text-sm text-text/80">
                               {issue.acceptanceCriteria}
                             </p>
                           </div>
@@ -309,10 +309,10 @@ const Task = () => {
                           >
                             {issue.status}
                           </span>
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-bg text-text border border-accent">
                             {issue.type}
                           </span>
-                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-[#fbfbfb] text-[#3b3b3b] border border-[#dfdcef]">
+                          <span className="px-3 py-1 rounded-full text-xs font-medium bg-bg text-text border border-accent">
                             ⏱️ {issue.estimatedHours}h
                           </span>
                         </div>
@@ -322,7 +322,7 @@ const Task = () => {
                           setSelectedIssueId(issue.id);
                           setIsCreateSubtaskModalOpen(true);
                         }}
-                        className="ml-4 px-4 py-2 bg-[#009063] text-white rounded-lg hover:bg-[#007a52] transition-colors whitespace-nowrap"
+                        className="ml-4 px-4 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition-colors whitespace-nowrap"
                       >
                         + Create Subtask
                       </button>
@@ -330,7 +330,7 @@ const Task = () => {
 
                     {/* Kanban Board for Subtasks */}
                     <div className="mt-6">
-                      <h4 className="text-sm font-semibold text-[#2f2f2f] mb-3 uppercase tracking-wide">
+                      <h4 className="text-sm font-semibold text-heading mb-3 uppercase tracking-wide">
                         Subtasks ({issue.subTasks?.length || 0})
                       </h4>
                       <KanbanBoard

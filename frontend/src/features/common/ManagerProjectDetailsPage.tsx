@@ -357,15 +357,15 @@ const ManagerProjectDetailsPage = () => {
     switch (status) {
       case "Completed":
       case "Done":
-        return "text-[#009063] bg-[#e6f7f0] border-[#009063]";
+        return "text-primary bg-primary/10 border-primary";
       case "InProgress":
       case "In Progress":
       case "Active":
-        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
+        return "text-text bg-accent border-purple-400";
       case "Planned":
-        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+        return "text-text bg-bg border-accent";
       default:
-        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+        return "text-text bg-bg border-accent";
     }
   };
 
@@ -374,11 +374,11 @@ const ManagerProjectDetailsPage = () => {
       case "High":
         return "text-red-700 bg-red-50 border-red-300";
       case "Medium":
-        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
+        return "text-text bg-accent border-purple-400";
       case "Low":
-        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+        return "text-text bg-bg border-accent";
       default:
-        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+        return "text-text bg-bg border-accent";
     }
   };
 
@@ -387,20 +387,20 @@ const ManagerProjectDetailsPage = () => {
       case "Bug":
         return "text-red-700 bg-red-50 border-red-300";
       case "User Story":
-        return "text-[#009063] bg-[#e6f7f0] border-[#009063]";
+        return "text-primary bg-primary/10 border-primary";
       case "Task":
-        return "text-[#3b3b3b] bg-[#dfdcef] border-[#9b8dc9]";
+        return "text-text bg-accent border-purple-400";
       default:
-        return "text-[#3b3b3b] bg-[#fbfbfb] border-[#dfdcef]";
+        return "text-text bg-bg border-accent";
     }
   };
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-[#009063] mx-auto"></div>
-          <p className="mt-4 text-lg text-[#3b3b3b]">
+          <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-primary mx-auto"></div>
+          <p className="mt-4 text-lg text-text">
             Loading project details...
           </p>
         </div>
@@ -410,7 +410,7 @@ const ManagerProjectDetailsPage = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
           <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
             <strong className="font-bold">Error!</strong>
@@ -418,7 +418,7 @@ const ManagerProjectDetailsPage = () => {
           </div>
           <button
             onClick={() => window.location.reload()}
-            className="mt-4 bg-[#009063] hover:bg-[#007a52] text-white font-bold py-2 px-4 rounded"
+            className="mt-4 bg-primary hover:bg-primaryHover text-white font-bold py-2 px-4 rounded"
           >
             Try Again
           </button>
@@ -429,9 +429,9 @@ const ManagerProjectDetailsPage = () => {
 
   if (!project) {
     return (
-      <div className="min-h-screen bg-[#fbfbfb] flex items-center justify-center">
+      <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
-          <p className="text-lg text-[#3b3b3b]">No project data available</p>
+          <p className="text-lg text-text">No project data available</p>
         </div>
       </div>
     );
@@ -483,32 +483,32 @@ const ManagerProjectDetailsPage = () => {
 
 
   return (
-    <div className="min-h-screen bg-[#fbfbfb]">
-      <div className="bg-[#fbfbfb] py-10 px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-bg">
+      <div className="bg-bg py-10 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-[#e9e6f5] shadow-sm hover:shadow-md transition-shadow duration-300">
+          <div className="rounded-2xl bg-white/80 backdrop-blur-sm border border-purple-100 shadow-sm hover:shadow-md transition-shadow duration-300">
             <div className="p-8">
               <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
                 <div className="space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-3">
-                    <h1 className="text-3xl lg:text-4xl font-bold text-[#2f2f2f] tracking-tight">
+                    <h1 className="text-3xl lg:text-4xl font-bold text-heading tracking-tight">
                       {project.name}
                     </h1>
-                    <span className="inline-flex items-center px-3 py-1 bg-[#f1effa] text-sm font-medium text-[#514f63] rounded-full border border-[#e3e0f3]">
+                    <span className="inline-flex items-center px-3 py-1 bg-purple-50 text-sm font-medium text-gray-700 rounded-full border border-purple-100">
                       {project.key}
                     </span>
                   </div>
-                  <p className="text-[#3b3b3b]/90 text-base leading-relaxed max-w-3xl">
+                  <p className="text-text/90 text-base leading-relaxed max-w-3xl">
                     {project.description}
                   </p>
                 </div>
 
                 <div className="flex justify-center lg:justify-end">
-                  <div className="rounded-xl bg-gradient-to-br from-[#f7f9fc] to-[#f1effa] border border-[#e3e0f3] px-8 py-6 text-center shadow-sm hover:shadow transition-all duration-300">
-                    <div className="text-2xl font-semibold text-[#2f2f2f] capitalize">
+                  <div className="rounded-xl bg-gradient-to-br from-blue-50 to-purple-50 border border-purple-100 px-8 py-6 text-center shadow-sm hover:shadow transition-all duration-300">
+                    <div className="text-2xl font-semibold text-heading capitalize">
                       {project.status}
                     </div>
-                    <div className="text-[#5a5a5a]/80 text-sm mt-1 font-medium">
+                    <div className="text-gray-600/80 text-sm mt-1 font-medium">
                       Project Status
                     </div>
                   </div>
@@ -550,8 +550,8 @@ const ManagerProjectDetailsPage = () => {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
-              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+              <h3 className="text-xl font-bold text-text mb-4">
                 Issue Distribution
               </h3>
               <div className="w-full flex items-center justify-center">
@@ -571,8 +571,8 @@ const ManagerProjectDetailsPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
-              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+              <h3 className="text-xl font-bold text-text mb-4">
                 SubTask Progress
               </h3>
               <div className="w-full flex items-center justify-center">
@@ -592,8 +592,8 @@ const ManagerProjectDetailsPage = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6">
-              <h3 className="text-xl font-bold text-[#3b3b3b] mb-4">
+            <div className="bg-white rounded-lg shadow-md border border-accent p-6">
+              <h3 className="text-xl font-bold text-text mb-4">
                 Sprint Overview
               </h3>
               <div className="w-full flex items-center justify-center">
@@ -614,8 +614,8 @@ const ManagerProjectDetailsPage = () => {
             </div>
           </div>
 
-          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-[#dfdcef]">
-            <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-[#3b3b3b] tracking-tight">
+          <div className="bg-white rounded-lg p-6 lg:p-8 shadow-md border border-accent">
+            <h3 className="text-xl lg:text-2xl font-bold mb-5 text-center text-text tracking-tight">
               Project Progress Summary
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
@@ -659,11 +659,11 @@ const ManagerProjectDetailsPage = () => {
           </div>
         </div>
 
-        <div className="bg-white rounded-lg shadow-md border border-[#dfdcef] p-6 lg:p-8">
-          <h3 className="text-xl lg:text-2xl font-bold text-[#3b3b3b] mb-6 flex items-center">
-            <div className="w-7 h-7 bg-[#dfdcef] rounded flex items-center justify-center mr-2">
+        <div className="bg-white rounded-lg shadow-md border border-accent p-6 lg:p-8">
+          <h3 className="text-xl lg:text-2xl font-bold text-text mb-6 flex items-center">
+            <div className="w-7 h-7 bg-accent rounded flex items-center justify-center mr-2">
               <svg
-                className="w-4 h-4 text-[#009063]"
+                className="w-4 h-4 text-primary"
                 fill="currentColor"
                 viewBox="0 0 20 20"
               >
@@ -677,10 +677,10 @@ const ManagerProjectDetailsPage = () => {
           </h3>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             <div className="space-y-1">
-              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+              <p className="text-xs font-medium text-text uppercase tracking-wider opacity-70">
                 Start Date
               </p>
-              <p className="text-base font-semibold text-[#3b3b3b]">
+              <p className="text-base font-semibold text-text">
                 {project.startDate
                   ? new Date(project.startDate).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -691,10 +691,10 @@ const ManagerProjectDetailsPage = () => {
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+              <p className="text-xs font-medium text-text uppercase tracking-wider opacity-70">
                 End Date
               </p>
-              <p className="text-base font-semibold text-[#3b3b3b]">
+              <p className="text-base font-semibold text-text">
                 {project.endDate
                   ? new Date(project.endDate).toLocaleDateString("en-US", {
                     year: "numeric",
@@ -705,18 +705,18 @@ const ManagerProjectDetailsPage = () => {
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+              <p className="text-xs font-medium text-text uppercase tracking-wider opacity-70">
                 Active Sprints
               </p>
-              <p className="text-base font-semibold text-[#3b3b3b]">
+              <p className="text-base font-semibold text-text">
                 {project.activeSprintCount || 0}
               </p>
             </div>
             <div className="space-y-1">
-              <p className="text-xs font-medium text-[#3b3b3b] uppercase tracking-wider opacity-70">
+              <p className="text-xs font-medium text-text uppercase tracking-wider opacity-70">
                 Total Sprints
               </p>
-              <p className="text-base font-semibold text-[#3b3b3b]">
+              <p className="text-base font-semibold text-text">
                 {allSprints.length}
               </p>
             </div>
@@ -726,25 +726,25 @@ const ManagerProjectDetailsPage = () => {
         <div className="flex flex-wrap gap-4">
           <button
             onClick={handleOpenEditModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200 shadow-sm"
           >
             Edit Project
           </button>
           <button
             onClick={handleOpenIssueModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200 shadow-sm"
           >
             Create Issue
           </button>
           <button
             onClick={handleOpenSprintModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200 shadow-sm"
           >
             Create Sprint
           </button>
           <button
             onClick={handleOpenEmployeeModal}
-            className="px-4 py-2 bg-[#009063] text-white rounded-lg text-sm font-semibold hover:bg-[#007a52] transition-colors duration-200 shadow-sm"
+            className="px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200 shadow-sm"
           >
             Add Employee
           </button>
@@ -765,8 +765,8 @@ const ManagerProjectDetailsPage = () => {
                 />
               </svg>
             }
-            iconBgColor="bg-[#dfdcef]"
-            iconColor="text-[#009063]"
+            iconBgColor="bg-accent"
+            iconColor="text-primary"
             data={project.backlog}
             type="backlog"
             expandedItem={expandedBacklog}
@@ -789,8 +789,8 @@ const ManagerProjectDetailsPage = () => {
                 />
               </svg>
             }
-            iconBgColor="bg-[#e6f7f0]"
-            iconColor="text-[#009063]"
+            iconBgColor="bg-primary/10"
+            iconColor="text-primary"
             data={project.activeSprints}
             type="sprint"
             expandedItem={expandedSprint}
@@ -814,8 +814,8 @@ const ManagerProjectDetailsPage = () => {
                 />
               </svg>
             }
-            iconBgColor="bg-[#dfdcef]"
-            iconColor="text-[#3b3b3b]"
+            iconBgColor="bg-accent"
+            iconColor="text-text"
             data={project.plannedSprints}
             type="sprint"
             expandedItem={expandedSprint}
@@ -839,8 +839,8 @@ const ManagerProjectDetailsPage = () => {
                 />
               </svg>
             }
-            iconBgColor="bg-[#e6f7f0]"
-            iconColor="text-[#009063]"
+            iconBgColor="bg-primary/10"
+            iconColor="text-primary"
             data={project.completedSprints}
             type="sprint"
             expandedItem={expandedSprint}

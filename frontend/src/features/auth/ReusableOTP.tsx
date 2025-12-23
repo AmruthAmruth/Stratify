@@ -26,13 +26,13 @@ const ReusableOTP: React.FC<ReusableOTPProps> = ({ onVerify, loading }) => {
         maxLength={6}
         value={otp}
         onChange={handleChange}
-        className="w-48 border border-[#dfdcef] rounded-lg px-4 py-2 text-center text-lg tracking-widest bg-[#fbfbfb] text-[#3b3b3b] focus:ring-2 focus:ring-[#009063] focus:border-transparent outline-none transition-all duration-200"
+        className="w-48 border border-accent rounded-lg px-4 py-2 text-center text-lg tracking-widest bg-bg text-text focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all duration-200"
         placeholder="Enter OTP"
       />
       <button
         type="submit"
         disabled={loading}
-        className="bg-[#009063] text-white px-6 py-2 rounded-lg hover:bg-green-700 disabled:opacity-50 transition-all duration-200"
+        className="bg-primary text-white px-6 py-2 rounded-lg hover:bg-primaryHover disabled:opacity-50 transition-all duration-200"
       >
         {loading ? "Verifying..." : "Verify"}
       </button>

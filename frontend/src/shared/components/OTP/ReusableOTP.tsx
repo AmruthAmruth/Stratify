@@ -31,7 +31,7 @@ const ReusableOTP: React.FC<OTPProps> = ({
           maxLength={1}
           value={digit}
           onChange={(e) => handleChange(e.target.value, index)}
-          className="border border-gray-400 rounded-lg text-center text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-green-600"
+          className="border border-gray-400 rounded-lg text-center text-xl font-semibold focus:outline-none focus:ring-2 focus:ring-primary"
           style={{ width: inputSize, height: inputSize }}
         />
       ))}

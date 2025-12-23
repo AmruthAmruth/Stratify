@@ -265,7 +265,7 @@ const AllCompanies = () => {
               disabled={isActionLoading}
               className={`px-3 py-1 text-sm rounded-lg transition-colors ${isActionLoading
                 ? "bg-gray-400 cursor-not-allowed"
-                : "bg-green-500 hover:bg-green-600 text-white"
+                : "bg-primary hover:bg-primary text-white"
                 }`}
             >
               {isActionLoading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Approve"}
@@ -291,7 +291,7 @@ const AllCompanies = () => {
     if (key === "status") {
       const status = row[key]?.toLowerCase() as string;
       const statusColors: Record<string, string> = {
-        approved: "text-green-600 bg-green-100",
+        approved: "text-primary bg-green-100",
         pending: "text-yellow-600 bg-yellow-100",
         rejected: "text-red-600 bg-red-100",
         active: "text-blue-600 bg-blue-100",

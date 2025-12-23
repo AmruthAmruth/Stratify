@@ -34,10 +34,10 @@ const MyTeam = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+            <div className="flex items-center justify-center min-h-screen bg-bg">
                 <div className="text-center">
-                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
-                    <p className="mt-4 text-[#3b3b3b] font-medium">Loading Team Data...</p>
+                    <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                    <p className="mt-4 text-text font-medium">Loading Team Data...</p>
                 </div>
             </div>
         );
@@ -69,14 +69,14 @@ const MyTeam = () => {
                         <img
                             src={`${import.meta.env.VITE_API_BASE_URL}${employee.profileImage}`}
                             alt={employee.name}
-                            className="w-10 h-10 rounded-full object-cover border-2 border-[#009063]"
+                            className="w-10 h-10 rounded-full object-cover border-2 border-primary"
                         />
                     ) : (
-                        <div className="w-10 h-10 rounded-full bg-[#009063] flex items-center justify-center text-white font-semibold">
+                        <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-semibold">
                             {employee.name.charAt(0).toUpperCase()}
                         </div>
                     )}
-                    <span className="font-medium text-[#3b3b3b]">{employee.name}</span>
+                    <span className="font-medium text-text">{employee.name}</span>
                 </div>
             );
         }
@@ -85,7 +85,7 @@ const MyTeam = () => {
         }
         if (key === 'gender') {
             return (
-                <span className="capitalize px-3 py-1 rounded-full text-xs font-medium bg-[#dfdcef] text-[#3b3b3b]">
+                <span className="capitalize px-3 py-1 rounded-full text-xs font-medium bg-accent text-text">
                     {employee.gender}
                 </span>
             );
@@ -94,14 +94,14 @@ const MyTeam = () => {
     };
 
     return (
-        <div className="min-h-screen bg-[#fbfbfb] p-6">
+        <div className="min-h-screen bg-bg p-6">
             {/* Header */}
             <div className="mb-8">
-                <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2 flex items-center gap-3">
-                    <Users className="w-10 h-10 text-[#009063]" />
+                <h1 className="text-4xl font-bold text-text mb-2 flex items-center gap-3">
+                    <Users className="w-10 h-10 text-primary" />
                     My Team
                 </h1>
-                <p className="text-[#3b3b3b]/70">Manage and monitor your department's team members</p>
+                <p className="text-text/70">Manage and monitor your department's team members</p>
             </div>
 
             {/* Dashboard Cards */}
@@ -151,12 +151,12 @@ const MyTeam = () => {
             {/* Analytics Charts */}
             {analytics && (
                 <div className="mb-12">
-                    <h2 className="text-2xl font-bold text-[#3b3b3b] mb-6">Team Analytics</h2>
+                    <h2 className="text-2xl font-bold text-text mb-6">Team Analytics</h2>
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Position Distribution Chart */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <Briefcase className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                            <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
+                                <Briefcase className="w-5 h-5 text-primary" />
                                 Position Distribution
                             </h3>
                             {Object.keys(analytics.positionDistribution).length > 0 ? (
@@ -169,16 +169,16 @@ const MyTeam = () => {
                                     />
                                 </div>
                             ) : (
-                                <div className="h-64 flex items-center justify-center text-[#3b3b3b]/50">
+                                <div className="h-64 flex items-center justify-center text-text/50">
                                     <p>No position data available</p>
                                 </div>
                             )}
                         </div>
 
                         {/* Project Allocation Chart */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <TrendingUp className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                            <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
+                                <TrendingUp className="w-5 h-5 text-primary" />
                                 Project Allocation
                             </h3>
                             <div className="h-64">
@@ -192,9 +192,9 @@ const MyTeam = () => {
                         </div>
 
                         {/* Gender Diversity Chart */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <Users className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                            <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
+                                <Users className="w-5 h-5 text-primary" />
                                 Gender Diversity
                             </h3>
                             <div className="h-64 flex items-center justify-center">
@@ -212,9 +212,9 @@ const MyTeam = () => {
                         </div>
 
                         {/* Team Status Overview */}
-                        <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-                            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4 flex items-center gap-2">
-                                <UserCheck className="w-5 h-5 text-[#009063]" />
+                        <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+                            <h3 className="text-lg font-semibold text-text mb-4 flex items-center gap-2">
+                                <UserCheck className="w-5 h-5 text-primary" />
                                 Team Status Overview
                             </h3>
                             <div className="h-64">
@@ -236,7 +236,7 @@ const MyTeam = () => {
 
             {/* Employee Table */}
             <div className="mb-8">
-                <h2 className="text-2xl font-bold text-[#3b3b3b] mb-6">Team Members</h2>
+                <h2 className="text-2xl font-bold text-text mb-6">Team Members</h2>
                 <Table
                     columns={columns}
                     data={paginatedEmployees}

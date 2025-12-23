@@ -455,7 +455,7 @@ const Department: React.FC = () => {
               + Add Department
             </button>
             <button
-              className="bg-green-600 text-white px-5 py-2 rounded-lg font-medium hover:bg-green-700 transition-all shadow-sm"
+              className="bg-primary text-white px-5 py-2 rounded-lg font-medium hover:bg-primaryHover transition-all shadow-sm"
               onClick={() => setIsManagerModalOpen(true)}
             >
               + Add Manager
@@ -585,7 +585,7 @@ const Department: React.FC = () => {
         />
         {submitLoading && (
           <div className="flex justify-center mt-4">
-            <div className="w-6 h-6 border-2 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+            <div className="w-6 h-6 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
           </div>
         )}
 

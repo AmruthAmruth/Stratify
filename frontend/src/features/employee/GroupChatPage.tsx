@@ -90,29 +90,29 @@ const GroupChatPage = () => {
     };
 
     return (
-        <div className="flex h-screen bg-[#fbfbfb] text-[#3b3b3b]">
+        <div className="flex h-screen bg-bg text-text">
             {/* Sidebar - Group List */}
-            <div className="w-1/3 md:w-1/4 bg-white border-r border-[#dfdcef] flex flex-col transition-all duration-300">
-                <div className="p-4 border-b border-[#dfdcef] bg-[#009063] text-white shadow-sm flex justify-between items-center">
+            <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+                <div className="p-4 border-b border-accent bg-primary text-white shadow-sm flex justify-between items-center">
                     <h2 className="text-lg font-semibold">Group Chats</h2>
                     <button
                         onClick={() => setIsCreateModalOpen(true)}
-                        className="bg-white text-[#009063] px-3 py-1 rounded-lg text-sm font-medium hover:bg-white/90 transition-colors"
+                        className="bg-white text-primary px-3 py-1 rounded-lg text-sm font-medium hover:bg-white/90 transition-colors"
                     >
                         + New
                     </button>
                 </div>
 
                 {loading ? (
-                    <p className="p-4 text-[#3b3b3b]/50 text-center animate-pulse">
+                    <p className="p-4 text-text/50 text-center animate-pulse">
                         Loading groups...
                     </p>
                 ) : groups.length === 0 ? (
                     <div className="p-4 text-center">
-                        <p className="text-[#3b3b3b]/50 mb-3">No groups yet.</p>
+                        <p className="text-text/50 mb-3">No groups yet.</p>
                         <button
                             onClick={() => setIsCreateModalOpen(true)}
-                            className="bg-[#009063] text-white px-4 py-2 rounded-lg hover:bg-[#009063]/90 transition-colors"
+                            className="bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/90 transition-colors"
                         >
                             Create Your First Group
                         </button>
@@ -122,23 +122,23 @@ const GroupChatPage = () => {
                         {/* Department Group */}
                         {departmentGroup && (
                             <>
-                                <li className="px-4 py-2 bg-[#f0f0f0] border-b border-[#dfdcef]">
-                                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide">Department</p>
+                                <li className="px-4 py-2 bg-gray-100 border-b border-accent">
+                                    <p className="text-xs font-semibold text-text/60 uppercase tracking-wide">Department</p>
                                 </li>
                                 <li
                                     key={departmentGroup.id}
                                     onClick={() => handleSelectGroup(departmentGroup)}
-                                    className={`relative flex items-center gap-3 p-4 cursor-pointer border-b-2 border-[#009063]/20 transition-all duration-200 hover:bg-[#dfdcef]/30 ${activeGroupId === departmentGroup.id
-                                        ? "bg-[#009063]/10 shadow-sm"
+                                    className={`relative flex items-center gap-3 p-4 cursor-pointer border-b-2 border-primary/20 transition-all duration-200 hover:bg-accent/30 ${activeGroupId === departmentGroup.id
+                                        ? "bg-primary/10 shadow-sm"
                                         : ""
                                         }`}
                                 >
-                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-[#009063] to-[#00b377] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                                    <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary to-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                                         🏢
                                     </div>
                                     <div className="flex-1">
-                                        <p className="font-medium text-[#3b3b3b]">{departmentGroup.name}</p>
-                                        <p className="text-sm text-[#3b3b3b]/60">
+                                        <p className="font-medium text-text">{departmentGroup.name}</p>
+                                        <p className="text-sm text-text/60">
                                             {departmentGroup.members.length} members
                                         </p>
                                     </div>
@@ -149,35 +149,35 @@ const GroupChatPage = () => {
                         {/* Custom Groups */}
                         {groups.length > 0 && (
                             <>
-                                <li className="px-4 py-2 bg-[#f0f0f0] border-b border-[#dfdcef] mt-2">
-                                    <p className="text-xs font-semibold text-[#3b3b3b]/60 uppercase tracking-wide">Custom Groups</p>
+                                <li className="px-4 py-2 bg-gray-100 border-b border-accent mt-2">
+                                    <p className="text-xs font-semibold text-text/60 uppercase tracking-wide">Custom Groups</p>
                                 </li>
                                 {groups.map((group) => (
                                     <li
                                         key={group.id}
                                         onClick={() => handleSelectGroup(group)}
-                                        className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${activeGroupId === group.id
-                                            ? "bg-[#009063]/10 shadow-sm"
+                                        className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-accent transition-all duration-200 hover:bg-accent/30 ${activeGroupId === group.id
+                                            ? "bg-primary/10 shadow-sm"
                                             : ""
                                             }`}
                                     >
-                                        <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                                        <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                                             {group.name.charAt(0).toUpperCase()}
                                         </div>
                                         <div className="flex-1">
-                                            <p className="font-medium text-[#3b3b3b]">{group.name}</p>
+                                            <p className="font-medium text-text">{group.name}</p>
                                             {group.lastMessage ? (
-                                                <p className="text-sm text-[#3b3b3b]/60 truncate max-w-[160px]">
+                                                <p className="text-sm text-text/60 truncate max-w-[160px]">
                                                     {group.lastMessage}
                                                 </p>
                                             ) : (
-                                                <p className="text-sm text-[#3b3b3b]/60">
+                                                <p className="text-sm text-text/60">
                                                     {group.members.length} members
                                                 </p>
                                             )}
                                         </div>
                                         {group.unreadCount && group.unreadCount > 0 && (
-                                            <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
+                                            <span className="absolute right-4 top-5 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
                                                 {group.unreadCount}
                                             </span>
                                         )}
@@ -190,7 +190,7 @@ const GroupChatPage = () => {
             </div>
 
             {/* Chat Section */}
-            <div className="flex-1 flex flex-col bg-[#fbfbfb]">
+            <div className="flex-1 flex flex-col bg-bg">
                 {selectedGroup ? (
                     <div className="flex-1 overflow-hidden">
                         <GroupChatBox
@@ -201,7 +201,7 @@ const GroupChatPage = () => {
                         />
                     </div>
                 ) : (
-                    <div className="flex flex-1 items-center justify-center text-[#3b3b3b]/50">
+                    <div className="flex flex-1 items-center justify-center text-text/50">
                         Select a group to start chatting
                     </div>
                 )}

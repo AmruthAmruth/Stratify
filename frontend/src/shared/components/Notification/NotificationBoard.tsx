@@ -130,22 +130,22 @@ const NotificationBoard = () => {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto p-4 text-[#3b3b3b] bg-[#fbfbfb] shadow-md rounded-md border border-[#dfdcef]">
+    <div className="w-full max-w-md mx-auto p-4 text-text bg-bg shadow-md rounded-md border border-accent">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-bold text-[#3b3b3b]">
+        <h3 className="text-lg font-bold text-text">
           Notifications {unreadCount > 0 && `(${unreadCount})`}
         </h3>
         {notifications.length > 0 && (
           <div className="flex gap-2">
             <button
               onClick={handleToggleReadAll}
-              className="text-sm text-[#009063] hover:text-[#007a4d] hover:underline transition-colors duration-200"
+              className="text-sm text-primary hover:text-[#007a4d] hover:underline transition-colors duration-200"
             >
               Mark All Read
             </button>
             <button
               onClick={handleDeleteAll}
-              className="text-sm text-[#3b3b3b] hover:text-[#009063] hover:underline transition-colors duration-200"
+              className="text-sm text-text hover:text-primary hover:underline transition-colors duration-200"
             >
               Clear All
             </button>
@@ -159,7 +159,7 @@ const NotificationBoard = () => {
             <LoadingSpinner variant="dots" size="small" />
           </div>
         ) : notifications.length === 0 ? (
-          <p className="text-sm text-[#3b3b3b]/70">No notifications</p>
+          <p className="text-sm text-text/70">No notifications</p>
         ) : (
           notifications.map((n) => (
             <NotificationItem

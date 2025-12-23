@@ -24,33 +24,33 @@ const Column: React.FC<ColumnProps> = ({ id, title, subtasks, onSubtaskClick }) 
     const getColumnColor = () => {
         switch (id) {
             case "To Do":
-                return "border-[#dfdcef] bg-[#fbfbfb]";
+                return "border-accent bg-bg";
             case "In Progress":
-                return "border-[#ff9800]/30 bg-[#fff4e6]/30";
+                return "border-orange-500/30 bg-orange-50/30";
             case "Done":
-                return "border-[#009063]/30 bg-[#e6f7f0]/30";
+                return "border-primary/30 bg-primary/10/30";
             default:
-                return "border-[#dfdcef] bg-[#fbfbfb]";
+                return "border-accent bg-bg";
         }
     };
 
     return (
         <div
             ref={setNodeRef}
-            className={`flex-1 min-w-[280px] border-2 rounded-xl p-4 transition-all ${getColumnColor()} ${isOver ? "ring-2 ring-[#009063] bg-[#e6f7f0]/50" : ""
+            className={`flex-1 min-w-[280px] border-2 rounded-xl p-4 transition-all ${getColumnColor()} ${isOver ? "ring-2 ring-primary bg-primary/10/50" : ""
                 }`}
         >
             <div className="flex items-center justify-between mb-4">
-                <h3 className="font-bold text-[#2f2f2f] text-sm uppercase tracking-wide">
+                <h3 className="font-bold text-heading text-sm uppercase tracking-wide">
                     {title}
                 </h3>
-                <span className="bg-[#009063] text-white text-xs font-bold px-2 py-1 rounded-full">
+                <span className="bg-primary text-white text-xs font-bold px-2 py-1 rounded-full">
                     {subtasks.length}
                 </span>
             </div>
             <div className="space-y-2 min-h-[200px]">
                 {subtasks.length === 0 ? (
-                    <div className="text-center text-[#3b3b3b]/50 text-sm py-8">
+                    <div className="text-center text-text/50 text-sm py-8">
                         No subtasks
                     </div>
                 ) : (

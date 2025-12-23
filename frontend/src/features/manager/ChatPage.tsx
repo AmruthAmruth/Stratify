@@ -112,10 +112,10 @@ const ChatPage = () => {
   }, [selectedEmployee]);
 
   return (
-    <div className="flex h-screen bg-[#fbfbfb] text-[#3b3b3b]">
+    <div className="flex h-screen bg-bg text-text">
       {/* Sidebar */}
-      <div className="w-1/3 md:w-1/4 bg-white border-r border-[#dfdcef] flex flex-col transition-all duration-300">
-        <div className="p-4 border-b border-[#dfdcef] bg-[#009063] text-white shadow-sm">
+      <div className="w-1/3 md:w-1/4 bg-white border-r border-accent flex flex-col transition-all duration-300">
+        <div className="p-4 border-b border-accent bg-primary text-white shadow-sm">
           <h2 className="text-lg font-semibold">Team Members</h2>
         </div>
 
@@ -124,45 +124,45 @@ const ChatPage = () => {
             <LoadingSpinner variant="pulse" size="medium" />
           </div>
         ) : employees.length === 0 ? (
-          <p className="p-4 text-[#3b3b3b]/50 text-center">No employees found.</p>
+          <p className="p-4 text-text/50 text-center">No employees found.</p>
         ) : (
           <ul className="flex-1 overflow-y-auto">
             {employees.map((emp) => (
               <li
                 key={emp.id}
                 onClick={() => setSelectedEmployee(emp)}
-                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-[#dfdcef] transition-all duration-200 hover:bg-[#dfdcef]/30 ${selectedEmployee?.id === emp.id
-                  ? "bg-[#009063]/10 shadow-sm"
+                className={`relative flex items-center gap-3 p-4 cursor-pointer border-b border-accent transition-all duration-200 hover:bg-accent/30 ${selectedEmployee?.id === emp.id
+                  ? "bg-primary/10 shadow-sm"
                   : ""
                   }`}
               >
                 {/* Avatar */}
-                <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
+                <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                   {emp.name.charAt(0).toUpperCase()}
                 </div>
 
                 {/* Name + last message */}
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center justify-between mb-1">
-                    <p className="font-medium text-[#3b3b3b]">{emp.name}</p>
+                    <p className="font-medium text-text">{emp.name}</p>
                     {emp.lastMessageTime && (
-                      <span className="text-xs text-[#3b3b3b]/50 ml-2">
+                      <span className="text-xs text-text/50 ml-2">
                         {formatChatTime(emp.lastMessageTime)}
                       </span>
                     )}
                   </div>
                   {emp.lastMessage ? (
-                    <p className="text-sm text-[#3b3b3b]/60 truncate">
+                    <p className="text-sm text-text/60 truncate">
                       {emp.lastMessage}
                     </p>
                   ) : (
-                    <p className="text-sm text-[#3b3b3b]/60">Tap to chat</p>
+                    <p className="text-sm text-text/60">Tap to chat</p>
                   )}
                 </div>
 
                 {/* Unread badge - Only show when there are new messages */}
                 {emp.unreadCount != null && emp.unreadCount > 0 && (
-                  <span className="absolute right-4 top-5 bg-[#009063] text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
+                  <span className="absolute right-4 top-5 bg-primary text-white text-xs font-semibold px-2 py-0.5 rounded-full shadow-md">
                     {emp.unreadCount}
                   </span>
                 )}
@@ -173,19 +173,19 @@ const ChatPage = () => {
       </div>
 
       {/* Chat Section */}
-      <div className="flex-1 flex flex-col bg-[#fbfbfb]">
+      <div className="flex-1 flex flex-col bg-bg">
         {selectedEmployee ? (
           <>
             {/* Chat Header */}
-            <div className="flex items-center gap-3 p-4 bg-white shadow-sm border-b border-[#dfdcef] transition-all duration-200">
-              <div className="w-10 h-10 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium shadow-md">
+            <div className="flex items-center gap-3 p-4 bg-white shadow-sm border-b border-accent transition-all duration-200">
+              <div className="w-10 h-10 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium shadow-md">
                 {selectedEmployee.name.charAt(0).toUpperCase()}
               </div>
               <div>
-                <h2 className="font-semibold text-lg text-[#3b3b3b]">
+                <h2 className="font-semibold text-lg text-text">
                   {selectedEmployee.name}
                 </h2>
-                <p className="text-sm text-[#009063] font-medium">Online</p>
+                <p className="text-sm text-primary font-medium">Online</p>
               </div>
             </div>
 
@@ -199,7 +199,7 @@ const ChatPage = () => {
             </div>
           </>
         ) : (
-          <div className="flex flex-1 items-center justify-center text-[#3b3b3b]/50">
+          <div className="flex flex-1 items-center justify-center text-text/50">
             Select an employee to start chatting
           </div>
         )}

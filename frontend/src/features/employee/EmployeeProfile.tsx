@@ -90,7 +90,7 @@ const EmployeeProfile: React.FC = () => {
             <div className="max-w-7xl mx-auto">
                 {/* Header Card */}
                 <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-green-600 to-emerald-700 opacity-10"></div>
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-primary to-primaryHover opacity-10"></div>
 
                     {/* Logo */}
                     <div className="flex-shrink-0 relative z-10">
@@ -106,7 +106,7 @@ const EmployeeProfile: React.FC = () => {
                             )}
                         </div>
                         {isEditing && (
-                            <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-green-600 transition">
+                            <button className="absolute bottom-0 right-0 p-2 bg-white rounded-full shadow-md border border-gray-200 text-gray-600 hover:text-primary transition">
                                 <Camera className="w-4 h-4" />
                             </button>
                         )}
@@ -125,7 +125,7 @@ const EmployeeProfile: React.FC = () => {
                                 <Building className="w-4 h-4" />
                                 {departmentName}
                             </span>
-                            <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 text-green-700 rounded-full text-sm font-medium">
+                            <span className="flex items-center gap-1 px-2 py-0.5 bg-green-100 text-primaryHover rounded-full text-sm font-medium">
                                 <Shield className="w-3 h-3 mr-1" />
                                 {employee?.role}
                             </span>
@@ -138,7 +138,7 @@ const EmployeeProfile: React.FC = () => {
                             <>
                                 <button
                                     onClick={handleSave}
-                                    className="flex items-center gap-2 px-6 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition shadow-sm"
+                                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition shadow-sm"
                                 >
                                     <Save className="w-4 h-4" /> Save
                                 </button>
@@ -181,7 +181,7 @@ const EmployeeProfile: React.FC = () => {
                                             name="phone"
                                             value={formData.phone || ""}
                                             onChange={handleInputChange}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-transparent"
                                         />
                                     ) : (
                                         <p className="text-gray-900 font-medium">{employee?.phone}</p>

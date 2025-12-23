@@ -278,21 +278,21 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         <div className="flex flex-wrap gap-3 mt-4">
           <button
             onClick={() => setIsUpdateProjectModalOpen(true)}
-            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            className="px-4 py-2 rounded-lg text-white bg-primary hover:opacity-90"
             aria-label="Edit project details"
           >
             Edit Project
           </button>
           <button
             onClick={() => setIsEmployeeModalOpen(true)}
-            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            className="px-4 py-2 rounded-lg text-white bg-primary hover:opacity-90"
             aria-label="Add employee to project"
           >
             Add Employee
           </button>
           <button
             onClick={() => setIsAssignSprintModalOpen(true)}
-            className="px-4 py-2 rounded-lg text-white bg-[#009063] hover:opacity-90"
+            className="px-4 py-2 rounded-lg text-white bg-primary hover:opacity-90"
             aria-label="Assign issue to sprint and employee"
           >
             Assign Issue to Sprint
@@ -343,7 +343,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       {/* ──────────────────────────────── */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-10">
         {/* Sprint Status Summary */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="doughnut"
             title="Sprint Overview"
@@ -357,7 +357,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Issue Type Distribution */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="pie"
             title="All Issue Types"
@@ -370,7 +370,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Issue Status Overview */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[400px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[400px]">
           <ReusableChart
             type="pie"
             title="Issue Status Overview"
@@ -384,7 +384,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Priority Distribution */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="bar"
             title="Priority Breakdown"
@@ -398,7 +398,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Assigned Employee Workload */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="line"
             title="Employee Workload"
@@ -411,7 +411,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
         </div>
 
         {/* Hours Estimation Chart */}
-        <div className="p-6 bg-[#fbfbfb] border border-[#dfdcef] rounded-xl shadow-sm w-full h-[350px]">
+        <div className="p-6 bg-bg border border-accent rounded-xl shadow-sm w-full h-[350px]">
           <ReusableChart
             type="bar"
             title="Estimated Hours (All Issues)"
@@ -446,7 +446,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
           {canManage && (
             <button
               onClick={() => setIsSprintModalOpen(true)}
-              className="bg-green-600 text-white px-4 py-2 rounded mb-3"
+              className="bg-primary text-white px-4 py-2 rounded mb-3"
               aria-label="Create new sprint"
             >
               + Create Sprint

@@ -54,11 +54,11 @@ const CreateGroupModal = ({ isOpen, onClose, availableMembers }: CreateGroupModa
     return (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50">
             <div className="bg-white rounded-lg shadow-xl p-6 w-full max-w-md">
-                <h2 className="text-xl font-semibold text-[#3b3b3b] mb-4">Create New Group</h2>
+                <h2 className="text-xl font-semibold text-text mb-4">Create New Group</h2>
 
                 {/* Group Name Input */}
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-[#3b3b3b] mb-2">
+                    <label className="block text-sm font-medium text-text mb-2">
                         Group Name
                     </label>
                     <input
@@ -66,33 +66,33 @@ const CreateGroupModal = ({ isOpen, onClose, availableMembers }: CreateGroupModa
                         value={groupName}
                         onChange={(e) => setGroupName(e.target.value)}
                         placeholder="Enter group name"
-                        className="w-full border border-[#dfdcef] rounded-lg px-4 py-2 outline-none focus:border-[#009063]/50"
+                        className="w-full border border-accent rounded-lg px-4 py-2 outline-none focus:border-primary/50"
                     />
                 </div>
 
                 {/* Member Selection */}
                 <div className="mb-4">
-                    <label className="block text-sm font-medium text-[#3b3b3b] mb-2">
+                    <label className="block text-sm font-medium text-text mb-2">
                         Select Members ({selectedMembers.length} selected)
                     </label>
-                    <div className="border border-[#dfdcef] rounded-lg max-h-60 overflow-y-auto">
+                    <div className="border border-accent rounded-lg max-h-60 overflow-y-auto">
                         {availableMembers.map((member) => (
                             <div
                                 key={member.id}
                                 onClick={() => toggleMember(member.id)}
-                                className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-[#dfdcef]/30 transition-colors ${selectedMembers.includes(member.id) ? "bg-[#009063]/10" : ""
+                                className={`flex items-center gap-3 p-3 cursor-pointer hover:bg-accent/30 transition-colors ${selectedMembers.includes(member.id) ? "bg-primary/10" : ""
                                     }`}
                             >
                                 <input
                                     type="checkbox"
                                     checked={selectedMembers.includes(member.id)}
                                     onChange={() => { }}
-                                    className="w-4 h-4 accent-[#009063]"
+                                    className="w-4 h-4 accent-primary"
                                 />
-                                <div className="w-8 h-8 rounded-full bg-[#009063] text-white flex items-center justify-center text-sm font-medium">
+                                <div className="w-8 h-8 rounded-full bg-primary text-white flex items-center justify-center text-sm font-medium">
                                     {member.name.charAt(0).toUpperCase()}
                                 </div>
-                                <span className="text-[#3b3b3b]">{member.name}</span>
+                                <span className="text-text">{member.name}</span>
                             </div>
                         ))}
                     </div>
@@ -102,14 +102,14 @@ const CreateGroupModal = ({ isOpen, onClose, availableMembers }: CreateGroupModa
                 <div className="flex gap-3 justify-end">
                     <button
                         onClick={onClose}
-                        className="px-4 py-2 text-[#3b3b3b] hover:bg-[#dfdcef]/30 rounded-lg transition-colors"
+                        className="px-4 py-2 text-text hover:bg-accent/30 rounded-lg transition-colors"
                     >
                         Cancel
                     </button>
                     <button
                         onClick={handleCreateGroup}
                         disabled={loading || !groupName.trim() || selectedMembers.length === 0}
-                        className="px-4 py-2 bg-[#009063] text-white rounded-lg hover:bg-[#009063]/90 disabled:bg-[#009063]/50 transition-colors"
+                        className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary/90 disabled:bg-primary/50 transition-colors"
                     >
                         {loading ? <LoadingSpinner variant="dots" size="small" color="#ffffff" /> : "Create Group"}
                     </button>

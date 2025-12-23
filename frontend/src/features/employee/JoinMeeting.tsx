@@ -92,7 +92,7 @@ const JoinMeeting: React.FC = () => {
     if (key === "status") {
       const color =
         row.status === "open"
-          ? "bg-green-100 text-green-700"
+          ? "bg-green-100 text-primaryHover"
           : "bg-red-100 text-red-700";
 
       return (
@@ -106,12 +106,12 @@ const JoinMeeting: React.FC = () => {
   };
 
   return (
-    <div className="bg-[#fbfbfb] p-6 rounded-xl border border-[#dfdcef] shadow-sm">
+    <div className="bg-bg p-6 rounded-xl border border-accent shadow-sm">
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-2">
+        <h2 className="text-2xl font-bold text-text mb-2">
           Available Meetings
         </h2>
-        <p className="text-sm text-[#3b3b3b]/60">
+        <p className="text-sm text-text/60">
           Join ongoing or scheduled meetings with your team and stay connected.
         </p>
       </div>

@@ -63,10 +63,10 @@ const SuperAdminDashboard = () => {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen bg-[#fbfbfb]">
+      <div className="flex items-center justify-center min-h-screen bg-bg">
         <div className="text-center">
-          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-[#009063]"></div>
-          <p className="mt-4 text-[#3b3b3b] font-medium">Loading Dashboard...</p>
+          <div className="inline-block animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <p className="mt-4 text-text font-medium">Loading Dashboard...</p>
         </div>
       </div>
     );
@@ -77,7 +77,7 @@ const SuperAdminDashboard = () => {
   };
 
   const EmptyChartState = ({ message }: { message: string }) => (
-    <div className="h-64 flex flex-col items-center justify-center text-[#3b3b3b]/50">
+    <div className="h-64 flex flex-col items-center justify-center text-text/50">
       <BarChart3 className="w-16 h-16 mb-3 opacity-30" />
       <p className="text-sm font-medium">{message}</p>
       <p className="text-xs mt-1">Data will appear once available</p>
@@ -85,10 +85,10 @@ const SuperAdminDashboard = () => {
   );
 
   return (
-    <div className="min-h-screen bg-[#fbfbfb] p-6">
+    <div className="min-h-screen bg-bg p-6">
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-[#3b3b3b] mb-2">Super Admin Dashboard</h1>
-        <p className="text-[#3b3b3b]/70">Overview of platform performance and companies</p>
+        <h1 className="text-4xl font-bold text-text mb-2">Super Admin Dashboard</h1>
+        <p className="text-text/70">Overview of platform performance and companies</p>
       </div>
 
       {/* Statistics Cards */}
@@ -122,12 +122,12 @@ const SuperAdminDashboard = () => {
 
       {/* Charts Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-[#3b3b3b] mb-6">Analytics & Insights</h2>
+        <h2 className="text-2xl font-bold text-text mb-6">Analytics & Insights</h2>
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Chart 1: Companies by Status */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Companies by Status</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Companies by Status</h3>
             {hasChartData(chartData.companiesByStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -143,8 +143,8 @@ const SuperAdminDashboard = () => {
           </div>
 
           {/* Chart 2: Subscriptions by Plan */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Subscriptions by Plan</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Subscriptions by Plan</h3>
             {hasChartData(chartData.subscriptionsByPlan.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -160,8 +160,8 @@ const SuperAdminDashboard = () => {
           </div>
 
           {/* Chart 3: Revenue Trend */}
-          <div className="bg-white border border-[#dfdcef] rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-[#3b3b3b] mb-4">Revenue Trend</h3>
+          <div className="bg-white border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-text mb-4">Revenue Trend</h3>
             {hasChartData(chartData.revenueTrend.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -178,8 +178,8 @@ const SuperAdminDashboard = () => {
         </div>
       </div>
 
-      <div className="mt-8 p-4 bg-white border border-[#dfdcef] rounded-xl">
-        <p className="text-sm text-[#3b3b3b]/70 text-center">
+      <div className="mt-8 p-4 bg-white border border-accent rounded-xl">
+        <p className="text-sm text-text/70 text-center">
           Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
         </p>
       </div>
