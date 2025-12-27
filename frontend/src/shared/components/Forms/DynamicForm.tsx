@@ -213,6 +213,38 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                     );
                   })}
                 </div>
+              ) : field.type === "select" ? (
+                <select
+                  name={field.name}
+                  value={(formData[field.name] as string) || ""}
+                  onChange={(e) =>
+                    setFormData((prev) => ({
+                      ...prev,
+                      [field.name]: e.target.value,
+                    }))
+                  }
+                  onBlur={() => validateField(field.name)}
+                  className="rounded-lg border border-accent
+                             bg-bg text-text px-3 py-2
+                             focus:outline-none focus:ring-2
+                             focus:ring-primary
+                             focus:border-primary
+                             transition-all duration-200
+                             focus:scale-[1.01]"
+                >
+                  <option value="" disabled>
+                    {field.placeholder || `Select ${field.label}`}
+                  </option>
+                  {field.options?.map((opt) => {
+                    const value = typeof opt === "string" ? opt : opt.value;
+                    const label = typeof opt === "string" ? opt : opt.label;
+                    return (
+                      <option key={value} value={value}>
+                        {label}
+                      </option>
+                    );
+                  })}
+                </select>
               ) : field.type === "date" ? (
                 <DatePicker
                   selected={
