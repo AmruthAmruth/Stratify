@@ -258,7 +258,7 @@ const HomePage = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className={`group ${feature.bgColor} ${feature.borderColor} border-2 rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 animate-slide-up bg-white`}
+                className={`group ${feature.bgColor} ${feature.borderColor} border-2 rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 animate-slide-up bg-surface`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
                 <div className="flex flex-col items-center text-center space-y-4">

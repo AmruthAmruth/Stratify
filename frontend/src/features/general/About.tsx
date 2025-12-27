@@ -197,11 +197,11 @@ const AboutPage = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-white relative overflow-hidden">
+    <div className="min-h-screen bg-bg relative overflow-hidden">
       <div className="absolute inset-0 pointer-events-none">
-        <div className="absolute top-20 left-10 w-96 h-96 bg-gradient-to-r from-blue-50 to-purple-50 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
+        <div className="absolute top-20 left-10 w-96 h-96 bg-accent/20 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"></div>
         <div
-          className="absolute bottom-20 right-10 w-96 h-96 bg-gradient-to-r from-purple-50 to-pink-50 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"
+          className="absolute bottom-20 right-10 w-96 h-96 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl opacity-40 animate-pulse"
           style={{ animationDelay: "2s" }}
         ></div>
       </div>
@@ -213,13 +213,13 @@ const AboutPage = () => {
       {/* Hero Section */}
       <section className="relative z-40 max-w-7xl mx-auto px-6 lg:px-12 pt-20 lg:pt-28 pb-20 lg:pb-28">
         {/* Background */}
-        <div className="absolute inset-0 bg-gradient-to-b from-white via-blue-50/40 to-white -z-10"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-bg via-accent/20 to-bg -z-10"></div>
 
         <div className="text-center max-w-4xl mx-auto space-y-10">
           {/* Tagline */}
-          <div className="inline-flex items-center space-x-3 bg-white/90 backdrop-blur-md border border-blue-200/70 px-5 py-2.5 rounded-full shadow-md">
-            <Award className="w-5 h-5 text-blue-600" />
-            <span className="text-sm font-semibold text-gray-800 tracking-wide">
+          <div className="inline-flex items-center space-x-3 bg-surface/90 backdrop-blur-md border border-accent px-5 py-2.5 rounded-full shadow-md">
+            <Award className="w-5 h-5 text-primary" />
+            <span className="text-sm font-semibold text-text tracking-wide">
               The Future of Company Management
             </span>
             <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
@@ -234,34 +234,34 @@ const AboutPage = () => {
           </h1>
 
           {/* Subheading */}
-          <p className="text-lg sm:text-xl md:text-2xl text-gray-600 font-light leading-relaxed">
+          <p className="text-lg sm:text-xl md:text-2xl text-muted font-light leading-relaxed">
             Stratify helps businesses streamline{" "}
-            <span className="font-semibold text-blue-600">employees</span>,{" "}
-            <span className="font-semibold text-purple-600">projects</span>, and{" "}
-            <span className="font-semibold text-cyan-600">growth</span> — all in one
+            <span className="font-semibold text-primary">employees</span>,{" "}
+            <span className="font-semibold text-primary">projects</span>, and{" "}
+            <span className="font-semibold text-primary">growth</span> — all in one
             powerful platform.
           </p>
 
           {/* Features */}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-6 mt-12">
-            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-              <Users className="w-8 h-8 text-blue-600 mb-4" />
-              <h3 className="font-semibold text-lg">Employee Hub</h3>
-              <p className="text-sm text-gray-500 mt-2">
+            <div className="p-6 bg-surface rounded-2xl shadow-lg hover:shadow-2xl transition border-2 border-accent">
+              <Users className="w-8 h-8 text-primary mb-4" />
+              <h3 className="font-semibold text-lg text-text">Employee Hub</h3>
+              <p className="text-sm text-muted mt-2">
                 Centralize employee profiles, roles & performance tracking.
               </p>
             </div>
-            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-              <Building2 className="w-8 h-8 text-purple-600 mb-4" />
-              <h3 className="font-semibold text-lg">Project Control</h3>
-              <p className="text-sm text-gray-500 mt-2">
+            <div className="p-6 bg-surface rounded-2xl shadow-lg hover:shadow-2xl transition border-2 border-accent">
+              <Building2 className="w-8 h-8 text-primary mb-4" />
+              <h3 className="font-semibold text-lg text-text">Project Control</h3>
+              <p className="text-sm text-muted mt-2">
                 Assign, monitor, and deliver projects with clarity & speed.
               </p>
             </div>
-            <div className="p-6 bg-white rounded-2xl shadow-lg hover:shadow-2xl transition">
-              <Globe className="w-8 h-8 text-cyan-600 mb-4" />
-              <h3 className="font-semibold text-lg">Global Scalability</h3>
-              <p className="text-sm text-gray-500 mt-2">
+            <div className="p-6 bg-surface rounded-2xl shadow-lg hover:shadow-2xl transition border-2 border-accent">
+              <Globe className="w-8 h-8 text-primary mb-4" />
+              <h3 className="font-semibold text-lg text-text">Global Scalability</h3>
+              <p className="text-sm text-muted mt-2">
                 Built to support businesses across countries and cultures.
               </p>
             </div>
@@ -284,14 +284,14 @@ const AboutPage = () => {
 
 
       {/* Company Story Section */}
-      <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
+      <section className="relative z-40 bg-bg py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="max-w-4xl mx-auto text-center">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-8">
               Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Story</span>
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Story</span>
             </h2>
-            <div className="prose prose-lg sm:prose-xl max-w-none text-gray-600 leading-relaxed space-y-6">
+            <div className="prose prose-lg sm:prose-xl max-w-none text-muted leading-relaxed space-y-6">
               <p className="text-xl sm:text-2xl">
                 Founded in 2019 by a team of former McKinsey consultants and Google engineers, Stratify was born from a
                 simple observation: businesses were drowning in complexity while simple, powerful solutions remained out
@@ -313,11 +313,11 @@ const AboutPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Our{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
                 Foundation
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               These core principles guide every decision we make and shape the culture that drives our success.
             </p>
           </div>
@@ -326,7 +326,7 @@ const AboutPage = () => {
             {coreValues.map((value, index) => (
               <div
                 key={index}
-                className="group relative overflow-hidden bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border border-gray-100"
+                className="group relative overflow-hidden bg-surface rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border-2 border-accent"
               >
                 <div
                   className={`absolute inset-0 bg-gradient-to-br ${value.gradient} opacity-0 group-hover:opacity-5 transition-opacity duration-500`}
@@ -338,7 +338,7 @@ const AboutPage = () => {
                     <value.icon className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="text-2xl font-bold text-heading mb-4">{value.title}</h3>
-                  <p className="text-gray-600 leading-relaxed">{value.description}</p>
+                  <p className="text-muted leading-relaxed">{value.description}</p>
                 </div>
               </div>
             ))}
@@ -346,16 +346,16 @@ const AboutPage = () => {
         </div>
       </section>
 
-      <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
+      <section className="relative z-40 bg-bg py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               What Our{" "}
-              <span className="bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
                 Clients Say
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               Don't just take our word for it. Here's what industry leaders say about Stratify.
             </p>
           </div>
@@ -364,19 +364,19 @@ const AboutPage = () => {
             {testimonials.map((testimonial, index) => (
               <div
                 key={index}
-                className="bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-gray-100"
+                className="bg-surface rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-accent"
               >
                 <div className="flex items-center mb-4">
                   {[...Array(testimonial.rating)].map((_, i) => (
                     <Star key={i} className="w-5 h-5 text-yellow-400 fill-current" />
                   ))}
                 </div>
-                <Quote className="w-8 h-8 text-blue-600 mb-4" />
-                <p className="text-gray-700 leading-relaxed mb-6 italic">"{testimonial.quote}"</p>
-                <div className="border-t pt-4">
+                <Quote className="w-8 h-8 text-primary mb-4" />
+                <p className="text-text leading-relaxed mb-6 italic">"{testimonial.quote}"</p>
+                <div className="border-t-2 border-accent pt-4">
                   <p className="font-bold text-heading">{testimonial.author}</p>
-                  <p className="text-blue-600 text-sm">{testimonial.role}</p>
-                  <p className="text-gray-500 text-sm">{testimonial.company}</p>
+                  <p className="text-primary text-sm">{testimonial.role}</p>
+                  <p className="text-muted text-sm">{testimonial.company}</p>
                 </div>
               </div>
             ))}
@@ -389,11 +389,11 @@ const AboutPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Awards &{" "}
-              <span className="bg-gradient-to-r from-yellow-500 to-orange-500 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">
                 Recognition
               </span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               Our commitment to excellence has been recognized by industry leaders worldwide.
             </p>
           </div>
@@ -402,7 +402,7 @@ const AboutPage = () => {
             {awards.map((award, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-gray-100 text-center"
+                className="bg-surface rounded-2xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-accent text-center"
               >
                 <div
                   className={`w-16 h-16 bg-gradient-to-br ${award.gradient} rounded-2xl flex items-center justify-center mb-4 mx-auto`}
@@ -410,7 +410,7 @@ const AboutPage = () => {
                   <award.icon className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-heading mb-2">{award.title}</h3>
-                <p className="text-gray-600 text-sm">{award.organization}</p>
+                <p className="text-muted text-sm">{award.organization}</p>
               </div>
             ))}
           </div>
@@ -418,14 +418,14 @@ const AboutPage = () => {
       </section>
 
       {/* Features Section */}
-      <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
+      <section className="relative z-40 bg-bg py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               What We{" "}
-              <span className="bg-gradient-to-r from-blue-600 to-purple-600 bg-clip-text text-transparent">Offer</span>
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Offer</span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               Comprehensive solutions designed to streamline every aspect of your business operations.
             </p>
           </div>
@@ -434,20 +434,20 @@ const AboutPage = () => {
             {features.map((feature, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border border-gray-100 relative overflow-hidden"
+                className="group bg-surface rounded-3xl p-8 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border-2 border-accent relative overflow-hidden"
               >
-                <div className="absolute top-0 right-0 w-32 h-32 bg-gradient-to-br from-blue-100 to-purple-100 rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-500"></div>
+                <div className="absolute top-0 right-0 w-32 h-32 bg-accent/30 rounded-full transform translate-x-16 -translate-y-16 group-hover:scale-150 transition-transform duration-500"></div>
                 <div className="relative z-10">
                   <div className="flex items-start space-x-6">
-                    <div className="w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-500 rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
+                    <div className="w-16 h-16 bg-gradient-to-br from-primary to-primary rounded-2xl flex items-center justify-center group-hover:scale-110 transition-transform duration-300 flex-shrink-0">
                       <feature.icon className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1">
                       <h3 className="text-2xl font-bold text-heading mb-4">{feature.title}</h3>
-                      <p className="text-gray-600 leading-relaxed mb-6">{feature.description}</p>
-                      <div className="inline-flex items-center space-x-2 bg-gradient-to-r from-blue-50 to-purple-50 px-4 py-2 rounded-full">
+                      <p className="text-muted leading-relaxed mb-6">{feature.description}</p>
+                      <div className="inline-flex items-center space-x-2 bg-accent/30 px-4 py-2 rounded-full border-2 border-accent">
                         <CheckCircle className="w-4 h-4 text-primary" />
-                        <span className="text-sm font-semibold text-gray-700">{feature.stats}</span>
+                        <span className="text-sm font-semibold text-text">{feature.stats}</span>
                       </div>
                     </div>
                   </div>
@@ -463,9 +463,9 @@ const AboutPage = () => {
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Our{" "}
-              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">Culture</span>
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Culture</span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               We believe that great products come from great people working in an environment that fosters creativity
               and growth.
             </p>
@@ -475,13 +475,13 @@ const AboutPage = () => {
             {culture.map((item, index) => (
               <div
                 key={index}
-                className="bg-white rounded-2xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border border-gray-100 text-center"
+                className="bg-surface rounded-2xl p-6 shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-accent text-center"
               >
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-purple-500 rounded-xl flex items-center justify-center mb-4 mx-auto">
+                <div className="w-12 h-12 bg-gradient-to-br from-primary to-primary rounded-xl flex items-center justify-center mb-4 mx-auto">
                   <item.icon className="w-6 h-6 text-white" />
                 </div>
                 <h3 className="text-lg font-bold text-heading mb-2">{item.title}</h3>
-                <p className="text-gray-600 text-sm leading-relaxed">{item.description}</p>
+                <p className="text-muted text-sm leading-relaxed">{item.description}</p>
               </div>
             ))}
           </div>
@@ -489,14 +489,14 @@ const AboutPage = () => {
       </section>
 
       {/* Team Section */}
-      <section className="relative z-40 bg-gray-50 py-16 sm:py-24">
+      <section className="relative z-40 bg-bg py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-heading mb-6">
               Meet Our{" "}
-              <span className="bg-gradient-to-r from-pink-600 to-blue-600 bg-clip-text text-transparent">Leaders</span>
+              <span className="bg-gradient-to-r from-primary to-primary bg-clip-text text-transparent">Leaders</span>
             </h2>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-3xl mx-auto">
+            <p className="text-lg sm:text-xl text-muted max-w-3xl mx-auto">
               Visionaries, innovators, and industry experts driving the future of business management.
             </p>
           </div>
@@ -505,7 +505,7 @@ const AboutPage = () => {
             {teamMembers.map((member, index) => (
               <div
                 key={index}
-                className="group bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border border-gray-100"
+                className="group bg-surface rounded-3xl overflow-hidden shadow-lg hover:shadow-xl transform hover:scale-105 transition-all duration-500 border-2 border-accent"
               >
                 <div className={`h-2 bg-gradient-to-r ${member.gradient}`}></div>
                 <div className="p-8 text-center">
@@ -522,8 +522,8 @@ const AboutPage = () => {
                     </div>
                   </div>
                   <h3 className="text-xl font-bold text-heading mb-2">{member.name}</h3>
-                  <p className="text-blue-600 font-semibold mb-4">{member.role}</p>
-                  <p className="text-gray-600 text-sm leading-relaxed">{member.bio}</p>
+                  <p className="text-primary font-semibold mb-4">{member.role}</p>
+                  <p className="text-muted text-sm leading-relaxed">{member.bio}</p>
                 </div>
               </div>
             ))}
@@ -532,25 +532,25 @@ const AboutPage = () => {
       </section>
 
       {/* CTA Section */}
-      <section className="relative z-40 bg-gradient-to-r from-blue-600 via-purple-600 to-cyan-600 py-16 sm:py-24">
+      <section className="relative z-40 bg-gradient-to-r from-primary to-primary py-16 sm:py-24">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <div className="space-y-8">
             <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-black text-white leading-tight">
               Ready to Transform Your Business?
             </h2>
-            <p className="text-lg sm:text-xl md:text-2xl text-blue-100 max-w-3xl mx-auto leading-relaxed">
+            <p className="text-lg sm:text-xl md:text-2xl text-white/80 max-w-3xl mx-auto leading-relaxed">
               Join thousands of companies that have revolutionized their operations with Stratify.
             </p>
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-              <button className="group bg-white text-blue-600 px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
+              <button className="group bg-white text-primary px-8 py-4 rounded-2xl font-bold text-lg shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300">
                 <span className="flex items-center justify-center space-x-3">
                   <span>Start Your Free Trial</span>
                   <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                 </span>
               </button>
 
-              <button className="group flex items-center justify-center space-x-3 border-2 border-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-blue-600 transition-all duration-300 transform hover:scale-105">
+              <button className="group flex items-center justify-center space-x-3 border-2 border-white text-white px-8 py-4 rounded-2xl font-bold text-lg hover:bg-white hover:text-primary transition-all duration-300 transform hover:scale-105">
                 <MessageSquare className="w-5 h-5" />
                 <span>Schedule a Demo</span>
               </button>
