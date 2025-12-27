@@ -37,6 +37,8 @@ export class ProjectMapper {
       createdByModel: entity.createdByModel,
       companyId: new Types.ObjectId(entity.companyId),
       teamMemberIds: entity.teamMemberIds?.map((id) => new Types.ObjectId(id)),
+      createdAt: entity.createdAt,
+      updatedAt: entity.updatedAt,
     };
   }
 
