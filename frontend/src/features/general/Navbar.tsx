@@ -8,7 +8,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-bg/95 backdrop-blur-md border-b border-accent shadow-lg p-5">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-bg border-b border-accent shadow-lg p-5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center justify-between h-16">
@@ -89,7 +89,7 @@ export const Navbar = () => {
 
       {/* Mobile Menu */}
       {isOpen && (
-        <div className="lg:hidden bg-bg/95 backdrop-blur-md border-t border-accent shadow-xl animate-in slide-in-from-top duration-300">
+        <div className="lg:hidden bg-bg border-t border-accent shadow-xl animate-in slide-in-from-top duration-300">
           <div className="max-w-7xl mx-auto px-4 py-6 space-y-1">
             <Link
               to="/"
