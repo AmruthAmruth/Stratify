@@ -6,7 +6,6 @@ import {
   Play,
   CheckCircle,
   Zap,
-  Globe,
   Users,
   TrendingUp,
   Star,
@@ -16,11 +15,31 @@ import {
   BarChart3,
   Target,
   Award,
+  FolderKanban,
+  MessageSquare,
+  Video,
+  Calendar,
+  UserCheck,
+  FileText,
+  Settings,
+  Briefcase,
+  Code,
+  Headphones,
+  Building2,
+  Sparkles,
+  CheckSquare,
+  GitBranch,
+  UserPlus,
+  LayoutDashboard,
+  PieChart,
+  Layers,
+  Workflow,
 } from "lucide-react"
 import CountUp from "react-countup"
 import { useInView } from "react-intersection-observer"
 import { Navbar } from "./Navbar"
 import Footer from "./Footer"
+
 const HomePage = () => {
   const [isVisible, setIsVisible] = useState(false)
   const [mousePosition, setMousePosition] = useState({ x: 0, y: 0 })
@@ -36,61 +55,155 @@ const HomePage = () => {
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
 
-  const floatingElements = [
-    { icon: Zap, color: "text-primary", delay: "0s" },
-    { icon: Globe, color: "text-text", delay: "0.5s" },
-    { icon: Users, color: "text-primary", delay: "1s" },
-    { icon: TrendingUp, color: "text-text", delay: "1.5s" },
+  const coreModules = [
+    {
+      icon: FolderKanban,
+      title: "Project Management",
+      desc: "Complete agile workflow with sprints, issues, backlogs, and user stories",
+      color: "text-white",
+      gradient: "from-primary to-primaryHover",
+      size: "large",
+    },
+    {
+      icon: MessageSquare,
+      title: "Team Collaboration",
+      desc: "Real-time chat, video meetings, and group discussions",
+      color: "text-text",
+      bgColor: "bg-white",
+      size: "small",
+    },
+    {
+      icon: UserCheck,
+      title: "HR Management",
+      desc: "Employee onboarding, leave tracking, and department organization",
+      color: "text-text",
+      bgColor: "bg-white",
+      size: "small",
+    },
+    {
+      icon: BarChart3,
+      title: "Analytics & Insights",
+      desc: "Project performance, team metrics, and resource allocation",
+      color: "text-white",
+      gradient: "from-accent to-primary",
+      size: "medium",
+    },
+    {
+      icon: Settings,
+      title: "Customization",
+      desc: "Company theming, role-based access, and notifications",
+      color: "text-text",
+      bgColor: "bg-white",
+      size: "medium",
+    },
+    {
+      icon: Shield,
+      title: "Enterprise Security",
+      desc: "Company isolation, secure authentication, and data protection",
+      color: "text-white",
+      gradient: "from-primaryHover to-primary",
+      size: "small",
+    },
+  ]
+
+  const useCases = [
+    {
+      icon: Code,
+      title: "Software Development Teams",
+      desc: "Built for agile teams with sprint planning, issue tracking, backlog management, and Kanban boards. Track velocity, manage releases, and collaborate seamlessly.",
+      features: ["Sprint Planning", "Issue Tracking", "Backlog Management", "Velocity Metrics"],
+      gradient: "from-primary/90 to-primaryHover/90",
+      image: "left",
+    },
+    {
+      icon: Briefcase,
+      title: "IT Services Companies",
+      desc: "Manage multiple client projects, allocate resources efficiently, track billable hours, and deliver projects on time with comprehensive project management tools.",
+      features: ["Multi-Project Management", "Resource Allocation", "Time Tracking", "Client Portals"],
+      gradient: "from-accent/90 to-primary/90",
+      image: "right",
+    },
+    {
+      icon: Headphones,
+      title: "Consulting Firms",
+      desc: "Organize client engagements, manage consultant assignments, track project profitability, and maintain detailed project documentation.",
+      features: ["Client Management", "Consultant Allocation", "Profitability Tracking", "Documentation"],
+      gradient: "from-primary/90 to-accent/90",
+      image: "left",
+    },
+    {
+      icon: Building2,
+      title: "Growing Startups",
+      desc: "Scale your team efficiently with department organization, automated workflows, leave management, and performance tracking as you grow.",
+      features: ["Department Setup", "Workflow Automation", "Leave Management", "Performance Reviews"],
+      gradient: "from-primaryHover/90 to-primary/90",
+      image: "right",
+    },
   ]
 
   const features = [
     {
+      icon: GitBranch,
+      title: "Agile Project Management",
+      desc: "Sprint planning, issue tracking, backlog management with Kanban boards",
+    },
+    {
+      icon: Calendar,
+      title: "Smart Leave Management",
+      desc: "Automated approvals, calendar integration, and balance tracking",
+    },
+    {
+      icon: Video,
+      title: "Real-time Collaboration",
+      desc: "Instant messaging, video meetings, file sharing, and group chats",
+    },
+    {
+      icon: Users,
+      title: "Department Management",
+      desc: "Hierarchical organization, manager assignments, and team structuring",
+    },
+    {
       icon: Shield,
-      title: "Enterprise Security",
-      desc: "Bank-level encryption & compliance",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      title: "Advanced Security",
+      desc: "Role-based access control, company isolation, and secure authentication",
     },
     {
-      icon: Clock,
-      title: "Real-time Sync",
-      desc: "Instant updates across all devices",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      icon: Sparkles,
+      title: "Custom Theming",
+      desc: "Brand customization per company with multiple theme presets",
+    },
+  ]
+
+  const howItWorks = [
+    {
+      step: "1",
+      icon: Building2,
+      title: "Company Registration",
+      desc: "Sign up and configure your company profile",
     },
     {
-      icon: Rocket,
-      title: "Lightning Fast",
-      desc: "50% faster than competitors",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      step: "2",
+      icon: UserPlus,
+      title: "Team Creation",
+      desc: "Add departments, managers, and employees",
     },
     {
-      icon: BarChart3,
-      title: "Advanced Analytics",
-      desc: "AI-powered insights and reporting",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      step: "3",
+      icon: FolderKanban,
+      title: "Project Setup",
+      desc: "Initialize projects with sprints and issues",
     },
     {
-      icon: Target,
-      title: "Goal Tracking",
-      desc: "Set and achieve business objectives",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      step: "4",
+      icon: MessageSquare,
+      title: "Collaborate",
+      desc: "Use real-time chat and meetings",
     },
     {
-      icon: Award,
-      title: "Premium Support",
-      desc: "24/7 dedicated customer success",
-      color: "text-primary",
-      bgColor: "bg-accent/30",
-      borderColor: "border-accent",
+      step: "5",
+      icon: PieChart,
+      title: "Insights",
+      desc: "Analyze performance and optimize",
     },
   ]
 
@@ -104,276 +217,395 @@ const HomePage = () => {
   ]
 
   return (
-    <div className="min-h-screen bg-bg relative overflow-hidden mt-6">
-      {/* Background Elements */}
-      <div className="absolute inset-0 overflow-hidden">
-        {/* Subtle gradient orbs with new colors */}
-        <div className="absolute top-20 left-10 w-96 h-96 bg-accent/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
-        <div
-          className="absolute top-40 right-10 w-96 h-96 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
-          style={{ animationDelay: "2s" }}
-        ></div>
-        <div
-          className="absolute bottom-20 left-1/3 w-96 h-96 bg-accent/15 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
-          style={{ animationDelay: "4s" }}
-        ></div>
-
-        {/* Interactive cursor effect */}
-        <div
-          className="absolute w-96 h-96 bg-primary/5 rounded-full mix-blend-multiply filter blur-3xl transition-all duration-1000 ease-out pointer-events-none"
-          style={{
-            left: mousePosition.x - 192,
-            top: mousePosition.y - 192,
-          }}
-        ></div>
-
-        {/* Decorative grid pattern */}
-        <div className="absolute inset-0 bg-[linear-gradient(to_right,#dfdcef_1px,transparent_1px),linear-gradient(to_bottom,#dfdcef_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20"></div>
-      </div>
-
+    <div className="min-h-screen bg-bg relative overflow-hidden">
       {/* Navigation */}
-      <nav className="relative z-50 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
+      <nav className="relative z-50 px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
         <Navbar />
       </nav>
 
-      <div className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-20 pb-16 sm:pb-20 lg:pb-24">
-        {/* Hero Content */}
-        <div className="text-center space-y-6 sm:space-y-8 lg:space-y-10">
-          {/* Floating Icons */}
-          <div className="relative h-16 sm:h-20 lg:h-24 sm:mb-8">
-            {floatingElements.map((Element, index) => (
-              <div
-                key={index}
-                className="absolute animate-bounce"
-                style={{
-                  left: `${10 + index * 20}%`,
-                  animationDelay: Element.delay,
-                  animationDuration: "3s",
-                }}
-              >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-white rounded-2xl flex items-center justify-center border-2 border-accent shadow-lg hover:shadow-xl hover:border-primary transition-all duration-300 transform hover:scale-110">
-                  <Element.icon className={`w-6 h-6 sm:w-7 sm:h-7 lg:w-8 lg:h-8 ${Element.color}`} />
-                </div>
-              </div>
-            ))}
-          </div>
-
+      {/* Hero Section - Full Width */}
+      <div className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Background Elements */}
+        <div className="absolute inset-0">
+          <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-br from-primary/10 via-accent/10 to-bg"></div>
+          <div className="absolute top-20 left-10 w-96 h-96 bg-accent/30 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"></div>
           <div
-            className={`space-y-6 sm:space-y-8 lg:space-y-10 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
-              }`}
-          >
-            {/* Badge */}
-            <div className="inline-flex items-center space-x-2 sm:space-x-3 bg-white border-2 border-accent px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg animate-fade-in">
-              <div className="flex items-center space-x-1">
-                {[...Array(5)].map((_, i) => (
-                  <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-current" />
-                ))}
+            className="absolute top-40 right-10 w-96 h-96 bg-primary/20 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+            style={{ animationDelay: "2s" }}
+          ></div>
+          <div
+            className="absolute bottom-20 left-1/3 w-96 h-96 bg-accent/25 rounded-full mix-blend-multiply filter blur-3xl animate-pulse"
+            style={{ animationDelay: "4s" }}
+          ></div>
+          <div
+            className="absolute w-96 h-96 bg-primary/10 rounded-full mix-blend-multiply filter blur-3xl transition-all duration-1000 ease-out pointer-events-none"
+            style={{
+              left: mousePosition.x - 192,
+              top: mousePosition.y - 192,
+            }}
+          ></div>
+          <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(22_163_74)_1px,transparent_1px),linear-gradient(to_bottom,rgb(22_163_74)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-[0.03]"></div>
+        </div>
+
+        <div className="relative z-10 w-full px-4 sm:px-6 lg:px-8 py-20">
+          <div className="max-w-6xl mx-auto text-center space-y-8 sm:space-y-10 lg:space-y-12">
+            <div
+              className={`space-y-6 sm:space-y-8 transition-all duration-1000 ${isVisible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-10"
+                }`}
+            >
+              {/* Badge */}
+              <div className="inline-flex items-center space-x-2 sm:space-x-3 bg-white/90 backdrop-blur-md border-2 border-primary/30 px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-xl hover:shadow-2xl hover:scale-105 transition-all duration-300 animate-fade-in">
+                <div className="flex items-center space-x-1">
+                  {[...Array(5)].map((_, i) => (
+                    <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
+                  ))}
+                </div>
+                <span className="text-text font-bold text-sm sm:text-base">Complete Company Management Platform</span>
+                <div className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50"></div>
               </div>
-              <span className="text-text font-bold text-sm sm:text-base">Rated #1 Business Platform 2024</span>
-              <div className="w-2 h-2 bg-primary rounded-full animate-pulse"></div>
-            </div>
 
-            <div className="space-y-4 sm:space-y-6">
-              <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl xl:text-8xl font-black leading-tight text-balance">
-                <span className="block text-text mb-1 sm:mb-2 animate-slide-up">Transform Your</span>
-                <span
-                  className="block text-primary mb-1 sm:mb-2 animate-slide-up"
-                  style={{ animationDelay: "0.2s" }}
-                >
-                  Business Future
-                </span>
-                <span
-                  className="block text-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl animate-slide-up"
-                  style={{ animationDelay: "0.4s" }}
-                >
-                  Today
-                </span>
-              </h1>
+              <div className="space-y-4 sm:space-y-6">
+                <h1 className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl font-black leading-tight">
+                  <span className="block text-text mb-2 animate-slide-up">Streamline Your</span>
+                  <span className="block text-primary mb-2 animate-slide-up" style={{ animationDelay: "0.2s" }}>
+                    Entire Organization
+                  </span>
+                  <span
+                    className="block text-text text-3xl sm:text-4xl md:text-5xl lg:text-6xl animate-slide-up"
+                    style={{ animationDelay: "0.4s" }}
+                  >
+                    In One Platform
+                  </span>
+                </h1>
 
-              <p
-                className="text-lg sm:text-xl lg:text-2xl text-text/80 max-w-3xl mx-auto leading-relaxed font-normal animate-fade-in"
-                style={{ animationDelay: "0.6s" }}
+                <p
+                  className="text-xl sm:text-2xl lg:text-3xl text-text/80 max-w-4xl mx-auto leading-relaxed animate-fade-in"
+                  style={{ animationDelay: "0.6s" }}
+                >
+                  From <span className="text-primary font-semibold">agile project management</span> to{" "}
+                  <span className="text-primary font-semibold">HR operations</span>, from{" "}
+                  <span className="text-primary font-semibold">real-time collaboration</span> to{" "}
+                  <span className="text-primary font-semibold">advanced analytics</span>
+                </p>
+              </div>
+
+              <div
+                className="flex flex-col sm:flex-row gap-4 sm:gap-6 justify-center items-center animate-fade-in"
+                style={{ animationDelay: "0.8s" }}
               >
-                Experience the next generation of business management with
-                <span className="text-primary font-semibold"> AI-powered insights</span>,
-                <span className="text-primary font-semibold"> seamless collaboration</span>, and
-                <span className="text-primary font-semibold"> intelligent automation</span>.
-              </p>
-            </div>
+                <button className="group relative bg-gradient-to-r from-primary to-primaryHover text-white px-10 sm:px-14 py-5 sm:py-6 rounded-2xl font-bold text-xl sm:text-2xl shadow-2xl hover:shadow-primary/50 transform hover:scale-105 transition-all duration-300 overflow-hidden w-full sm:w-auto">
+                  <span className="relative z-10 flex items-center justify-center space-x-3">
+                    <span>Start Free Trial</span>
+                    <ArrowRight className="w-6 h-6 sm:w-7 sm:h-7 group-hover:translate-x-2 transition-transform" />
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primaryHover to-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                </button>
 
-            <div
-              className="flex flex-col sm:flex-row gap-3 sm:gap-4 justify-center items-center animate-fade-in"
-              style={{ animationDelay: "0.8s" }}
-            >
-              <button className="group relative bg-primary text-white px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 overflow-hidden w-full sm:w-auto">
-                <span className="relative z-10 flex items-center justify-center space-x-3">
-                  <span>Start Free Trial</span>
-                  <ArrowRight className="w-5 h-5 sm:w-6 sm:h-6 group-hover:translate-x-2 transition-transform" />
-                </span>
-                <div className="absolute inset-0 bg-[#007a52] opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-              </button>
-
-              <button className="group flex items-center justify-center space-x-3 bg-white border-2 border-accent text-text px-8 sm:px-12 py-4 sm:py-5 rounded-2xl font-bold text-lg sm:text-xl shadow-lg hover:shadow-xl hover:border-primary transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
-                <Play className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
-                <span>Watch Demo</span>
-              </button>
-            </div>
-
-            <div
-              className="flex flex-wrap justify-center gap-3 sm:gap-4 lg:gap-6 text-text animate-fade-in"
-              style={{ animationDelay: "1s" }}
-            >
-              <div className="flex items-center space-x-2 bg-white border-2 border-accent px-3 sm:px-4 py-2 rounded-full">
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="font-medium text-sm sm:text-base">14-day free trial</span>
+                <button className="group flex items-center justify-center space-x-3 bg-white/90 backdrop-blur-md border-2 border-primary/30 text-text px-10 sm:px-14 py-5 sm:py-6 rounded-2xl font-bold text-xl sm:text-2xl shadow-xl hover:shadow-2xl hover:border-primary hover:bg-white transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
+                  <Play className="w-6 h-6 sm:w-7 sm:h-7 text-primary group-hover:scale-110 transition-transform" />
+                  <span>Watch Demo</span>
+                </button>
               </div>
-              <div className="flex items-center space-x-2 bg-white border-2 border-accent px-3 sm:px-4 py-2 rounded-full">
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="font-medium text-sm sm:text-base">No setup fees</span>
-              </div>
-              <div className="flex items-center space-x-2 bg-white border-2 border-accent px-3 sm:px-4 py-2 rounded-full">
-                <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-primary" />
-                <span className="font-medium text-sm sm:text-base">Cancel anytime</span>
+
+              <div
+                className="flex flex-wrap justify-center gap-4 lg:gap-6 text-text animate-fade-in"
+                style={{ animationDelay: "1s" }}
+              >
+                <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border-2 border-primary/20 px-4 sm:px-5 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  <span className="font-medium text-base sm:text-lg text-text">14-day free trial</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border-2 border-primary/20 px-4 sm:px-5 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  <span className="font-medium text-base sm:text-lg text-text">No setup fees</span>
+                </div>
+                <div className="flex items-center space-x-2 bg-white/90 backdrop-blur-md border-2 border-primary/20 px-4 sm:px-5 py-2 sm:py-3 rounded-full shadow-lg hover:shadow-xl hover:border-primary/40 transition-all duration-300">
+                  <CheckCircle className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
+                  <span className="font-medium text-base sm:text-lg text-text">Cancel anytime</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
+      </div>
 
-
-        {/* Features Section */}
-        <div className="mt-16 sm:mt-20 lg:mt-32">
-          <div className="text-center mb-12 sm:mb-16">
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-text mb-4 animate-fade-in text-balance">
-              Why Choose Our Platform?
+      {/* Core Modules - Bento Grid Full Width */}
+      <div className="w-full bg-gradient-to-br from-bg via-accent/5 to-bg py-20 sm:py-24 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-text mb-4 sm:mb-6">
+              Complete Suite of Management Tools
             </h2>
-            <p
-              className="text-lg sm:text-xl text-text/70 max-w-3xl mx-auto animate-fade-in text-pretty"
-              style={{ animationDelay: "0.2s" }}
-            >
-              Discover the features that make us the preferred choice for modern businesses
+            <p className="text-xl sm:text-2xl text-text/70 max-w-3xl mx-auto">
+              Everything you need to run your company efficiently, all integrated
             </p>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 sm:gap-8">
-            {features.map((feature, index) => (
+          {/* Bento Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            {coreModules.map((module, index) => (
               <div
                 key={index}
-                className={`group ${feature.bgColor} ${feature.borderColor} border-2 rounded-3xl p-6 sm:p-8 shadow-lg hover:shadow-2xl transform hover:scale-105 hover:-translate-y-2 transition-all duration-300 animate-slide-up bg-surface`}
+                className={`group ${module.size === "large" ? "md:col-span-2 lg:row-span-2" : ""
+                  } ${module.size === "medium" ? "lg:col-span-2" : ""} ${module.gradient ? `bg-gradient-to-br ${module.gradient}` : module.bgColor
+                  } rounded-3xl p-6 sm:p-8 lg:p-10 shadow-2xl hover:shadow-3xl transform hover:scale-[1.02] transition-all duration-300 border-4 ${module.gradient ? "border-white/20" : "border-primary/30"} animate-slide-up hover:border-primary/50`}
                 style={{ animationDelay: `${index * 0.1}s` }}
               >
-                <div className="flex flex-col items-center text-center space-y-4">
-                  <div className="w-16 h-16 sm:w-20 sm:h-20 bg-accent/50 rounded-2xl flex items-center justify-center group-hover:scale-110 group-hover:bg-primary/10 transition-all shadow-md border-2 border-accent">
-                    <feature.icon className={`w-8 h-8 sm:w-10 sm:h-10 ${feature.color}`} />
+                <div className={`flex flex-col ${module.size === "large" ? "justify-between h-full" : ""} space-y-4 sm:space-y-6`}>
+                  <div className={`w-14 h-14 sm:w-16 sm:h-16 ${module.gradient ? "bg-white/20 backdrop-blur-sm" : "bg-primary/10"} rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-lg`}>
+                    <module.icon className={`w-7 h-7 sm:w-8 sm:h-8 ${module.color}`} />
                   </div>
                   <div>
-                    <h3 className="font-bold text-text text-lg sm:text-xl mb-2">{feature.title}</h3>
-                    <p className="text-text/70 text-sm sm:text-base leading-relaxed">{feature.desc}</p>
+                    <h3 className={`font-bold text-xl sm:text-2xl ${module.size === "large" ? "lg:text-3xl" : ""} mb-3 ${module.gradient ? "text-white" : "text-text"}`}>
+                      {module.title}
+                    </h3>
+                    <p className={`text-base sm:text-lg ${module.size === "large" ? "lg:text-xl" : ""} leading-relaxed ${module.gradient ? "text-white/90" : "text-text/80"}`}>
+                      {module.desc}
+                    </p>
                   </div>
                 </div>
               </div>
             ))}
           </div>
         </div>
+      </div>
 
-        {/* Dashboard Mockup */}
-        <div className="mt-16 sm:mt-20 lg:mt-32 relative">
-          <div className="relative max-w-6xl mx-auto">
-            {/* Glow effect */}
-            <div className="absolute inset-0 bg-primary/10 rounded-3xl blur-3xl opacity-50 transform scale-105 animate-pulse"></div>
-
-            {/* Main mockup */}
-            <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-accent transform hover:scale-[1.02] transition-all duration-500 animate-fade-in">
-              {/* Mockup Header */}
-              <div className="bg-gradient-to-r from-bg to-white p-4 sm:p-6 border-b-2 border-accent">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="flex space-x-1 sm:space-x-2">
-                      <div className="w-3 h-3 sm:w-4 sm:h-4 bg-primary rounded-full shadow-sm"></div>
-                      <div className="w-3 h-3 sm:w-4 sm:h-4 bg-accent rounded-full shadow-sm"></div>
-                      <div className="w-3 h-3 sm:w-4 sm:h-4 bg-text rounded-full shadow-sm"></div>
+      {/* Use Cases - Full Width Alternating */}
+      {useCases.map((useCase, index) => (
+        <div
+          key={index}
+          className={`w-full relative overflow-hidden ${index % 2 === 0 ? "bg-gradient-to-br from-accent/20 to-bg" : "bg-gradient-to-br from-bg to-accent/10"}`}
+        >
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-24">
+            <div className={`grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-12 items-center ${useCase.image === "right" ? "lg:flex-row-reverse" : ""}`}>
+              {/* Content */}
+              <div className={`space-y-6 ${useCase.image === "right" ? "lg:order-2" : ""}`}>
+                <div className={`inline-flex items-center justify-center w-16 h-16 sm:w-20 sm:h-20 bg-gradient-to-br ${useCase.gradient} rounded-2xl shadow-xl`}>
+                  <useCase.icon className="w-8 h-8 sm:w-10 sm:h-10 text-white" />
+                </div>
+                <h3 className="text-3xl sm:text-4xl lg:text-5xl font-black text-text">{useCase.title}</h3>
+                <p className="text-lg sm:text-xl text-text/70 leading-relaxed">{useCase.desc}</p>
+                <div className="grid grid-cols-2 gap-3 sm:gap-4 pt-4">
+                  {useCase.features.map((feature, idx) => (
+                    <div key={idx} className="flex items-center space-x-2">
+                      <CheckCircle className="w-5 h-5 text-primary flex-shrink-0" />
+                      <span className="text-text font-medium text-sm sm:text-base">{feature}</span>
                     </div>
-                    <span className="text-text font-bold text-sm sm:text-lg">stratify.app</span>
-                  </div>
-                  <div className="flex items-center space-x-2">
-                    <div className="w-2 h-2 sm:w-3 sm:h-3 bg-primary rounded-full animate-pulse"></div>
-                    <span className="text-text/70 font-medium text-xs sm:text-sm">Live Dashboard</span>
-                  </div>
+                  ))}
                 </div>
               </div>
 
-              {/* Mockup Content */}
-              <div className="p-6 sm:p-8 lg:p-10 space-y-6 sm:space-y-8 bg-bg">
-                {/* Stats Cards */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8">
-                  <div className="bg-gradient-to-br from-primary to-primaryHover p-6 sm:p-8 rounded-2xl text-white shadow-xl transform hover:scale-105 transition-all duration-300 border-2 border-primary">
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <TrendingUp className="w-8 h-8 sm:w-10 sm:h-10" />
-                      <span className="text-2xl sm:text-3xl font-bold">+32%</span>
+              {/* Visual */}
+              <div className={`relative ${useCase.image === "right" ? "lg:order-1" : ""}`}>
+                <div className={`relative bg-gradient-to-br ${useCase.gradient} rounded-3xl p-8 sm:p-10 lg:p-12 shadow-2xl border-4 border-white/20`}>
+                  <div className="aspect-video bg-white/10 backdrop-blur-sm rounded-2xl flex items-center justify-center">
+                    <div className="text-center space-y-4">
+                      <Layers className="w-16 h-16 sm:w-20 sm:h-20 text-white/80 mx-auto" />
+                      <p className="text-white/90 font-semibold text-lg sm:text-xl">Dashboard Preview</p>
                     </div>
-                    <p className="text-white/90 text-base sm:text-lg font-medium">Revenue Growth</p>
-                  </div>
-                  <div className="bg-white border-2 border-accent p-6 sm:p-8 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300">
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <Users className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
-                      <span className="text-2xl sm:text-3xl font-bold text-text">18.2K</span>
-                    </div>
-                    <p className="text-text/70 text-base sm:text-lg font-medium">Active Users</p>
-                  </div>
-                  <div className="bg-accent/50 border-2 border-accent p-6 sm:p-8 rounded-2xl shadow-xl transform hover:scale-105 transition-all duration-300 sm:col-span-2 lg:col-span-1">
-                    <div className="flex items-center justify-between mb-4 sm:mb-6">
-                      <Zap className="w-8 h-8 sm:w-10 sm:h-10 text-primary" />
-                      <span className="text-2xl sm:text-3xl font-bold text-text">99.2%</span>
-                    </div>
-                    <p className="text-text/70 text-base sm:text-lg font-medium">Efficiency Score</p>
-                  </div>
-                </div>
-
-                {/* Chart Area */}
-                <div className="bg-white rounded-2xl p-6 sm:p-8 border-2 border-accent shadow-lg">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 sm:mb-6 space-y-2 sm:space-y-0">
-                    <h3 className="text-text font-bold text-xl sm:text-2xl">Performance Analytics</h3>
-                    <div className="flex items-center space-x-2">
-                      <div className="w-2 h-2 sm:w-3 sm:h-3 bg-primary rounded-full animate-pulse"></div>
-                      <span className="text-text/70 font-medium text-sm sm:text-base">Live Data</span>
-                    </div>
-                  </div>
-                  <div className="h-32 sm:h-40 bg-gradient-to-r from-primary/20 via-accent/40 to-primary/20 rounded-xl shadow-inner relative overflow-hidden">
-                    <div className="absolute inset-0 bg-[linear-gradient(to_right,transparent_0%,#009063_50%,transparent_100%)] animate-pulse opacity-30"></div>
                   </div>
                 </div>
               </div>
             </div>
           </div>
         </div>
+      ))}
 
+      {/* Features - Full Width Grid */}
+      <div className="w-full bg-gradient-to-br from-primary/5 via-bg to-accent/5 py-20 sm:py-24 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-text mb-4 sm:mb-6">
+              Powerful Features That Drive Results
+            </h2>
+            <p className="text-xl sm:text-2xl text-text/70 max-w-3xl mx-auto">
+              Comprehensive capabilities designed to transform how your organization works
+            </p>
+          </div>
 
-
-        {/* Stats Section */}
-        <div
-          ref={ref}
-          className="relative z-40 bg-white border-2 border-accent rounded-3xl shadow-xl mt-16 sm:mt-20 lg:mt-32"
-        >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8 text-center">
-              {stats.map((stat, i) => (
-                <div
-                  key={i}
-                  className="space-y-2 sm:space-y-3 animate-fade-in"
-                  style={{ animationDelay: `${i * 0.1}s` }}
-                >
-                  <div className="text-3xl sm:text-4xl lg:text-5xl font-black text-primary">
-                    {inView ? (
-                      <CountUp end={stat.value} duration={2.5} separator="," decimals={stat.value % 1 !== 0 ? 2 : 0} />
-                    ) : (
-                      "0"
-                    )}
-                    {stat.suffix}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-0 border-2 border-accent rounded-3xl overflow-hidden shadow-2xl">
+            {features.map((feature, index) => (
+              <div
+                key={index}
+                className={`group bg-white p-8 sm:p-10 hover:bg-accent/10 transition-all duration-300 border-r-2 border-b-2 border-primary/20 hover:border-primary/40 ${index % 3 !== 2 ? "lg:border-r-2" : ""
+                  } ${index < 3 ? "lg:border-b-2" : ""} ${index % 2 !== 1 ? "sm:border-r-2" : ""
+                  } ${index < 4 ? "sm:border-b-2" : ""}`}
+              >
+                <div className="flex flex-col space-y-4">
+                  <div className="w-14 h-14 sm:w-16 sm:h-16 bg-primary/10 rounded-2xl flex items-center justify-center group-hover:bg-primary/20 group-hover:scale-110 transition-all shadow-lg">
+                    <feature.icon className="w-7 h-7 sm:w-8 sm:h-8 text-primary" />
                   </div>
-                  <div className="text-text/70 font-semibold text-sm sm:text-base lg:text-lg">{stat.label}</div>
+                  <div>
+                    <h3 className="font-bold text-text text-xl sm:text-2xl mb-2">{feature.title}</h3>
+                    <p className="text-text/80 text-base sm:text-lg leading-relaxed">{feature.desc}</p>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* How It Works - Full Width Timeline */}
+      <div className="w-full bg-gradient-to-br from-bg to-accent/10 py-20 sm:py-24 lg:py-32">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-12 sm:mb-16 lg:mb-20">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-text mb-4 sm:mb-6">Get Started in Minutes</h2>
+            <p className="text-xl sm:text-2xl text-text/70 max-w-3xl mx-auto">
+              Simple onboarding process to get your entire team up and running
+            </p>
+          </div>
+
+          <div className="relative">
+            {/* Connection Line */}
+            <div className="hidden lg:block absolute top-12 left-0 right-0 h-1 bg-gradient-to-r from-accent via-primary to-accent"></div>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-4 relative z-10">
+              {howItWorks.map((step, index) => (
+                <div key={index} className="group text-center">
+                  <div className="relative inline-block mb-6">
+                    <div className="w-24 h-24 bg-white border-4 border-primary/30 rounded-full flex items-center justify-center shadow-2xl group-hover:shadow-3xl group-hover:border-primary group-hover:scale-110 transition-all duration-300">
+                      <step.icon className="w-12 h-12 text-primary" />
+                    </div>
+                    <div className="absolute -top-2 -right-2 w-10 h-10 bg-gradient-to-br from-primary to-primaryHover text-white rounded-full flex items-center justify-center font-bold text-lg shadow-xl">
+                      {step.step}
+                    </div>
+                  </div>
+                  <h3 className="font-bold text-text text-xl sm:text-2xl mb-3">{step.title}</h3>
+                  <p className="text-text/70 text-base sm:text-lg leading-relaxed">{step.desc}</p>
                 </div>
               ))}
             </div>
           </div>
+        </div>
+      </div>
+
+      {/* Dashboard Preview - Full Width Immersive */}
+      <div className="w-full bg-gradient-to-br from-bg via-primary/5 to-bg py-20 sm:py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[linear-gradient(to_right,rgb(229_231_235)_1px,transparent_1px),linear-gradient(to_bottom,rgb(229_231_235)_1px,transparent_1px)] bg-[size:4rem_4rem] opacity-20"></div>
+
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+          <div className="text-center mb-12 sm:mb-16">
+            <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-text mb-4 sm:mb-6">Your Command Center</h2>
+            <p className="text-xl sm:text-2xl text-text/70 max-w-3xl mx-auto">
+              Real-time insights and control over your entire organization
+            </p>
+          </div>
+
+          <div className="relative">
+            <div className="absolute inset-0 bg-primary/10 rounded-3xl blur-3xl opacity-50 transform scale-105"></div>
+
+            <div className="relative bg-white rounded-3xl overflow-hidden shadow-2xl border-4 border-primary/30">
+              <div className="bg-gradient-to-r from-accent/30 to-white p-6 border-b-4 border-primary/20">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center space-x-4">
+                    <div className="flex space-x-2">
+                      <div className="w-4 h-4 bg-primary rounded-full"></div>
+                      <div className="w-4 h-4 bg-accent rounded-full"></div>
+                      <div className="w-4 h-4 bg-text rounded-full"></div>
+                    </div>
+                    <span className="text-text font-bold text-lg">stratify.app/dashboard</span>
+                  </div>
+                  <div className="flex items-center space-x-2">
+                    <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                    <span className="text-text/70 font-medium">Live</span>
+                  </div>
+                </div>
+              </div>
+
+              <div className="p-8 lg:p-12 space-y-8 bg-bg">
+                <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+                  <div className="bg-gradient-to-br from-primary to-primaryHover p-8 rounded-2xl text-white shadow-xl">
+                    <div className="flex items-center justify-between mb-6">
+                      <FolderKanban className="w-10 h-10" />
+                      <span className="text-4xl font-bold">12</span>
+                    </div>
+                    <p className="text-white/90 text-lg font-medium">Active Projects</p>
+                  </div>
+                  <div className="bg-white border-4 border-primary/30 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <Users className="w-10 h-10 text-primary" />
+                      <span className="text-4xl font-bold text-text">48</span>
+                    </div>
+                    <p className="text-text/80 text-lg font-medium">Team Members</p>
+                  </div>
+                  <div className="bg-gradient-to-br from-accent/40 to-white border-4 border-primary/30 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <Calendar className="w-10 h-10 text-primary" />
+                      <span className="text-4xl font-bold text-text">7</span>
+                    </div>
+                    <p className="text-text/80 text-lg font-medium">Pending Leaves</p>
+                  </div>
+                  <div className="bg-white border-4 border-primary/30 p-8 rounded-2xl shadow-xl hover:shadow-2xl hover:border-primary/50 transition-all duration-300">
+                    <div className="flex items-center justify-between mb-6">
+                      <CheckSquare className="w-10 h-10 text-primary" />
+                      <span className="text-4xl font-bold text-text">85%</span>
+                    </div>
+                    <p className="text-text/80 text-lg font-medium">Sprint Progress</p>
+                  </div>
+                </div>
+
+                <div className="bg-white rounded-2xl p-8 border-4 border-primary/30 shadow-xl hover:shadow-2xl hover:border-primary/50 transition-all duration-300">
+                  <div className="flex items-center justify-between mb-6">
+                    <h3 className="text-text font-bold text-2xl">Project Performance</h3>
+                    <div className="flex items-center space-x-2">
+                      <div className="w-3 h-3 bg-primary rounded-full animate-pulse"></div>
+                      <span className="text-text/70 font-medium">Real-time</span>
+                    </div>
+                  </div>
+                  <div className="h-48 bg-gradient-to-r from-primary/20 via-accent/40 to-primary/20 rounded-xl"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Stats - Full Width Bar */}
+      <div ref={ref} className="w-full bg-gradient-to-r from-accent/20 via-white to-accent/20 border-y-4 border-primary/30 py-16 sm:py-20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12 text-center">
+            {stats.map((stat, i) => (
+              <div key={i} className="space-y-3">
+                <div className="text-4xl sm:text-5xl lg:text-6xl font-black text-primary">
+                  {inView ? (
+                    <CountUp end={stat.value} duration={2.5} separator="," decimals={stat.value % 1 !== 0 ? 2 : 0} />
+                  ) : (
+                    "0"
+                  )}
+                  {stat.suffix}
+                </div>
+                <div className="text-text/70 font-semibold text-base sm:text-lg lg:text-xl">{stat.label}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* Final CTA - Full Width */}
+      <div className="w-full bg-gradient-to-br from-primary via-primaryHover to-primary py-20 sm:py-24 lg:py-32 relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+        <div className="absolute bottom-0 left-0 w-96 h-96 bg-white/10 rounded-full blur-3xl"></div>
+
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 text-center space-y-8">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-black text-white">Ready to Transform Your Company?</h2>
+          <p className="text-2xl sm:text-3xl text-white/90 max-w-3xl mx-auto">
+            Join thousands of companies using Stratify to streamline operations
+          </p>
+          <div className="flex flex-col sm:flex-row gap-6 justify-center items-center pt-4">
+            <button className="group bg-white text-primary px-12 sm:px-16 py-6 sm:py-7 rounded-2xl font-bold text-xl sm:text-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 w-full sm:w-auto">
+              <span className="flex items-center justify-center space-x-3">
+                <span>Get Started Free</span>
+                <ArrowRight className="w-7 h-7 group-hover:translate-x-2 transition-transform" />
+              </span>
+            </button>
+            <button className="group bg-transparent border-3 border-white text-white px-12 sm:px-16 py-6 sm:py-7 rounded-2xl font-bold text-xl sm:text-2xl hover:bg-white hover:text-primary transition-all duration-300 transform hover:scale-105 w-full sm:w-auto">
+              Schedule a Demo
+            </button>
+          </div>
+          <p className="text-white/80 text-lg sm:text-xl pt-4">
+            No credit card required • 14-day free trial • Setup in minutes
+          </p>
         </div>
       </div>
 

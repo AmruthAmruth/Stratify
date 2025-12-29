@@ -17,7 +17,7 @@ export default function Footer() {
   ]
 
   return (
-    <footer className="relative z-40 bg-surface border-t-2 border-accent mt-16 sm:mt-20 lg:mt-24">
+    <footer className="relative z-40 bg-gradient-to-br from-bg via-accent/10 to-bg border-t-4 border-primary/30 mt-16 sm:mt-20 lg:mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">
         {/* Main Footer Content */}
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8 mb-12">
@@ -68,7 +68,7 @@ export default function Footer() {
         </div>
 
         {/* Contact Info */}
-        <div className="border-t-2 border-accent pt-8 mb-8">
+        <div className="border-t-4 border-primary/20 pt-8 mb-8">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 bg-accent/50 rounded-lg flex items-center justify-center border-2 border-accent">
@@ -101,7 +101,7 @@ export default function Footer() {
         </div>
 
         {/* Bottom Bar */}
-        <div className="border-t-2 border-accent pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
+        <div className="border-t-4 border-primary/20 pt-8 flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
           <p className="text-text/70 text-sm">© 2025 Stratify. All rights reserved.</p>
           <div className="flex items-center space-x-6">
             <Link to="#" className="text-text/70 hover:text-primary text-sm transition-colors duration-200">
