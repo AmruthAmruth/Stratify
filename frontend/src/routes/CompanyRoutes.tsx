@@ -11,6 +11,7 @@ import Notification from "@/features/company/Notification";
 import StratifyDashboard from "@/features/company/CompanyDashboard";
 import ProjectPage from "@/features/employee/ProjectPage";
 import CompanyGroupChatPage from "@/features/company/CompanyGroupChatPage";
+import ThemeSettings from "@/features/company/ThemeSettings";
 
 const adminRoutes: RouteObject[] = [
   {
@@ -60,6 +61,10 @@ const adminRoutes: RouteObject[] = [
   {
     path: "project/:id",
     element: <ProjectPage />,
+  },
+  {
+    path: "theme-settings",
+    element: <ThemeSettings />,
   },
   {
     path: "notification",

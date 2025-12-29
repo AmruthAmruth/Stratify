@@ -12,7 +12,7 @@ export class CompanyThemeController {
         private getThemePresetsUseCase: IGetThemePresetsUseCase
     ) { }
 
-    
+
     getCompanyTheme = async (req: Request, res: Response): Promise<void> => {
         try {
             const { companyId } = req.params;
@@ -41,7 +41,7 @@ export class CompanyThemeController {
         }
     };
 
-    
+
     updateCompanyTheme = async (req: Request, res: Response): Promise<void> => {
         try {
             const role = (req as { role?: string }).role;
@@ -64,7 +64,10 @@ export class CompanyThemeController {
             // Validate required fields
             if (!themeData.themeName || !themeData.themeMode ||
                 !themeData.primaryColor || !themeData.secondaryColor ||
-                !themeData.accentColor) {
+                !themeData.accentColor || !themeData.backgroundColor ||
+                !themeData.textColor || !themeData.surfaceColor ||
+                !themeData.borderColor || !themeData.mutedColor ||
+                !themeData.headingColor) {
                 throw new AppError(
                     "Missing required theme fields",
                     StatusCodes.BAD_REQUEST
@@ -86,7 +89,7 @@ export class CompanyThemeController {
         }
     };
 
-   
+
     getThemePresets = async (_req: Request, res: Response): Promise<void> => {
         try {
             const presets = await this.getThemePresetsUseCase.execute();
@@ -101,7 +104,7 @@ export class CompanyThemeController {
         }
     };
 
-   
+
     applyPreset = async (req: Request, res: Response): Promise<void> => {
         try {
             const role = (req as { role?: string }).role;
@@ -131,7 +134,7 @@ export class CompanyThemeController {
                 throw new AppError("Invalid preset name", StatusCodes.BAD_REQUEST);
             }
 
-          
+
             const themeData: UpdateThemeDTO = {
                 themeName: selectedPreset.name,
                 themeMode: selectedPreset.mode,
@@ -140,6 +143,10 @@ export class CompanyThemeController {
                 accentColor: selectedPreset.accentColor,
                 backgroundColor: selectedPreset.backgroundColor,
                 textColor: selectedPreset.textColor,
+                surfaceColor: selectedPreset.surfaceColor,
+                borderColor: selectedPreset.borderColor,
+                mutedColor: selectedPreset.mutedColor,
+                headingColor: selectedPreset.headingColor,
                 isCustom: false,
             };
 

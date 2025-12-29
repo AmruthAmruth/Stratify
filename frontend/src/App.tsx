@@ -5,6 +5,7 @@ import "./App.css";
 import NotificationListener from "./shared/socket/NotificationListener";
 import ChatListener from "./shared/socket/ChatListener";
 import GroupChatListener from "./shared/socket/GroupChatListener";
+import { ThemeProvider } from "./providers/ThemeProvider";
 import { useSelector, useDispatch } from "react-redux";
 import { RootState } from "./store";
 import { useEffect } from "react";
@@ -61,10 +62,12 @@ const App = () => {
   return (
     <SnackbarProvider maxSnack={3}>
       <BrowserRouter>
-        <NotificationListener />
-        <ChatListener />
-        <GroupChatListener />
-        <AppRoutes />
+        <ThemeProvider>
+          <NotificationListener />
+          <ChatListener />
+          <GroupChatListener />
+          <AppRoutes />
+        </ThemeProvider>
       </BrowserRouter>
     </SnackbarProvider>
   );

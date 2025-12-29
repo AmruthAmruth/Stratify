@@ -9,6 +9,7 @@ import { jwtDecode } from "jwt-decode";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setCredentials } from "@/store/slices/authSlice";
+import { setFullTheme, resetToDefault } from "@/store/slices/themeSlice";
 import { useSnackbar } from "notistack";
 import { connectSocket } from "@/shared/socket/socket";
 import { RootState } from "@/store";
@@ -68,8 +69,21 @@ const Login: React.FC = () => {
               role: decoded.role,
               userId: decoded.id,
               name: decoded.name,
+              companyId: data.companyId,
             })
           );
+
+          // Apply company theme if available
+          if (data.theme) {
+            dispatch(setFullTheme({
+              ...data.theme,
+              companyId: data.companyId,
+              isCompanyTheme: true,
+            }));
+          } else {
+            // Reset to default theme if company has no custom theme
+            dispatch(resetToDefault());
+          }
 
           connectSocket(decoded.id, data.accessToken);
 

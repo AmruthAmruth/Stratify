@@ -141,11 +141,11 @@ export class AuthenticationController {
       email: req.body.email,
       password: req.body.password,
     };
-    const { accessToken, refreshToken } = await this._loginUseCase.execute(dto);
+    const { accessToken, refreshToken, companyId, theme } = await this._loginUseCase.execute(dto);
     res.cookie("refreshToken", refreshToken, CookieConfig);
     res
       .status(StatusCodes.OK)
-      .json({ accessToken, message: Messages.LOGIN_SUCCESS });
+      .json({ accessToken, companyId, theme, message: Messages.LOGIN_SUCCESS });
   };
 
   logout = async (_req: Request, res: Response): Promise<void> => {

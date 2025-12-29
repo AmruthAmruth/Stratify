@@ -2,11 +2,13 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { companyDI } from "../../di/CompanyDI";
+import { companyThemeDI } from "../../di/CompanyThemeDI";
 import { emitNotification } from "../../infrastructure/socket/SocketServer";
 import { io } from "../../main";
 
 const companyRouter = Router();
 const controller = companyDI();
+const themeController = companyThemeDI();
 
 companyRouter.get("/companies", asyncHandler(controller.getPaginatedCompanies));
 companyRouter.get("/company/:id", asyncHandler(controller.getCompanyById));
@@ -37,6 +39,31 @@ companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
 companyRouter.post(
   "/unapprove-company",
   asyncHandler(controller.unapproveCompany),
+);
+
+// Theme routes
+companyRouter.get(
+  "/theme/:companyId",
+  authMiddleware(["company", "manager", "employee"]),
+  asyncHandler(themeController.getCompanyTheme),
+);
+
+companyRouter.put(
+  "/theme",
+  authMiddleware(["company"]),
+  asyncHandler(themeController.updateCompanyTheme),
+);
+
+companyRouter.get(
+  "/theme-presets",
+  authMiddleware(["company"]),
+  asyncHandler(themeController.getThemePresets),
+);
+
+companyRouter.post(
+  "/theme/apply-preset",
+  authMiddleware(["company"]),
+  asyncHandler(themeController.applyPreset),
 );
 
 

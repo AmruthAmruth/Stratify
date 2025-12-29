@@ -20,11 +20,15 @@ export class GetCompanyThemeUseCase implements IGetCompanyThemeUseCase {
                 companyId,
                 'Clean Professional',
                 'light',
-                '#009063', // Green - Primary (CTAs and highlights)
-                '#3b3b3b', // Dark gray - Secondary (text and elements)
-                '#dfdcef', // Light purple - Accent (borders and subtle accents)
-                '#fbfbfb', // Off-white - Background
-                '#3b3b3b', // Dark gray - Text color
+                '#16a34a', // Primary - Green
+                '#1f2937', // Secondary - Dark gray
+                '#e5e7eb', // Accent - Light gray
+                '#f7faf9', // Background - Off-white
+                '#1f2937', // Text - Dark gray
+                '#ffffff', // Surface - White
+                '#e5e7eb', // Border - Light gray
+                '#6b7280', // Muted - Medium gray
+                '#0f172a', // Heading - Very dark
                 false // Not custom
             );
 

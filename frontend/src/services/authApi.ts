@@ -39,7 +39,24 @@ export const companyRegistration = (data: Record<string, unknown>): Promise<{ me
 export const verifyOTP = (data: { otp: string; email: string }): Promise<{ message: string; success: boolean }> =>
   handleRequest(api.post(AUTH_ROUTES.COMPANY_VERIFY_OTP, data));
 
-export const companyLogin = (data: { email: string; password: string }): Promise<{ accessToken: string }> =>
+export const companyLogin = (data: { email: string; password: string }): Promise<{
+  accessToken: string;
+  companyId: string;
+  theme: {
+    themeName: string;
+    themeMode: 'light' | 'dark';
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+    backgroundColor: string;
+    textColor: string;
+    surfaceColor: string;
+    borderColor: string;
+    mutedColor: string;
+    headingColor: string;
+    isCustom: boolean;
+  } | null;
+}> =>
   handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGIN, data));
 
 export const logout = (): Promise<{ message: string }> => handleRequest(api.post(AUTH_ROUTES.COMPANY_LOGOUT));

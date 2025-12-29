@@ -1,17 +1,34 @@
 import api from './axiosInstance';
+import { ThemeConfig, ThemePreset } from '@/types/theme';
 
 /**
- * Update company theme color
+ * Get company theme by company ID
  */
-export const updateCompanyTheme = async (themeColor: string) => {
-    const response = await api.patch('/company/theme', { themeColor });
+export const getCompanyTheme = async (companyId: string) => {
+    const response = await api.get(`/api/company/theme/${companyId}`);
     return response.data;
 };
 
 /**
- * Get company profile (includes theme color)
+ * Update company theme with full configuration
  */
-export const getCompanyProfile = async (companyId: string) => {
-    const response = await api.get(`/company/${companyId}`);
+export const updateCompanyTheme = async (themeConfig: Omit<ThemeConfig, 'isCustom'> & { isCustom?: boolean }) => {
+    const response = await api.put('/api/company/theme', themeConfig);
+    return response.data;
+};
+
+/**
+ * Get all available theme presets
+ */
+export const getThemePresets = async (): Promise<{ response: ThemePreset[] }> => {
+    const response = await api.get('/api/company/theme-presets');
+    return response.data;
+};
+
+/**
+ * Apply a preset theme by name
+ */
+export const applyPresetTheme = async (presetName: string) => {
+    const response = await api.post('/api/company/theme/apply-preset', { presetName });
     return response.data;
 };

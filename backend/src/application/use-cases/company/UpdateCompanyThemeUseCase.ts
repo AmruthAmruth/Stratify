@@ -9,8 +9,12 @@ export interface UpdateThemeDTO {
     primaryColor: string;
     secondaryColor: string;
     accentColor: string;
-    backgroundColor?: string;
-    textColor?: string;
+    backgroundColor: string;
+    textColor: string;
+    surfaceColor: string;
+    borderColor: string;
+    mutedColor: string;
+    headingColor: string;
     isCustom?: boolean;
 }
 
@@ -25,7 +29,18 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
         const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
         // Validate all color fields
-        const colorFields = ['primaryColor', 'secondaryColor', 'accentColor'] as const;
+        const colorFields = [
+            'primaryColor',
+            'secondaryColor',
+            'accentColor',
+            'backgroundColor',
+            'textColor',
+            'surfaceColor',
+            'borderColor',
+            'mutedColor',
+            'headingColor'
+        ] as const;
+
         for (const field of colorFields) {
             if (!hexColorRegex.test(themeData[field])) {
                 throw new AppError(
@@ -48,8 +63,12 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
                 themeData.primaryColor,
                 themeData.secondaryColor,
                 themeData.accentColor,
-                themeData.backgroundColor || '#FFFFFF',
-                themeData.textColor || '#000000',
+                themeData.backgroundColor,
+                themeData.textColor,
+                themeData.surfaceColor,
+                themeData.borderColor,
+                themeData.mutedColor,
+                themeData.headingColor,
                 themeData.isCustom ?? false
             );
             return await this._companyThemeRepository.create(newTheme);
@@ -61,8 +80,12 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
         existingTheme.primaryColor = themeData.primaryColor;
         existingTheme.secondaryColor = themeData.secondaryColor;
         existingTheme.accentColor = themeData.accentColor;
-        if (themeData.backgroundColor) existingTheme.backgroundColor = themeData.backgroundColor;
-        if (themeData.textColor) existingTheme.textColor = themeData.textColor;
+        existingTheme.backgroundColor = themeData.backgroundColor;
+        existingTheme.textColor = themeData.textColor;
+        existingTheme.surfaceColor = themeData.surfaceColor;
+        existingTheme.borderColor = themeData.borderColor;
+        existingTheme.mutedColor = themeData.mutedColor;
+        existingTheme.headingColor = themeData.headingColor;
         existingTheme.isCustom = themeData.isCustom ?? existingTheme.isCustom;
 
         return await this._companyThemeRepository.update(existingTheme);

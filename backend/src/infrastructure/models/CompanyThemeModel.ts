@@ -9,6 +9,10 @@ export interface ICompanyThemeDoc extends Document {
     accentColor: string;
     backgroundColor: string;
     textColor: string;
+    surfaceColor: string;
+    borderColor: string;
+    mutedColor: string;
+    headingColor: string;
     isCustom: boolean;
     createdAt: Date;
     updatedAt: Date;
@@ -35,27 +39,47 @@ const CompanyThemeSchema = new Schema<ICompanyThemeDoc>(
         primaryColor: {
             type: String,
             required: true,
-            default: "#009063"
+            default: "#16a34a"
         },
         secondaryColor: {
             type: String,
             required: true,
-            default: "#3b3b3b"
+            default: "#1f2937"
         },
         accentColor: {
             type: String,
             required: true,
-            default: "#dfdcef"
+            default: "#e5e7eb"
         },
         backgroundColor: {
             type: String,
             required: true,
-            default: "#fbfbfb"
+            default: "#f7faf9"
         },
         textColor: {
             type: String,
             required: true,
-            default: "#3b3b3b"
+            default: "#1f2937"
+        },
+        surfaceColor: {
+            type: String,
+            required: true,
+            default: "#ffffff"
+        },
+        borderColor: {
+            type: String,
+            required: true,
+            default: "#e5e7eb"
+        },
+        mutedColor: {
+            type: String,
+            required: true,
+            default: "#6b7280"
+        },
+        headingColor: {
+            type: String,
+            required: true,
+            default: "#0f172a"
         },
         isCustom: {
             type: Boolean,

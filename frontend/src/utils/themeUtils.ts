@@ -2,6 +2,8 @@
  * Theme utility functions for color manipulation and CSS variable management
  */
 
+import { ThemeConfig } from '@/types/theme';
+
 /**
  * Converts hex color to HSL
  */
@@ -126,7 +128,7 @@ export function isValidHexColor(hex: string): boolean {
 }
 
 /**
- * Apply theme colors to CSS variables
+ * Apply theme colors to CSS variables (legacy - for backward compatibility)
  */
 export function applyThemeColors(baseColor: string): void {
     if (!isValidHexColor(baseColor)) {
@@ -168,3 +170,77 @@ export const THEME_COLOR_PALETTE = [
     { name: 'Teal', color: '#14B8A6' },
     { name: 'Indigo', color: '#6366F1' },
 ];
+
+/**
+ * Apply comprehensive theme configuration to the application
+ * This updates CSS variables and Tailwind classes
+ */
+export function applyFullTheme(theme: {
+    primaryColor: string;
+    secondaryColor: string;
+    accentColor: string;
+    backgroundColor: string;
+    textColor: string;
+    surfaceColor: string;
+    borderColor: string;
+    mutedColor: string;
+    headingColor: string;
+    themeMode: 'light' | 'dark';
+}): void {
+    const root = document.documentElement;
+
+    console.log('🔧 applyFullTheme: Setting CSS variables', theme);
+
+    // Apply theme mode class
+    if (theme.themeMode === 'dark') {
+        root.classList.add('dark');
+    } else {
+        root.classList.remove('dark');
+    }
+
+    // Apply all theme colors as CSS variables
+    root.style.setProperty('--color-primary', theme.primaryColor);
+    root.style.setProperty('--color-secondary', theme.secondaryColor);
+    root.style.setProperty('--color-accent', theme.accentColor);
+    root.style.setProperty('--color-background', theme.backgroundColor);
+    root.style.setProperty('--color-text', theme.textColor);
+    root.style.setProperty('--color-surface', theme.surfaceColor);
+    root.style.setProperty('--color-border', theme.borderColor);
+    root.style.setProperty('--color-muted', theme.mutedColor);
+    root.style.setProperty('--color-heading', theme.headingColor);
+
+    // Generate and apply primary color shades
+    const primaryShades = generateColorShades(theme.primaryColor);
+    Object.entries(primaryShades).forEach(([shade, color]) => {
+        root.style.setProperty(`--color-primary-${shade}`, color);
+    });
+
+    // Apply hover variations
+    root.style.setProperty('--color-primary-hover', darkenColor(theme.primaryColor, 10));
+    root.style.setProperty('--color-surface-hover', darkenColor(theme.surfaceColor, 3));
+
+    console.log('✅ applyFullTheme: CSS variables set successfully');
+    console.log('📊 Sample CSS vars:', {
+        '--color-primary': root.style.getPropertyValue('--color-primary'),
+        '--color-background': root.style.getPropertyValue('--color-background'),
+        '--color-surface': root.style.getPropertyValue('--color-surface'),
+    });
+
+    // Store theme in localStorage for persistence
+    localStorage.setItem('appTheme', JSON.stringify(theme));
+}
+
+/**
+ * Load theme from localStorage
+ */
+export function loadThemeFromStorage(): ThemeConfig | null {
+    const stored = localStorage.getItem('appTheme');
+    if (stored) {
+        try {
+            return JSON.parse(stored) as ThemeConfig;
+        } catch {
+            return null;
+        }
+    }
+    return null;
+}

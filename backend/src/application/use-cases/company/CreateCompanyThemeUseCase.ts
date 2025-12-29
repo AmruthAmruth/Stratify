@@ -38,6 +38,10 @@ export class CreateCompanyThemeUseCase implements ICreateCompanyThemeUseCase {
                 backgroundColor,         // accentColor
                 '#FFFFFF',              // backgroundColor
                 textColor,              // textColor
+                '#F9FAFB',              // surfaceColor
+                '#E5E7EB',              // borderColor
+                '#6B7280',              // mutedColor
+                textColor,              // headingColor
                 true                    // isCustom - true since extracted from image
             );
 

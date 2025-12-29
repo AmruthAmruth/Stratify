@@ -3,6 +3,7 @@ import { Bell } from 'lucide-react';
 import { useDispatch, useSelector } from 'react-redux';
 import { Link, useNavigate } from 'react-router-dom';
 import { clearCredentials } from '@/store/slices/authSlice';
+import { resetToDefault } from '@/store/slices/themeSlice';
 import { logout } from '@/services/authApi';
 import { useSnackbar } from "notistack";
 import { RootState } from '@/store';
@@ -28,6 +29,7 @@ const Navbar = () => {
       enqueueSnackbar(error?.message || "Logout failed!", { variant: "error" });
     } finally {
       dispatch(clearCredentials());
+      dispatch(resetToDefault());
       localStorage.clear();
       navigate("/");
     }

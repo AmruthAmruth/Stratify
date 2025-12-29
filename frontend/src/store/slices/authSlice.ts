@@ -8,6 +8,7 @@ interface AuthState {
   companyName: string | null;
   companyLogo: string | null;
   email: string | null;
+  companyId: string | null;
   companyThemeColor: string | null;
   themeBackgroundColor: string | null;
   themeTextColor: string | null;
@@ -21,6 +22,7 @@ const initialState: AuthState = {
   companyName: null,
   companyLogo: null,
   email: null,
+  companyId: null,
   companyThemeColor: null,
   themeBackgroundColor: null,
   themeTextColor: null,
@@ -39,6 +41,7 @@ const authSlice = createSlice({
         name: string | null;
         companyName?: string | null;
         companyLogo?: string | null;
+        companyId?: string | null;
       }>
     ) => {
       state.accessToken = action.payload.accessToken;
@@ -47,6 +50,7 @@ const authSlice = createSlice({
       state.name = action.payload.name;
       state.companyName = action.payload.companyName || null;
       state.companyLogo = action.payload.companyLogo || null;
+      state.companyId = action.payload.companyId || null;
     },
     setCompanyInfo: (
       state,
@@ -62,6 +66,7 @@ const authSlice = createSlice({
       state.name = null;
       state.companyName = null;
       state.companyLogo = null;
+      state.companyId = null;
     },
   },
 });

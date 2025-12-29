@@ -10,9 +10,11 @@ import {
     X,
     Camera,
     Briefcase,
+    Palette,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
+import { useNavigate } from "react-router-dom";
 import { getCompanyProfile, updateCompanyProfile } from "@/services/company";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
 import { toast } from "react-hot-toast";
@@ -20,6 +22,7 @@ import type { Company } from "@/types/types";
 
 const CompanyProfile: React.FC = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
+    const navigate = useNavigate();
     const [company, setCompany] = useState<Company | null>(null);
     const [isEditing, setIsEditing] = useState(false);
     const [formData, setFormData] = useState<Partial<Company>>({});
@@ -167,12 +170,20 @@ const CompanyProfile: React.FC = () => {
                                 </button>
                             </>
                         ) : (
-                            <button
-                                onClick={() => setIsEditing(true)}
-                                className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
-                            >
-                                <Edit3 className="w-4 h-4" /> Edit Profile
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => navigate('/company/theme-settings')}
+                                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition shadow-sm"
+                                >
+                                    <Palette className="w-4 h-4" /> Theme Settings
+                                </button>
+                                <button
+                                    onClick={() => setIsEditing(true)}
+                                    className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
+                                >
+                                    <Edit3 className="w-4 h-4" /> Edit Profile
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>

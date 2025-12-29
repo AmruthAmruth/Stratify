@@ -14,6 +14,10 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
             accentColor: theme.accentColor,
             backgroundColor: theme.backgroundColor,
             textColor: theme.textColor,
+            surfaceColor: theme.surfaceColor,
+            borderColor: theme.borderColor,
+            mutedColor: theme.mutedColor,
+            headingColor: theme.headingColor,
             isCustom: theme.isCustom,
         });
 
@@ -27,6 +31,10 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
             doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.surfaceColor,
+            doc.borderColor,
+            doc.mutedColor,
+            doc.headingColor,
             doc.isCustom,
             doc.createdAt,
             doc.updatedAt
@@ -47,6 +55,10 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
             doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.surfaceColor,
+            doc.borderColor,
+            doc.mutedColor,
+            doc.headingColor,
             doc.isCustom,
             doc.createdAt,
             doc.updatedAt
@@ -64,6 +76,10 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
                 accentColor: theme.accentColor,
                 backgroundColor: theme.backgroundColor,
                 textColor: theme.textColor,
+                surfaceColor: theme.surfaceColor,
+                borderColor: theme.borderColor,
+                mutedColor: theme.mutedColor,
+                headingColor: theme.headingColor,
                 isCustom: theme.isCustom,
             },
             { new: true }
@@ -83,6 +99,10 @@ export class CompanyThemeRepository implements ICompanyThemeRepository {
             doc.accentColor,
             doc.backgroundColor,
             doc.textColor,
+            doc.surfaceColor,
+            doc.borderColor,
+            doc.mutedColor,
+            doc.headingColor,
             doc.isCustom,
             doc.createdAt,
             doc.updatedAt

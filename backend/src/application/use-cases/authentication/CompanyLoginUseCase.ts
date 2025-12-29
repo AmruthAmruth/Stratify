@@ -17,6 +17,8 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
 import { INotificationRepository } from "../../../domain/repositories/INotificationRepository";
 import { Notification } from "../../../domain/entities/Notification";
+import { ICompanyThemeRepository } from "../../../domain/repositories/ICompanyThemeRepository";
+import { CompanyTheme } from "../../../domain/entities/CompanyTheme";
 
 type UserType = Company | Manager | Employee;
 
@@ -26,12 +28,13 @@ export class CompanyLoginUseCase {
     private _managerRepository: IManagerRepository,
     private _employeeRepository: IEmployeeRepository,
     private _subscriptionRepository: ISubscriptionRepository,
-    private _notificationRepository: INotificationRepository
+    private _notificationRepository: INotificationRepository,
+    private _companyThemeRepository: ICompanyThemeRepository
   ) { }
 
   async execute(
     data: LoginDTO,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<{ accessToken: string; refreshToken: string; companyId: string; theme: CompanyTheme | null }> {
     let user: UserType | null = await this._companyRepository.findByEmail(
       data.email,
     );
@@ -75,10 +78,49 @@ export class CompanyLoginUseCase {
 
     await this._notificationRepository.create(notification)
 
+    // Determine companyId based on user type
+    let companyId: string;
+    if (user instanceof Company) {
+      companyId = user.id!;
+    } else {
+      // Manager or Employee
+      companyId = user.companyId;
+    }
+
+    // Fetch company theme
+    let theme: CompanyTheme | null = null;
+    try {
+      theme = await this._companyThemeRepository.findByCompanyId(companyId);
+
+      // If no theme exists, create default theme
+      if (!theme) {
+        const defaultTheme = new CompanyTheme(
+          undefined,
+          companyId,
+          'Clean Professional',
+          'light',
+          '#16a34a', // Primary - Green
+          '#1f2937', // Secondary - Dark gray
+          '#e5e7eb', // Accent - Light gray
+          '#f7faf9', // Background - Off-white
+          '#1f2937', // Text - Dark gray
+          '#ffffff', // Surface - White
+          '#e5e7eb', // Border - Light gray
+          '#6b7280', // Muted - Medium gray
+          '#0f172a', // Heading - Very dark
+          false // Not custom
+        );
+        theme = await this._companyThemeRepository.create(defaultTheme);
+      }
+    } catch (error) {
+      console.error('Error fetching company theme:', error);
+      // Continue without theme - frontend will use default
+    }
+
     const payload = { id: user.id!, role: user.role, name: user.name };
     const accessToken = generateAccessToken(payload);
     const refreshToken = generateRefreshToken(payload);
 
-    return { accessToken, refreshToken };
+    return { accessToken, refreshToken, companyId, theme };
   }
 }

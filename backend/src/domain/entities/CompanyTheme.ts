@@ -11,6 +11,10 @@ export class CompanyTheme {
         public accentColor: string,
         public backgroundColor: string,
         public textColor: string,
+        public surfaceColor: string,
+        public borderColor: string,
+        public mutedColor: string,
+        public headingColor: string,
         public isCustom: boolean = false,
         public createdAt?: Date,
         public updatedAt?: Date

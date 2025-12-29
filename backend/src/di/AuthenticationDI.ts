@@ -4,6 +4,7 @@ import { TempRegistrationRepository } from "../infrastructure/repositories/TempR
 import { EmployeeRepository } from "../infrastructure/repositories/EmployeeRepository";
 import { ManagerRepository } from "../infrastructure/repositories/ManagerRepository";
 import { SubscriptionRepository } from "../infrastructure/repositories/SubscriptionRepository";
+import { CompanyThemeRepository } from "../infrastructure/repositories/CompanyThemeRepository";
 import { EmailService } from "../infrastructure/services/EmailService";
 import { SendOtpUseCase } from "../application/use-cases/authentication/SendOTPUseCase";
 import { ResendOtpUseCase } from "../application/use-cases/authentication/ResentOTPUseCase";
@@ -28,7 +29,8 @@ export const authenticationDI = () => {
   const managerRepo = new ManagerRepository();
   const subscriptionRepo = new SubscriptionRepository();
   const superAdminRepo = new SuperAdminRepository();
-  const notificationRepo=new NotificationRepository()
+  const notificationRepo = new NotificationRepository()
+  const companyThemeRepo = new CompanyThemeRepository();
   const emailService = new EmailService();
 
   const sendOtpUseCase = new SendOtpUseCase(otpRepo, emailService);
@@ -51,7 +53,8 @@ export const authenticationDI = () => {
     managerRepo,
     employeeRepo,
     subscriptionRepo,
-    notificationRepo
+    notificationRepo,
+    companyThemeRepo
   );
   const resendOtpUseCase = new ResendOtpUseCase(
     otpRepo,

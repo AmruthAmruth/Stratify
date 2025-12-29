@@ -1,30 +1,43 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-
-interface ThemeState {
-    mode: 'light' | 'dark';
-    companyColor: string;
-}
+import { ThemeState, ThemeConfig, DEFAULT_THEME } from "@/types/theme";
 
 const initialState: ThemeState = {
-    mode: 'light',
-    companyColor: '#009063',
+    ...DEFAULT_THEME,
+    companyId: undefined,
+    isCompanyTheme: false
 };
 
 const themeSlice = createSlice({
     name: 'theme',
     initialState,
     reducers: {
-        toggleTheme: (state) => {
-            state.mode = state.mode === 'light' ? 'dark' : 'light';
+        setFullTheme: (state, action: PayloadAction<ThemeConfig>) => {
+            return { ...action.payload };
         },
-        setTheme: (state, action: PayloadAction<'light' | 'dark'>) => {
-            state.mode = action.payload;
+        setThemeMode: (state, action: PayloadAction<'light' | 'dark'>) => {
+            state.themeMode = action.payload;
         },
-        setCompanyColor: (state, action: PayloadAction<string>) => {
-            state.companyColor = action.payload;
+        updateThemeColor: (state, action: PayloadAction<{ field: keyof ThemeConfig; value: string }>) => {
+            const { field, value } = action.payload;
+            if (typeof state[field] === 'string') {
+                (state as Record<string, string | boolean>)[field] = value;
+            }
+        },
+        resetToDefault: () => {
+            return { ...DEFAULT_THEME, companyId: undefined, isCompanyTheme: false };
+        },
+        resetToDefaultTheme: () => {
+            return { ...DEFAULT_THEME, companyId: undefined, isCompanyTheme: false };
+        },
+        setCustomTheme: (state, action: PayloadAction<Partial<ThemeConfig>>) => {
+            return {
+                ...state,
+                ...action.payload,
+                isCustom: true,
+            };
         },
     },
 });
 
-export const { toggleTheme, setTheme, setCompanyColor } = themeSlice.actions;
+export const { setFullTheme, setThemeMode, updateThemeColor, resetToDefault, setCustomTheme, resetToDefaultTheme } = themeSlice.actions;
 export default themeSlice.reducer;
