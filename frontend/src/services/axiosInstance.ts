@@ -26,7 +26,6 @@ const processQueue = (error: AxiosError | null, token: string | null = null) => 
   failedQueue = [];
 };
 
-// Helper to check if token is expired or about to expire
 const isTokenExpiringSoon = (token: string, bufferSeconds = 60): boolean => {
   try {
     const decoded = jwtDecode<{ exp: number }>(token);
@@ -37,13 +36,11 @@ const isTokenExpiringSoon = (token: string, bufferSeconds = 60): boolean => {
   }
 };
 
-// Request Interceptor - Add token and check expiration
 api.interceptors.request.use(
   async (config) => {
     const token = store.getState().auth.accessToken;
 
     if (token) {
-      // Check if token is expired or expiring soon (within 1 minute)
       if (isTokenExpiringSoon(token, 60)) {
         console.log("Token expiring soon, will be refreshed on next 401");
       }
@@ -55,21 +52,20 @@ api.interceptors.request.use(
   (error) => Promise.reject(error)
 );
 
-// Response Interceptor - Handle 401 and refresh tokens
 api.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-    // Only handle 401 errors and prevent infinite loops
+  
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      // Skip refresh for the refresh-token endpoint itself
+      
       if (originalRequest.url?.includes('/refresh-token')) {
         return Promise.reject(error);
       }
 
       if (isRefreshing) {
-        // If already refreshing, queue this request
+       
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -87,7 +83,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        // Attempt to refresh the token
+        
         const refreshRes = await api.post("/api/auth/refresh-token");
         const newToken = refreshRes.data.accessToken;
 
@@ -95,50 +91,49 @@ api.interceptors.response.use(
           throw new Error("No access token received from refresh");
         }
 
-        // Decode and validate the new token
+        
         const decoded = jwtDecode<{ id: string; role: string; exp: number }>(newToken);
 
         if (!decoded.id || !decoded.role || !decoded.exp) {
           throw new Error("Invalid token payload received");
         }
 
-        // Update Redux store with new token
         const currentAuth = store.getState().auth;
         store.dispatch(
           setCredentials({
             accessToken: newToken,
             role: decoded.role,
             userId: decoded.id,
-            name: currentAuth.name, // Preserve existing name
+            name: currentAuth.name, 
           })
         );
 
-        // Process queued requests
+       
         processQueue(null, newToken);
 
-        // Retry the original request with new token
+     
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
 
         return api.request(originalRequest);
       } catch (refreshError) {
-        // Refresh failed - log out user
+        
         processQueue(refreshError as AxiosError, null);
 
         console.error("Token refresh failed:", refreshError);
 
-        // Clear credentials
+       
         store.dispatch(clearCredentials());
 
-        // Call logout endpoint to clear refresh token cookie
+       
         try {
           await api.post("/api/auth/logout");
         } catch (logoutError) {
           console.error("Logout API call failed:", logoutError);
         }
 
-        // Only redirect if not already on login page
+       
         if (!window.location.pathname.includes('/login')) {
           window.location.href = "/login";
         }

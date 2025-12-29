@@ -1,9 +1,8 @@
-// Updated CollapsibleSection.tsx
-/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState, ReactNode, Dispatch, SetStateAction } from "react";
 import ReusableChart from "../Chart/ReusableChart";
 
-// Local interfaces for type safety in callbacks
+
 interface LocalSubTask {
   id?: string;
   _id?: string;

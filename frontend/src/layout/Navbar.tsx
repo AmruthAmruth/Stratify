@@ -33,7 +33,6 @@ const Navbar = () => {
     }
   };
 
-  // REMOVED: The useEffect with socket listener - NotificationListener handles this globally
 
   return (
     <header className="w-full bg-bg shadow px-6 py-6 flex justify-between items-center border-b border-accent">

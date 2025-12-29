@@ -12,10 +12,7 @@ export class CompanyThemeController {
         private getThemePresetsUseCase: IGetThemePresetsUseCase
     ) { }
 
-    /**
-     * GET /api/company/theme/:companyId
-     * Get theme for a specific company
-     */
+    
     getCompanyTheme = async (req: Request, res: Response): Promise<void> => {
         try {
             const { companyId } = req.params;
@@ -44,10 +41,7 @@ export class CompanyThemeController {
         }
     };
 
-    /**
-     * PUT /api/company/theme
-     * Update company theme (company admin only)
-     */
+    
     updateCompanyTheme = async (req: Request, res: Response): Promise<void> => {
         try {
             const role = (req as { role?: string }).role;
@@ -92,10 +86,7 @@ export class CompanyThemeController {
         }
     };
 
-    /**
-     * GET /api/company/theme-presets
-     * Get available theme presets
-     */
+   
     getThemePresets = async (_req: Request, res: Response): Promise<void> => {
         try {
             const presets = await this.getThemePresetsUseCase.execute();
@@ -110,10 +101,7 @@ export class CompanyThemeController {
         }
     };
 
-    /**
-     * POST /api/company/theme/apply-preset
-     * Apply a preset theme to company
-     */
+   
     applyPreset = async (req: Request, res: Response): Promise<void> => {
         try {
             const role = (req as { role?: string }).role;
@@ -136,7 +124,6 @@ export class CompanyThemeController {
                 throw new AppError("Preset name is required", StatusCodes.BAD_REQUEST);
             }
 
-            // Get all presets and find the selected one
             const presets = await this.getThemePresetsUseCase.execute();
             const selectedPreset = presets.find(p => p.name === presetName);
 
@@ -144,7 +131,7 @@ export class CompanyThemeController {
                 throw new AppError("Invalid preset name", StatusCodes.BAD_REQUEST);
             }
 
-            // Apply as theme update
+          
             const themeData: UpdateThemeDTO = {
                 themeName: selectedPreset.name,
                 themeMode: selectedPreset.mode,
