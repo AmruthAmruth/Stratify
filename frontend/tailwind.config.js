@@ -14,6 +14,7 @@ module.exports = {
 
         primary: 'var(--color-primary, #16a34a)',
         primaryHover: 'var(--color-primary-hover, #15803d)',
+        textOnPrimary: 'var(--color-text-on-primary, #ffffff)',
 
         accent: 'var(--color-accent, #e5e7eb)',
         borderColor: 'var(--color-border, #e5e7eb)',

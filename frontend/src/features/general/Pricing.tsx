@@ -92,11 +92,9 @@ const PricingPage = () => {
             </div>
 
             {/* Navigation */}
-            <nav className="relative z-50 flex items-center justify-between px-4 sm:px-6 lg:px-8 py-4 lg:py-6">
-                <Navbar />
-            </nav>
+            <Navbar />
 
-            <div className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-8 sm:pt-12 lg:pt-20 pb-16 sm:pb-20 lg:pb-24">
+            <div className="relative z-40 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 lg:pt-32 pb-16 sm:pb-20 lg:pb-24">
                 {/* Header */}
                 <div className="text-center mb-12 sm:mb-16">
                     <div className="inline-flex items-center space-x-2 bg-white border-2 border-accent px-4 sm:px-6 py-2 sm:py-3 rounded-full shadow-lg mb-6">
@@ -173,8 +171,8 @@ const PricingPage = () => {
                             <Link
                                 to={plan.name === "Enterprise" ? "/contact" : "/register"}
                                 className={`block w-full py-4 rounded-2xl font-bold text-lg text-center mb-8 transition-all duration-300 ${plan.popular
-                                        ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
-                                        : "bg-accent/50 text-text hover:bg-accent border-2 border-accent"
+                                    ? "bg-gradient-to-r from-purple-500 to-pink-500 text-white shadow-lg hover:shadow-xl transform hover:scale-105"
+                                    : "bg-accent/50 text-text hover:bg-accent border-2 border-accent"
                                     }`}
                             >
                                 {plan.cta}

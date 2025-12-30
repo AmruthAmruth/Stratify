@@ -8,7 +8,7 @@ export const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false)
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-bg border-b border-accent shadow-lg p-5">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-bg border-b border-accent shadow-lg py-3 px-4 sm:p-5">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         {/* Desktop Navigation */}
         <div className="hidden lg:flex items-center justify-between h-16">
@@ -68,7 +68,7 @@ export const Navbar = () => {
         </div>
 
         {/* Mobile Navigation */}
-        <div className="lg:hidden flex items-center justify-between h-16">
+        <div className="lg:hidden flex items-center justify-between h-12">
           {/* Logo */}
           <Link to="/" className="flex items-center space-x-2 group">
             <div className="w-9 h-9 bg-primary rounded-lg flex items-center justify-center shadow-md group-hover:shadow-lg transition-all duration-300">

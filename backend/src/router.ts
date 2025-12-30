@@ -12,6 +12,7 @@ import chatRouter from "./interfaces/routes/ChatRoutes";
 import groupChatRouter from "./interfaces/routes/GroupChatRoutes";
 import managerRouter from "./interfaces/routes/ManagerRoutes";
 import superAdminRouter from "./interfaces/routes/SuperAdminRoutes";
+import contactRouter from "./interfaces/routes/ContactRoutes";
 import { apiLimiter } from "./config/RateLimiter";
 
 const router = Router();
@@ -33,5 +34,6 @@ router.use('/chat', chatRouter)
 router.use('/group-chat', groupChatRouter)
 router.use('/manager', managerRouter)
 router.use('/super-admin', superAdminRouter)
+router.use('/contact', contactRouter)
 
 export default router;
