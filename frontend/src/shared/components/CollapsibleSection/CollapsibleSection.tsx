@@ -33,7 +33,7 @@ interface CollapsibleSectionProps {
   icon: ReactNode;
   iconBgColor: string;
   iconColor: string;
-  data: (LocalIssue | { id?: string; _id?: string; name: string; goal: string; status: string; startDate: string; endDate: string; issues: LocalIssue[] })[];
+  data: unknown[];
   type: 'sprint' | 'backlog';
   expandedItem: string | null;
   setExpandedItem: Dispatch<SetStateAction<string | null>>;
@@ -70,11 +70,13 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
       </div>
       <div className="p-6 space-y-4">
         {data.map((item, index) => {
-          const itemId = type === 'sprint' ? item.id || item._id : item.id || item._id;
+          const typedItem = item as Record<string, unknown>;
+          const itemId = String(type === 'sprint' ? (typedItem.id || typedItem._id) : (typedItem.id || typedItem._id));
           const isExpanded = expandedItem === itemId;
 
           // For backlog items, render differently
           if (type === 'backlog') {
+            const backlogItem = item as LocalIssue;
             return (
               <div
                 key={itemId}
@@ -87,34 +89,34 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
                       <div className="flex items-center space-x-3 mb-3">
-                        <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(item.type)}`}>
-                          {item.type}
+                        <span className={`px-2 py-1 text-xs font-semibold rounded border ${getTypeColor(backlogItem.type || '')}`}>
+                          {backlogItem.type}
                         </span>
-                        <h4 className="text-lg font-bold text-text">{item.heading}</h4>
+                        <h4 className="text-lg font-bold text-text">{backlogItem.heading}</h4>
                       </div>
 
                       <p className="text-text text-sm leading-relaxed mb-3 opacity-80">
-                        {item.description}
+                        {backlogItem.description}
                       </p>
 
                       <div className="flex flex-wrap items-center gap-4">
-                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(item.status)}`}>
-                          {item.status}
+                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(backlogItem.status)}`}>
+                          {backlogItem.status}
                         </span>
-                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getPriorityColor(item.priority)}`}>
-                          {item.priority}
+                        <span className={`px-3 py-1 text-sm font-semibold rounded border ${getPriorityColor(backlogItem.priority || '')}`}>
+                          {backlogItem.priority}
                         </span>
                         <div className="flex items-center space-x-2 text-sm text-text">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm1-12a1 1 0 10-2 0v4a1 1 0 00.293.707l2.828 2.829a1 1 0 101.414-1.414L11 11.586V6z" />
                           </svg>
-                          <span className="font-medium">{item.estimatedHours}h</span>
+                          <span className="font-medium">{backlogItem.estimatedHours}h</span>
                         </div>
                         <div className="flex items-center space-x-2 text-sm text-text">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                           </svg>
-                          <span className="font-medium">Size: {item.size}</span>
+                          <span className="font-medium">Size: {backlogItem.size}</span>
                         </div>
                       </div>
                     </div>
@@ -140,14 +142,14 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                     <div className="space-y-4">
                       <div>
                         <h5 className="text-sm font-semibold text-text mb-2">Acceptance Criteria</h5>
-                        <p className="text-sm text-text opacity-80 leading-relaxed">{item.acceptanceCriteria}</p>
+                        <p className="text-sm text-text opacity-80 leading-relaxed">{backlogItem.acceptanceCriteria}</p>
                       </div>
-                      {item.assignedTo && (
+                      {backlogItem.assignedTo && (
                         <div className="flex items-center space-x-2 text-sm text-text">
                           <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
                             <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" />
                           </svg>
-                          <span className="font-medium">Assigned to: {item.assignedTo}</span>
+                          <span className="font-medium">Assigned to: {backlogItem.assignedTo}</span>
                         </div>
                       )}
                     </div>
@@ -158,6 +160,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
           }
 
           // For sprint items
+          interface SprintItem {
+            id?: string;
+            _id?: string;
+            name: string;
+            goal: string;
+            status: string;
+            startDate: string;
+            endDate: string;
+            issues: LocalIssue[];
+          }
+          const sprintItem = item as SprintItem;
           return (
             <div
               key={itemId}
@@ -171,22 +184,22 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                   <div className="flex-1">
                     <div className="flex items-center space-x-3 mb-3">
                       <span className="px-3 py-1 bg-primary text-white text-sm font-bold rounded">
-                        {item.name}
+                        {sprintItem.name}
                       </span>
-                      <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(item.status)}`}>
-                        {item.status}
+                      <span className={`px-3 py-1 text-sm font-semibold rounded border ${getStatusColor(sprintItem.status)}`}>
+                        {sprintItem.status}
                       </span>
                     </div>
 
-                    <h4 className="text-xl font-bold text-text mb-3">{item.goal}</h4>
+                    <h4 className="text-xl font-bold text-text mb-3">{sprintItem.goal}</h4>
 
                     <p className="text-text text-sm leading-relaxed mb-3 opacity-80">
-                      {new Date(item.startDate).toLocaleDateString("en-US", {
+                      {new Date(sprintItem.startDate).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                       })}{" "}
                       -{" "}
-                      {new Date(item.endDate).toLocaleDateString("en-US", {
+                      {new Date(sprintItem.endDate).toLocaleDateString("en-US", {
                         month: "short",
                         day: "numeric",
                         year: "numeric",
@@ -195,7 +208,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
 
                     <div className="flex items-center space-x-6">
                       <span className="text-sm font-semibold text-primary">
-                        {item.issues.length} {item.issues.length === 1 ? "Issue" : "Issues"}
+                        {sprintItem.issues.length} {sprintItem.issues.length === 1 ? "Issue" : "Issues"}
                       </span>
                     </div>
                   </div>
@@ -230,7 +243,7 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                   </div>
 
                   {/* Sprint Analytics Dashboard */}
-                  {item.issues && item.issues.length > 0 && (
+                  {sprintItem.issues && sprintItem.issues.length > 0 && (
                     <div className="mb-8">
                       <h5 className="text-lg font-bold text-text mb-4 flex items-center">
                         <svg className="w-5 h-5 text-primary mr-2" fill="currentColor" viewBox="0 0 20 20">
@@ -247,10 +260,10 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                             title="Issue Breakdown"
                             labels={["Planned", "In Progress", "Done", "Blocked"]}
                             data={[
-                              item.issues.filter((i: LocalIssue) => i.status === "Planned").length,
-                              item.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
-                              item.issues.filter((i: LocalIssue) => i.status === "Done").length,
-                              item.issues.filter((i: LocalIssue) => i.status === "Blocked").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "Planned").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "Done").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "Blocked").length,
                             ]}
                             backgroundColors={["#dfdcef", "#FFB84D", "#009063", "#FF6B6B"]}
                           />
@@ -262,10 +275,10 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                             type="line"
                             title="Burndown (Subtask Hours)"
                             labels={(() => {
-                              const totalSubtaskHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                              const totalSubtaskHours = sprintItem.issues.reduce((sum: number, issue: LocalIssue) =>
                                 sum + (issue.subTasks?.reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
-                              const completedHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                              const completedHours = sprintItem.issues.reduce((sum: number, issue: LocalIssue) =>
                                 sum + (issue.subTasks?.filter((st: LocalSubTask) => st.status === "Done")
                                   .reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
@@ -274,10 +287,10 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                               return ["Total Hours", "Completed", "Remaining"];
                             })()}
                             data={(() => {
-                              const totalSubtaskHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                              const totalSubtaskHours = sprintItem.issues.reduce((sum: number, issue: LocalIssue) =>
                                 sum + (issue.subTasks?.reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
-                              const completedHours = item.issues.reduce((sum: number, issue: LocalIssue) =>
+                              const completedHours = sprintItem.issues.reduce((sum: number, issue: LocalIssue) =>
                                 sum + (issue.subTasks?.filter((st: LocalSubTask) => st.status === "Done")
                                   .reduce((s: number, st: LocalSubTask) => s + (st.hours || 0), 0) || 0), 0
                               );
@@ -295,9 +308,9 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                             title="Velocity (Completion %)"
                             labels={["Completed", "In Progress", "Pending"]}
                             data={[
-                              item.issues.filter((i: LocalIssue) => i.status === "Done").length,
-                              item.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
-                              item.issues.filter((i: LocalIssue) => i.status === "Planned" || i.status === "Blocked").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "Done").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "In Progress").length,
+                              sprintItem.issues.filter((i: LocalIssue) => i.status === "Planned" || i.status === "Blocked").length,
                             ]}
                             backgroundColors={["#009063", "#FFB84D", "#dfdcef"]}
                           />
@@ -306,8 +319,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                     </div>
                   )}
 
-                  {item.issues.length > 0 ? (
-                    item.issues.map((issue: LocalIssue) => {
+                  {sprintItem.issues.length > 0 ? (
+                    sprintItem.issues.map((issue: LocalIssue) => {
                       const issueId = issue.id || issue._id;
                       const isIssueExpanded = expandedIssue === issueId;
 

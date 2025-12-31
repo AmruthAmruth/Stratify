@@ -1,7 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { ThemeState, ThemeConfig, DEFAULT_THEME } from "@/types/theme";
+import { ThemeConfig, DEFAULT_THEME } from "@/types/theme";
 
-const initialState: ThemeState = {
+const initialState: ThemeConfig = {
     ...DEFAULT_THEME,
     companyId: undefined,
     isCompanyTheme: false

@@ -43,36 +43,13 @@ const HomePage = () => {
   useEffect(() => {
     setIsVisible(true)
 
-    const handleMouseMove = (e) => {
+    const handleMouseMove = (e: MouseEvent) => {
       setMousePosition({ x: e.clientX, y: e.clientY })
     }
 
     window.addEventListener("mousemove", handleMouseMove)
     return () => window.removeEventListener("mousemove", handleMouseMove)
   }, [])
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting && !statsInView) {
-          setStatsInView(true)
-          animateStats()
-        }
-      },
-      { threshold: 0.2 }
-    )
-
-    const statsElement = document.getElementById("stats-section")
-    if (statsElement) {
-      observer.observe(statsElement)
-    }
-
-    return () => {
-      if (statsElement) {
-        observer.unobserve(statsElement)
-      }
-    }
-  }, [statsInView, animateStats])
 
   const animateStats = useCallback(() => {
     const duration = 2500
@@ -99,6 +76,29 @@ const HomePage = () => {
       }, interval)
     })
   }, [stats])
+
+  useEffect(() => {
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !statsInView) {
+          setStatsInView(true)
+          animateStats()
+        }
+      },
+      { threshold: 0.2 }
+    )
+
+    const statsElement = document.getElementById("stats-section")
+    if (statsElement) {
+      observer.observe(statsElement)
+    }
+
+    return () => {
+      if (statsElement) {
+        observer.unobserve(statsElement)
+      }
+    }
+  }, [statsInView, animateStats])
 
   const coreModules = [
     {
