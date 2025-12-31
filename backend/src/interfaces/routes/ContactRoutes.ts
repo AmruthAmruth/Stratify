@@ -1,8 +1,10 @@
 import { Router } from "express";
 import { contactDI } from "../../di/ContactDI";
-import { createContactRoutes } from "./contactRoutes";
+import { asyncHandler } from "../middleware/AsyncHandler";
 
 const contactController = contactDI();
-const router = createContactRoutes(contactController);
+const contactRouter = Router();
 
-export default router;
+contactRouter.post("/send", asyncHandler(contactController.sendMessage));
+
+export default contactRouter;

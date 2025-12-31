@@ -158,7 +158,7 @@ const PricingPage = () => {
                         <span className="block bg-gradient-to-r from-primary to-primaryHover bg-clip-text text-transparent">Powerful Management</span>
                     </h1>
 
-                    <p className="text-lg sm:text-xl lg:text-2xl text-text/80 max-w-3xl mx-auto leading-relaxed">
+                    <p className="text-lg sm:text-xl lg:text-2xl text-text max-w-3xl mx-auto leading-relaxed">
                         Start with a free trial. Scale as you grow. All plans include 14-day free trial with no credit card required.
                     </p>
 
