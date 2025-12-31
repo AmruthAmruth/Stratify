@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import {
   ArrowRight,
   Play,
@@ -72,9 +72,9 @@ const HomePage = () => {
         observer.unobserve(statsElement)
       }
     }
-  }, [statsInView])
+  }, [statsInView, animateStats])
 
-  const animateStats = () => {
+  const animateStats = useCallback(() => {
     const duration = 2500
     const steps = 60
     const interval = duration / steps
@@ -98,7 +98,7 @@ const HomePage = () => {
         }
       }, interval)
     })
-  }
+  }, [stats])
 
   const coreModules = [
     {
@@ -377,8 +377,8 @@ const HomePage = () => {
               >
                 <div className={`flex flex-col ${module.size === "large" ? "justify-between h-full" : ""} space-y-4 sm:space-y-6`}>
                   <div className={`w-14 h-14 sm:w-16 sm:h-16 ${module.variant === "primary"
-                      ? "bg-surface/20 backdrop-blur-sm"
-                      : "bg-primary/10"
+                    ? "bg-surface/20 backdrop-blur-sm"
+                    : "bg-primary/10"
                     } rounded-2xl flex items-center justify-center group-hover:scale-110 transition-all shadow-lg`}>
                     <module.icon className={`w-7 h-7 sm:w-8 sm:h-8 ${module.variant === "primary" ? "text-textOnPrimary" : "text-primary"
                       }`} />

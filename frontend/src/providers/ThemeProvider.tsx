@@ -1,8 +1,7 @@
 import React, { useEffect } from 'react';
-import { useSelector, useDispatch } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { useLocation } from 'react-router-dom';
 import { RootState } from '@/store';
-import { resetToDefaultTheme } from '@/store/slices/themeSlice';
 import { applyFullTheme } from '@/utils/themeUtils';
 import { DEFAULT_THEME } from '@/types/theme';
 
@@ -31,7 +30,6 @@ const PUBLIC_ROUTES = [
  * Applies default theme for public routes and company theme for authenticated routes
  */
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({ children }) => {
-    const dispatch = useDispatch();
     const theme = useSelector((state: RootState) => state.theme);
     const isAuthenticated = useSelector((state: RootState) => state.auth.accessToken);
     const location = useLocation();

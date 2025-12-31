@@ -88,7 +88,7 @@ const Login: React.FC = () => {
           connectSocket(decoded.id, data.accessToken);
 
           navigate("/dashboard");
-        } catch (decodeError) {
+        } catch {
           enqueueSnackbar("Authentication error. Please try again.", { variant: "error" });
         }
       } else {

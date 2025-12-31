@@ -60,7 +60,7 @@ const NotificationListener = () => {
     return () => {
       socket?.off("new-notification", handleNewNotification);
     };
-  }, [enqueueSnackbar, dispatch, userId]);
+  }, [enqueueSnackbar, dispatch, userId, accessToken]);
 
   return null;
 };

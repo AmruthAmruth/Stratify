@@ -50,7 +50,7 @@ const App = () => {
             }));
             dispatch(setNotifications(notifications));
           }
-        } catch (err) {
+        } catch {
           // Failed to load notifications
         }
       };

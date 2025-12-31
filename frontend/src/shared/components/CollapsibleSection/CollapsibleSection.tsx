@@ -33,7 +33,7 @@ interface CollapsibleSectionProps {
   icon: ReactNode;
   iconBgColor: string;
   iconColor: string;
-  data: any[];
+  data: (LocalIssue | { id?: string; _id?: string; name: string; goal: string; status: string; startDate: string; endDate: string; issues: LocalIssue[] })[];
   type: 'sprint' | 'backlog';
   expandedItem: string | null;
   setExpandedItem: Dispatch<SetStateAction<string | null>>;
@@ -42,7 +42,6 @@ interface CollapsibleSectionProps {
   getTypeColor: (type: string) => string;
   onAssignIssue?: (sprintId: string) => void;
 }
-/* eslint-enable @typescript-eslint/no-explicit-any */
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   title,

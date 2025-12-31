@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { setFullTheme, setCustomTheme } from '@/store/slices/themeSlice';
 import { useTheme } from '@/hooks/useTheme';
@@ -20,19 +20,19 @@ const ThemeSettings: React.FC = () => {
         ...currentTheme
     });
 
-    // Load presets on mount
-    useEffect(() => {
-        loadPresets();
-    }, []);
-
-    const loadPresets = async () => {
+    const loadPresets = useCallback(async () => {
         try {
             const data = await getThemePresets();
             setPresets(data.response);
-        } catch (error) {
+        } catch {
             enqueueSnackbar('Failed to load theme presets', { variant: 'error' });
         }
-    };
+    }, [enqueueSnackbar]);
+
+    // Load presets on mount
+    useEffect(() => {
+        loadPresets();
+    }, [loadPresets]);
 
     const handleApplyPreset = async (presetName: string) => {
         setLoading(true);
@@ -56,7 +56,7 @@ const ThemeSettings: React.FC = () => {
                 }));
             }
             enqueueSnackbar(`Theme "${presetName}" applied successfully`, { variant: 'success' });
-        } catch (error) {
+        } catch {
             enqueueSnackbar('Failed to apply theme', { variant: 'error' });
         } finally {
             setLoading(false);
@@ -79,7 +79,7 @@ const ThemeSettings: React.FC = () => {
             });
             dispatch(setCustomTheme(customThemeForm));
             enqueueSnackbar('Custom theme saved successfully', { variant: 'success' });
-        } catch (error) {
+        } catch {
             enqueueSnackbar('Failed to save custom theme', { variant: 'error' });
         } finally {
             setLoading(false);
@@ -139,8 +139,8 @@ const ThemeSettings: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('presets')}
                         className={`px-4 py-2 font-medium transition-colors ${activeTab === 'presets'
-                                ? 'text-primary border-b-2 border-primary'
-                                : 'text-muted hover:text-text'
+                            ? 'text-primary border-b-2 border-primary'
+                            : 'text-muted hover:text-text'
                             }`}
                     >
                         Preset Themes
@@ -148,8 +148,8 @@ const ThemeSettings: React.FC = () => {
                     <button
                         onClick={() => setActiveTab('custom')}
                         className={`px-4 py-2 font-medium transition-colors ${activeTab === 'custom'
-                                ? 'text-primary border-b-2 border-primary'
-                                : 'text-muted hover:text-text'
+                            ? 'text-primary border-b-2 border-primary'
+                            : 'text-muted hover:text-text'
                             }`}
                     >
                         Custom Theme

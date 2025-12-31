@@ -35,10 +35,6 @@ export interface ThemePreset {
     headingColor: string;
 }
 
-export interface ThemeState extends ThemeConfig {
-    // Additional state-specific properties can be added here
-}
-
 export const DEFAULT_THEME: ThemeConfig = {
     themeName: 'Clean Professional',
     themeMode: 'light',
