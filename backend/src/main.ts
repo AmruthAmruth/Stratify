@@ -10,36 +10,36 @@ import cookieParser from "cookie-parser";
 import http from "http";
 import helmet from "helmet";
 
-
 import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
 import { validateEnv } from "./config/validateEnv";
 import logger from "./shared/utils/logger";
 
-
 import { initSocket } from "./infrastructure/socket/SocketServer";
 import { SocketService } from "./shared/services/SocketService";
-
 
 import { MeetingScheduler } from "./infrastructure/scheduler/MeetingScheduler";
 import { MeetingRepository } from "./infrastructure/repositories/MeetingRepository";
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";
 import { NotificationRepository } from "./infrastructure/repositories/NotificationRepository";
 
+// Load environment variables
 dotenv.config();
 
-// Validate environment variables before starting
+// Validate environment variables
 validateEnv();
- 
+
 const app = express();
 
-// Security headers
-app.use(helmet({
-  crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow Cloudinary images
-}));
+// ---------------- Security ----------------
+app.use(
+  helmet({
+    crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow Cloudinary images
+  })
+);
 
-// CORS configuration
-const isProduction = process.env.NODE_ENV === 'production';
+// ---------------- CORS ----------------
+const isProduction = process.env.NODE_ENV === "production";
 const allowedOrigins = isProduction
   ? [process.env.FRONTEND_URL!]
   : ["http://localhost:5173", "thunder-client://"];
@@ -61,11 +61,12 @@ app.use(
   })
 );
 
+// ---------------- Middleware ----------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
+// ---------------- Logging ----------------
 const logDirectory = path.join(__dirname, "logs");
 if (!fs.existsSync(logDirectory)) fs.mkdirSync(logDirectory);
 
@@ -80,7 +81,7 @@ if (!isProduction) {
   app.use(morgan("dev"));
 }
 
-
+// ---------------- Database ----------------
 connectDB()
   .then(() => logger.info("✅ MongoDB Connected"))
   .catch((err) => {
@@ -88,42 +89,50 @@ connectDB()
     process.exit(1);
   });
 
-app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
+// ---------------- Static Files ----------------
+app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// Health check endpoint
-app.get('/health', (_req, res) => {
+// ---------------- Health Check ----------------
+app.get("/health", (_req, res) => {
   res.json({
-    status: 'ok',
+    status: "ok",
     timestamp: new Date().toISOString(),
     uptime: process.uptime(),
-    environment: process.env.NODE_ENV || 'development',
+    environment: process.env.NODE_ENV || "development",
   });
 });
 
+// ---------------- API Routes ----------------
 app.use("/api", router);
 
+// ---------------- Error Handling ----------------
 app.use(errorMiddleware);
 
-
+// ---------------- Server & Socket ----------------
 const server = http.createServer(app);
 const io = initSocket(server);
 SocketService.setIO(io);
 
-
+// ---------------- Scheduler ----------------
 const meetingRepo = new MeetingRepository();
 const projectRepo = new ProjectRepository();
 const notificationRepo = new NotificationRepository();
 
-const meetingScheduler = new MeetingScheduler(meetingRepo, projectRepo, notificationRepo);
+const meetingScheduler = new MeetingScheduler(
+  meetingRepo,
+  projectRepo,
+  notificationRepo
+);
 meetingScheduler.start();
 
+// ---------------- Start Server ----------------
 const PORT = process.env.PORT || 7000;
 server.listen(PORT, () => {
-  logger.info(`🚀 Server running on http://localhost:${PORT}`);
-  logger.info(`Environment: ${process.env.NODE_ENV || 'development'}`);
+  logger.info(`🚀 Server running on port ${PORT}`);
+  logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
 
-
+// Timeout for long requests
 server.timeout = 30000;
 
 export { io };

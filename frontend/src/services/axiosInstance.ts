@@ -57,15 +57,15 @@ api.interceptors.response.use(
   async (error: AxiosError) => {
     const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
 
-  
+
     if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-      
+
       if (originalRequest.url?.includes('/refresh-token')) {
         return Promise.reject(error);
       }
 
       if (isRefreshing) {
-       
+
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
@@ -83,7 +83,7 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        
+
         const refreshRes = await api.post("/api/auth/refresh-token");
         const newToken = refreshRes.data.accessToken;
 
@@ -91,7 +91,7 @@ api.interceptors.response.use(
           throw new Error("No access token received from refresh");
         }
 
-        
+
         const decoded = jwtDecode<{ id: string; role: string; exp: number }>(newToken);
 
         if (!decoded.id || !decoded.role || !decoded.exp) {
@@ -104,36 +104,36 @@ api.interceptors.response.use(
             accessToken: newToken,
             role: decoded.role,
             userId: decoded.id,
-            name: currentAuth.name, 
+            name: currentAuth.name,
           })
         );
 
-       
+
         processQueue(null, newToken);
 
-     
+
         if (originalRequest.headers) {
           originalRequest.headers.Authorization = `Bearer ${newToken}`;
         }
 
         return api.request(originalRequest);
       } catch (refreshError) {
-        
+
         processQueue(refreshError as AxiosError, null);
 
         console.error("Token refresh failed:", refreshError);
 
-       
+
         store.dispatch(clearCredentials());
 
-       
+
         try {
           await api.post("/api/auth/logout");
         } catch (logoutError) {
           console.error("Logout API call failed:", logoutError);
         }
 
-       
+
         if (!window.location.pathname.includes('/login')) {
           window.location.href = "/login";
         }
