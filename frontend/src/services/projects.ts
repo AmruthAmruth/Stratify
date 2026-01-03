@@ -84,13 +84,13 @@ export const getEmployeesNotInProject = (id: string): Promise<TeamMember[]> =>
   handleRequest(api.get(PROJECT_ROUTES.GET_EMPLOYEE_NOT_IN_PROJECT(id)));
 
 export const addEmployeeProject = (data: Record<string, unknown>): Promise<{ success: boolean; message: string }> =>
-  handleRequest(api.post(PROJECT_ROUTES.Add_EMPLOYEE_TO_PROJECT, data));
+  handleRequest(api.post(PROJECT_ROUTES.ADD_EMPLOYEE_TO_PROJECT, data));
 
 
 
 
 export const getIssuesForEmployee = (): Promise<Issue[]> =>
-  handleRequest(api.get(PROJECT_ROUTES.GET_ISSSUES_FOR_EMPLOYEE));
+  handleRequest(api.get(PROJECT_ROUTES.GET_ISSUES_FOR_EMPLOYEE));
 
 export const getIssuesForManager = () =>
   handleRequest(api.get(PROJECT_ROUTES.GET_ISSUES_FOR_MANAGER));

@@ -41,14 +41,13 @@ app.use(
 // ---------------- CORS ----------------
 const isProduction = process.env.NODE_ENV === "production";
 const allowedOrigins = isProduction
-  ? [process.env.FRONTEND_URL!]
-  : ["http://localhost:5173", "thunder-client://"];
+  ? [process.env.FRONTEND_URL!] // <- set FRONTEND_URL=http://44.192.100.142 in .env
+  : ["http://localhost:5173", "thunder-client://", "http://44.192.100.142"];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, Postman, etc.)
-      if (!origin) return callback(null, true);
+      if (!origin) return callback(null, true); // allow Postman or mobile apps
 
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
