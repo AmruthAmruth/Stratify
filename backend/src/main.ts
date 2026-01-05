@@ -40,9 +40,17 @@ app.use(
 
 // ---------------- CORS ----------------
 const isProduction = process.env.NODE_ENV === "production";
+
 const allowedOrigins = isProduction
-  ? [process.env.FRONTEND_URL!] // <- set FRONTEND_URL=http://44.192.100.142 in .env
-  : ["http://localhost:5173", "thunder-client://", "http://44.192.100.142"];
+  ? [
+    process.env.FRONTEND_URL!,
+    "http://44.192.100.142"
+  ]
+  : [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "thunder-client://"
+  ];
 
 app.use(
   cors({

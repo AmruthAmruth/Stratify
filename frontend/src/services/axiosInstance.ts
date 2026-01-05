@@ -3,12 +3,22 @@ import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
 
+<<<<<<< HEAD
 
 
 const api = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
+=======
+const apiBaseURL =
+  window.location.hostname === "localhost"
+    ? import.meta.env.VITE_LOCAL_API
+    : import.meta.env.VITE_PROD_API;
+
+const api = axios.create({
+  baseURL: apiBaseURL,
   withCredentials: true,
 });
+
 // Token refresh state management
 let isRefreshing = false;
 let failedQueue: Array<{
