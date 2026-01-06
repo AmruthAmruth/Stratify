@@ -13,6 +13,7 @@ export interface ManagerDocument extends Document {
   companyId: Types.ObjectId;
   departmentId?: Types.ObjectId;
   profileImage?: string;
+  address?: string;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -36,6 +37,7 @@ const ManagerSchema = new Schema<ManagerDocument>(
     companyId: { type: Schema.Types.ObjectId, ref: "Company", required: true },
     departmentId: { type: Schema.Types.ObjectId, ref: "Department" },
     profileImage: { type: String },
+    address: { type: String },
   },
   { timestamps: true },
 );

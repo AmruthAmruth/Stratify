@@ -18,6 +18,7 @@ export class ManagerMapper {
       doc.companyId.toString(),
       doc.departmentId?.toString(),
       doc.profileImage,
+      doc.address,
     );
   }
 
@@ -35,6 +36,7 @@ export class ManagerMapper {
       companyId: new Types.ObjectId(entity.companyId),
       departmentId: entity.departmentId ? new Types.ObjectId(entity.departmentId) : undefined,
       profileImage: entity.profileImage,
+      address: entity.address,
     };
   }
 

@@ -3,19 +3,17 @@ import { clearCredentials, setCredentials } from "@/store/slices/authSlice";
 import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
 
-<<<<<<< HEAD
 
 
-const api = axios.create({
-  baseURL: import.meta.env.VITE_API_URL,
-=======
+
+// Determine API base URL based on environment
 const apiBaseURL =
   window.location.hostname === "localhost"
     ? import.meta.env.VITE_LOCAL_API
     : import.meta.env.VITE_PROD_API;
 
 const api = axios.create({
-  baseURL: apiBaseURL,
+  baseURL: `${apiBaseURL}/api`,
   withCredentials: true,
 });
 
@@ -95,7 +93,7 @@ api.interceptors.response.use(
 
       try {
 
-        const refreshRes = await api.post("/api/auth/refresh-token");
+        const refreshRes = await api.post("/auth/refresh-token");
         const newToken = refreshRes.data.accessToken;
 
         if (!newToken) {
@@ -139,7 +137,7 @@ api.interceptors.response.use(
 
 
         try {
-          await api.post("/api/auth/logout");
+          await api.post("/auth/logout");
         } catch (logoutError) {
           console.error("Logout API call failed:", logoutError);
         }

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { User, Mail, Phone, MapPin, Calendar, Briefcase, Building2, Shield, Camera } from 'lucide-react';
+import { User, Mail, Phone, MapPin, Calendar, Briefcase, Building2, Shield, Camera, Edit } from 'lucide-react';
 import { getManagerProfile, updateManagerProfile, changeManagerPassword } from '@/services/authApi';
 import DynamicForm from '@/shared/components/Forms/DynamicForm';
+import Modal from '@/shared/components/ModalFrom/ModalForm';
 import { z } from 'zod';
 import { enqueueSnackbar } from 'notistack';
 
@@ -27,9 +28,10 @@ interface ManagerProfile {
 const Profile = () => {
     const [loading, setLoading] = useState(true);
     const [profile, setProfile] = useState<ManagerProfile | null>(null);
-    const [activeTab, setActiveTab] = useState<'view' | 'edit' | 'password'>('view');
     const [imagePreview, setImagePreview] = useState<string | null>(null);
     const [uploading, setUploading] = useState(false);
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isPasswordModalOpen, setIsPasswordModalOpen] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -94,7 +96,7 @@ const Profile = () => {
             await updateManagerProfile(values);
             enqueueSnackbar('Profile updated successfully!', { variant: 'success' });
             await fetchProfile();
-            setActiveTab('view');
+            setIsEditModalOpen(false);
         } catch (error) {
             const err = error as { message?: string };
             console.error('Error updating profile:', error);
@@ -109,7 +111,7 @@ const Profile = () => {
                 newPassword: values.newPassword as string,
             });
             enqueueSnackbar('Password changed successfully!', { variant: 'success' });
-            setActiveTab('view');
+            setIsPasswordModalOpen(false);
         } catch (error) {
             const err = error as { message?: string };
             console.error('Error changing password:', error);
@@ -142,17 +144,17 @@ const Profile = () => {
     });
 
     const editProfileFields = [
-        { name: 'name', label: 'Full Name', type: 'text' },
-        { name: 'email', label: 'Email', type: 'email' },
-        { name: 'phone', label: 'Phone Number', type: 'tel' },
-        { name: 'address', label: 'Address', type: 'textarea' },
-        { name: 'dateOfBirth', label: 'Date of Birth', type: 'date' },
+        { name: 'name', label: 'Full Name', type: 'text', placeholder: 'Enter your full name' },
+        { name: 'email', label: 'Email', type: 'email', placeholder: 'Enter your email address' },
+        { name: 'phone', label: 'Phone Number', type: 'tel', placeholder: 'Enter your phone number' },
+        { name: 'address', label: 'Address', type: 'textarea', placeholder: 'Enter your address' },
+        { name: 'dateOfBirth', label: 'Date of Birth', type: 'date', placeholder: 'Select your date of birth' },
     ];
 
     const changePasswordFields = [
-        { name: 'currentPassword', label: 'Current Password', type: 'password' },
-        { name: 'newPassword', label: 'New Password', type: 'password' },
-        { name: 'confirmPassword', label: 'Confirm New Password', type: 'password' },
+        { name: 'currentPassword', label: 'Current Password', type: 'password', placeholder: 'Enter your current password' },
+        { name: 'newPassword', label: 'New Password', type: 'password', placeholder: 'Enter your new password' },
+        { name: 'confirmPassword', label: 'Confirm New Password', type: 'password', placeholder: 'Re-enter your new password' },
     ];
 
     const getInitials = (name: string) => {
@@ -191,241 +193,230 @@ const Profile = () => {
                 <p className="text-text/70">Manage your personal information and settings</p>
             </div>
 
-            {/* Tabs */}
-            <div className="flex gap-4 mb-6 border-b border-accent">
-                <button
-                    onClick={() => setActiveTab('view')}
-                    className={`px-6 py-3 font-medium transition-all ${activeTab === 'view'
-                        ? 'text-primary border-b-2 border-primary'
-                        : 'text-text/60 hover:text-text'
-                        }`}
-                >
-                    View Profile
-                </button>
-                <button
-                    onClick={() => setActiveTab('edit')}
-                    className={`px-6 py-3 font-medium transition-all ${activeTab === 'edit'
-                        ? 'text-primary border-b-2 border-primary'
-                        : 'text-text/60 hover:text-text'
-                        }`}
-                >
-                    Edit Profile
-                </button>
-                <button
-                    onClick={() => setActiveTab('password')}
-                    className={`px-6 py-3 font-medium transition-all ${activeTab === 'password'
-                        ? 'text-primary border-b-2 border-primary'
-                        : 'text-text/60 hover:text-text'
-                        }`}
-                >
-                    Change Password
-                </button>
-            </div>
-
-            {/* View Profile Tab */}
-            {activeTab === 'view' && (
-                <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-                    {/* Profile Card */}
-                    <div className="lg:col-span-1">
-                        <div className="bg-surface border border-accent rounded-2xl p-8 shadow-sm">
-                            <div className="flex flex-col items-center">
-                                {/* Avatar */}
-                                <div className="relative group">
-                                    <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center text-white text-3xl font-bold shadow-lg">
-                                        {imagePreview ? (
-                                            <img src={imagePreview} alt={profile.name} className="w-full h-full object-cover" />
-                                        ) : (
-                                            getInitials(profile.name)
-                                        )}
-                                    </div>
-                                    <label
-                                        htmlFor="avatar-upload"
-                                        className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primaryHover transition shadow-lg"
-                                    >
-                                        <Camera className="w-5 h-5" />
-                                        <input
-                                            id="avatar-upload"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handleImageUpload}
-                                            className="hidden"
-                                            disabled={uploading}
-                                        />
-                                    </label>
-                                    {uploading && (
-                                        <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
-                                            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
-                                        </div>
+            {/* Profile Content */}
+            <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                {/* Profile Card */}
+                <div className="lg:col-span-1">
+                    <div className="bg-surface border border-accent rounded-2xl p-8 shadow-sm">
+                        <div className="flex flex-col items-center">
+                            {/* Avatar */}
+                            <div className="relative group">
+                                <div className="w-32 h-32 rounded-full overflow-hidden bg-gradient-to-br from-primary to-primaryHover flex items-center justify-center text-white text-3xl font-bold shadow-lg">
+                                    {imagePreview ? (
+                                        <img src={imagePreview} alt={profile.name} className="w-full h-full object-cover" />
+                                    ) : (
+                                        getInitials(profile.name)
                                     )}
                                 </div>
-
-                                {/* Name and Role */}
-                                <h2 className="mt-6 text-2xl font-bold text-text">{profile.name}</h2>
-                                <p className="text-text/70 font-medium mt-1">{profile.role || 'Manager'}</p>
-                                {profile.employeeId && (
-                                    <p className="text-sm text-text/50 mt-1">ID: {profile.employeeId}</p>
+                                <label
+                                    htmlFor="avatar-upload"
+                                    className="absolute bottom-0 right-0 bg-primary text-white p-2 rounded-full cursor-pointer hover:bg-primaryHover transition shadow-lg"
+                                >
+                                    <Camera className="w-5 h-5" />
+                                    <input
+                                        id="avatar-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handleImageUpload}
+                                        className="hidden"
+                                        disabled={uploading}
+                                    />
+                                </label>
+                                {uploading && (
+                                    <div className="absolute inset-0 bg-black/50 rounded-full flex items-center justify-center">
+                                        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white"></div>
+                                    </div>
                                 )}
+                            </div>
 
-                                {/* Quick Stats */}
-                                <div className="w-full mt-6 pt-6 border-t border-accent">
-                                    <div className="grid grid-cols-2 gap-4 text-center">
-                                        <div>
-                                            <p className="text-2xl font-bold text-primary">{profile.projectsManaged || 0}</p>
-                                            <p className="text-xs text-text/60 mt-1">Projects</p>
-                                        </div>
-                                        <div>
-                                            <p className="text-2xl font-bold text-primary">{profile.teamSize || 0}</p>
-                                            <p className="text-xs text-text/60 mt-1">Team Members</p>
-                                        </div>
+                            {/* Name and Role */}
+                            <h2 className="mt-6 text-2xl font-bold text-text">{profile.name}</h2>
+                            <p className="text-text font-medium mt-1">{profile.role || 'Manager'}</p>
+                            {profile.employeeId && (
+                                <p className="text-sm text-text mt-1">ID: {profile.employeeId}</p>
+                            )}
+
+                            {/* Quick Stats */}
+                            <div className="w-full mt-6 pt-6 border-t border-accent">
+                                <div className="grid grid-cols-2 gap-4 text-center">
+                                    <div>
+                                        <p className="text-2xl font-bold text-primary">{profile.projectsManaged || 0}</p>
+                                        <p className="text-xs text-text mt-1">Projects</p>
+                                    </div>
+                                    <div>
+                                        <p className="text-2xl font-bold text-primary">{profile.teamSize || 0}</p>
+                                        <p className="text-xs text-text mt-1">Team Members</p>
                                     </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
 
-                    {/* Information Cards */}
-                    <div className="lg:col-span-2 space-y-6">
-                        {/* Personal Information */}
-                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
-                                <User className="w-5 h-5 text-primary" />
-                                Personal Information
-                            </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {/* Information Cards */}
+                <div className="lg:col-span-2 space-y-6">
+                    {/* Personal Information */}
+                    <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
+                        <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+                            <User className="w-5 h-5 text-primary" />
+                            Personal Information
+                        </h3>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="flex items-start gap-3">
+                                <Mail className="w-5 h-5 text-text mt-0.5" />
+                                <div>
+                                    <p className="text-xs text-text uppercase tracking-wide">Email</p>
+                                    <p className="text-text font-medium">{profile.email}</p>
+                                </div>
+                            </div>
+                            {profile.phone && (
                                 <div className="flex items-start gap-3">
-                                    <Mail className="w-5 h-5 text-text/50 mt-0.5" />
+                                    <Phone className="w-5 h-5 text-text mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-text/50 uppercase tracking-wide">Email</p>
-                                        <p className="text-text font-medium">{profile.email}</p>
+                                        <p className="text-xs text-text uppercase tracking-wide">Phone</p>
+                                        <p className="text-text font-medium">{profile.phone}</p>
                                     </div>
                                 </div>
-                                {profile.phone && (
-                                    <div className="flex items-start gap-3">
-                                        <Phone className="w-5 h-5 text-text/50 mt-0.5" />
-                                        <div>
-                                            <p className="text-xs text-text/50 uppercase tracking-wide">Phone</p>
-                                            <p className="text-text font-medium">{profile.phone}</p>
-                                        </div>
+                            )}
+                            {profile.dateOfBirth && (
+                                <div className="flex items-start gap-3">
+                                    <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
+                                    <div>
+                                        <p className="text-xs text-text uppercase tracking-wide">Date of Birth</p>
+                                        <p className="text-text font-medium">
+                                            {new Date(profile.dateOfBirth).toLocaleDateString()}
+                                        </p>
                                     </div>
-                                )}
-                                {profile.dateOfBirth && (
-                                    <div className="flex items-start gap-3">
-                                        <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
-                                        <div>
-                                            <p className="text-xs text-text/50 uppercase tracking-wide">Date of Birth</p>
-                                            <p className="text-text font-medium">
-                                                {new Date(profile.dateOfBirth).toLocaleDateString()}
-                                            </p>
-                                        </div>
+                                </div>
+                            )}
+                            {profile.address && (
+                                <div className="flex items-start gap-3 md:col-span-2">
+                                    <MapPin className="w-5 h-5 text-text/50 mt-0.5" />
+                                    <div>
+                                        <p className="text-xs text-text uppercase tracking-wide">Address</p>
+                                        <p className="text-text font-medium">{profile.address}</p>
                                     </div>
-                                )}
-                                {profile.address && (
-                                    <div className="flex items-start gap-3 md:col-span-2">
-                                        <MapPin className="w-5 h-5 text-text/50 mt-0.5" />
-                                        <div>
-                                            <p className="text-xs text-text/50 uppercase tracking-wide">Address</p>
-                                            <p className="text-text font-medium">{profile.address}</p>
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
+                                </div>
+                            )}
                         </div>
+                    </div>
 
-                        {/* Professional Information */}
-                        <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
-                            <h3 className="text-xl font-bold text-text mb-4 flex items-center gap-2">
+                    {/* Professional Information */}
+                    <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm">
+                        <div className="flex items-center justify-between mb-4">
+                            <h3 className="text-xl font-bold text-text flex items-center gap-2">
                                 <Briefcase className="w-5 h-5 text-primary" />
                                 Professional Information
                             </h3>
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                                {profile.department && (
-                                    <div className="flex items-start gap-3">
-                                        <Building2 className="w-5 h-5 text-text/50 mt-0.5" />
-                                        <div>
-                                            <p className="text-xs text-text/50 uppercase tracking-wide">Department</p>
-                                            <p className="text-text font-medium">{profile.department.name}</p>
-                                        </div>
-                                    </div>
-                                )}
+                            <button
+                                onClick={() => setIsEditModalOpen(true)}
+                                className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition-colors flex items-center gap-2"
+                            >
+                                <Edit className="w-4 h-4" />
+                                Edit Profile
+                            </button>
+                        </div>
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            {profile.department && (
                                 <div className="flex items-start gap-3">
-                                    <Shield className="w-5 h-5 text-text/50 mt-0.5" />
+                                    <Building2 className="w-5 h-5 text-text/50 mt-0.5" />
                                     <div>
-                                        <p className="text-xs text-text/50 uppercase tracking-wide">Role</p>
-                                        <p className="text-text font-medium">{profile.role || 'Manager'}</p>
+                                        <p className="text-xs text-text uppercase tracking-wide">Department</p>
+                                        <p className="text-text font-medium">{profile.department.name}</p>
                                     </div>
                                 </div>
-                                {profile.joinDate && (
-                                    <div className="flex items-start gap-3">
-                                        <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
-                                        <div>
-                                            <p className="text-xs text-text/50 uppercase tracking-wide">Join Date</p>
-                                            <p className="text-text font-medium">
-                                                {new Date(profile.joinDate).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                )}
+                            )}
+                            <div className="flex items-start gap-3">
+                                <Shield className="w-5 h-5 text-text/50 mt-0.5" />
+                                <div>
+                                    <p className="text-xs text-text uppercase tracking-wide">Role</p>
+                                    <p className="text-text font-medium">{profile.role || 'Manager'}</p>
+                                </div>
                             </div>
+                            {profile.joinDate && (
+                                <div className="flex items-start gap-3">
+                                    <Calendar className="w-5 h-5 text-text/50 mt-0.5" />
+                                    <div>
+                                        <p className="text-xs text-text uppercase tracking-wide">Join Date</p>
+                                        <p className="text-text font-medium">
+                                            {new Date(profile.joinDate).toLocaleDateString()}
+                                        </p>
+                                    </div>
+                                </div>
+                            )}
+                        </div>
+                        <div className="mt-6 pt-6 border-t border-accent">
+                            <button
+                                onClick={() => setIsPasswordModalOpen(true)}
+                                className="w-full px-4 py-2 bg-accent text-text rounded-lg hover:bg-accent/80 transition-colors flex items-center justify-center gap-2"
+                            >
+                                <Shield className="w-4 h-4" />
+                                Change Password
+                            </button>
                         </div>
                     </div>
                 </div>
-            )}
+            </div>
 
-            {/* Edit Profile Tab */}
-            {activeTab === 'edit' && (
-                <div className="max-w-4xl mx-auto">
-                    <DynamicForm
-                        fields={editProfileFields}
-                        validationSchema={editProfileSchema}
-                        onSubmit={handleProfileUpdate}
-                        buttonText="Update Profile"
-                        initialValues={{
-                            name: profile.name,
-                            email: profile.email,
-                            phone: profile.phone || '',
-                            address: profile.address || '',
-                            dateOfBirth: profile.dateOfBirth || '',
-                        }}
-                    />
-                </div>
-            )}
+            {/* Edit Profile Modal */}
+            <Modal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                title="Edit Profile"
+            >
+                <DynamicForm
+                    fields={editProfileFields}
+                    validationSchema={editProfileSchema}
+                    onSubmit={handleProfileUpdate}
+                    buttonText="Update Profile"
+                    initialValues={{
+                        name: profile?.name || '',
+                        email: profile?.email || '',
+                        phone: profile?.phone || '',
+                        address: profile?.address || '',
+                        dateOfBirth: profile?.dateOfBirth || '',
+                    }}
+                />
+            </Modal>
 
-            {/* Change Password Tab */}
-            {activeTab === 'password' && (
-                <div className="max-w-2xl mx-auto">
-                    <div className="bg-surface border border-accent rounded-2xl p-6 mb-6">
-                        <h3 className="text-lg font-semibold text-text mb-3">Password Requirements:</h3>
-                        <ul className="space-y-2 text-sm text-text/70">
-                            <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                At least 8 characters long
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                Contains at least one uppercase letter
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                Contains at least one lowercase letter
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                Contains at least one number
-                            </li>
-                            <li className="flex items-center gap-2">
-                                <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
-                                Contains at least one special character
-                            </li>
-                        </ul>
-                    </div>
-                    <DynamicForm
-                        fields={changePasswordFields}
-                        validationSchema={changePasswordSchema}
-                        onSubmit={handlePasswordChange}
-                        buttonText="Change Password"
-                    />
+            {/* Change Password Modal */}
+            <Modal
+                isOpen={isPasswordModalOpen}
+                onClose={() => setIsPasswordModalOpen(false)}
+                title="Change Password"
+            >
+                <div className="bg-surface border border-accent rounded-xl p-4 mb-6">
+                    <h4 className="text-sm font-semibold text-text mb-3">Password Requirements:</h4>
+                    <ul className="space-y-2 text-xs text-text/70">
+                        <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            At least 8 characters long
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Contains at least one uppercase letter
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Contains at least one lowercase letter
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Contains at least one number
+                        </li>
+                        <li className="flex items-center gap-2">
+                            <span className="w-1.5 h-1.5 rounded-full bg-primary"></span>
+                            Contains at least one special character
+                        </li>
+                    </ul>
                 </div>
-            )}
+                <DynamicForm
+                    fields={changePasswordFields}
+                    validationSchema={changePasswordSchema}
+                    onSubmit={handlePasswordChange}
+                    buttonText="Change Password"
+                />
+            </Modal>
         </div>
     );
 };

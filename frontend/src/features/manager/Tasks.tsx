@@ -483,10 +483,10 @@ const Tasks = () => {
                                                     >
                                                         {issue.status}
                                                     </span>
-                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-bg text-text border border-accent">
+                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-surface text-text border border-accent">
                                                         {issue.type}
                                                     </span>
-                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-bg text-text border border-accent">
+                                                    <span className="px-3 py-1 rounded-full text-xs font-medium bg-surface text-text border border-accent">
                                                         ⏱️ {issue.estimatedHours}h
                                                     </span>
                                                 </div>

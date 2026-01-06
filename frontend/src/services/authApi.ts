@@ -75,7 +75,7 @@ export const updatePassword = (data: { email: string; password: string }): Promi
 
 // Manager Profile APIs
 export const getManagerProfile = (): Promise<UserProfile> =>
-  handleRequest(api.get('/api/manager/profile'));
+  handleRequest(api.get('/manager/profile'));
 
 export const updateManagerProfile = (data: Record<string, unknown>): Promise<UserProfile> => {
   const formData = new FormData();
@@ -87,11 +87,11 @@ export const updateManagerProfile = (data: Record<string, unknown>): Promise<Use
     }
   }
   return handleRequest(
-    api.put('/api/manager/profile', formData, {
+    api.put('/manager/profile', formData, {
       headers: { 'Content-Type': 'multipart/form-data' },
     })
   );
 };
 
 export const changeManagerPassword = (data: { currentPassword: string; newPassword: string }): Promise<{ message: string }> =>
-  handleRequest(api.post('/api/manager/change-password', data));
+  handleRequest(api.post('/manager/change-password', data));

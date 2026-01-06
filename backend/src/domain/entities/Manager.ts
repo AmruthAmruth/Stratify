@@ -13,5 +13,6 @@ export class Manager {
     public companyId: string,
     public departmentId?: string,
     public profileImage?: string,
-  ) {}
+    public address?: string,
+  ) { }
 }

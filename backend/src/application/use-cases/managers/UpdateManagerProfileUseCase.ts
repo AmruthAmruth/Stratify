@@ -17,25 +17,28 @@ export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase
         }
 
         const updateData: Partial<Manager> = {};
+
         if (data.name) updateData.name = data.name;
         if (data.email) updateData.email = data.email;
         if (data.phone) updateData.phone = data.phone;
-        if (data.dateOfBirth) updateData.dob = data.dateOfBirth;
+        if (data.dateOfBirth) updateData.dob = new Date(data.dateOfBirth);
         if (data.profileImage) updateData.profileImage = data.profileImage;
+        if (data.address !== undefined) updateData.address = data.address;
 
         const updatedManager = await this.managerRepository.updatePartial(managerId, updateData);
 
         if (!updatedManager) {
-            throw new AppError(Messages.MANAGER_UPDATE_FAILED, StatusCodes.INTERNAL_SERVER_ERROR);
+            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND); // Changed from MANAGER_UPDATE_FAILED
         }
 
         return {
-            id: updatedManager.id || '',
+            id: updatedManager.id!,
             name: updatedManager.name,
             email: updatedManager.email,
             phone: updatedManager.phone,
-            dateOfBirth: updatedManager.dob,
+            dateOfBirth: updatedManager.dob ? updatedManager.dob.toISOString() : undefined,
             profileImage: updatedManager.profileImage,
+            address: updatedManager.address,
         };
     }
 }

@@ -258,7 +258,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                       [field.name]: date?.toISOString() ?? null,
                     }))
                   }
-                  placeholderText={field.placeholder}
+                  placeholderText={field.placeholder || `Select ${field.label.toLowerCase()}`}
                   onBlur={() => validateField(field.name)}
                   className="w-full rounded-lg border border-accent
                              bg-bg text-text px-3 py-2
@@ -268,12 +268,30 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
                              focus:border-primary
                              transition-all duration-200"
                 />
+              ) : field.type === "textarea" ? (
+                <textarea
+                  name={field.name}
+                  value={(formData[field.name] as string) || ""}
+                  placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
+                  onChange={handleChange}
+                  onBlur={() => validateField(field.name)}
+                  rows={4}
+                  className="rounded-lg border border-accent
+                             bg-bg text-text px-3 py-2
+                             placeholder-muted
+                             focus:outline-none focus:ring-2
+                             focus:ring-primary
+                             focus:border-primary
+                             transition-all duration-200
+                             focus:scale-[1.01]
+                             resize-none"
+                />
               ) : (
                 <input
                   type={field.type}
                   name={field.name}
                   value={(formData[field.name] as string) || ""}
-                  placeholder={field.placeholder}
+                  placeholder={field.placeholder || `Enter ${field.label.toLowerCase()}`}
                   onChange={handleChange}
                   onBlur={() => validateField(field.name)}
                   className="rounded-lg border border-accent

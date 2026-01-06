@@ -5,7 +5,7 @@ import { ThemeConfig, ThemePreset } from '@/types/theme';
  * Get company theme by company ID
  */
 export const getCompanyTheme = async (companyId: string) => {
-    const response = await api.get(`/api/company/theme/${companyId}`);
+    const response = await api.get(`/company/theme/${companyId}`);
     return response.data;
 };
 
@@ -13,7 +13,7 @@ export const getCompanyTheme = async (companyId: string) => {
  * Update company theme with full configuration
  */
 export const updateCompanyTheme = async (themeConfig: Omit<ThemeConfig, 'isCustom'> & { isCustom?: boolean }) => {
-    const response = await api.put('/api/company/theme', themeConfig);
+    const response = await api.put('/company/theme', themeConfig);
     return response.data;
 };
 
@@ -21,7 +21,7 @@ export const updateCompanyTheme = async (themeConfig: Omit<ThemeConfig, 'isCusto
  * Get all available theme presets
  */
 export const getThemePresets = async (): Promise<{ response: ThemePreset[] }> => {
-    const response = await api.get('/api/company/theme-presets');
+    const response = await api.get('/company/theme-presets');
     return response.data;
 };
 
@@ -29,6 +29,6 @@ export const getThemePresets = async (): Promise<{ response: ThemePreset[] }> =>
  * Apply a preset theme by name
  */
 export const applyPresetTheme = async (presetName: string) => {
-    const response = await api.post('/api/company/theme/apply-preset', { presetName });
+    const response = await api.post('/company/theme/apply-preset', { presetName });
     return response.data;
 };

@@ -48,7 +48,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
             name: manager.name,
             email: manager.email,
             phone: manager.phone,
-            dateOfBirth: manager.dob,
+            dateOfBirth: manager.dob ? manager.dob.toISOString() : undefined,
             profileImage: manager.profileImage,
             department: manager.departmentId ? {
                 id: manager.departmentId._id.toString(),
@@ -56,10 +56,11 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
             } : null,
             role: manager.role || 'Manager',
             employeeId: manager._id.toString().slice(-8).toUpperCase(),
-            joinDate: manager.joiningDate,
+            joinDate: manager.joiningDate ? manager.joiningDate.toISOString() : undefined,
             projectsManaged,
             teamSize,
             companyId: manager.companyId,
+            address: manager.address,
         };
     }
 }

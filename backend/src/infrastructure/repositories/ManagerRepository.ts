@@ -44,6 +44,7 @@ export class ManagerRepository extends BaseRepository<Manager, ManagerDocument> 
     if (data.phone) updateData.phone = data.phone;
     if (data.dob) updateData.dob = data.dob;
     if (data.profileImage) updateData.profileImage = data.profileImage;
+    if (data.address !== undefined) updateData.address = data.address;
 
     const doc = await ManagerModel.findByIdAndUpdate(
       id,

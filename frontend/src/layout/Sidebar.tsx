@@ -46,10 +46,10 @@ const Sidebar: React.FC = () => {
 
         // If user is manager or employee, fetch their profile to get companyId
         if (role === "manager") {
-          const response = await api.get('/api/manager/profile');
+          const response = await api.get('/manager/profile');
           companyId = response.data.manager.companyId;
         } else if (role === "employee") {
-          const response = await api.get('/api/employee/profile');
+          const response = await api.get('/employee/profile');
           companyId = response.data.companyId;
         }
 

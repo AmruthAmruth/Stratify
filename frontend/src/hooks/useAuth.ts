@@ -21,7 +21,7 @@ export const useAuth = () => {
 
             try {
                 // Try to refresh token from cookie
-                const response = await api.post('/api/auth/refresh-token');
+                const response = await api.post('/auth/refresh-token');
                 const { accessToken } = response.data;
 
                 if (!accessToken) {
