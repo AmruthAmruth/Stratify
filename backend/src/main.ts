@@ -23,39 +23,53 @@ import { MeetingRepository } from "./infrastructure/repositories/MeetingReposito
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";
 import { NotificationRepository } from "./infrastructure/repositories/NotificationRepository";
 
+// ----------------------------------------------------
 // Load environment variables
+// ----------------------------------------------------
 dotenv.config();
 
+// ----------------------------------------------------
 // Validate environment variables
+// ----------------------------------------------------
 validateEnv();
 
+// ----------------------------------------------------
+// Create app
+// ----------------------------------------------------
 const app = express();
 
-// ---------------- Security ----------------
+/* ✅ REQUIRED for EC2 / Nginx / Rate-Limit */
+app.set("trust proxy", 1);
+
+// ----------------------------------------------------
+// Security
+// ----------------------------------------------------
 app.use(
   helmet({
-    crossOriginResourcePolicy: { policy: "cross-origin" }, // Allow Cloudinary images
+    crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 
-// ---------------- CORS ----------------
+// ----------------------------------------------------
+// CORS
+// ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = isProduction
   ? [
-    process.env.FRONTEND_URL!,
-    "http://44.192.100.142"
-  ]
+      process.env.FRONTEND_URL!, // must exist in .env
+      "http://44.192.100.142",
+    ]
   : [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "thunder-client://"
-  ];
+      "http://localhost:5173",
+      "http://localhost:3000",
+      "thunder-client://",
+    ];
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (!origin) return callback(null, true); // allow Postman or mobile apps
+      if (!origin) return callback(null, true);
 
       if (allowedOrigins.includes(origin)) {
         callback(null, true);
@@ -68,12 +82,16 @@ app.use(
   })
 );
 
-// ---------------- Middleware ----------------
+// ----------------------------------------------------
+// Body parsers
+// ----------------------------------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// ---------------- Logging ----------------
+// ----------------------------------------------------
+// Logging
+// ----------------------------------------------------
 const logDirectory = path.join(__dirname, "logs");
 if (!fs.existsSync(logDirectory)) fs.mkdirSync(logDirectory);
 
@@ -84,43 +102,62 @@ const accessLogStream = rfs.createStream("access.log", {
 });
 
 app.use(morgan("combined", { stream: accessLogStream }));
+
 if (!isProduction) {
   app.use(morgan("dev"));
 }
 
-// ---------------- Database ----------------
+// ----------------------------------------------------
+// Database (SAFE for PM2)
+// ----------------------------------------------------
 connectDB()
   .then(() => logger.info("✅ MongoDB Connected"))
   .catch((err) => {
-    logger.error("❌ MongoDB connection failed", { error: err });
-    process.exit(1);
+    logger.error("❌ MongoDB connection failed", err);
+
+    // ❌ never hard-crash production
+    if (!isProduction) {
+      process.exit(1);
+    }
   });
 
-// ---------------- Static Files ----------------
+// ----------------------------------------------------
+// Static files
+// ----------------------------------------------------
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-// ---------------- Health Check ----------------
+// ----------------------------------------------------
+// Health check
+// ----------------------------------------------------
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
-    timestamp: new Date().toISOString(),
     uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development",
   });
 });
 
-// ---------------- API Routes ----------------
+// ----------------------------------------------------
+// API routes
+// ----------------------------------------------------
 app.use("/api", router);
 
-// ---------------- Error Handling ----------------
+// ----------------------------------------------------
+// Error handler (LAST middleware)
+// ----------------------------------------------------
 app.use(errorMiddleware);
 
-// ---------------- Server & Socket ----------------
+// ----------------------------------------------------
+// HTTP + Socket
+// ----------------------------------------------------
 const server = http.createServer(app);
 const io = initSocket(server);
 SocketService.setIO(io);
 
-// ---------------- Scheduler ----------------
+// ----------------------------------------------------
+// Scheduler
+// ----------------------------------------------------
 const meetingRepo = new MeetingRepository();
 const projectRepo = new ProjectRepository();
 const notificationRepo = new NotificationRepository();
@@ -132,8 +169,11 @@ const meetingScheduler = new MeetingScheduler(
 );
 meetingScheduler.start();
 
-// ---------------- Start Server ----------------
-const PORT = process.env.PORT || 7000;
+// ----------------------------------------------------
+// Start server
+// ----------------------------------------------------
+const PORT = Number(process.env.PORT) || 7000;
+
 server.listen(PORT, () => {
   logger.info(`🚀 Server running on port ${PORT}`);
   logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);

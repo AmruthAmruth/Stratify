@@ -6,11 +6,18 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
-    await mongoose.connect(process.env.MONGO_URI as string);
+    await mongoose.connect(process.env.MONGO_URI as string, {
+      serverSelectionTimeoutMS: 5000, // fail fast
+    });
+
     logger.info("✅ MongoDB Connected");
   } catch (error) {
-    logger.error("❌ MongoDB connection failed", { error });
-    process.exit(1);
+    logger.error("❌ MongoDB connection failed", error);
+
+    // ❌ Do not crash production server
+    if (process.env.NODE_ENV !== "production") {
+      process.exit(1);
+    }
   }
 };
 
