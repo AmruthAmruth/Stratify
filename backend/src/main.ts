@@ -55,24 +55,20 @@ app.use(
 // ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
-const allowedOrigins = isProduction
-  ? [
-      process.env.FRONTEND_URL!, // must exist in .env
-      "http://44.192.100.142",
-    ]
-  : [
-      "http://localhost:5173",
-      "http://44.192.100.142",
-      "http://localhost:3000",
-      "thunder-client://",
-    ];
+const allowedOrigins = [
+  process.env.FRONTEND_URL!, // http://44.192.100.142
+];
 
 app.use(
   cors({
     origin: (origin, callback) => {
       if (!origin) return callback(null, true);
 
-      if (allowedOrigins.includes(origin)) {
+      const isAllowed = allowedOrigins.some((allowed) =>
+        origin.startsWith(allowed)
+      );
+
+      if (isAllowed) {
         callback(null, true);
       } else {
         logger.warn(`CORS blocked request from origin: ${origin}`);
