@@ -62,6 +62,7 @@ const allowedOrigins = isProduction
     ]
   : [
       "http://localhost:5173",
+      "http://44.192.100.142",
       "http://localhost:3000",
       "thunder-client://",
     ];
