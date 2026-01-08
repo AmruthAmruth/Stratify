@@ -83,10 +83,10 @@ const CompanyDashboard = () => {
 
   // Empty state component
   const EmptyChartState = ({ message }: { message: string }) => (
-    <div className="h-64 flex flex-col items-center justify-center text-text/50">
-      <BarChart3 className="w-16 h-16 mb-3 opacity-30" />
-      <p className="text-sm font-medium">{message}</p>
-      <p className="text-xs mt-1">Data will appear once available</p>
+    <div className="h-64 flex flex-col items-center justify-center text-muted">
+      <BarChart3 className="w-16 h-16 mb-3 opacity-40" />
+      <p className="text-sm font-semibold">{message}</p>
+      <p className="text-xs mt-1 opacity-70">Data will appear once available</p>
     </div>
   );
 
@@ -94,8 +94,8 @@ const CompanyDashboard = () => {
     <div className="min-h-screen bg-bg p-6">
       {/* Header */}
       <div className="mb-8">
-        <h1 className="text-4xl font-bold text-text mb-2">Company Dashboard</h1>
-        <p className="text-text/70">Comprehensive overview of your organization's performance and activities</p>
+        <h1 className="text-4xl font-bold text-heading mb-2">Company Dashboard</h1>
+        <p className="text-muted">Comprehensive overview of your organization's performance and activities</p>
       </div>
 
       {/* Statistics Cards */}
@@ -144,13 +144,13 @@ const CompanyDashboard = () => {
 
       {/* Charts Section */}
       <div className="mb-8">
-        <h2 className="text-2xl font-bold text-text mb-6">Analytics & Insights</h2>
+        <h2 className="text-2xl font-bold text-heading mb-6">Analytics & Insights</h2>
 
         {/* Row 1 - First 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
           {/* Chart 1: Department Distribution - Doughnut */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Department Distribution</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Department Distribution</h3>
             {hasChartData(chartData.departmentDistribution.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -166,8 +166,8 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 2: Project Status - Pie */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Project Status Distribution</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Project Status Distribution</h3>
             {hasChartData(chartData.projectStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -183,8 +183,8 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 3: Employee by Department - Bar */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Employees by Department</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Employees by Department</h3>
             {hasChartData(chartData.employeeByDepartment.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -203,8 +203,8 @@ const CompanyDashboard = () => {
         {/* Row 2 - Next 3 Charts */}
         <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
           {/* Chart 4: Leave Status - Pie */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Leave Request Status</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Leave Request Status</h3>
             {hasChartData(chartData.leaveStatus.data) ? (
               <div className="h-64 flex items-center justify-center">
                 <ReusableChart
@@ -220,8 +220,8 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 5: Meeting Types - Bar */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Meeting Types</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Meeting Types</h3>
             {hasChartData(chartData.meetingTypes.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -237,8 +237,8 @@ const CompanyDashboard = () => {
           </div>
 
           {/* Chart 6: Company Activity Timeline - Line */}
-          <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
-            <h3 className="text-lg font-semibold text-text mb-4">Company Activity Timeline</h3>
+          <div className="bg-surface border border-borderColor rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
+            <h3 className="text-lg font-semibold text-heading mb-4">Company Activity Timeline</h3>
             {hasChartData(chartData.companyActivity.data) ? (
               <div className="h-64">
                 <ReusableChart
@@ -256,8 +256,8 @@ const CompanyDashboard = () => {
       </div>
 
       {/* Footer Info */}
-      <div className="mt-8 p-4 bg-surface border border-accent rounded-xl">
-        <p className="text-sm text-text/70 text-center">
+      <div className="mt-8 p-4 bg-surface border border-borderColor rounded-xl">
+        <p className="text-sm text-muted text-center">
           Dashboard data is updated in real-time. Last refreshed: {new Date().toLocaleString()}
         </p>
       </div>

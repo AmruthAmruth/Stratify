@@ -40,10 +40,10 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
   return (
     <div className="flex items-center justify-between">
       {/* Page Info */}
-      <div className="flex items-center text-sm text-text">
+      <div className="flex items-center text-sm text-muted">
         <span>
-          Page <span className="font-semibold">{currentPage}</span> of{' '}
-          <span className="font-semibold">{totalPages}</span>
+          Page <span className="font-semibold text-heading">{currentPage}</span> of{' '}
+          <span className="font-semibold text-heading">{totalPages}</span>
         </span>
       </div>
 
@@ -53,8 +53,8 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <button
           onClick={() => onPageChange(currentPage - 1)}
           disabled={currentPage === 1}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-bg border border-accent rounded-md 
-                     hover:bg-[#f2f2f2] hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-borderColor rounded-lg 
+                     hover:bg-gray-50 hover:text-primary hover:border-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-surface disabled:hover:border-borderColor disabled:hover:text-text transition-all duration-200 shadow-sm"
           aria-label="Previous page"
         >
           <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -68,15 +68,14 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
           {visiblePages.map((page, index) => (
             <React.Fragment key={index}>
               {page === '...' ? (
-                <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-text">...</span>
+                <span className="inline-flex items-center px-3 py-2 text-sm font-medium text-muted">...</span>
               ) : (
                 <button
                   onClick={() => onPageChange(page as number)}
-                  className={`inline-flex items-center px-3 py-2 text-sm font-medium rounded-md border transition-colors duration-150 ${
-                    currentPage === page
-                      ? 'bg-primary text-white border-primary shadow-md'
-                      : 'text-text bg-bg border-accent hover:bg-[#f2f2f2] hover:text-primary'
-                  }`}
+                  className={`inline-flex items-center px-3 py-2 text-sm font-semibold rounded-lg border transition-all duration-200 shadow-sm ${currentPage === page
+                      ? 'bg-primary text-white border-primary hover:bg-primaryHover hover:shadow-md'
+                      : 'text-text bg-surface border-borderColor hover:bg-gray-50 hover:text-primary hover:border-primary/30'
+                    }`}
                   aria-label={`Go to page ${page}`}
                   aria-current={currentPage === page ? 'page' : undefined}
                 >
@@ -88,7 +87,7 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         </div>
 
         {/* Mobile Page Display */}
-        <div className="sm:hidden flex items-center px-3 py-2 text-sm font-medium text-text bg-bg border border-accent rounded-md">
+        <div className="sm:hidden flex items-center px-3 py-2 text-sm font-semibold text-heading bg-surface border border-borderColor rounded-lg shadow-sm">
           {currentPage} / {totalPages}
         </div>
 
@@ -96,8 +95,8 @@ const Pagination: React.FC<PaginationProps> = ({ currentPage, totalPages, onPage
         <button
           onClick={() => onPageChange(currentPage + 1)}
           disabled={currentPage === totalPages}
-          className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-bg border border-accent rounded-md 
-                     hover:bg-[#f2f2f2] hover:text-primary disabled:opacity-50 disabled:cursor-not-allowed transition-colors duration-150"
+          className="inline-flex items-center px-3 py-2 text-sm font-medium text-text bg-surface border border-borderColor rounded-lg 
+                     hover:bg-gray-50 hover:text-primary hover:border-primary/30 disabled:opacity-50 disabled:cursor-not-allowed disabled:hover:bg-surface disabled:hover:border-borderColor disabled:hover:text-text transition-all duration-200 shadow-sm"
           aria-label="Next page"
         >
           Next
