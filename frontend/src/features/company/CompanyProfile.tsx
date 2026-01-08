@@ -172,7 +172,7 @@ const CompanyProfile: React.FC = () => {
                         ) : (
                             <>
                                 <button
-                                    onClick={() => navigate('/company/theme-settings')}
+                                    onClick={() => navigate('/theme-settings')}
                                     className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition shadow-sm"
                                 >
                                     <Palette className="w-4 h-4" /> Theme Settings
