@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import ReusableOTP from "@/shared/components/OTP/ReusableOTP";
-import { Users } from "lucide-react";
+import { Mail, Shield, Clock, CheckCircle } from "lucide-react";
 import { forgotPasswordVerifyOTP, resendOTP, verifyOTP } from "@/services/authApi";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -87,83 +87,101 @@ const OTPPage: React.FC<OTPProps> = ({ context }) => {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-bg">
-      <div className="flex flex-1 flex-col lg:flex-row pt-20">
-        {/* Left Side */}
-        <div className="hidden lg:flex w-1/2 bg-gradient-to-br from-primary to-text text-white flex-col justify-center items-center p-16 text-left">
-          <Users className="w-20 h-20 mb-6 text-white" />
-          <h1 className="text-5xl font-bold mb-4 leading-snug">
-            {context === "register" ? "Verify Your Account" : "Reset Your Password"}
+    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4 py-12">
+      <div className="w-full max-w-md">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-primary rounded-2xl mb-4 shadow-sm">
+            <Shield className="w-8 h-8 text-white" />
+          </div>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2">
+            {context === "register" ? "Verify Your Email" : "Reset Password"}
           </h1>
-          <p className="text-lg text-accent max-w-md">
-            Enter the 6-digit code sent to your email to{" "}
-            {context === "register" ? "activate your account" : "reset your password"}.
+          <p className="text-gray-600">
+            Enter the 6-digit code sent to your email
           </p>
         </div>
 
-        {/* Right Side */}
-        <div className="flex w-full lg:w-1/2 justify-center items-center px-6 py-12 lg:px-12">
-          <div className="bg-surface shadow-2xl rounded-3xl p-8 sm:p-10 md:p-12 lg:p-14 w-full max-w-lg md:max-w-xl lg:max-w-2xl transition-all duration-300 border border-accent">
-            <div className="flex justify-center mb-6">
-              <span className="bg-accent text-text px-5 py-2 rounded-full text-sm md:text-base font-medium shadow-sm">
-                {context === "register" ? "Account Verification" : "Password Reset Verification"}
-              </span>
+        {/* Main Card */}
+        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
+          {/* Email Info */}
+          <div className="flex items-center gap-3 bg-gray-50 rounded-xl p-4 mb-6">
+            <div className="w-10 h-10 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+              <Mail className="w-5 h-5 text-primary" />
             </div>
-
-            <h2 className="text-3xl md:text-4xl font-bold text-text text-center mb-3">
-              Enter OTP
-            </h2>
-            <p className="text-center text-gray-500 mb-8 md:mb-10 text-base">
-              {context === "register"
-                ? "Please type the 6-digit code sent to your email to verify your account."
-                : "Please type the 6-digit code sent to your email to reset your password."}
-            </p>
-
-            {/* OTP Component */}
-            <div className="flex justify-center gap-4 mb-8">
-              <ReusableOTP value={otp} onChange={setOtp} numInputs={6} inputSize="3.5rem" gap="1rem" />
-            </div>
-
-            {/* Timer */}
-            <div className="text-center mb-4">
-              {timeLeft > 0 ? (
-                <p className="text-text text-sm">
-                  OTP will expire in{" "}
-                  <span className="font-semibold text-primary">{formatTime(timeLeft)}</span>
-                </p>
-              ) : (
-                <p className="text-red-500 text-sm font-medium">OTP expired. Please resend.</p>
-              )}
-            </div>
-
-            {/* Verify Button */}
-            <button
-              onClick={handleVerify}
-              disabled={timeLeft <= 0}
-              className={`w-full text-white font-semibold py-3 rounded-xl shadow-md transition transform hover:scale-105 ${timeLeft <= 0 ? "bg-gray-400 cursor-not-allowed" : "bg-primary hover:bg-primaryHover"
-                }`}
-            >
-              Verify OTP
-            </button>
-
-            {/* Resend */}
-            <div className="mt-6 text-center text-sm md:text-base">
-              <p className="text-text">
-                Didn't receive the code?{" "}
-                <span
-                  className={`font-medium cursor-pointer ${timeLeft > 0
-                    ? "text-gray-400 cursor-not-allowed"
-                    : "text-primary hover:underline"
-                    }`}
-                  onClick={() => {
-                    if (timeLeft <= 0) handleResendOTP();
-                  }}
-                >
-                  Resend OTP
-                </span>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-medium text-gray-900">Check your email</p>
+              <p className="text-xs text-gray-600 truncate">
+                {localStorage.getItem("email") || "your-email@example.com"}
               </p>
             </div>
           </div>
+
+          {/* OTP Inputs */}
+          <div className="mb-6">
+            <label className="block text-sm font-medium text-gray-900 mb-3">
+              Enter verification code
+            </label>
+            <div className="flex justify-center">
+              <ReusableOTP value={otp} onChange={setOtp} numInputs={6} inputSize="3rem" gap="0.5rem" />
+            </div>
+          </div>
+
+          {/* Timer */}
+          <div className="mb-6">
+            {timeLeft > 0 ? (
+              <div className="flex items-center justify-center gap-2 text-sm">
+                <Clock className="w-4 h-4 text-gray-500" />
+                <span className="text-gray-700">
+                  Code expires in <span className="font-semibold text-gray-900">{formatTime(timeLeft)}</span>
+                </span>
+              </div>
+            ) : (
+              <div className="flex items-center justify-center gap-2 text-sm text-red-600 bg-red-50 rounded-lg py-2 px-3">
+                <span className="font-medium">Code expired. Please request a new one.</span>
+              </div>
+            )}
+          </div>
+
+          {/* Verify Button */}
+          <button
+            onClick={handleVerify}
+            disabled={timeLeft <= 0 || otp.length !== 6}
+            className={`w-full py-3 px-4 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center gap-2 ${timeLeft <= 0 || otp.length !== 6
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-primary text-white hover:bg-primaryHover shadow-sm hover:shadow-md"
+              }`}
+          >
+            {otp.length === 6 && <CheckCircle className="w-5 h-5" />}
+            Verify Code
+          </button>
+
+          {/* Resend */}
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              Didn't receive the code?{" "}
+              <button
+                onClick={handleResendOTP}
+                disabled={timeLeft > 0}
+                className={`font-semibold transition-colors ${timeLeft > 0
+                    ? "text-gray-400 cursor-not-allowed"
+                    : "text-primary hover:text-primaryHover"
+                  }`}
+              >
+                Resend
+              </button>
+            </p>
+          </div>
+        </div>
+
+        {/* Footer Help Text */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500">
+            Having trouble? Contact{" "}
+            <a href="mailto:support@stratify.com" className="text-primary hover:underline font-medium">
+              support@stratify.com
+            </a>
+          </p>
         </div>
       </div>
     </div>

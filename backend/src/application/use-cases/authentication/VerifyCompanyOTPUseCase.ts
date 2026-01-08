@@ -1,10 +1,6 @@
 import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
-import {
-  generateAccessToken,
-  generateRefreshToken,
-} from "../../../shared/utils/token";
 import { Messages } from "../../../shared/constants/messages";
 import { Company } from "../../../domain/entities/Company";
 import { ICreateTrialSubscriptionUseCase } from "../../interfaces/subscriptions/ICreateTrialSubscriptionUseCase";
@@ -21,7 +17,7 @@ export class VerifyCompanyOTPUseCase {
   async execute(
     email: string,
     otp: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<void> {
     const storedOtp = await this._otpRepo.findByEmail(email);
     console.log("Stored OTP:", storedOtp, "Entered OTP:", otp);
 
@@ -63,13 +59,11 @@ export class VerifyCompanyOTPUseCase {
 
     await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
 
-    const payload = { id: createdCompany.id, role: createdCompany.role };
-    const accessToken = generateAccessToken(payload);
-    const refreshToken = generateRefreshToken(payload);
-
+    // Cleanup temporary data
     await this._tempRegRepo.delete(email);
     await this._otpRepo.deleteByEmail(email);
 
-    return { accessToken, refreshToken };
+    // No token generation - company must be approved by super admin before login
+    return;
   }
 }

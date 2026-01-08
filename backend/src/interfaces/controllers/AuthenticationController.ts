@@ -108,14 +108,10 @@ export class AuthenticationController {
 
   verifyOtp = async (req: Request, res: Response): Promise<void> => {
     const { email, otp } = req.body;
-    const { accessToken, refreshToken } = await this._verifyOtpUseCase.execute(
-      email,
-      otp,
-    );
-    res.cookie("refreshToken", refreshToken, CookieConfig);
+    await this._verifyOtpUseCase.execute(email, otp);
     res
       .status(StatusCodes.CREATED)
-      .json({ accessToken, message: Messages.REGISTER_SUCCESS });
+      .json({ message: Messages.REGISTER_SUCCESS });
   };
 
   resendOtp = async (req: Request, res: Response): Promise<void> => {

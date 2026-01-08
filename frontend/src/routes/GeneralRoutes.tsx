@@ -9,6 +9,7 @@ import ContactPage from "@/features/general/Contact";
 import PricingPage from "@/features/general/Pricing";
 import OTPPage from "@/shared/OTP/OTPPage";
 import ResetPassword from "@/features/auth/ResetPassword";
+import CompanyPendingApproval from "@/features/general/CompanyPendingApproval";
 
 const generalRoutes: RouteObject[] = [
   {
@@ -54,6 +55,10 @@ const generalRoutes: RouteObject[] = [
   {
     path: "/pricing",
     element: <PricingPage />,
+  },
+  {
+    path: "/company-pending-approval",
+    element: <CompanyPendingApproval />,
   },
 ];
 

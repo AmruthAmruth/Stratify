@@ -13,7 +13,7 @@ const apiBaseURL =
     : import.meta.env.VITE_PROD_API;
 
 const api = axios.create({
-  baseURL: `${apiBaseURL}/api`,
+  baseURL: `${apiBaseURL}`,
   withCredentials: true,
 });
 

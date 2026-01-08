@@ -39,13 +39,13 @@ validateEnv();
 const app = express();
 
 /* ✅ REQUIRED for EC2 / Nginx / Rate-Limit */
-app.set("trust proxy", 1);
+app.set("trust proxy", 1); 
 
 // ----------------------------------------------------
 // Security
 // ----------------------------------------------------
 app.use(
-  helmet({
+  helmet({ 
     crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
@@ -56,8 +56,18 @@ app.use(
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL!, // http://44.192.100.142
+  process.env.FRONTEND_URL!, // Production frontend URL
 ];
+
+// Add localhost origins for local development
+if (!isProduction) {
+  allowedOrigins.push(
+    "http://localhost:5173",
+    "http://localhost:5174",
+    "http://127.0.0.1:5173",
+    "http://127.0.0.1:5174"
+  );
+}
 
 app.use(
   cors({
