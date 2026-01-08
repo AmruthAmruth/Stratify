@@ -101,19 +101,18 @@ api.interceptors.response.use(
         }
 
 
-        const decoded = jwtDecode<{ id: string; role: string; exp: number }>(newToken);
+        const decoded = jwtDecode<{ id: string; role: string; name?: string; exp: number }>(newToken);
 
         if (!decoded.id || !decoded.role || !decoded.exp) {
           throw new Error("Invalid token payload received");
         }
 
-        const currentAuth = store.getState().auth;
         store.dispatch(
           setCredentials({
             accessToken: newToken,
             role: decoded.role,
             userId: decoded.id,
-            name: currentAuth.name,
+            name: decoded.name || null,
           })
         );
 

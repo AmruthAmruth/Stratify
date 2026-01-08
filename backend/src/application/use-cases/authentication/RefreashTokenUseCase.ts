@@ -14,7 +14,11 @@ export class RefreshTokenUseCase {
   ): Promise<{ accessToken: string; refreshToken: string }> {
     try {
       const decoded = verifyRefreshToken(refreshToken) as TokenPayload;
-      const payload: TokenPayload = { id: decoded.id, role: decoded.role };
+      const payload: TokenPayload = {
+        id: decoded.id,
+        role: decoded.role,
+        name: decoded.name
+      };
       const accessToken = generateAccessToken(payload);
       const newRefreashToken = generateRefreshToken(payload);
       return { accessToken, refreshToken: newRefreashToken };
@@ -23,4 +27,3 @@ export class RefreshTokenUseCase {
     }
   }
 }
- 
