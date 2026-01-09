@@ -170,7 +170,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
           email: company.email || "",
         },
         theme: {
-          color: "#2563eb",
+          color: "#16a34a",
         },
       };
 
@@ -182,30 +182,39 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
   };
 
   if (loading) return <LoadingSpinner fullScreen={true} text="Loading subscription plans..." />;
-  if (plans.length === 0) return <div className="text-center mt-20 text-gray-500">No subscription plans available</div>;
+  if (plans.length === 0) return <div className="text-center mt-20 text-muted">No subscription plans available</div>;
 
   // Use different layouts based on authentication status
   const containerClass = isAuthenticated
-    ? "max-w-6xl mx-auto mt-12 px-4"
-    : "w-full h-screen bg-surface flex flex-col items-center justify-center px-6 py-12";
+    ? "max-w-7xl mx-auto py-12 px-6"
+    : "w-full min-h-screen bg-bg flex flex-col items-center justify-center px-6 py-16";
 
   const titleClass = isAuthenticated
-    ? "text-4xl font-extrabold text-center mb-12 text-gray-800"
-    : "text-4xl font-extrabold text-center mb-16 text-text";
+    ? "text-5xl font-extrabold text-center mb-4 text-heading"
+    : "text-5xl font-extrabold text-center mb-4 text-heading";
+
+  const subtitleClass = isAuthenticated
+    ? "text-center text-lg text-muted mb-16 max-w-2xl mx-auto"
+    : "text-center text-lg text-muted mb-16 max-w-2xl mx-auto";
 
   const gridClass = isAuthenticated
-    ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8"
-    : "w-full h-full grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10";
+    ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-6xl mx-auto"
+    : "w-full max-w-6xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8";
 
   const cardWrapperClass = isAuthenticated
     ? ""
-    : "w-full h-full bg-surface border border-accent rounded-2xl shadow-md hover:shadow-xl transition-shadow duration-300 p-6 flex flex-col justify-between";
+    : "";
 
   return (
     <div className={containerClass}>
-      <h1 className={titleClass}>
-        Choose Your Subscription
-      </h1>
+      <div>
+        <h1 className={titleClass}>
+          Choose Your Perfect Plan
+        </h1>
+        <p className={subtitleClass}>
+          Select the subscription that best fits your needs. All plans include full access to our platform.
+        </p>
+      </div>
 
       <div className={gridClass}>
         {plans.map((plan) => (

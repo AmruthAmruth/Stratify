@@ -1,4 +1,5 @@
 import React from "react";
+import { Check, Star } from "lucide-react";
 
 interface Plan {
   plan: string;
@@ -17,37 +18,68 @@ interface PlanCardProps {
 }
 
 const PlanCard: React.FC<PlanCardProps> = ({ plan, mode, onBuy, onEdit, onDelete }) => {
+  // Determine if this is a featured/popular plan (middle tier or specific plan name)
+  const isPopular = plan.plan.toLowerCase().includes('professional') ||
+    plan.plan.toLowerCase().includes('premium') ||
+    plan.durationInMonths === 6;
+
   return (
-    <div className="bg-surface border border-accent rounded-3xl p-6 shadow-md hover:shadow-xl transform hover:-translate-y-1 transition-all duration-300 flex flex-col justify-between">
+    <div className={`relative bg-surface border-2 ${isPopular ? 'border-primary shadow-lg' : 'border-borderColor'} rounded-2xl p-8 hover:shadow-2xl transform hover:-translate-y-2 transition-all duration-300 flex flex-col justify-between ${isPopular ? 'ring-2 ring-primary ring-opacity-20' : ''}`}>
+      {/* Popular Badge */}
+      {isPopular && mode === "company" && (
+        <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+          <div className="bg-primary text-textOnPrimary px-4 py-1.5 rounded-full text-sm font-bold flex items-center gap-1 shadow-md">
+            <Star className="w-4 h-4 fill-current" />
+            Popular
+          </div>
+        </div>
+      )}
+
       <div>
-        <h2 className="text-2xl font-bold text-gray-800 mb-2">{plan.plan}</h2>
-        <p className="text-gray-600 mb-4">{plan.description}</p>
-        <p className="text-gray-500 mb-2">
-          Duration: {plan.durationInMonths} {plan.durationInMonths > 1 ? "months" : "month"}
-        </p>
-        <p className="text-3xl font-extrabold text-blue-600 mb-6">₹{plan.amount}</p>
+        {/* Plan Name */}
+        <h2 className="text-3xl font-bold text-heading mb-3 mt-2">{plan.plan}</h2>
+
+        {/* Description */}
+        <p className="text-text mb-6 leading-relaxed">{plan.description}</p>
+
+        {/* Duration */}
+        <div className="flex items-center gap-2 mb-6">
+          <Check className="w-5 h-5 text-primary" />
+          <p className="text-muted font-medium">
+            {plan.durationInMonths} {plan.durationInMonths > 1 ? "months" : "month"} access
+          </p>
+        </div>
+
+        {/* Price */}
+        <div className="mb-8">
+          <div className="flex items-baseline gap-2">
+            <span className="text-5xl font-extrabold text-primary">₹{plan.amount}</span>
+            <span className="text-muted text-lg">/ {plan.durationInMonths}mo</span>
+          </div>
+        </div>
       </div>
 
+      {/* Action Buttons */}
       {mode === "company" && (
         <button
           onClick={() => onBuy?.(plan)}
-          className="mt-auto bg-blue-600 text-white py-3 px-5 rounded-xl hover:bg-blue-700 font-semibold transition"
+          className={`w-full ${isPopular ? 'bg-primary hover:bg-primaryHover' : 'bg-primary hover:bg-primaryHover'} text-textOnPrimary py-4 px-6 rounded-xl font-bold text-lg transition-all duration-200 shadow-md hover:shadow-lg transform hover:scale-105`}
         >
-          Buy Now
+          Get Started
         </button>
       )}
 
       {mode === "super-admin" && (
-        <div className="mt-auto flex space-x-3">
+        <div className="flex gap-3">
           <button
             onClick={() => onEdit?.(plan)}
-            className="bg-yellow-500 text-white py-2 px-4 rounded-xl hover:bg-yellow-600 font-semibold transition"
+            className="flex-1 bg-yellow-500 text-white py-3 px-4 rounded-xl hover:bg-yellow-600 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
           >
             Edit
           </button>
           <button
             onClick={() => onDelete?.(plan)}
-            className="bg-red-600 text-white py-2 px-4 rounded-xl hover:bg-red-700 font-semibold transition"
+            className="flex-1 bg-red-600 text-white py-3 px-4 rounded-xl hover:bg-red-700 font-semibold transition-all duration-200 shadow-md hover:shadow-lg"
           >
             Delete
           </button>
