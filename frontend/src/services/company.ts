@@ -8,7 +8,7 @@ import type {
   DepartmentDetails,
   TeamMember,
   SubscriptionPlan,
-  PaymentResponse,
+  PaymentResponse as CustomPaymentResponse,
   UserProfile,
   Company,
 } from "@/types/types";
@@ -74,10 +74,10 @@ export const getCompanyProfile = (profileId: string): Promise<Company> =>
 
 export const listSubscriptionPlan = (): Promise<SubscriptionPlan[]> => handleRequest(api.get(COMPANY_ROUTES.SUBSCRIPTION_PLANS));
 
-export const createSubscriptionPlan = (planName: string): Promise<PaymentResponse> =>
+export const createSubscriptionPlan = (planName: string): Promise<CustomPaymentResponse> =>
   handleRequest(api.post(COMPANY_ROUTES.PURCHASE, { planName }));
 
-export const createSubscriptionPlanForUnauthenticated = (planName: string, companyId: string): Promise<PaymentResponse> =>
+export const createSubscriptionPlanForUnauthenticated = (planName: string, companyId: string): Promise<CustomPaymentResponse> =>
   handleRequest(api.post(COMPANY_ROUTES.PURCHASE_UNAUTH, { planName, companyId }));
 
 export const verifyPayment = (payload: {

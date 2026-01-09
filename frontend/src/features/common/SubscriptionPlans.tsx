@@ -12,6 +12,7 @@ import { RootState } from "@/store";
 import { useSnackbar } from "notistack";
 import PlanCard from "../common/PlanCard";
 import { LoadingSpinner } from "@/shared/components/Loading";
+import type { PaymentResponse as CustomPaymentResponse } from "@/types/types";
 
 interface Plan {
   plan: string;
@@ -68,16 +69,7 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
     fetchPlans();
   }, [enqueueSnackbar]);
 
-  interface RazorpaySubscription {
-    key: string;
-    amount: number;
-    currency: string;
-    orderId: string;
-  }
-
-  interface RazorpayOrderData {
-    subscription: RazorpaySubscription;
-  }
+  // Removed unused interfaces - using PaymentResponse type directly
 
   interface RazorpayResponse {
     razorpay_order_id: string;
@@ -91,45 +83,53 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
 
   const handleBuy = async (plan: Plan) => {
     try {
-      let orderData: RazorpayOrderData;
+      let orderData: CustomPaymentResponse;
 
       // Create subscription based on authentication status
       if (isAuthenticated) {
-        orderData = (await createSubscriptionPlan(plan.plan)) as unknown as RazorpayOrderData;
+        orderData = await createSubscriptionPlan(plan.plan);
       } else {
         if (!companyId) {
           enqueueSnackbar("Company ID is required", { variant: "error" });
           return;
         }
-        orderData = (await createSubscriptionPlanForUnauthenticated(plan.plan, companyId)) as unknown as RazorpayOrderData;
+        orderData = await createSubscriptionPlanForUnauthenticated(plan.plan, companyId);
       }
 
-      const subscription = orderData.subscription;
-      if (!subscription) {
-        enqueueSnackbar("No subscription data received", { variant: "error" });
+      // Validate payment data
+      if (!orderData.orderId || !orderData.key) {
+        console.error("Invalid payment data:", orderData);
+        enqueueSnackbar("Invalid payment data received", { variant: "error" });
         return;
       }
 
-      // For unauthenticated users, dynamically load Razorpay SDK
-      if (!isAuthenticated) {
+      // Log payment data for debugging
+      console.log("Payment data received:", {
+        orderId: orderData.orderId,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        hasKey: !!orderData.key,
+        planName: plan.plan
+      });
+
+      // Ensure Razorpay SDK is loaded (for both authenticated and unauthenticated users)
+      if (!window.Razorpay) {
+        console.log("Razorpay SDK not found, loading dynamically...");
         const isLoaded = await loadRazorpayScript();
         if (!isLoaded) {
           enqueueSnackbar("Failed to load Razorpay SDK", { variant: "error" });
           return;
         }
+        console.log("Razorpay SDK loaded successfully");
       } else {
-        // For authenticated users, check if Razorpay is available
-        if (!window.Razorpay) {
-          enqueueSnackbar("Razorpay SDK not loaded", { variant: "warning" });
-          return;
-        }
+        console.log("Razorpay SDK already available");
       }
 
       const options = {
-        key: subscription.key,
-        amount: subscription.amount,
-        currency: subscription.currency,
-        order_id: subscription.orderId,
+        key: orderData.key,
+        amount: orderData.amount,
+        currency: orderData.currency,
+        order_id: orderData.orderId,
         name: "Stratify",
         description: `Purchase ${plan.plan}`,
         handler: async (response: RazorpayResponse) => {
@@ -174,10 +174,18 @@ const SubscriptionPlans: React.FC<SubscriptionPlansProps> = ({
         },
       };
 
-      new window.Razorpay(options).open();
+      console.log("Opening Razorpay payment modal...");
+      try {
+        const razorpayInstance = new window.Razorpay(options);
+        razorpayInstance.open();
+      } catch (error) {
+        console.error("Razorpay initialization error:", error);
+        enqueueSnackbar("Failed to open payment gateway. Please try again.", { variant: "error" });
+      }
     } catch (err: unknown) {
       const error = err as RazorpayError;
-      enqueueSnackbar(error.message || "Payment initiation failed", { variant: "error" });
+      console.error("Payment initiation error:", error);
+      enqueueSnackbar(error.message || "Payment initiation failed. Please try again.", { variant: "error" });
     }
   };
 
