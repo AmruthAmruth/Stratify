@@ -5,13 +5,13 @@ import { getCompanyProjects } from '@/services/projects';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import TableFilterBar from '@/shared/components/FilterBar/TableFilterBar';
 import Table from '@/shared/components/Table/Table';
-import { LoadingSpinner } from '@/shared/components/Loading';
 import { Project, ProjectsResponse } from '@/types/types';
 
 type SortKey = keyof Project | '';
 
 const Projects = () => {
   const [projects, setProjects] = useState<ProjectsResponse | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -27,19 +27,23 @@ const Projects = () => {
    */
   useEffect(() => {
     const fetchProjects = async () => {
+      setIsLoading(true);
       const data = await getCompanyProjects();
       setProjects(data);
+      setIsLoading(false);
     };
 
     fetchProjects();
   }, []);
 
-  if (!projects) {
-    return <LoadingSpinner fullScreen text="Loading projects..." />;
-  }
+  // Get project counts (default to 0 if loading or no data)
+  const counts = projects?.counts ?? { total: 0, planned: 0, active: 0, completed: 0 };
+
+  // Get projects array (default to empty array if loading or no data)
+  const projectsList = projects?.projects ?? [];
 
   /** Filter projects */
-  const filteredProjects = projects.projects
+  const filteredProjects = projectsList
     .filter((p) =>
       (p.projectName || p.name)
         .toLowerCase()
@@ -77,7 +81,7 @@ const Projects = () => {
 
   /** Status filter options */
   const uniqueStatus = Array.from(
-    new Set(projects.projects.map((p) => p.status))
+    new Set(projectsList.map((p) => p.status))
   );
 
   const clearFilters = () => {
@@ -97,27 +101,27 @@ const Projects = () => {
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <DashboardCard
           title="Total Projects"
-          value={projects.counts?.total ?? 0}
+          value={counts.total}
           subtitle="All company projects"
-          trend={(projects.counts?.total ?? 0) > 0 ? 'up' : 'down'}
+          trend={counts.total > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Planned Projects"
-          value={projects.counts?.planned ?? 0}
+          value={counts.planned}
           subtitle="Not started yet"
-          trend={(projects.counts?.planned ?? 0) > 0 ? 'up' : 'down'}
+          trend={counts.planned > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Active Projects"
-          value={projects.counts?.active ?? 0}
+          value={counts.active}
           subtitle="Currently running"
-          trend={(projects.counts?.active ?? 0) > 0 ? 'up' : 'down'}
+          trend={counts.active > 0 ? 'up' : 'down'}
         />
         <DashboardCard
           title="Completed Projects"
-          value={projects.counts?.completed ?? 0}
+          value={counts.completed}
           subtitle="Finished successfully"
-          trend={(projects.counts?.completed ?? 0) > 0 ? 'up' : 'down'}
+          trend={counts.completed > 0 ? 'up' : 'down'}
         />
       </div>
 
@@ -141,40 +145,65 @@ const Projects = () => {
         onClearFilters={clearFilters}
       />
 
-      {/* Projects table */}
-      <Table
-        columns={[
-          { key: 'projectName', label: 'Project Name' },
-          { key: 'projectDescription', label: 'Project Description' },
-          { key: 'departmentName', label: 'Department Name' },
-          { key: 'projectLead', label: 'Project Lead' },
-          { key: 'status', label: 'Status' },
-          { key: 'remainingTimeInDays', label: 'Remaining Days' },
-        ]}
-        data={paginatedData}
-        currentPage={currentPage}
-        totalPages={totalPages}
-        onPageChange={setCurrentPage}
-        actions={[
-          {
-            label: 'View More',
-            type: 'custom',
-            onClick: (row: Project) => handleViewProject(row.id),
-          },
-          {
-            label: 'Edit',
-            type: 'edit',
-            onClick: (row: Project) =>
-              alert(`Editing ${row.projectName}`),
-          },
-          {
-            label: 'Archive',
-            type: 'delete',
-            onClick: (row: Project) =>
-              alert(`Archiving ${row.projectName}`),
-          },
-        ]}
-      />
+      {/* Empty state or table */}
+      {projectsList.length === 0 ? (
+        <div className="bg-surface rounded-lg shadow-sm border border-borderColor p-12 text-center">
+          <div className="flex flex-col items-center gap-4">
+            <svg
+              className="w-16 h-16 text-muted"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+              />
+            </svg>
+            <div>
+              <p className="text-muted text-lg">No projects found.</p>
+              <p className="text-muted/70 text-sm mt-1">Projects will appear here once they are created.</p>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* Projects table */
+        <Table
+          columns={[
+            { key: 'projectName', label: 'Project Name' },
+            { key: 'projectDescription', label: 'Project Description' },
+            { key: 'departmentName', label: 'Department Name' },
+            { key: 'projectLead', label: 'Project Lead' },
+            { key: 'status', label: 'Status' },
+            { key: 'remainingTimeInDays', label: 'Remaining Days' },
+          ]}
+          data={paginatedData}
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={setCurrentPage}
+          actions={[
+            {
+              label: 'View More',
+              type: 'custom',
+              onClick: (row: Project) => handleViewProject(row.id),
+            },
+            {
+              label: 'Edit',
+              type: 'edit',
+              onClick: (row: Project) =>
+                alert(`Editing ${row.projectName}`),
+            },
+            {
+              label: 'Archive',
+              type: 'delete',
+              onClick: (row: Project) =>
+                alert(`Archiving ${row.projectName}`),
+            },
+          ]}
+        />
+      )}
     </div>
   );
 };
