@@ -3,20 +3,21 @@ import {
     Building,
     Phone,
     MapPin,
-    Globe,
     FileText,
     Edit3,
-    Save,
-    X,
-    Camera,
     Briefcase,
     Palette,
+    Mail,
+    Globe,
 } from "lucide-react";
 import { useSelector } from "react-redux";
 import { RootState } from "@/store";
 import { useNavigate } from "react-router-dom";
 import { getCompanyProfile, updateCompanyProfile } from "@/services/company";
 import InfoCard from "@/shared/components/InfoCard/InfoCard";
+import Modal from "@/shared/components/ModalFrom/ModalForm";
+import DynamicForm from "@/shared/components/Forms/DynamicForm";
+import { updateCompanyProfileFields } from "@/shared/components/Forms/formFields";
 import { toast } from "react-hot-toast";
 import type { Company } from "@/types/types";
 
@@ -24,17 +25,15 @@ const CompanyProfile: React.FC = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
     const navigate = useNavigate();
     const [company, setCompany] = useState<Company | null>(null);
-    const [isEditing, setIsEditing] = useState(false);
-    const [formData, setFormData] = useState<Partial<Company>>({});
+    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const fetchCompanyProfile = React.useCallback(async () => {
         try {
             setLoading(true);
-            // Assuming getCompanyProfile takes ID. If user is company, user.id is companyId.
             const response = await getCompanyProfile(userId!);
             setCompany(response);
-            setFormData(response);
         } catch (error) {
             console.error("Error fetching company profile:", error);
             toast.error("Failed to load profile");
@@ -49,39 +48,35 @@ const CompanyProfile: React.FC = () => {
         }
     }, [userId, fetchCompanyProfile]);
 
-    const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-        const { name, value } = e.target;
-        setFormData((prev) => ({ ...prev, [name]: value }));
-    };
-
-    const handleSave = async () => {
+    const handleUpdateProfile = async (values: unknown) => {
+        setSubmitLoading(true);
         try {
-            const updatedCompany = await updateCompanyProfile(formData);
+            const updatedCompany = await updateCompanyProfile(values as Record<string, unknown>);
             setCompany(updatedCompany);
-            setIsEditing(false);
+            setIsEditModalOpen(false);
             toast.success("Profile updated successfully");
         } catch (error) {
             console.error("Error updating profile:", error);
             toast.error("Failed to update profile");
+        } finally {
+            setSubmitLoading(false);
         }
-    };
-
-    const handleCancel = () => {
-        setFormData(company || {});
-        setIsEditing(false);
     };
 
     if (loading) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-gray-500">
-                Loading profile...
+            <div className="min-h-screen flex items-center justify-center">
+                <div className="flex flex-col items-center gap-4">
+                    <div className="w-8 h-8 border-2 border-primary border-t-transparent rounded-full animate-spin"></div>
+                    <p className="text-muted">Loading profile...</p>
+                </div>
             </div>
         );
     }
 
     if (!company) {
         return (
-            <div className="min-h-screen flex items-center justify-center text-gray-500">
+            <div className="min-h-screen flex items-center justify-center text-muted">
                 Profile not found.
             </div>
         );
@@ -91,8 +86,8 @@ const CompanyProfile: React.FC = () => {
         <div className="min-h-screen bg-bg py-8 px-4 sm:px-6 lg:px-8">
             <div className="max-w-7xl mx-auto">
                 {/* Header Card */}
-                <div className="bg-surface rounded-2xl shadow-lg border border-accent p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
-                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-blue-600 to-indigo-700 opacity-10"></div>
+                <div className="bg-surface rounded-2xl shadow-lg border border-borderColor p-8 mb-8 flex flex-col lg:flex-row items-center gap-8 relative overflow-hidden">
+                    <div className="absolute top-0 left-0 w-full h-32 bg-gradient-to-r from-primary/10 to-primary/5"></div>
 
                     {/* Logo */}
                     <div className="flex-shrink-0 relative z-10">
@@ -104,49 +99,21 @@ const CompanyProfile: React.FC = () => {
                                     className="w-full h-full object-cover"
                                 />
                             ) : (
-                                <Building className="w-16 h-16 text-blue-600" />
+                                <Building className="w-16 h-16 text-primary" />
                             )}
                         </div>
-                        {isEditing && (
-                            <button className="absolute -bottom-2 -right-2 p-2 bg-surface rounded-full shadow-md border border-accent text-text hover:text-primary transition">
-                                <Camera className="w-4 h-4" />
-                            </button>
-                        )}
                     </div>
 
                     {/* Info */}
                     <div className="flex-1 flex flex-col justify-center gap-2 z-10 text-center lg:text-left">
-                        {isEditing ? (
-                            <input
-                                type="text"
-                                name="name"
-                                value={formData.name || ""}
-                                onChange={handleInputChange}
-                                className="text-3xl font-bold text-heading border-b-2 border-blue-500 focus:outline-none bg-transparent"
-                                placeholder="Company Name"
-                            />
-                        ) : (
-                            <h1 className="text-3xl font-bold text-heading">{company.name}</h1>
-                        )}
-
-                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-gray-600">
+                        <h1 className="text-4xl font-bold text-heading">{company.name}</h1>
+                        <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-text">
                             <span className="flex items-center gap-1">
-                                <Briefcase className="w-4 h-4" />
-                                {isEditing ? (
-                                    <input
-                                        type="text"
-                                        name="industry"
-                                        value={formData.industry || ""}
-                                        onChange={handleInputChange}
-                                        className="border-b border-gray-300 focus:outline-none focus:border-blue-500 bg-transparent"
-                                        placeholder="Industry"
-                                    />
-                                ) : (
-                                    company.industry
-                                )}
+                                <Briefcase className="w-4 h-4 text-primary" />
+                                {company.industry}
                             </span>
                             <span className="flex items-center gap-1">
-                                <MapPin className="w-4 h-4" />
+                                <MapPin className="w-4 h-4 text-primary" />
                                 {company.city}, {company.country}
                             </span>
                         </div>
@@ -154,37 +121,18 @@ const CompanyProfile: React.FC = () => {
 
                     {/* Actions */}
                     <div className="flex gap-3 z-10">
-                        {isEditing ? (
-                            <>
-                                <button
-                                    onClick={handleSave}
-                                    className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition shadow-sm"
-                                >
-                                    <Save className="w-4 h-4" /> Save
-                                </button>
-                                <button
-                                    onClick={handleCancel}
-                                    className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
-                                >
-                                    <X className="w-4 h-4" /> Cancel
-                                </button>
-                            </>
-                        ) : (
-                            <>
-                                <button
-                                    onClick={() => navigate('/theme-settings')}
-                                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white rounded-lg hover:bg-primaryHover transition shadow-sm"
-                                >
-                                    <Palette className="w-4 h-4" /> Theme Settings
-                                </button>
-                                <button
-                                    onClick={() => setIsEditing(true)}
-                                    className="flex items-center gap-2 px-6 py-2 bg-surface text-text border border-accent rounded-lg hover:bg-accent transition shadow-sm"
-                                >
-                                    <Edit3 className="w-4 h-4" /> Edit Profile
-                                </button>
-                            </>
-                        )}
+                        <button
+                            onClick={() => navigate('/theme-settings')}
+                            className="flex items-center gap-2 px-6 py-3 bg-primary text-textOnPrimary rounded-xl hover:bg-primaryHover transition-all duration-200 shadow-md hover:shadow-lg font-semibold"
+                        >
+                            <Palette className="w-4 h-4" /> Theme
+                        </button>
+                        <button
+                            onClick={() => setIsEditModalOpen(true)}
+                            className="flex items-center gap-2 px-6 py-3 bg-surface text-text border-2 border-borderColor rounded-xl hover:bg-accent transition-all duration-200 shadow-sm font-semibold"
+                        >
+                            <Edit3 className="w-4 h-4" /> Edit Profile
+                        </button>
                     </div>
                 </div>
 
@@ -192,167 +140,99 @@ const CompanyProfile: React.FC = () => {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Left Column: Contact & Address */}
                     <div className="lg:col-span-1 space-y-8">
-                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-borderColor p-6">
                             <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
-                                <Phone className="w-5 h-5 text-blue-600" /> Contact Info
+                                <Phone className="w-5 h-5 text-primary" /> Contact Info
                             </h3>
                             <div className="space-y-4">
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Email</label>
-                                    {isEditing ? (
-                                        <input
-                                            type="email"
-                                            name="email"
-                                            value={formData.email || ""}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        />
-                                    ) : (
+                                    <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-1">Email</label>
+                                    <div className="flex items-center gap-2">
+                                        <Mail className="w-4 h-4 text-primary" />
                                         <p className="text-heading font-medium">{company.email}</p>
-                                    )}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Phone</label>
-                                    {isEditing ? (
-                                        <input
-                                            type="text"
-                                            name="phone"
-                                            value={formData.phone || ""}
-                                            onChange={handleInputChange}
-                                            className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                        />
-                                    ) : (
+                                    <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-1">Phone</label>
+                                    <div className="flex items-center gap-2">
+                                        <Phone className="w-4 h-4 text-primary" />
                                         <p className="text-heading font-medium">{company.phone}</p>
-                                    )}
+                                    </div>
                                 </div>
                                 <div>
-                                    <label className="block text-xs font-medium text-gray-500 uppercase tracking-wider mb-1">Website</label>
-                                    <p className="text-blue-600 font-medium hover:underline cursor-pointer">www.{company.name.toLowerCase().replace(/\s/g, '')}.com</p>
+                                    <label className="block text-xs font-medium text-muted uppercase tracking-wider mb-1">Website</label>
+                                    <div className="flex items-center gap-2">
+                                        <Globe className="w-4 h-4 text-primary" />
+                                        <p className="text-primary font-medium hover:underline cursor-pointer">
+                                            www.{company.name.toLowerCase().replace(/\s/g, '')}.com
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
 
-                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-6">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-borderColor p-6">
                             <h3 className="text-lg font-bold text-heading mb-4 flex items-center gap-2">
                                 <MapPin className="w-5 h-5 text-primary" /> Address
                             </h3>
-                            <div className="space-y-4">
-                                {isEditing ? (
-                                    <>
-                                        <input
-                                            type="text"
-                                            name="address"
-                                            value={formData.address || ""}
-                                            onChange={handleInputChange}
-                                            placeholder="Street Address"
-                                            className="w-full p-2 border border-gray-300 rounded-lg mb-2"
-                                        />
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <input
-                                                type="text"
-                                                name="city"
-                                                value={formData.city || ""}
-                                                onChange={handleInputChange}
-                                                placeholder="City"
-                                                className="w-full p-2 border border-gray-300 rounded-lg"
-                                            />
-                                            <input
-                                                type="text"
-                                                name="state"
-                                                value={formData.state || ""}
-                                                onChange={handleInputChange}
-                                                placeholder="State"
-                                                className="w-full p-2 border border-gray-300 rounded-lg"
-                                            />
-                                        </div>
-                                        <div className="grid grid-cols-2 gap-2">
-                                            <input
-                                                type="text"
-                                                name="country"
-                                                value={formData.country || ""}
-                                                onChange={handleInputChange}
-                                                placeholder="Country"
-                                                className="w-full p-2 border border-gray-300 rounded-lg"
-                                            />
-                                            <input
-                                                type="text"
-                                                name="zipcode"
-                                                value={formData.zipcode || ""}
-                                                onChange={handleInputChange}
-                                                placeholder="Zipcode"
-                                                className="w-full p-2 border border-gray-300 rounded-lg"
-                                            />
-                                        </div>
-                                    </>
-                                ) : (
-                                    <>
-                                        <p className="text-heading">{company.address}</p>
-                                        <p className="text-heading">{company.city}, {company.state}</p>
-                                        <p className="text-heading">{company.country} - {company.zipcode}</p>
-                                    </>
-                                )}
+                            <div className="space-y-2">
+                                <p className="text-heading">{company.address}</p>
+                                <p className="text-heading">{company.city}, {company.state}</p>
+                                <p className="text-heading">{company.country} - {company.zipcode}</p>
                             </div>
                         </div>
                     </div>
 
                     {/* Right Column: About & Details */}
                     <div className="lg:col-span-2 space-y-8">
-                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-8">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-borderColor p-8">
                             <h3 className="text-xl font-bold text-heading mb-6 flex items-center gap-2">
-                                <FileText className="w-6 h-6 text-purple-600" /> About Company
+                                <FileText className="w-6 h-6 text-primary" /> About Company
                             </h3>
-                            {isEditing ? (
-                                <textarea
-                                    name="description"
-                                    value={formData.description || ""}
-                                    onChange={handleInputChange}
-                                    rows={6}
-                                    className="w-full p-4 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                                    placeholder="Describe your company..."
-                                />
-                            ) : (
-                                <p className="text-gray-600 leading-relaxed text-lg">
-                                    {company.description || "No description available."}
-                                </p>
-                            )}
+                            <p className="text-text leading-relaxed text-lg">
+                                {company.description || "No description available."}
+                            </p>
                         </div>
 
-                        <div className="bg-surface rounded-2xl shadow-sm border border-accent p-8">
+                        <div className="bg-surface rounded-2xl shadow-sm border border-borderColor p-8">
                             <h3 className="text-xl font-bold text-heading mb-6 flex items-center gap-2">
-                                <Globe className="w-6 h-6 text-orange-600" /> Business Details
+                                <Briefcase className="w-6 h-6 text-primary" /> Business Details
                             </h3>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <InfoCard
-                                    icon={<Briefcase className="w-5 h-5 text-blue-600" />}
+                                    icon={<Briefcase className="w-5 h-5 text-primary" />}
                                     label="Business Registration No"
-                                    value={
-                                        isEditing ? (
-                                            <input
-                                                type="text"
-                                                name="businessRegNo"
-                                                value={formData.businessRegNo || ""}
-                                                onChange={handleInputChange}
-                                                className="w-full bg-transparent border-b border-gray-300 focus:outline-none"
-                                            />
-                                        ) : (
-                                            company.businessRegNo
-                                        )
-                                    }
-                                    bgColor="bg-blue-50"
-                                    hoverColor="hover:bg-blue-100"
+                                    value={company.businessRegNo}
+                                    bgColor="bg-primary/10"
+                                    hoverColor="hover:bg-primary/20"
                                 />
                                 <InfoCard
-                                    icon={<Building className="w-5 h-5 text-indigo-600" />}
+                                    icon={<Building className="w-5 h-5 text-primary" />}
                                     label="Company ID"
                                     value={company.id}
-                                    bgColor="bg-indigo-50"
-                                    hoverColor="hover:bg-indigo-100"
+                                    bgColor="bg-primary/10"
+                                    hoverColor="hover:bg-primary/20"
                                 />
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
+
+            {/* Edit Profile Modal */}
+            <Modal
+                isOpen={isEditModalOpen}
+                onClose={() => setIsEditModalOpen(false)}
+                title="Edit Company Profile"
+            >
+                <DynamicForm
+                    fields={updateCompanyProfileFields}
+                    onSubmit={handleUpdateProfile}
+                    buttonText={submitLoading ? "Updating..." : "Update Profile"}
+                    loading={submitLoading}
+                    initialValues={company}
+                />
+            </Modal>
         </div>
     );
 };

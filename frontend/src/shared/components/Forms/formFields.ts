@@ -221,6 +221,9 @@ export const updateSubTaskFields = [
 
 
 
+
+
+
 export const updateSprintFields = [
   { name: "startDate", label: "Start Date", type: "date" },
   { name: "endDate", label: "End Date", type: "date" },
@@ -228,3 +231,17 @@ export const updateSprintFields = [
   { name: "reason", label: "Reason", type: "text" },
 ]
 
+
+export const updateCompanyProfileFields = [
+  { name: "name", label: "Company Name", type: "text", placeholder: "Enter company name" },
+  { name: "industry", label: "Industry", type: "text", placeholder: "e.g., Technology, Healthcare" },
+  { name: "email", label: "Email", type: "email", placeholder: "company@example.com" },
+  { name: "phone", label: "Phone", type: "tel", placeholder: "+1 234 567 8900" },
+  { name: "address", label: "Address", type: "text", placeholder: "Street address" },
+  { name: "city", label: "City", type: "text", placeholder: "City" },
+  { name: "state", label: "State", type: "text", placeholder: "State/Province" },
+  { name: "country", label: "Country", type: "text", placeholder: "Country" },
+  { name: "zipcode", label: "Zip Code", type: "text", placeholder: "Postal code" },
+  { name: "description", label: "About Company", type: "textarea", placeholder: "Describe your company..." },
+  { name: "businessRegNo", label: "Business Registration No", type: "text", placeholder: "Registration number" },
+];
