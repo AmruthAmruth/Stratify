@@ -139,10 +139,6 @@ const TeamPage: React.FC = () => {
         filterValue={filterRole}
         setFilterValue={setFilterRole}
         filterLabel="Role"
-        secondaryFilterOptions={uniqueStatuses}
-        secondaryFilterValue={filterStatus}
-        secondaryFilterLabel="Status"
-        setSecondaryFilterValue={setFilterStatus}
         sortOptions={[
           { key: 'name', label: 'Name' },
           { key: 'email', label: 'Email' },
@@ -151,7 +147,7 @@ const TeamPage: React.FC = () => {
           { key: 'departmentName', label: 'Department' },
         ]}
         sortBy={sortBy ? String(sortBy) : null}
-        setSortBy={setSortBy}
+        setSortBy={(val: string) => setSortBy(val as SortKey)}
         sortOrder={sortOrder}
         setSortOrder={setSortOrder}
         onClearFilters={clearFilters}

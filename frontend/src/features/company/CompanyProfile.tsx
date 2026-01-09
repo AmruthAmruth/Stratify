@@ -20,6 +20,22 @@ import DynamicForm from "@/shared/components/Forms/DynamicForm";
 import { updateCompanyProfileFields } from "@/shared/components/Forms/formFields";
 import { toast } from "react-hot-toast";
 import type { Company } from "@/types/types";
+import { z } from "zod";
+
+// Validation schema for company profile update
+const companyProfileSchema = z.object({
+    name: z.string().min(1, "Company name is required"),
+    industry: z.string().min(1, "Industry is required"),
+    email: z.string().email("Invalid email address"),
+    phone: z.string().min(1, "Phone is required"),
+    address: z.string().min(1, "Address is required"),
+    city: z.string().min(1, "City is required"),
+    state: z.string().min(1, "State is required"),
+    country: z.string().min(1, "Country is required"),
+    zipcode: z.string().min(1, "Zip code is required"),
+    description: z.string().optional(),
+    businessRegNo: z.string().min(1, "Business registration number is required"),
+});
 
 const CompanyProfile: React.FC = () => {
     const { userId } = useSelector((state: RootState) => state.auth);
@@ -227,6 +243,7 @@ const CompanyProfile: React.FC = () => {
             >
                 <DynamicForm
                     fields={updateCompanyProfileFields}
+                    validationSchema={companyProfileSchema}
                     onSubmit={handleUpdateProfile}
                     buttonText={submitLoading ? "Updating..." : "Update Profile"}
                     loading={submitLoading}

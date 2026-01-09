@@ -33,6 +33,7 @@ interface AuthFormProps {
   buttonText: React.ReactNode;
   initialValues?: Record<string, unknown>;
   disabled?: boolean;
+  loading?: boolean;
 }
 
 /* ---------- Animations ---------- */
@@ -65,6 +66,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
       buttonText,
       initialValues,
       disabled = false,
+      loading = false,
     },
     ref
   ) => {
@@ -440,7 +442,7 @@ const AuthForm = forwardRef<{ resetForm: () => void }, AuthFormProps>(
 
         <motion.button
           type="submit"
-          disabled={disabled}
+          disabled={disabled || loading}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
           className="w-full rounded-lg bg-primary py-3
