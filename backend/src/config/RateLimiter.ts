@@ -22,7 +22,7 @@ export const apiLimiter = rateLimit({
 // Stricter rate limiter for password reset endpoints
 export const passwordResetLimiter = rateLimit({
     windowMs: 60 * 60 * 1000, // 1 hour
-    max: 3, // Limit each IP to 3 requests per hour
+    max: 5, // Limit each IP to 5 requests per hour
     message: 'Too many password reset attempts, please try again after an hour',
     standardHeaders: true,
     legacyHeaders: false,

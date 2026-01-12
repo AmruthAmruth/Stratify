@@ -30,6 +30,7 @@ interface TableProps {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   renderCell?: (row: any, key: string) => React.ReactNode;
   actions?: TableAction[];
+  emptyStateMessage?: string;
 }
 
 export type { TableProps, Column, RowData, TableAction };

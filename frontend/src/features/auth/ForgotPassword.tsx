@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { Mail, ArrowLeft, CheckCircle, AlertCircle, Shield, Lock } from "lucide-react";
 import { enqueueSnackbar } from "notistack";
 import { forgotPassword } from "@/services/authApi";
@@ -11,6 +11,7 @@ const ForgotPassword: React.FC = () => {
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [error, setError] = useState("");
   const navigate = useNavigate();
+  const requestInProgress = useRef(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,20 +27,35 @@ const ForgotPassword: React.FC = () => {
       return;
     }
 
+    // Prevent duplicate requests
+    if (requestInProgress.current || isLoading) {
+      return;
+    }
+
     setIsLoading(true);
+    requestInProgress.current = true;
     localStorage.setItem("email", email);
 
-    forgotPassword(email)
-      .then((data) => {
-        localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()));
-        enqueueSnackbar("Verification successful! OTP sent to your email.", { variant: "success" });
-        navigate("/forgot-otp");
-      })
-      .catch((err) => {
-        const error = err as { message?: string };
-        enqueueSnackbar(error?.message || "Verification failed", { variant: "error" });
-      })
-      .finally(() => setIsLoading(false));
+    try {
+      const data = await forgotPassword(email);
+      localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()));
+      enqueueSnackbar("Verification successful! OTP sent to your email.", { variant: "success" });
+      navigate("/forgot-otp");
+    } catch (err: any) {
+      const errorMessage = err?.message || "Verification failed";
+
+      // Check if it's a rate limit error
+      if (err?.response?.status === 429 || errorMessage.toLowerCase().includes("too many")) {
+        enqueueSnackbar("Too many attempts. Please try again after an hour.", { variant: "error" });
+        setError("You've exceeded the maximum number of password reset attempts. Please try again later.");
+      } else {
+        enqueueSnackbar(errorMessage, { variant: "error" });
+        setError(errorMessage);
+      }
+    } finally {
+      setIsLoading(false);
+      requestInProgress.current = false;
+    }
   };
 
   const handleBackToLogin = () => {

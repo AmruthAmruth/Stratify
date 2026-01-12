@@ -10,6 +10,7 @@ const Table: React.FC<TableProps> = ({
   onPageChange,
   renderCell,
   actions,
+  emptyStateMessage = "No data available",
 }) => {
   return (
     <div className="bg-surface border border-borderColor rounded-xl shadow-sm overflow-hidden">
@@ -60,12 +61,12 @@ const Table: React.FC<TableProps> = ({
                             key={index}
                             onClick={() => action.onClick(row)}
                             className={`px-3 py-1.5 text-xs font-semibold rounded-lg shadow-sm transition-all duration-200 ${action.type === "delete"
-                                ? "bg-red-50 text-red-600 hover:bg-red-100 hover:shadow-md"
-                                : action.type === "edit"
-                                  ? "bg-blue-50 text-blue-600 hover:bg-blue-100 hover:shadow-md"
-                                  : action.type === "approve"
-                                    ? "bg-green-50 text-primary hover:bg-green-100 hover:shadow-md"
-                                    : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:shadow-md"
+                              ? "bg-red-50 text-red-600 hover:bg-red-100 hover:shadow-md"
+                              : action.type === "edit"
+                                ? "bg-blue-50 text-blue-600 hover:bg-blue-100 hover:shadow-md"
+                                : action.type === "approve"
+                                  ? "bg-green-50 text-primary hover:bg-green-100 hover:shadow-md"
+                                  : "bg-gray-50 text-gray-600 hover:bg-gray-100 hover:shadow-md"
                               }`}
                           >
                             {action.label}
@@ -99,7 +100,7 @@ const Table: React.FC<TableProps> = ({
                       </svg>
                     </div>
                     <div className="space-y-1">
-                      <p className="text-sm font-semibold text-heading">No data available</p>
+                      <p className="text-sm font-semibold text-heading">{emptyStateMessage}</p>
                       <p className="text-xs text-muted">
                         There are no records to display
                       </p>

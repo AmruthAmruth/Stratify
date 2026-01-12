@@ -463,96 +463,88 @@ const Projects: React.FC = () => {
         </button>
       </div>
 
-      {/* Empty State */}
-      {projects.projects.length === 0 ? (
-        <div className="flex flex-col items-center justify-center py-20 text-gray-600">
-          <p className="text-lg mb-4">No projects found in this department.</p>
-        </div>
-      ) : (
-        <>
-          {/* Dashboard Cards */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-            <DashboardCard
-              title="Total Projects"
-              value={projects.counts?.total ?? 0}
-              subtitle="All department projects"
-              trend={(projects.counts?.total ?? 0) > 0 ? "up" : "down"}
-            />
-            <DashboardCard
-              title="Planned Projects"
-              value={projects.counts?.planned ?? 0}
-              subtitle="Not started yet"
-              trend={(projects.counts?.planned ?? 0) > 0 ? "up" : "down"}
-            />
-            <DashboardCard
-              title="Active Projects"
-              value={projects.counts?.active ?? 0}
-              subtitle="Currently running"
-              trend={(projects.counts?.active ?? 0) > 0 ? "up" : "down"}
-            />
-            <DashboardCard
-              title="Completed Projects"
-              value={projects.counts?.completed ?? 0}
-              subtitle="Finished successfully"
-              trend={(projects.counts?.completed ?? 0) > 0 ? "up" : "down"}
-            />
-          </div>
+      {/* Dashboard Cards */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+        <DashboardCard
+          title="Total Projects"
+          value={projects.counts?.total ?? 0}
+          subtitle="All department projects"
+          trend={(projects.counts?.total ?? 0) > 0 ? "up" : "down"}
+        />
+        <DashboardCard
+          title="Planned Projects"
+          value={projects.counts?.planned ?? 0}
+          subtitle="Not started yet"
+          trend={(projects.counts?.planned ?? 0) > 0 ? "up" : "down"}
+        />
+        <DashboardCard
+          title="Active Projects"
+          value={projects.counts?.active ?? 0}
+          subtitle="Currently running"
+          trend={(projects.counts?.active ?? 0) > 0 ? "up" : "down"}
+        />
+        <DashboardCard
+          title="Completed Projects"
+          value={projects.counts?.completed ?? 0}
+          subtitle="Finished successfully"
+          trend={(projects.counts?.completed ?? 0) > 0 ? "up" : "down"}
+        />
+      </div>
 
-          {/* Filter Bar */}
-          <TableFilterBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            filterOptions={uniqueStatus}
-            filterValue={filterStatus}
-            setFilterValue={setFilterStatus}
-            sortOptions={[
-              { key: "projectName", label: "Project Name" },
-              { key: "projectLead", label: "Project Lead" },
-              { key: "departmentName", label: "Department" },
-              { key: "remainingTimeInDays", label: "Remaining Days" },
-              { key: "startDate", label: "Start Date" },
-              { key: "endDate", label: "End Date" },
-            ]}
-            sortBy={sortBy}
-            setSortBy={setSortBy}
-            sortOrder={sortOrder}
-            setSortOrder={setSortOrder}
-            onClearFilters={clearFilters}
-          />
+      {/* Filter Bar */}
+      <TableFilterBar
+        searchTerm={searchTerm}
+        setSearchTerm={setSearchTerm}
+        filterOptions={uniqueStatus}
+        filterValue={filterStatus}
+        setFilterValue={setFilterStatus}
+        sortOptions={[
+          { key: "projectName", label: "Project Name" },
+          { key: "projectLead", label: "Project Lead" },
+          { key: "departmentName", label: "Department" },
+          { key: "remainingTimeInDays", label: "Remaining Days" },
+          { key: "startDate", label: "Start Date" },
+          { key: "endDate", label: "End Date" },
+        ]}
+        sortBy={sortBy}
+        setSortBy={setSortBy}
+        sortOrder={sortOrder}
+        setSortOrder={setSortOrder}
+        onClearFilters={clearFilters}
+      />
 
-          {/* Projects Table */}
-          <Table
-            columns={[
-              { key: "projectName", label: "Project Name" },
-              { key: "projectDescription", label: "Project Description" },
-              { key: "status", label: "Status" },
-              { key: "remainingTimeInDays", label: "Remaining Days" },
-            ]}
-            data={paginatedData}
-            currentPage={currentPage}
-            totalPages={totalPages}
-            onPageChange={setCurrentPage}
-            actions={[
-              {
-                label: "View More",
-                type: "custom",
-                onClick: (row) => handleViewProject(row.id),
-              },
-              {
-                label: "Edit",
-                type: "edit",
-                onClick: (row) => openEditModal(row),
-              },
-              {
-                label: "Delete",
-                type: "delete",
-                onClick: (row) => handleOpenDeleteConfirm(row.id),
-                disabled: isDeleting,
-              },
-            ]}
-          />
-        </>
-      )}
+      {/* Projects Table */}
+      <Table
+        columns={[
+          { key: "projectName", label: "Project Name" },
+          { key: "projectDescription", label: "Project Description" },
+          { key: "status", label: "Status" },
+          { key: "remainingTimeInDays", label: "Remaining Days" },
+        ]}
+        data={paginatedData}
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+        emptyStateMessage="No projects"
+        actions={[
+          {
+            label: "View More",
+            type: "custom",
+            onClick: (row) => handleViewProject(row.id),
+          },
+          {
+            label: "Edit",
+            type: "edit",
+            onClick: (row) => openEditModal(row),
+          },
+          {
+            label: "Delete",
+            type: "delete",
+            onClick: (row) => handleOpenDeleteConfirm(row.id),
+            disabled: isDeleting,
+          },
+        ]}
+      />
 
       {/* Create/Edit Project Modal */}
       {isProjectModalOpen && (
