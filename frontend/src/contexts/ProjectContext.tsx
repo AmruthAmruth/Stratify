@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useCallback, ReactNode } from 'react';
+import React, { createContext, useState, useCallback, ReactNode } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import {
     getDepartmentProjects,
@@ -17,12 +17,7 @@ import type {
     ProjectDetails,
     ProjectContextValue,
 } from './ProjectContext.types';
-
-// ============================================================================
-// CONTEXT
-// ============================================================================
-
-export const ProjectContext = createContext<ProjectContextValue | undefined>(undefined);
+import { ProjectContext } from './ProjectContext.context';
 
 // ============================================================================
 // PROVIDER

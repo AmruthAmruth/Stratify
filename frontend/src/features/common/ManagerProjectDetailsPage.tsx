@@ -29,24 +29,6 @@ ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 // Type definitions
 
-interface Issue {
-  id?: string;
-  _id?: string;
-  title?: string;
-  heading?: string;
-  type: string;
-  status: string;
-  priority?: string;
-  sprintId?: string;
-  estimatedHours?: number;
-  subTasks?: SubTask[];
-}
-
-interface SubTask {
-  id: string;
-  heading: string;
-  status: string;
-}
 
 
 

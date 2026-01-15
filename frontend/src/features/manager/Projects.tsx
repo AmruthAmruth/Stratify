@@ -34,16 +34,7 @@ interface Project {
   teamMemberIds: string[];
 }
 
-interface ProjectsData {
-  departmentId?: string;
-  projects: Project[];
-  counts?: {
-    total: number;
-    planned: number;
-    active: number;
-    completed: number;
-  };
-}
+
 
 interface CreateProjectFormValues {
   name: string;
