@@ -1,4 +1,4 @@
-import React, { createContext, useState, useCallback, ReactNode } from 'react';
+import React, { useState, useCallback, ReactNode } from 'react';
 import { enqueueSnackbar } from 'notistack';
 import {
     getDepartmentProjects,
