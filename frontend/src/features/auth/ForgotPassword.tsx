@@ -41,11 +41,12 @@ const ForgotPassword: React.FC = () => {
       localStorage.setItem("otpExpiry", String(new Date(data.time).getTime()));
       enqueueSnackbar("Verification successful! OTP sent to your email.", { variant: "success" });
       navigate("/forgot-otp");
-    } catch (err: any) {
-      const errorMessage = err?.message || "Verification failed";
+    } catch (err: unknown) {
+      const error = err as { response?: { status?: number }; message?: string };
+      const errorMessage = error?.message || "Verification failed";
 
       // Check if it's a rate limit error
-      if (err?.response?.status === 429 || errorMessage.toLowerCase().includes("too many")) {
+      if (error?.response?.status === 429 || errorMessage.toLowerCase().includes("too many")) {
         enqueueSnackbar("Too many attempts. Please try again after an hour.", { variant: "error" });
         setError("You've exceeded the maximum number of password reset attempts. Please try again later.");
       } else {

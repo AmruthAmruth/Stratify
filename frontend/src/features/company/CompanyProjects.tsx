@@ -11,7 +11,6 @@ type SortKey = keyof Project | '';
 
 const Projects = () => {
   const [projects, setProjects] = useState<ProjectsResponse | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
@@ -27,10 +26,8 @@ const Projects = () => {
    */
   useEffect(() => {
     const fetchProjects = async () => {
-      setIsLoading(true);
       const data = await getCompanyProjects();
       setProjects(data);
-      setIsLoading(false);
     };
 
     fetchProjects();

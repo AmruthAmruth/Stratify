@@ -24,11 +24,6 @@ interface Employee {
   position: string;
 }
 
-interface DepartmentEmployeeData {
-  departmentId: string;
-  employee: Employee[];
-}
-
 interface Project {
   id: string;
   projectName: string;

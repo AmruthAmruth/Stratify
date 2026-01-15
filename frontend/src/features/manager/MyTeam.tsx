@@ -59,7 +59,8 @@ const MyTeam = () => {
                 deptId = profile.departmentId;
             } else if (profile.departmentId && typeof profile.departmentId === 'object') {
                 // Handle both _id and id properties
-                deptId = (profile.departmentId as any)._id || (profile.departmentId as any).id;
+                const deptObj = profile.departmentId as Record<string, unknown>;
+                deptId = (deptObj._id as string) || (deptObj.id as string);
             }
 
             if (deptId) {

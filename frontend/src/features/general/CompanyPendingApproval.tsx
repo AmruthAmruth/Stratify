@@ -1,5 +1,5 @@
 import React from "react";
-import { Mail, Clock, CheckCircle, ArrowRight, HelpCircle } from "lucide-react";
+import { Mail, Clock, CheckCircle, HelpCircle } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const CompanyPendingApproval: React.FC = () => {

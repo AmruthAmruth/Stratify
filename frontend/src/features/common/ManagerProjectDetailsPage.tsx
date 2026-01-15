@@ -28,11 +28,6 @@ import * as z from "zod";
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 // Type definitions
-interface ProjectEmployee {
-  employeeId: string;
-  name: string;
-  position: string;
-}
 
 interface Sprint {
   id?: string;
@@ -61,22 +56,6 @@ interface SubTask {
   status: string;
 }
 
-interface ProjectData {
-  id?: string;
-  name: string;
-  key: string;
-  description: string;
-  status: string;
-  startDate?: string;
-  endDate?: string;
-  departmentId?: string;
-  teamMemberIds?: string[];
-  backlog?: Issue[];
-  activeSprints?: Sprint[];
-  plannedSprints?: Sprint[];
-  completedSprints?: Sprint[];
-  activeSprintCount?: number;
-}
 
 
 

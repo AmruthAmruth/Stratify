@@ -85,7 +85,6 @@ const TeamPage: React.FC = () => {
 
   // Get unique roles and statuses for filters
   const uniqueRoles = Array.from(new Set(teamMembers.map((m) => m.role).filter(Boolean)));
-  const uniqueStatuses = Array.from(new Set(teamMembers.map((m) => m.status).filter(Boolean)));
 
   const clearFilters = () => {
     setSearchTerm('');
