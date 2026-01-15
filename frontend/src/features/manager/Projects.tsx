@@ -5,10 +5,9 @@ import { enqueueSnackbar } from "notistack";
 import {
   createProject,
   deleteProject,
-  getDepartmentProjects,
-  projectLevelTeamAllocation,
   updateProject
 } from "@/services/projects";
+import { useProjectContext } from "@/contexts/ProjectContext";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import Table from "@/shared/components/Table/Table";
@@ -105,12 +104,25 @@ const Projects: React.FC = () => {
   const navigate = useNavigate();
 
   // ============================================================================
-  // STATE
+  // CONTEXT
   // ============================================================================
 
-  const [projects, setProjects] = useState<ProjectsData>(INITIAL_PROJECTS_STATE);
-  const [employees, setEmployees] = useState<Employee[]>([]);
-  const [departmentId, setDepartmentId] = useState<string>("");
+  const {
+    projects,
+    employees,
+    departmentId,
+    loading,
+    refreshProjects,
+    optimisticCreateProject,
+    optimisticUpdateProject,
+    optimisticDeleteProject,
+    rollback,
+  } = useProjectContext();
+
+  // ============================================================================
+  // LOCAL STATE (UI only)
+  // ============================================================================
+
   const [currentPage, setCurrentPage] = useState(1);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState("");
@@ -118,7 +130,6 @@ const Projects: React.FC = () => {
   const [sortOrder, setSortOrder] = useState<"asc" | "desc">("asc");
   const [isProjectModalOpen, setIsProjectModalOpen] = useState(false);
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [fetchLoading, setFetchLoading] = useState(true);
   const [isDeleting, setIsDeleting] = useState(false);
   const [isConfirmOpen, setIsConfirmOpen] = useState(false);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
@@ -131,81 +142,9 @@ const Projects: React.FC = () => {
   // DATA FETCHING
   // ============================================================================
 
-  const fetchProjectsAndEmployees = useCallback(async () => {
-    setFetchLoading(true);
-    try {
-      const [projectsResponse, employeesResponse] = await Promise.all([
-        getDepartmentProjects(),
-        projectLevelTeamAllocation().catch(err => {
-          console.warn("Failed to fetch employees:", err);
-          return []; // Return empty array on error - non-blocking
-        }),
-      ]);
-
-      console.log("=== DEBUG: API Responses ===");
-      console.log("Projects Response:", projectsResponse);
-      console.log("Employees Response:", employeesResponse);
-
-      // Handle projects response
-      if (projectsResponse && !projectsResponse.status?.includes("error")) {
-        const projectData = projectsResponse as unknown as ProjectsData;
-        setProjects(projectData);
-
-        // Set departmentId from projects response - this is the primary source
-        if (projectData.departmentId) {
-          console.log("✅ Setting departmentId from projects:", projectData.departmentId);
-          setDepartmentId(projectData.departmentId);
-        } else {
-          console.error("❌ No departmentId in projects response - this should not happen");
-          enqueueSnackbar("Unable to retrieve department information. Please contact support.", {
-            variant: "error",
-            ...SNACKBAR_OPTIONS,
-          });
-        }
-      } else {
-        console.error("❌ Projects response has error");
-        setProjects(INITIAL_PROJECTS_STATE);
-        enqueueSnackbar("Failed to fetch projects.", {
-          variant: "error",
-          ...SNACKBAR_OPTIONS,
-        });
-      }
-
-      // Handle employees response
-      if (Array.isArray(employeesResponse) && employeesResponse.length > 0) {
-        const departmentData: DepartmentEmployeeData[] = employeesResponse;
-        setEmployees(departmentData[0]?.employee || []);
-        console.log("✅ Loaded employees:", departmentData[0]?.employee?.length || 0);
-      } else {
-        console.log("ℹ️ No employees data available");
-        setEmployees([]);
-      }
-    } catch (err) {
-      console.error("❌ Error fetching data:", err);
-      setProjects(INITIAL_PROJECTS_STATE);
-      setEmployees([]);
-
-      // Check if error is due to missing department assignment
-      const errorMessage = (err as any)?.response?.data?.message || (err as Error)?.message || "";
-      if (errorMessage.includes("department")) {
-        enqueueSnackbar("Your account is not assigned to a department. Please contact your administrator.", {
-          variant: "error",
-          ...SNACKBAR_OPTIONS,
-        });
-      } else {
-        enqueueSnackbar("Failed to load projects and employees.", {
-          variant: "error",
-          ...SNACKBAR_OPTIONS,
-        });
-      }
-    } finally {
-      setFetchLoading(false);
-    }
-  }, []);
-
   useEffect(() => {
-    fetchProjectsAndEmployees();
-  }, [fetchProjectsAndEmployees]);
+    refreshProjects();
+  }, [refreshProjects]);
 
   // ============================================================================
   // DELETE PROJECT HANDLERS
@@ -225,6 +164,9 @@ const Projects: React.FC = () => {
     if (!selectedProjectId) return;
 
     setIsDeleting(true);
+    // Optimistic update
+    optimisticDeleteProject(selectedProjectId);
+
     try {
       const data = await deleteProject(selectedProjectId);
 
@@ -233,8 +175,11 @@ const Projects: React.FC = () => {
         ...SNACKBAR_OPTIONS,
       });
 
-      await fetchProjectsAndEmployees();
+      // Refresh to get accurate data from server
+      await refreshProjects();
     } catch (err: unknown) {
+      // Rollback on error
+      rollback();
       const error = err as { response?: { data?: { message?: string } }; message?: string };
       enqueueSnackbar(error?.response?.data?.message || error?.message || "Failed to delete project.", {
         variant: "error",
@@ -257,6 +202,18 @@ const Projects: React.FC = () => {
     if (!editingProject || !departmentId) return;
 
     setSubmitLoading(true);
+
+    // Optimistic update
+    optimisticUpdateProject(editingProject.id, {
+      name: values.name,
+      key: values.key,
+      description: values.description,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      status: values.status || editingProject.status,
+      teamMemberIds: values.teamMemberIds,
+    });
+
     try {
       // Dates are sent as full ISO strings - backend should handle
       const payload: UpdateProjectPayload = {
@@ -280,9 +237,12 @@ const Projects: React.FC = () => {
         ...SNACKBAR_OPTIONS,
       });
 
-      await fetchProjectsAndEmployees();
+      // Refresh to get accurate data from server
+      await refreshProjects();
       closeModal();
     } catch (err: unknown) {
+      // Rollback on error
+      rollback();
       enqueueSnackbar((err as Error)?.message || "Failed to update project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
@@ -305,6 +265,18 @@ const Projects: React.FC = () => {
     }
 
     setSubmitLoading(true);
+
+    // Optimistic update
+    optimisticCreateProject({
+      name: values.name,
+      key: values.key,
+      description: values.description,
+      startDate: values.startDate,
+      endDate: values.endDate,
+      status: values.status || "Planned",
+      teamMemberIds: values.teamMemberIds,
+    });
+
     try {
       const payload: CreateProjectPayload = {
         name: values.name,
@@ -326,9 +298,12 @@ const Projects: React.FC = () => {
         ...SNACKBAR_OPTIONS,
       });
 
-      await fetchProjectsAndEmployees();
+      // Refresh to get accurate data from server
+      await refreshProjects();
       closeModal();
     } catch (err: unknown) {
+      // Rollback on error
+      rollback();
       enqueueSnackbar((err as Error)?.message || "Failed to create project.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
@@ -352,7 +327,7 @@ const Projects: React.FC = () => {
   // ============================================================================
 
   const filteredProjects = projects.projects
-    .filter((p) => p.projectName.toLowerCase().includes(searchTerm.toLowerCase()))
+    .filter((p) => p.projectName?.toLowerCase().includes(searchTerm.toLowerCase()))
     .filter((p) => !filterStatus || p.status === filterStatus);
 
   const sortedProjects = [...filteredProjects].sort((a, b) => {
@@ -474,7 +449,7 @@ const Projects: React.FC = () => {
   // RENDER
   // ============================================================================
 
-  if (fetchLoading) {
+  if (loading.projects) {
     return (
       <div className="flex items-center justify-center py-20 text-gray-600">
         Loading projects...

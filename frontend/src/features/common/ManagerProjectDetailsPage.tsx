@@ -7,11 +7,9 @@ import {
   addEmployeeProject,
   createIssue,
   createSprint,
-  employeeUnderTheProject,
-  getEmployeesNotInProject,
-  getProjectDetails,
   updateProject,
 } from "@/services/projects";
+import { useProjectContext } from "@/contexts/ProjectContext";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
@@ -83,48 +81,49 @@ interface ProjectData {
 
 
 const ManagerProjectDetailsPage = () => {
-  const [project, setProject] = useState<ProjectData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
+  const { id } = useParams<{ id: string }>();
+
+  // ============================================================================
+  // CONTEXT
+  // ============================================================================
+
+  const {
+    currentProject: project,
+    employees,
+    employeesNotInProject,
+    loading,
+    refreshProjectDetails,
+    refreshProjectEmployees,
+    optimisticUpdateProject,
+    optimisticCreateSprint,
+    optimisticCreateIssue,
+    optimisticAddEmployee,
+    rollback,
+  } = useProjectContext();
+
+  // ============================================================================
+  // LOCAL STATE
+  // ============================================================================
+
   const [isBacklogModalOpen, setIsBacklogModalOpen] = useState(false);
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
   const [submitLoading, setSubmitLoading] = useState(false);
-  const [employees, setEmployees] = useState<ProjectEmployee[]>([]);
   const [expandedBacklog, setExpandedBacklog] = useState<string | null>(null);
   const [expandedSprint, setExpandedSprint] = useState<string | null>(null);
-  const [employeeNotInProject, setEmployeeNotInProject] = useState<ProjectEmployee[]>([]);
 
-  const { id } = useParams<{ id: string }>();
+  // ============================================================================
+  // DATA FETCHING
+  // ============================================================================
 
   useEffect(() => {
-    const fetchProjectData = async (projectId: string) => {
-      try {
-        setLoading(true);
-        const data = await getProjectDetails(projectId);
-        const employeeData = await employeeUnderTheProject(projectId);
-        const employeesNotInProject = await getEmployeesNotInProject(projectId);
-        setEmployeeNotInProject(employeesNotInProject as unknown as ProjectEmployee[]);
-
-        if (employeeData && Array.isArray(employeeData)) {
-          setEmployees(employeeData as unknown as ProjectEmployee[]);
-        }
-        setProject(data as unknown as ProjectData);
-        setError(null);
-      } catch (err) {
-        console.error("Error fetching project details:", err);
-        setError("Failed to load project details");
-      } finally {
-        setLoading(false);
-      }
-    };
-
     if (id) {
-      fetchProjectData(id);
+      refreshProjectDetails(id);
+      refreshProjectEmployees(id);
     }
-  }, [id]);
+  }, [id, refreshProjectDetails, refreshProjectEmployees]);
 
   const statusOptions = [
     { value: "Planned", label: "Planned" },
@@ -198,6 +197,20 @@ const ManagerProjectDetailsPage = () => {
 
   const handleUpdateProject = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
+
+    // Optimistic update
+    if (id) {
+      optimisticUpdateProject(id, {
+        name: values.name as string,
+        key: values.key as string,
+        description: values.description as string,
+        startDate: values.startDate as string,
+        endDate: values.endDate as string,
+        status: values.status as string,
+        teamMemberIds: values.teamMemberIds as string[],
+      });
+    }
+
     try {
       const payload = {
         id,
@@ -213,11 +226,11 @@ const ManagerProjectDetailsPage = () => {
       await updateProject(payload);
       enqueueSnackbar("Project updated successfully!", { variant: "success" });
       if (id) {
-        const updatedProject = await getProjectDetails(id);
-        setProject(updatedProject as unknown as ProjectData);
+        await refreshProjectDetails(id);
       }
       setIsEditModalOpen(false);
     } catch (err: unknown) {
+      rollback();
       console.error(err);
       const error = err as { message?: string };
       enqueueSnackbar(error.message || "Failed to update project.", {
@@ -230,16 +243,31 @@ const ManagerProjectDetailsPage = () => {
 
   const handleCreateIssue = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
+
+    // Optimistic update
+    if (id) {
+      optimisticCreateIssue(id, {
+        heading: values.heading as string,
+        description: values.description as string,
+        type: values.type as string,
+        status: values.status as string,
+        priority: values.priority as string,
+        estimatedHours: values.estimatedHours as number,
+        acceptanceCriteria: values.acceptanceCriteria as string,
+        assignedTo: values.assignedTo as string,
+      });
+    }
+
     try {
       const payload = { ...values, projectId: id };
       await createIssue(payload);
       enqueueSnackbar("Issue created successfully!", { variant: "success" });
       if (id) {
-        const updatedProject = await getProjectDetails(id);
-        setProject(updatedProject as unknown as ProjectData);
+        await refreshProjectDetails(id);
       }
       setIsBacklogModalOpen(false);
     } catch (err: unknown) {
+      rollback();
       console.error(err);
       const error = err as { message?: string };
       enqueueSnackbar(error.message || "Failed to create issue.", {
@@ -273,7 +301,7 @@ const ManagerProjectDetailsPage = () => {
       type: "select",
       options: [
         { value: "", label: "Select Team Member" },
-        ...employeeNotInProject.map((emp) => ({
+        ...employeesNotInProject.map((emp) => ({
           value: emp.employeeId,
           label: `${emp.name}`,
         })),
@@ -287,16 +315,28 @@ const ManagerProjectDetailsPage = () => {
 
   const handleCreateSprint = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
+
+    // Optimistic update
+    if (id) {
+      optimisticCreateSprint(id, {
+        name: values.name as string,
+        goal: values.goal as string,
+        startDate: values.startDate as string,
+        endDate: values.endDate as string,
+        status: values.status as string,
+      });
+    }
+
     try {
       const payload = { ...values, projectId: id };
       await createSprint(payload);
       enqueueSnackbar("Sprint created successfully!", { variant: "success" });
       if (id) {
-        const updatedProject = await getProjectDetails(id);
-        setProject(updatedProject as unknown as ProjectData);
+        await refreshProjectDetails(id);
       }
       setIsStoryModalOpen(false);
     } catch (err: unknown) {
+      rollback();
       console.error(err);
       const error = err as { message?: string };
       enqueueSnackbar(error.message || "Failed to create sprint.", {
@@ -309,22 +349,28 @@ const ManagerProjectDetailsPage = () => {
 
   const handleAddEmployee = async (values: Record<string, unknown>) => {
     setSubmitLoading(true);
+
+    // Optimistic update
+    if (id) {
+      const selectedEmployee = employeesNotInProject.find(
+        (emp) => emp.employeeId === values.employeeId
+      );
+      if (selectedEmployee) {
+        optimisticAddEmployee(id, selectedEmployee);
+      }
+    }
+
     try {
       const payload = { employeeId: values.employeeId as string, projectId: id };
       await addEmployeeProject(payload);
       enqueueSnackbar("Employee added successfully!", { variant: "success" });
       if (id) {
-        const updatedProject = await getProjectDetails(id);
-        setProject(updatedProject as unknown as ProjectData);
-        const employeeData = await employeeUnderTheProject(id);
-        if (employeeData && Array.isArray(employeeData)) {
-          setEmployees(employeeData as unknown as ProjectEmployee[]);
-        }
-        const employeesNotInProject = await getEmployeesNotInProject(id);
-        setEmployeeNotInProject(employeesNotInProject as unknown as ProjectEmployee[]);
+        await refreshProjectDetails(id);
+        await refreshProjectEmployees(id);
       }
       setIsEmployeeModalOpen(false);
     } catch (err: unknown) {
+      rollback();
       console.error(err);
       const error = err as { message?: string };
       enqueueSnackbar(error.message || "Failed to add employee.", {
@@ -395,7 +441,7 @@ const ManagerProjectDetailsPage = () => {
     }
   };
 
-  if (loading) {
+  if (loading.projectDetails) {
     return (
       <div className="min-h-screen bg-bg flex items-center justify-center">
         <div className="text-center">
@@ -403,25 +449,6 @@ const ManagerProjectDetailsPage = () => {
           <p className="mt-4 text-lg text-text">
             Loading project details...
           </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen bg-bg flex items-center justify-center">
-        <div className="text-center">
-          <div className="bg-red-50 border border-red-300 text-red-700 px-4 py-3 rounded">
-            <strong className="font-bold">Error!</strong>
-            <span className="block sm:inline"> {error}</span>
-          </div>
-          <button
-            onClick={() => window.location.reload()}
-            className="mt-4 bg-primary hover:bg-primaryHover text-white font-bold py-2 px-4 rounded"
-          >
-            Try Again
-          </button>
         </div>
       </div>
     );

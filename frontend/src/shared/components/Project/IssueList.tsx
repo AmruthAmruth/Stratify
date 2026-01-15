@@ -1,7 +1,8 @@
 // components/project/IssueList.tsx
-import React, { useState, useRef, useCallback } from "react";
+import React, { useState, useRef, useCallback, useEffect } from "react";
 import { IssueDTO, UserRole, EmployeeDTO } from "./types";
 import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask } from "@/services/projects";
+import { useProjectContext } from "@/contexts/ProjectContext";
 import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../Forms/formFields";
 import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "../ModalFrom/ModalForm";
@@ -17,8 +18,20 @@ interface Props {
   employees?: EmployeeDTO[];
 }
 
-const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
+const IssueList: React.FC<Props> = ({ issues: propIssues, role, onRefresh, employees }) => {
   const canEdit = role === "company" || role === "manager";
+
+  // Get context methods for optimistic updates
+  const { optimisticDeleteIssue, optimisticDeleteSubTask, rollback } = useProjectContext();
+
+  // Local state for issues - this allows instant updates
+  const [localIssues, setLocalIssues] = useState<IssueDTO[]>(propIssues);
+
+  // Sync local state when prop changes (from parent refresh)
+  useEffect(() => {
+    setLocalIssues(propIssues);
+  }, [propIssues]);
+
   const [expandedIssues, setExpandedIssues] = useState<Set<string>>(new Set());
   const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
   const [updateIssueModalOpen, setUpdateIssueModalOpen] = useState(false);
@@ -159,11 +172,22 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
       message: "Are you sure you want to delete this issue? This action cannot be undone.",
       onConfirm: async () => {
         setConfirmDialog({ ...confirmDialog, isOpen: false });
+
+        // Immediately remove from local state for instant UI update
+        setLocalIssues((prev) => prev.filter((issue) => issue.id !== issueId));
+
+        // Also update context for other components
+        optimisticDeleteIssue(issueId);
+
         try {
           await deleteIssue(issueId);
           enqueueSnackbar("Issue deleted successfully!", { variant: "success" });
+          // Refresh to ensure data consistency
           if (onRefresh) await onRefresh();
         } catch (err: unknown) {
+          // Rollback both local and context state on error
+          setLocalIssues(propIssues); // Restore from props
+          rollback();
           const error = err as { message?: string };
           enqueueSnackbar(error?.message || "Failed to delete issue", { variant: "error" });
         }
@@ -194,18 +218,35 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
   );
 
   // Delete Subtask
-  const handleDeleteSubTask = (subTaskId: string) => {
+  const handleDeleteSubTask = (issueId: string, subTaskId: string) => {
     setConfirmDialog({
       isOpen: true,
       title: "Delete Subtask",
       message: "Are you sure you want to delete this subtask? This action cannot be undone.",
       onConfirm: async () => {
         setConfirmDialog({ ...confirmDialog, isOpen: false });
+
+        // Immediately remove from local state for instant UI update
+        setLocalIssues((prev) =>
+          prev.map((issue) =>
+            issue.id === issueId
+              ? { ...issue, subTasks: issue.subTasks?.filter((st) => st.id !== subTaskId) }
+              : issue
+          )
+        );
+
+        // Also update context for other components
+        optimisticDeleteSubTask(issueId, subTaskId);
+
         try {
           await deleteSubTask(subTaskId);
           enqueueSnackbar("Subtask deleted successfully!", { variant: "success" });
+          // Refresh to ensure data consistency
           if (onRefresh) await onRefresh();
         } catch (err: unknown) {
+          // Rollback both local and context state on error
+          setLocalIssues(propIssues); // Restore from props
+          rollback();
           const error = err as { message?: string };
           enqueueSnackbar(error?.message || "Failed to delete subtask", { variant: "error" });
         }
@@ -213,7 +254,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
     });
   };
 
-  if (!issues.length) {
+  if (!localIssues.length) {
     return (
       <div className="text-center py-16 bg-bg rounded-2xl border border-accent shadow-sm">
         <p className="text-xl text-text/60 font-light">No issues found.</p>
@@ -278,7 +319,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
       </Modal>
 
       {/* Issue List */}
-      {issues.map((issue) => {
+      {localIssues.map((issue) => {
         const isExpanded = expandedIssues.has(issue.id);
         const showSubtasks = canEdit || hasSubtasks(issue);
 
@@ -495,7 +536,7 @@ const IssueList: React.FC<Props> = ({ issues, role, onRefresh, employees }) => {
 
                                   <button
                                     className="text-xs bg-red-500 text-white rounded px-3 py-1.5 hover:bg-red-600"
-                                    onClick={() => handleDeleteSubTask(sub.id)}
+                                    onClick={() => handleDeleteSubTask(issue.id, sub.id)}
                                   >
                                     Delete
                                   </button>

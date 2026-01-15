@@ -17,9 +17,9 @@ import {
 import { Pie, Bar, Line } from "react-chartjs-2";
 import {
     createSubTask,
-    getIssuesForManager,
     updateSubTask,
 } from "@/services/projects";
+import { useProjectContext } from "@/contexts/ProjectContext";
 import { createSubTaskFields } from "@/shared/components/Forms/formFields";
 import { createSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
@@ -50,37 +50,36 @@ interface GroupedIssues {
 }
 
 const Tasks = () => {
-    const [issues, setIssues] = useState<Issue[]>([]);
-    const [loading, setLoading] = useState(true);
+    // ============================================================================
+    // CONTEXT
+    // ============================================================================
+
+    const {
+        issues,
+        loading,
+        refreshIssues,
+        optimisticUpdateIssue,
+        optimisticUpdateSubTask,
+        rollback,
+    } = useProjectContext();
+
+    // ============================================================================
+    // LOCAL STATE
+    // ============================================================================
+
     const [selectedIssueId, setSelectedIssueId] = useState<string | null>(null);
     const [selectedSubtask, setSelectedSubtask] = useState<SubTask | null>(null);
     const [isCreateSubtaskModalOpen, setIsCreateSubtaskModalOpen] = useState(false);
     const [isEditSubtaskModalOpen, setIsEditSubtaskModalOpen] = useState(false);
     const [submitLoading, setSubmitLoading] = useState(false);
 
-    const fetchIssues = useCallback(async () => {
-        setLoading(true);
-        try {
-            const data = await getIssuesForManager();
-            console.log("Manager Issues data:", data);
-            if (Array.isArray(data)) {
-                setIssues(data);
-            } else {
-                console.warn("Invalid issue data format", data);
-                setIssues([]);
-            }
-        } catch (err) {
-            console.error("Failed to fetch issues:", err);
-            enqueueSnackbar("Failed to load tasks", { variant: "error" });
-            setIssues([]);
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+    // ============================================================================
+    // DATA FETCHING
+    // ============================================================================
 
     useEffect(() => {
-        fetchIssues();
-    }, [fetchIssues]);
+        refreshIssues();
+    }, [refreshIssues]);
 
     // Group issues by project
     const groupedIssues: GroupedIssues = issues.reduce((acc, issue) => {
@@ -156,28 +155,18 @@ const Tasks = () => {
         const newStatus = over.id as string;
 
         // Optimistic update
-        setIssues((prevIssues) =>
-            prevIssues.map((issue) => {
-                if (issue.id === issueId) {
-                    return {
-                        ...issue,
-                        subTasks: issue.subTasks?.map((st) =>
-                            st.id === subtaskId ? { ...st, status: newStatus } : st
-                        ),
-                    };
-                }
-                return issue;
-            })
-        );
+        optimisticUpdateSubTask(issueId, subtaskId, { status: newStatus } as any);
 
         try {
             await updateSubTask({ id: subtaskId, status: newStatus });
             enqueueSnackbar("Subtask status updated!", { variant: "success" });
+            // Refresh to get accurate data from server
+            await refreshIssues();
         } catch (error) {
+            // Rollback on error
+            rollback();
             console.error("Failed to update subtask:", error);
             enqueueSnackbar("Failed to update subtask status", { variant: "error" });
-            // Revert on error
-            await fetchIssues();
         }
     };
 
@@ -202,7 +191,8 @@ const Tasks = () => {
             });
             enqueueSnackbar("Subtask created successfully!", { variant: "success" });
             setIsCreateSubtaskModalOpen(false);
-            await fetchIssues();
+            // Refresh to get updated data
+            await refreshIssues();
         } catch (error: unknown) {
             console.error("Failed to create subtask:", error);
             enqueueSnackbar(
@@ -226,7 +216,8 @@ const Tasks = () => {
             enqueueSnackbar("Subtask updated successfully!", { variant: "success" });
             setIsEditSubtaskModalOpen(false);
             setSelectedSubtask(null);
-            await fetchIssues();
+            // Refresh to get updated data
+            await refreshIssues();
         } catch (error: unknown) {
             console.error("Failed to update subtask:", error);
             enqueueSnackbar(
@@ -264,7 +255,7 @@ const Tasks = () => {
         }
     };
 
-    if (loading) {
+    if (loading.issues) {
         return (
             <div className="flex items-center justify-center py-20">
                 <div className="text-center">
