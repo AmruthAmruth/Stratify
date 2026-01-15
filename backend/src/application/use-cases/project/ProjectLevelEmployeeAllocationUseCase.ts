@@ -16,28 +16,25 @@ export class ProjectLevelEmployeeAllocationUseCase
   async execute(
     managerId: string,
   ): Promise<ProjectLevelEmployeeAllocationDTO[]> {
-    const manager = await this._managerRepo.findById(managerId);
+    const manager = await this._managerRepo.findByIdWithDepartment(managerId);
     if (!manager) {
       throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    const departmentId = manager.departmentId;
+    // Handle populated departmentId (it's an object with _id and name when populated)
+    const departmentId = manager.departmentId?._id?.toString();
     if (!departmentId) {
       throw new AppError(Messages.MANAGER_NO_DEPARTMENT, StatusCodes.BAD_REQUEST);
     }
 
     const employees = await this._employeeRepo.findByDepartmentId(departmentId);
-    if (!employees || employees.length === 0) {
-      throw new AppError(Messages.NO_EMPLOYEES_IN_DEPARTMENT, StatusCodes.NOT_FOUND);
-    }
 
-
-
-
+    // Return empty employee list if no employees - valid state for new departments
+    const employeeList = employees || [];
 
     const allocations: ProjectLevelEmployeeAllocationDTO = {
       departmentId,
-      employee: employees.map((emp) => ({
+      employee: employeeList.map((emp) => ({
         name: emp.name,
         position: emp.position,
         employeeId: emp.id!,

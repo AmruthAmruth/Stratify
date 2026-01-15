@@ -9,6 +9,7 @@ export interface ManagerProfileResponse {
     phone: string;
     dateOfBirth?: string;
     profileImage?: string;
+    departmentId?: string;
     department: {
         id: string;
         name: string;

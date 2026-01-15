@@ -16,17 +16,19 @@ export class GetIssuesForManagerUseCase implements IGetIssuesForManagerUseCase {
 
     async execute(managerId: string): Promise<EmployeeIssueDTO[]> {
         // Get manager to find their department
-        const manager = await this._managerRepo.findById(managerId);
+        const manager = await this._managerRepo.findByIdWithDepartment(managerId);
         if (!manager) {
             throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        if (!manager.departmentId) {
+        // Handle populated departmentId (it's an object with _id and name when populated)
+        const departmentId = manager.departmentId?._id?.toString();
+        if (!departmentId) {
             throw new AppError("Manager has no department assigned", StatusCodes.BAD_REQUEST);
         }
 
         // Get all projects in the manager's department
-        const projects = await this._projectRepo.findByDepartmentId(manager.departmentId);
+        const projects = await this._projectRepo.findByDepartmentId(departmentId);
 
         if (!projects || projects.length === 0) {
             return [];

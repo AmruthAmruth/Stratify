@@ -19,12 +19,13 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
   ) { }
 
   async execute(managerId: string): Promise<DepartmentLeaveDTO> {
-    const manager = await this._managerRepo.findById(managerId);
+    const manager = await this._managerRepo.findByIdWithDepartment(managerId);
     if (!manager) {
       throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    const departmentId = manager.departmentId;
+    // Handle populated departmentId (it's an object with _id and name when populated)
+    const departmentId = manager.departmentId?._id?.toString();
     if (!departmentId) {
       throw new AppError(
         Messages.MANAGER_NO_DEPARTMENT,

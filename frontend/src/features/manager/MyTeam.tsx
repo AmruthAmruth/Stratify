@@ -1,19 +1,35 @@
 import React, { useEffect, useState } from 'react';
+import { enqueueSnackbar } from 'notistack';
 import DashboardCard from '@/shared/components/DashboardCards/Cards';
 import ReusableChart from '@/shared/components/Chart/ReusableChart';
 import Table from '@/shared/components/Table/Table';
+import Modal from '@/shared/components/ModalFrom/ModalForm';
+import AuthForm from '@/shared/components/Forms/DynamicForm';
+import { addMember } from '@/shared/components/Forms/formFields';
+import { addMemberSchema } from '@/shared/utils/validations';
 import { getDepartmentEmployees, getTeamAnalytics, Employee, TeamAnalytics } from '@/services/team';
+import { createEmployee } from '@/services/company';
+import { getManagerProfile } from '@/services/authApi';
 import { Users, UserCheck, TrendingUp, Briefcase } from 'lucide-react';
+
+const SNACKBAR_OPTIONS = {
+    autoHideDuration: 3000,
+    anchorOrigin: { vertical: 'top' as const, horizontal: 'right' as const },
+};
 
 const MyTeam = () => {
     const [loading, setLoading] = useState(true);
     const [employees, setEmployees] = useState<Employee[]>([]);
     const [analytics, setAnalytics] = useState<TeamAnalytics | null>(null);
     const [currentPage, setCurrentPage] = useState(1);
+    const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
+    const [submitLoading, setSubmitLoading] = useState(false);
+    const [departmentId, setDepartmentId] = useState<string>("");
     const itemsPerPage = 6;
 
     useEffect(() => {
         fetchTeamData();
+        fetchManagerDepartment();
     }, []);
 
     const fetchTeamData = async () => {
@@ -29,6 +45,69 @@ const MyTeam = () => {
             console.error('Error fetching team data:', error);
         } finally {
             setLoading(false);
+        }
+    };
+
+    const fetchManagerDepartment = async () => {
+        try {
+            const profile = await getManagerProfile();
+
+            // Extract departmentId from various possible formats
+            let deptId: string | undefined;
+
+            if (typeof profile.departmentId === 'string') {
+                deptId = profile.departmentId;
+            } else if (profile.departmentId && typeof profile.departmentId === 'object') {
+                // Handle both _id and id properties
+                deptId = (profile.departmentId as any)._id || (profile.departmentId as any).id;
+            }
+
+            if (deptId) {
+                setDepartmentId(deptId);
+            } else {
+                console.warn('⚠️ Manager profile does not have department information');
+            }
+        } catch (error) {
+            console.error('Error fetching manager profile:', error);
+        }
+    };
+
+    const openEmployeeModal = () => {
+        setIsEmployeeModalOpen(true);
+    };
+
+    const closeEmployeeModal = () => {
+        setIsEmployeeModalOpen(false);
+    };
+
+    const handleCreateEmployee = async (formValues: Record<string, unknown>) => {
+        if (!departmentId) {
+            enqueueSnackbar("Unable to create employee: Department information is missing. Please contact your administrator.", {
+                variant: "error",
+                ...SNACKBAR_OPTIONS,
+            });
+            console.error("❌ departmentId is missing when attempting to create employee:", departmentId);
+            return;
+        }
+
+        setSubmitLoading(true);
+        try {
+            await createEmployee({ ...formValues, departmentId });
+
+            enqueueSnackbar("Employee created successfully!", {
+                variant: "success",
+                ...SNACKBAR_OPTIONS,
+            });
+
+            await fetchTeamData();
+            closeEmployeeModal();
+        } catch (err: unknown) {
+            enqueueSnackbar((err as Error)?.message || "Failed to create employee.", {
+                variant: "error",
+                ...SNACKBAR_OPTIONS,
+            });
+        } finally {
+            setSubmitLoading(false);
         }
     };
 
@@ -96,12 +175,23 @@ const MyTeam = () => {
     return (
         <div className="min-h-screen bg-bg p-6">
             {/* Header */}
-            <div className="mb-8">
-                <h1 className="text-4xl font-bold text-text mb-2 flex items-center gap-3">
-                    <Users className="w-10 h-10 text-primary" />
-                    My Team
-                </h1>
-                <p className="text-text/70">Manage and monitor your department's team members</p>
+            <div className="flex justify-between items-center mb-8">
+                <div>
+                    <h1 className="text-4xl font-bold text-text mb-2 flex items-center gap-3">
+                        <Users className="w-10 h-10 text-primary" />
+                        My Team
+                    </h1>
+                    <p className="text-text/70">Manage and monitor your department's team members</p>
+                </div>
+
+                {/* Add Employee Button */}
+                <button
+                    onClick={openEmployeeModal}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
+                    disabled={submitLoading}
+                >
+                    + Add Employee
+                </button>
             </div>
 
             {/* Dashboard Cards */}
@@ -247,7 +337,32 @@ const MyTeam = () => {
                 />
             </div>
 
+            {/* Create Employee Modal */}
+            {isEmployeeModalOpen && (
+                <Modal
+                    isOpen={isEmployeeModalOpen}
+                    onClose={closeEmployeeModal}
+                    title="Add New Employee"
+                >
+                    <div className="space-y-4">
+                        <div className="shadow-lg rounded-xl p-8 max-w-4xl mx-auto bg-surface">
+                            <AuthForm
+                                fields={addMember}
+                                validationSchema={addMemberSchema}
+                                onSubmit={handleCreateEmployee}
+                                buttonText="Create Employee"
+                                disabled={submitLoading}
+                            />
+                        </div>
 
+                        {submitLoading && (
+                            <div className="flex justify-center mt-4">
+                                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+                            </div>
+                        )}
+                    </div>
+                </Modal>
+            )}
         </div>
     );
 };

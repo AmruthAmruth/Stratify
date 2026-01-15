@@ -14,17 +14,19 @@ export class GetDepartmentEmployeesUseCase implements IGetDepartmentEmployeesUse
 
     async execute(managerId: string): Promise<Employee[]> {
 
-        const manager = await this.managerRepository.findById(managerId);
+        const manager = await this.managerRepository.findByIdWithDepartment(managerId);
 
         if (!manager) {
             throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        if (!manager.departmentId) {
+        // Handle populated departmentId (it's an object with _id and name when populated)
+        const departmentId = manager.departmentId?._id?.toString();
+        if (!departmentId) {
             throw new AppError(Messages.MANAGER_NO_DEPARTMENT, StatusCodes.BAD_REQUEST);
         }
 
-        const employees = await this.employeeRepository.findByDepartmentId(manager.departmentId);
+        const employees = await this.employeeRepository.findByDepartmentId(departmentId);
 
         return employees;
     }

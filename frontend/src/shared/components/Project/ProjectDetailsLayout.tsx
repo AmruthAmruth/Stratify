@@ -219,8 +219,8 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       type: "select",
       placeholder: "Choose employee",
       options: employeeList.map((emp) => ({
-        label: `${emp.name} — ${emp.position} `,
-        value: emp.id,
+        label: `${emp.name} — ${emp.position || 'N/A'}`,
+        value: emp.employeeId || emp.id,
       })),
     },
   ];
@@ -242,7 +242,7 @@ const ProjectDetailsLayout: React.FC<Props> = ({ project, role, onRefresh }) => 
       type: "select",
       placeholder: "Choose employee",
       options: assignedEmployees.map((emp) => ({
-        label: `${emp.name} — ${emp.position} `,
+        label: `${emp.name} — ${emp.position || 'N/A'}`,
         value: emp.id,
       })),
     },

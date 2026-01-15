@@ -17,13 +17,14 @@ export class GetProjectsByDepartmentUseCase
   ) { }
 
   async execute(managerId: string): Promise<GetProjectsByDepartmentResponse> {
-    const manager = await this._managerRepo.findById(managerId);
+    const manager = await this._managerRepo.findByIdWithDepartment(managerId);
 
     if (!manager) {
       throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    const departmentId = manager.departmentId;
+    // Handle populated departmentId (it's an object with _id and name when populated)
+    const departmentId = manager.departmentId?._id?.toString();
     if (!departmentId) {
       throw new AppError(
         Messages.MANAGER_NO_DEPARTMENT,
@@ -33,19 +34,18 @@ export class GetProjectsByDepartmentUseCase
 
     const projects = await this._projectRepo.findByDepartmentId(departmentId);
 
-    if (!projects || projects.length === 0) {
-      throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
-    }
+    // Return empty array if no projects - this is a valid state for new departments
+    const projectsList = projects || [];
 
     const counts = {
-      total: projects.length,
+      total: projectsList.length,
       planned: 0,
       active: 0,
       completed: 0,
       archived: 0,
     };
 
-    const result: GetProjectsByDepartmentDTO[] = projects.map((project) => {
+    const result: GetProjectsByDepartmentDTO[] = projectsList.map((project) => {
       const remainingTimeInDays = project.endDate
         ? Math.ceil(
           (new Date(project.endDate).getTime() - new Date().getTime()) /

@@ -8,7 +8,7 @@ export interface GetProjectsByDepartmentDTO {
 
 export interface GetProjectsByDepartmentResponse {
   projects: GetProjectsByDepartmentDTO[];
-  departmentId: string | undefined;
+  departmentId: string;
   counts: {
     total: number;
     planned: number;

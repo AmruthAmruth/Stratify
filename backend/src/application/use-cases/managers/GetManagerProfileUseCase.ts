@@ -50,6 +50,7 @@ export class GetManagerProfileUseCase implements IGetManagerProfileUseCase {
             phone: manager.phone,
             dateOfBirth: manager.dob ? manager.dob.toISOString() : undefined,
             profileImage: manager.profileImage,
+            departmentId: manager.departmentId ? manager.departmentId._id.toString() : undefined,
             department: manager.departmentId ? {
                 id: manager.departmentId._id.toString(),
                 name: manager.departmentId.name

@@ -136,13 +136,34 @@ const Projects: React.FC = () => {
     try {
       const [projectsResponse, employeesResponse] = await Promise.all([
         getDepartmentProjects(),
-        projectLevelTeamAllocation(),
+        projectLevelTeamAllocation().catch(err => {
+          console.warn("Failed to fetch employees:", err);
+          return []; // Return empty array on error - non-blocking
+        }),
       ]);
 
-      // Handle projects
+      console.log("=== DEBUG: API Responses ===");
+      console.log("Projects Response:", projectsResponse);
+      console.log("Employees Response:", employeesResponse);
+
+      // Handle projects response
       if (projectsResponse && !projectsResponse.status?.includes("error")) {
-        setProjects(projectsResponse as unknown as ProjectsData);
+        const projectData = projectsResponse as unknown as ProjectsData;
+        setProjects(projectData);
+
+        // Set departmentId from projects response - this is the primary source
+        if (projectData.departmentId) {
+          console.log("✅ Setting departmentId from projects:", projectData.departmentId);
+          setDepartmentId(projectData.departmentId);
+        } else {
+          console.error("❌ No departmentId in projects response - this should not happen");
+          enqueueSnackbar("Unable to retrieve department information. Please contact support.", {
+            variant: "error",
+            ...SNACKBAR_OPTIONS,
+          });
+        }
       } else {
+        console.error("❌ Projects response has error");
         setProjects(INITIAL_PROJECTS_STATE);
         enqueueSnackbar("Failed to fetch projects.", {
           variant: "error",
@@ -150,28 +171,33 @@ const Projects: React.FC = () => {
         });
       }
 
-      // Handle employees - assume first department or enhance with auth context
+      // Handle employees response
       if (Array.isArray(employeesResponse) && employeesResponse.length > 0) {
         const departmentData: DepartmentEmployeeData[] = employeesResponse;
         setEmployees(departmentData[0]?.employee || []);
-        setDepartmentId(departmentData[0]?.departmentId || "");
+        console.log("✅ Loaded employees:", departmentData[0]?.employee?.length || 0);
       } else {
+        console.log("ℹ️ No employees data available");
         setEmployees([]);
-        setDepartmentId("");
-        enqueueSnackbar("No employees found for this department.", {
-          variant: "warning",
+      }
+    } catch (err) {
+      console.error("❌ Error fetching data:", err);
+      setProjects(INITIAL_PROJECTS_STATE);
+      setEmployees([]);
+
+      // Check if error is due to missing department assignment
+      const errorMessage = (err as any)?.response?.data?.message || (err as Error)?.message || "";
+      if (errorMessage.includes("department")) {
+        enqueueSnackbar("Your account is not assigned to a department. Please contact your administrator.", {
+          variant: "error",
+          ...SNACKBAR_OPTIONS,
+        });
+      } else {
+        enqueueSnackbar("Failed to load projects and employees.", {
+          variant: "error",
           ...SNACKBAR_OPTIONS,
         });
       }
-    } catch (err) {
-      console.error("Error fetching data:", err);
-      setProjects(INITIAL_PROJECTS_STATE);
-      setEmployees([]);
-      setDepartmentId("");
-      enqueueSnackbar("Failed to load projects and employees.", {
-        variant: "error",
-        ...SNACKBAR_OPTIONS,
-      });
     } finally {
       setFetchLoading(false);
     }
@@ -268,11 +294,13 @@ const Projects: React.FC = () => {
 
   const handleCreateProject = async (formValues: Record<string, unknown>) => {
     const values = formValues as unknown as CreateProjectFormValues;
+
     if (!departmentId) {
-      enqueueSnackbar("Department not available. Cannot create project.", {
+      enqueueSnackbar("Unable to create project: Department information is missing. Please contact your administrator.", {
         variant: "error",
         ...SNACKBAR_OPTIONS,
       });
+      console.error("❌ departmentId is missing when attempting to create project:", departmentId);
       return;
     }
 
@@ -362,8 +390,12 @@ const Projects: React.FC = () => {
   // ============================================================================
 
   const openModal = () => {
+    console.log("=== openModal called ===");
+    console.log("Current departmentId:", departmentId);
+    console.log("Current isProjectModalOpen:", isProjectModalOpen);
     setEditingProject(null);
     setIsProjectModalOpen(true);
+    console.log("Modal should now be open");
   };
 
   const openEditModal = (project: Project) => {
@@ -450,16 +482,30 @@ const Projects: React.FC = () => {
     );
   }
 
+  console.log("=== RENDER DEBUG ===");
+  console.log("departmentId:", departmentId);
+  console.log("submitLoading:", submitLoading);
+  console.log("Button disabled:", submitLoading || !departmentId);
+  console.log("isProjectModalOpen:", isProjectModalOpen);
+
   return (
     <div className="text-text space-y-6">
       {/* Create Project Button */}
       <div className="flex justify-end mb-4">
         <button
-          onClick={openModal}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition"
+          onClick={() => {
+            console.log("=== BUTTON CLICKED ===");
+            console.log("departmentId at click:", departmentId);
+            console.log("Button disabled:", submitLoading || !departmentId);
+            if (departmentId) {
+              openModal();
+            }
+          }}
+          className="px-4 py-2 bg-blue-600 text-white rounded-lg shadow hover:bg-blue-700 transition disabled:opacity-50 disabled:cursor-not-allowed"
           disabled={submitLoading || !departmentId}
+          title={!departmentId ? "Department information not available" : "Create a new project"}
         >
-          + Create Project
+          + Create New Project
         </button>
       </div>
 

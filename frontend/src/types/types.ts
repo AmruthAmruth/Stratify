@@ -64,6 +64,7 @@ export interface DepartmentFormData {
 
 export interface TeamMember {
     id: string;
+    employeeId?: string; // Backend API returns this field for employee lists
     name: string;
     email: string;
     role: string;
