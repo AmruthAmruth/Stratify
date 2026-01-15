@@ -7,7 +7,7 @@ import {
   deleteProject,
   updateProject
 } from "@/services/projects";
-import { useProjectContext } from "@/contexts/ProjectContext";
+import { useProjectContext } from "@/contexts/useProjectContext";
 import DashboardCard from "@/shared/components/DashboardCards/Cards";
 import TableFilterBar from "@/shared/components/FilterBar/TableFilterBar";
 import Table from "@/shared/components/Table/Table";
@@ -18,11 +18,7 @@ import { createProjectSchema } from "@/shared/utils/validations";
 import ConfirmDialog from "@/shared/components/ConfirmDialog/ConfirmDialog";
 
 
-interface Employee {
-  employeeId: string;
-  name: string;
-  position: string;
-}
+
 
 interface Project {
   id: string;
@@ -78,12 +74,6 @@ interface UpdateProjectPayload extends CreateProjectPayload {
 // ============================================================================
 // CONSTANTS
 // ============================================================================
-
-const INITIAL_PROJECTS_STATE: ProjectsData = {
-  departmentId: "",
-  projects: [],
-  counts: { total: 0, planned: 0, active: 0, completed: 0 },
-};
 
 const ITEMS_PER_PAGE = 6;
 

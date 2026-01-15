@@ -9,7 +9,7 @@ import {
   createSprint,
   updateProject,
 } from "@/services/projects";
-import { useProjectContext } from "@/contexts/ProjectContext";
+import { useProjectContext } from "@/contexts/useProjectContext";
 import { useParams } from "react-router-dom";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
 import AuthForm from "@/shared/components/Forms/DynamicForm";
@@ -28,14 +28,6 @@ import * as z from "zod";
 ChartJS.register(ArcElement, Tooltip, Legend, Title);
 
 // Type definitions
-
-interface Sprint {
-  id?: string;
-  _id?: string;
-  name: string;
-  issues?: Issue[];
-  status?: string;
-}
 
 interface Issue {
   id?: string;

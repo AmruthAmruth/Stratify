@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import { DragEndEvent } from "@dnd-kit/core";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -19,7 +19,7 @@ import {
     createSubTask,
     updateSubTask,
 } from "@/services/projects";
-import { useProjectContext } from "@/contexts/ProjectContext";
+import { useProjectContext } from "@/contexts/useProjectContext";
 import { createSubTaskFields } from "@/shared/components/Forms/formFields";
 import { createSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "@/shared/components/ModalFrom/ModalForm";
@@ -58,7 +58,6 @@ const Tasks = () => {
         issues,
         loading,
         refreshIssues,
-        optimisticUpdateIssue,
         optimisticUpdateSubTask,
         rollback,
     } = useProjectContext();
@@ -155,7 +154,7 @@ const Tasks = () => {
         const newStatus = over.id as string;
 
         // Optimistic update
-        optimisticUpdateSubTask(issueId, subtaskId, { status: newStatus } as any);
+        optimisticUpdateSubTask(issueId, subtaskId, { status: newStatus } as Partial<SubTask>);
 
         try {
             await updateSubTask({ id: subtaskId, status: newStatus });

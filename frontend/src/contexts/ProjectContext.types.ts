@@ -1,4 +1,4 @@
-import type { Issue, Project } from '@/types/types';
+import type { Issue, Project, SubTask } from '@/types/types';
 
 // ============================================================================
 // TYPES
@@ -75,7 +75,7 @@ export interface ProjectContextValue {
     optimisticCreateIssue: (projectId: string, issue: Partial<Issue>) => void;
     optimisticUpdateIssue: (issueId: string, updates: Partial<Issue>) => void;
     optimisticDeleteIssue: (issueId: string) => void;
-    optimisticUpdateSubTask: (issueId: string, subtaskId: string, updates: Partial<Issue['subTasks']>) => void;
+    optimisticUpdateSubTask: (issueId: string, subtaskId: string, updates: Partial<SubTask>) => void;
     optimisticDeleteSubTask: (issueId: string, subtaskId: string) => void;
     optimisticAddEmployee: (projectId: string, employee: Employee) => void;
 

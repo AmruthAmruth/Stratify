@@ -2,7 +2,7 @@
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { IssueDTO, UserRole, EmployeeDTO } from "./types";
 import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask } from "@/services/projects";
-import { useProjectContext } from "@/contexts/ProjectContext";
+import { useProjectContext } from "@/contexts/useProjectContext";
 import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../Forms/formFields";
 import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
 import Modal from "../ModalFrom/ModalForm";

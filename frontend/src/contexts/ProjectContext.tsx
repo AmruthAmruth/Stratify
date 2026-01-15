@@ -8,7 +8,7 @@ import {
     employeeUnderTheProject,
     getEmployeesNotInProject,
 } from '@/services/projects';
-import type { Issue, Project } from '@/types/types';
+import type { Issue, Project, SubTask } from '@/types/types';
 import type {
     Employee,
     DepartmentEmployeeData,
@@ -22,7 +22,7 @@ import type {
 // CONTEXT
 // ============================================================================
 
-const ProjectContext = createContext<ProjectContextValue | undefined>(undefined);
+export const ProjectContext = createContext<ProjectContextValue | undefined>(undefined);
 
 // ============================================================================
 // PROVIDER
@@ -310,7 +310,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
         }
     }, [createSnapshot, currentProject]);
 
-    const optimisticUpdateSubTask = useCallback((issueId: string, subtaskId: string, updates: Partial<Issue['subTasks']>) => {
+    const optimisticUpdateSubTask = useCallback((issueId: string, subtaskId: string, updates: Partial<SubTask>) => {
         createSnapshot();
         setIssues((prev) =>
             prev.map((issue) =>
@@ -459,16 +459,4 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
     };
 
     return <ProjectContext.Provider value={value}>{children}</ProjectContext.Provider>;
-};
-
-// ============================================================================
-// CUSTOM HOOK
-// ============================================================================
-
-export const useProjectContext = () => {
-    const context = useContext(ProjectContext);
-    if (context === undefined) {
-        throw new Error('useProjectContext must be used within a ProjectProvider');
-    }
-    return context;
 };
