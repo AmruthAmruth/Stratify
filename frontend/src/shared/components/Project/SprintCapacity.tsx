@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { getSprintCapacity } from "@/services/projects";
+import ForecastAllocationGraph from "./ForecastAllocationGraph";
 
 interface EmployeeCapacity {
     employeeId: string;
@@ -8,7 +9,10 @@ interface EmployeeCapacity {
     totalHours: number;
     leaveHours: number;
     availableHours: number;
+    assignedHours: number;
+    remainingHours: number;
     utilizationPercent: number;
+    workloadPercent: number;
     leaves?: Array<{
         startDate: Date;
         endDate: Date;
@@ -87,7 +91,7 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
         return null;
     }
 
-    const { teamSummary, employees } = capacity;
+    const { teamSummary, employees, sprintName = "Sprint" } = capacity;
     const percent = teamSummary.availabilityPercent;
 
     // Determine color based on capacity
@@ -145,57 +149,103 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
                 </div>
             </div>
 
+            {/* Forecast Allocation Graph */}
+            <div className="mb-6">
+                <ForecastAllocationGraph
+                    employees={employees}
+                    sprintName={sprintName}
+                />
+            </div>
+
             {/* Employee List */}
             {employees.length > 0 ? (
                 <div className="space-y-3">
                     <p className="text-sm font-semibold text-text/80 mb-2">
                         Team Members:
                     </p>
-                    {employees.map((employee) => (
-                        <div
-                            key={employee.employeeId}
-                            className="bg-surface rounded-lg border border-accent/50 p-3 hover:border-primary/30 transition-colors duration-200"
-                        >
-                            <div className="flex items-center justify-between">
-                                <div className="flex-1">
-                                    <p className="font-semibold text-text">
-                                        👤 {employee.name}
-                                    </p>
-                                    <p className="text-xs text-text/60">
-                                        {employee.position}
-                                    </p>
-                                </div>
-                                <div className="text-right">
-                                    <p className="text-sm font-semibold text-text">
-                                        {employee.availableHours}/{employee.totalHours}h
-                                    </p>
-                                    <p
-                                        className={`text-xs font-bold ${getEmployeeColor(
-                                            employee.utilizationPercent
-                                        )}`}
-                                    >
-                                        {Math.round(employee.utilizationPercent)}%
-                                    </p>
-                                </div>
-                            </div>
+                    {employees.map((employee) => {
+                        const workloadColor =
+                            employee.workloadPercent > 100 ? "text-red-700" :
+                                employee.workloadPercent > 80 ? "text-yellow-700" :
+                                    "text-primaryHover";
 
-                            {/* Show leave details if employee has leaves */}
-                            {employee.leaves && employee.leaves.length > 0 && (
-                                <div className="mt-2 pt-2 border-t border-accent/30">
-                                    <p className="text-xs text-text/70 mb-1">
-                                        🏖️ On leave ({employee.leaveHours}h):
-                                    </p>
-                                    {employee.leaves.map((leave, idx) => (
-                                        <p key={idx} className="text-xs text-text/60 ml-4">
-                                            • {new Date(leave.startDate).toLocaleDateString()} -{" "}
-                                            {new Date(leave.endDate).toLocaleDateString()} (
-                                            {leave.type})
+                        const progressColor =
+                            employee.workloadPercent > 100 ? "bg-red-500" :
+                                employee.workloadPercent > 80 ? "bg-yellow-500" :
+                                    "bg-primary";
+
+                        return (
+                            <div
+                                key={employee.employeeId}
+                                className="bg-surface rounded-lg border border-accent/50 p-4 hover:border-primary/30 transition-colors duration-200"
+                            >
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="flex-1">
+                                        <p className="font-semibold text-text">
+                                            👤 {employee.name}
                                         </p>
-                                    ))}
+                                        <p className="text-xs text-text/60">
+                                            {employee.position}
+                                        </p>
+                                    </div>
+                                    <div className="text-right">
+                                        <p className={`text-sm font-bold ${workloadColor}`}>
+                                            {Math.round(employee.workloadPercent)}% Loaded
+                                        </p>
+                                        <p className="text-xs text-text/60">
+                                            {Math.round(employee.utilizationPercent)}% Available
+                                        </p>
+                                    </div>
                                 </div>
-                            )}
-                        </div>
-                    ))}
+
+                                {/* Workload Progress Bar */}
+                                <div className="mb-2">
+                                    <div className="flex justify-between text-xs text-text/70 mb-1">
+                                        <span>Workload</span>
+                                        <span>{employee.assignedHours}h / {employee.availableHours}h</span>
+                                    </div>
+                                    <div className="w-full bg-accent/30 rounded-full h-2">
+                                        <div
+                                            className={`${progressColor} h-2 rounded-full transition-all duration-300`}
+                                            style={{ width: `${Math.min(employee.workloadPercent, 100)}%` }}
+                                        ></div>
+                                    </div>
+                                </div>
+
+                                {/* Hours Breakdown */}
+                                <div className="grid grid-cols-3 gap-2 text-xs">
+                                    <div className="bg-bg/50 rounded p-2">
+                                        <p className="text-text/60">Assigned</p>
+                                        <p className="font-semibold text-text">{employee.assignedHours}h</p>
+                                    </div>
+                                    <div className="bg-bg/50 rounded p-2">
+                                        <p className="text-text/60">Remaining</p>
+                                        <p className="font-semibold text-primary">{employee.remainingHours}h</p>
+                                    </div>
+                                    <div className="bg-bg/50 rounded p-2">
+                                        <p className="text-text/60">Leave</p>
+                                        <p className="font-semibold text-red-600">{employee.leaveHours}h</p>
+                                    </div>
+                                </div>
+
+                                {/* Show leave details if employee has leaves */}
+                                {employee.leaves && employee.leaves.length > 0 && (
+                                    <div className="mt-3 pt-3 border-t border-accent/30">
+                                        <p className="text-xs text-text/70 mb-1">
+                                            🏖️ On leave ({employee.leaveHours}h):
+                                        </p>
+                                        {employee.leaves.map((leave, idx) => (
+                                            <p key={idx} className="text-xs text-text/60 ml-4">
+                                                • {new Date(leave.startDate).toLocaleDateString()} -{" "}
+                                                {new Date(leave.endDate).toLocaleDateString()} (
+                                                {leave.type})
+                                            </p>
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        );
+                    })}
                 </div>
             ) : (
                 <p className="text-sm text-text/60 text-center py-4">

@@ -1,12 +1,12 @@
 export const Messages = {
-  
+
   LOGIN_SUCCESS: "Login successful",
   LOGIN_FAILED: "Invalid credentials",
   MISSING_FIELDS: "Required fields are missing",
   UNAUTHORIZED_ACCESS: "You are not authorized",
   SERVER_ERROR: "Something went wrong on the server",
 
-  
+
   REGISTER_SUCCESS: "Company Registration Successful",
   REGISTER_FAILED: "Company Registration Failed",
   EMAIL_ALREADY_EXISTS: "Email is already registered",
@@ -22,7 +22,7 @@ export const Messages = {
   PHONE_ALREADY_EXISTS: "Phone number is already exist",
   PASSWORD_RESET_SUCCESS: "Password Reset Successfull",
 
-  
+
   TOKEN_EXPIRED: "Session expired. Please log in again",
   INVALID_TOKEN: "Invalid token",
   ACCESS_DENIED: "Access denied",
@@ -30,17 +30,17 @@ export const Messages = {
   ACCOUNT_PENDING_APPROVAL: "Your account is still pending approval by Stratify Team.",
   SUBSCRIPTION_INACTIVE: "Your subscription is not active. Please subscribe to continue.",
 
-  
+
   OTP_SENT: "OTP has been sent to email successfully",
   OTP_INVALID: "Invalid OTP",
   OTP_EXPIRED: "OTP has expired",
   OTP_VERIFIED: "OTP verified successfully",
   OTP_RESENT: "A new OTP has been resent successfully.",
 
-  
+
   NO_REFREASHTOKEN: "No refresh token provided",
 
-  
+
   PROJECT_CREATED: "Project created successfully",
   PROJECT_UPDATED: "Updated the project successfully!",
   PROJECT_DELETED: "Project Deleted Successfully!",
@@ -107,20 +107,21 @@ export const Messages = {
   EMPLOYEE_NOT_IN_PROJECT: "Employee is not part of this project",
   EMPLOYEE_ALREADY_IN_PROJECT: "Employee is already part of the project",
   NO_TEAM_MEMBERS_IN_PROJECT: "No team members assigned to this project",
+  EMPLOYEE_CAPACITY_EXCEEDED: "Employee capacity exceeded for this sprint",
 
-  
+
   MEETING_CREATED: "Meeting Created Successfully!",
   MEETING_CLOSED_SUCCESS: "Meeting Closed Successfully",
   TOKEN_GENERATED: "Token Generated Successfully",
 
-  
+
   SUBSCRIPTION_PURCHASED: "Subscription purchased successfully",
   PAYMENT_VERIFIED: "Payment verified & subscription activated",
   PLAN_CREATED: "Plan created successfully",
   PLAN_UPDATED: "Updated Plan Successfully",
   PLAN_DELETED: "Deleted Plan Successfully",
 
-  
+
   NOTIFICATION_CREATED: "Notification Created Successfully!",
   ALL_NOTIFICATIONS: "All Notification",
   NOTIFICATION_STATUS_UPDATED: "Notification Status updated",
@@ -128,7 +129,7 @@ export const Messages = {
   ALL_NOTIFICATIONS_DELETED: "Delete all notifications",
 
 
-  
+
   USER_NOT_AUTHENTICATED: "User not authenticated",
   RECEIVER_ID_AND_MESSAGE_REQUIRED: "receiverId and message are required",
   MESSAGE_SENT: "Message sent successfully",
@@ -137,7 +138,7 @@ export const Messages = {
   FAILED_TO_MARK_AS_READ: "Failed to mark messages as read",
   FAILED_TO_GET_UNREAD_COUNTS: "Failed to get unread counts",
 
-  
+
   GROUP_NAME_AND_MEMBERS_REQUIRED: "name and members array are required",
   GROUP_CREATED: "Group created successfully",
   GROUP_NOT_FOUND: "Group not found",
@@ -146,7 +147,7 @@ export const Messages = {
   MEMBER_ADDED_TO_GROUP: "Member added to group",
   MEMBER_REMOVED_FROM_GROUP: "Member removed from group",
 
-  
+
   DEPARTMENT_CREATED: "Department created successfully",
   DEPARTMENT_EXISTS: "Department already exists",
   MANAGER_ALREADY_ASSIGNED: "Manager is already assigned to another department",
@@ -154,7 +155,7 @@ export const Messages = {
   DEPARTMENT_HAS_MANAGER: "Department Already Have a Manager",
   DEPARTMENT_NOT_BELONG_TO_COMPANY: "Department does not belong to creator company",
 
-  
+
   MANAGER_CREATED: "Manager created successfully",
   EMPLOYEE_CREATED: "Employee created successfully",
   EMPLOYEE_NOT_FOUND: "Employee not found",
@@ -167,24 +168,24 @@ export const Messages = {
   ASSIGNED_USER_NOT_EXIST: "Assigned user does not exist",
   ASSIGNED_USER_NOT_IN_COMPANY: "Assigned user does not belong to the same company as the user story",
 
-  
+
   LEAVE_CREATED: "Leave created successfully",
   LEAVE_NOT_FOUND: "Leave not found",
   INVALID_LEAVE_STATUS: "Invalid status. Must be 'Approved' or 'Rejected'.",
   REASON_REQUIRED_FOR_REJECTION: "Reason is required when rejecting a leave",
 
-  
+
   COMPANY_APPROVED: "Company approved successfully",
   COMPANY_UNAPPROVED: "Company unapproved successfully",
   COMPNAY_NOT_FOUND: "Company not found",
 
-  
+
   INTERNAL_SERVER_ERROR: "Internal Server Error",
   FORBIDDEN: "Forbidden",
   REGISTRATION_DATA_EXPIRED: "Registration data expired",
   PASSWORD_MISSING: "Password is missing in temporary registration data",
 
-  
+
   PROFILE_UPDATE_SUCCESS: "Profile updated successfully",
   PROFILE_UPDATE_FAILED: "Profile update failed",
   PASSWORD_CHANGE_SUCCESS: "Password changed successfully",

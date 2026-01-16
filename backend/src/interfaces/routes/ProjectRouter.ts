@@ -183,4 +183,16 @@ projectRouter.get(
   asyncHandler(controller.getIssuesForManager)
 );
 
+projectRouter.post(
+  "/validate-capacity",
+  authMiddleware(["company", "manager"]),
+  asyncHandler(controller.validateEmployeeCapacity)
+);
+
+projectRouter.get(
+  "/sprints/:sprintId/capacity",
+  authMiddleware(["company", "manager", "employee"]),
+  asyncHandler(controller.getSprintCapacity)
+);
+
 export default projectRouter;

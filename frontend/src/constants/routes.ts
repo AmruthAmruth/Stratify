@@ -75,6 +75,7 @@ export const PROJECT_ROUTES = {
   UPDATE_ISSUE: "/project/update-issue",
   DELETE_ISSUE: (issueId: string) => `/project/delete-issue/${issueId}`,
   REMOVE_EMPLOYEE_TO_PROJECT: "/project/remove-emp",
+  VALIDATE_CAPACITY: "/project/validate-capacity",
 };
 
 // ===================== LEAVE ROUTES =====================

@@ -29,6 +29,8 @@ import { IUpdateSprintUseCase } from "../../application/interfaces/project/IUpda
 import { IDeleteSprintUseCase } from "../../application/interfaces/project/IDeleteSprintUseCase";
 import { IUpdateSubTaskUseCase } from "../../application/interfaces/project/IUpdateSubTaskUseCase";
 import { IDeleteSubTaskUseCase } from "../../application/interfaces/project/IDeleteSubTaskUseCase";
+import { IValidateEmployeeCapacityUseCase } from "../../application/interfaces/project/IValidateEmployeeCapacityUseCase";
+import { ICalculateSprintCapacityUseCase } from "../../application/interfaces/project/ICalculateSprintCapacityUseCase";
 
 export class ProjectController {
   constructor(
@@ -58,7 +60,9 @@ export class ProjectController {
     private _updateSubTaskUseCase: IUpdateSubTaskUseCase,
     private _deleteSubTaskUseCase: IDeleteSubTaskUseCase,
     private _getProjectsForEmployeeUseCase: IGetProjectsForEmployeeUseCase,
-    private _getIssuesForManagerUseCase: IGetIssuesForManagerUseCase
+    private _getIssuesForManagerUseCase: IGetIssuesForManagerUseCase,
+    private _validateEmployeeCapacityUseCase: IValidateEmployeeCapacityUseCase,
+    private _calculateSprintCapacityUseCase: ICalculateSprintCapacityUseCase
   ) { }
 
   createProject = async (req: AuthRequest, res: Response): Promise<void> => {
@@ -292,6 +296,17 @@ export class ProjectController {
   getIssuesForManager = async (req: AuthRequest, res: Response): Promise<void> => {
     const managerId = req.userId;
     const response = await this._getIssuesForManagerUseCase.execute(managerId!);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  validateEmployeeCapacity = async (req: Request, res: Response): Promise<void> => {
+    const response = await this._validateEmployeeCapacityUseCase.execute(req.body);
+    res.status(StatusCodes.OK).json(response);
+  };
+
+  getSprintCapacity = async (req: Request, res: Response): Promise<void> => {
+    const { sprintId } = req.params;
+    const response = await this._calculateSprintCapacityUseCase.execute(sprintId);
     res.status(StatusCodes.OK).json(response);
   };
 

@@ -117,6 +117,18 @@ export const removeEmployeeInProject = (data: Record<string, unknown>): Promise<
 // Alias for updateTask - used in Task.tsx
 export const updateSubTask = updateTask;
 
+// Capacity validation API
+export const validateEmployeeCapacity = (data: Record<string, unknown>): Promise<{
+  isValid: boolean;
+  employeeName: string;
+  totalAvailability: number;
+  currentWorkload: number;
+  additionalSize: number;
+  remainingCapacity: number;
+  errorMessage?: string;
+}> =>
+  handleRequest(api.post(PROJECT_ROUTES.VALIDATE_CAPACITY, data));
+
 // Sprint capacity API
 export const getSprintCapacity = (sprintId: string): Promise<unknown> =>
-  handleRequest(api.get(`/projects/sprints/${sprintId}/capacity`));
+  handleRequest(api.get(`/project/sprints/${sprintId}/capacity`));

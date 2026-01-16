@@ -38,6 +38,9 @@ import { DeleteSprintUseCase } from "../application/use-cases/project/DeleteSpri
 import { UpdateSubTaskUseCase } from "../application/use-cases/project/UpdateSubTaskUseCase";
 import { DeleteSubTaskUseCase } from "../application/use-cases/project/DeleteSubTaskUseCase";
 import { NotificationRepository } from "../infrastructure/repositories/NotificationRepository";
+import { ValidateEmployeeCapacityUseCase } from "../application/use-cases/project/ValidateEmployeeCapacityUseCase";
+import { CalculateSprintCapacityUseCase } from "../application/use-cases/project/CalculateSprintCapacityUseCase";
+import { LeaveRepository } from "../infrastructure/repositories/LeaveRepository";
 
 
 export const projectDI = () => {
@@ -53,6 +56,7 @@ export const projectDI = () => {
   const subTaskRepo = new SubTaskRepository();
   const sprintRepo = new SprintRepository();
   const notificationRepo = new NotificationRepository();
+  const leaveRepo = new LeaveRepository();
 
   const createProjectUseCase = new CreateProjectUseCase(
     projectRepo,
@@ -101,9 +105,26 @@ export const projectDI = () => {
   );
   const createSubTaskUseCase = new CreateSubTaskUseCase(issueRepo, subTaskRepo);
   const createSprentUseCase = new CreateSprintUseCase(projectRepo, sprintRepo);
+
+  const validateEmployeeCapacityUseCase = new ValidateEmployeeCapacityUseCase(
+    sprintRepo,
+    employeeRepo,
+    leaveRepo,
+    issueRepo
+  );
+
+  const calculateSprintCapacityUseCase = new CalculateSprintCapacityUseCase(
+    sprintRepo,
+    projectRepo,
+    leaveRepo,
+    employeeRepo,
+    issueRepo
+  );
+
   const assineIssueToSprintUseCase = new AssignIssueToSprintUseCase(
     issueRepo,
     sprintRepo,
+    validateEmployeeCapacityUseCase
   );
   const projectLevelEmployeeAllocationUseCase =
     new ProjectLevelEmployeeAllocationUseCase(managerRepo, employeeRepo);
@@ -156,7 +177,12 @@ export const projectDI = () => {
     notificationRepo
   )
 
-  const updateIssueUseCase = new UpdateIssueUseCase(issueRepo)
+  const updateIssueUseCase = new UpdateIssueUseCase(
+    issueRepo,
+    employeeRepo,
+    projectRepo,
+    validateEmployeeCapacityUseCase
+  )
 
   const deleteIssueUseCase = new DeleteIssueUseCase(issueRepo)
 
@@ -198,6 +224,8 @@ export const projectDI = () => {
     updateSubTaskUseCase,
     deleteSubTaskUseCase,
     getProjectsForEmployeeUseCase,
-    getIssuesForManagerUseCase
+    getIssuesForManagerUseCase,
+    validateEmployeeCapacityUseCase,
+    calculateSprintCapacityUseCase
   );
 };

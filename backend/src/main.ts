@@ -158,7 +158,7 @@ app.use(errorMiddleware);
 // ----------------------------------------------------
 // HTTP + Socket
 // ----------------------------------------------------
-const server = http.createServer(app);
+const server = http.createServer(app); 
 const io = initSocket(server);
 SocketService.setIO(io);
 

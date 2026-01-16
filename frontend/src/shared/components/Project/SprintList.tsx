@@ -3,6 +3,7 @@ import { useDroppable } from "@dnd-kit/core";
 import { SprintDTO, UserRole, EmployeeDTO } from "./types";
 import IssueList from "./IssueList";
 import ReusableChart from "../Chart/ReusableChart";
+import SprintCapacity from "./SprintCapacity";
 
 interface Props {
   sprints: SprintDTO[];
@@ -213,6 +214,11 @@ const SprintItem: React.FC<SprintItemProps> = ({ sprint, role, employees, isExpa
                   backgroundColors={["#3b3b3b"]}
                 />
               </div>
+            </div>
+
+            {/* Sprint Capacity & Forecast Allocation */}
+            <div className="mt-8 mb-8">
+              <SprintCapacity sprintId={sprint.id} />
             </div>
 
             {/* Issues Section */}

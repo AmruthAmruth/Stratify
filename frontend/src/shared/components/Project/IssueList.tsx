@@ -1,7 +1,7 @@
 // components/project/IssueList.tsx
 import React, { useState, useRef, useCallback, useEffect } from "react";
 import { IssueDTO, UserRole, EmployeeDTO } from "./types";
-import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask } from "@/services/projects";
+import { createSubTask, deleteIssue, updateIssue, updateTask, deleteSubTask, validateEmployeeCapacity } from "@/services/projects";
 import { useProjectContext } from "@/contexts/useProjectContext";
 import { createSubTaskFields, updateIssueFields, updateSubTaskFields } from "../Forms/formFields";
 import { createSubTaskSchema, updateIssueSchema, updateSubTaskSchema } from "@/shared/utils/validations";
@@ -145,6 +145,24 @@ const IssueList: React.FC<Props> = ({ issues: propIssues, role, onRefresh, emplo
       }
 
       try {
+        // Check if assignedTo is changing and issue has a sprintId
+        const isChangingAssignment = values.assignedTo !== undefined && values.assignedTo !== currentIssue.assignedTo;
+
+        if (isChangingAssignment && currentIssue.sprintId && values.assignedTo) {
+          // Validate capacity before updating
+          const validationResult = await validateEmployeeCapacity({
+            employeeId: values.assignedTo as string,
+            sprintId: currentIssue.sprintId,
+            additionalSize: (values.size as number) || currentIssue.size,
+            excludeIssueId: currentIssue.id,
+          });
+
+          if (!validationResult.isValid) {
+            enqueueSnackbar(validationResult.errorMessage || "Employee capacity exceeded", { variant: "error" });
+            return;
+          }
+        }
+
         const payload = { ...values, id: currentIssue.id };
         await updateIssue(payload);
 
@@ -158,7 +176,7 @@ const IssueList: React.FC<Props> = ({ issues: propIssues, role, onRefresh, emplo
         closeUpdateIssueModal();
       } catch (err: unknown) {
         const error = err as { message?: string };
-        enqueueSnackbar(error?.message || "Failed to create issue", { variant: "error" });
+        enqueueSnackbar(error?.message || "Failed to update issue", { variant: "error" });
       }
     },
     [currentIssue, closeUpdateIssueModal, onRefresh]

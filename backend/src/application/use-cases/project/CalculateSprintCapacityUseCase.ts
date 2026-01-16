@@ -2,6 +2,7 @@ import { ISprintRepository } from "../../../domain/repositories/ISprintRepositor
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { ILeaveRepository } from "../../../domain/repositories/ILeaveRepository";
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
+import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
@@ -19,17 +20,18 @@ export class CalculateSprintCapacityUseCase
         private _sprintRepo: ISprintRepository,
         private _projectRepo: IProjectRepository,
         private _leaveRepo: ILeaveRepository,
-        private _employeeRepo: IEmployeeRepository
+        private _employeeRepo: IEmployeeRepository,
+        private _issueRepo: IIssueRepository
     ) { }
 
     async execute(sprintId: string): Promise<SprintCapacityDTO> {
-        
+
         const sprint = await this._sprintRepo.findById(sprintId);
         if (!sprint) {
             throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        
+
         const project = await this._projectRepo.findById(sprint.projectId);
         if (!project) {
             throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
@@ -37,32 +39,35 @@ export class CalculateSprintCapacityUseCase
 
         const teamMemberIds = project.teamMemberIds || [];
         if (teamMemberIds.length === 0) {
-            
+
             return this._createEmptyCapacity(sprint as Sprint & { id: string });
         }
 
-        
+
         const totalWorkingDays = DateUtils.calculateWorkingDays(
             sprint.startDate,
             sprint.endDate
         );
 
-        
+
         const allLeaves = await this._leaveRepo.findApprovedLeavesByEmployeesInRange(
             teamMemberIds,
             sprint.startDate,
             sprint.endDate
         );
 
-        
+
         const employees = await Promise.all(
             teamMemberIds.map((id) => this._employeeRepo.findById(id))
         );
 
-        
+
         const validEmployees = employees.filter((emp) => emp !== null);
 
-        
+        // Fetch all issues in this sprint to calculate assigned workload
+        const sprintIssues = await this._issueRepo.findBySprintId(sprintId);
+
+
         const employeeCapacities: EmployeeCapacityDTO[] = validEmployees.map(
             (employee) => {
                 const employeeLeaves = allLeaves.filter(
@@ -81,6 +86,24 @@ export class CalculateSprintCapacityUseCase
                 const totalHours = totalWorkingDays * 8;
                 const leaveHours = leaveDays * 8;
                 const availableHours = totalHours - leaveHours;
+
+                // Calculate assigned workload for this employee
+                const assignedIssues = sprintIssues.filter(
+                    (issue) => issue.assignedTo === employee!.id
+                );
+                const assignedHours = assignedIssues.reduce(
+                    (sum, issue) => sum + (issue.size * 8),
+                    0
+                );
+
+                // Calculate remaining capacity
+                const remainingHours = availableHours - assignedHours;
+
+                // Calculate workload percentage
+                const workloadPercent = availableHours > 0
+                    ? (assignedHours / availableHours) * 100
+                    : 0;
+
                 const utilizationPercent =
                     totalHours > 0 ? (availableHours / totalHours) * 100 : 0;
 
@@ -91,7 +114,10 @@ export class CalculateSprintCapacityUseCase
                     totalHours,
                     leaveHours,
                     availableHours,
-                    utilizationPercent: Math.round(utilizationPercent * 100) / 100, 
+                    assignedHours,
+                    remainingHours,
+                    utilizationPercent: Math.round(utilizationPercent * 100) / 100,
+                    workloadPercent: Math.round(workloadPercent * 100) / 100,
                     leaves: employeeLeaves.map((leave) => ({
                         startDate: leave.startDate,
                         endDate: leave.endDate,
@@ -101,7 +127,7 @@ export class CalculateSprintCapacityUseCase
             }
         );
 
-        
+
         const totalCapacity = employeeCapacities.reduce(
             (sum, emp) => sum + emp.totalHours,
             0
@@ -117,7 +143,7 @@ export class CalculateSprintCapacityUseCase
         const availabilityPercent =
             totalCapacity > 0 ? (availableCapacity / totalCapacity) * 100 : 0;
 
-        
+
         return {
             sprintId: sprint.id!,
             sprintName: sprint.name,
@@ -134,7 +160,7 @@ export class CalculateSprintCapacityUseCase
         };
     }
 
-    
+
 
 
     private _createEmptyCapacity(sprint: Sprint & { id: string }): SprintCapacityDTO {

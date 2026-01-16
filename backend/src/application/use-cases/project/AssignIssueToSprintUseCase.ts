@@ -5,11 +5,13 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { Messages } from "../../../shared/constants/messages";
 import { IAssignIssueToSprintUseCase } from "../../interfaces/project/IAssignIssueToSprintUseCase";
+import { IValidateEmployeeCapacityUseCase } from "../../interfaces/project/IValidateEmployeeCapacityUseCase";
 
 export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
   constructor(
     private _issueRepo: IssueRepository,
     private _sprintRepo: SprintRepository,
+    private _validateCapacityUseCase: IValidateEmployeeCapacityUseCase
   ) { }
   async execute(issueId: string, sprintId: string): Promise<Issue> {
     const issue = await this._issueRepo.findById(issueId);
@@ -17,6 +19,23 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
 
     const sprint = await this._sprintRepo.findById(sprintId);
     if (!sprint) throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
+
+    // If issue has an assigned employee, validate capacity
+    if (issue.assignedTo) {
+      const validationResult = await this._validateCapacityUseCase.execute({
+        employeeId: issue.assignedTo,
+        sprintId: sprintId,
+        additionalSize: issue.size,
+        excludeIssueId: issue.id,
+      });
+
+      if (!validationResult.isValid) {
+        throw new AppError(
+          validationResult.errorMessage || Messages.EMPLOYEE_CAPACITY_EXCEEDED,
+          StatusCodes.BAD_REQUEST
+        );
+      }
+    }
 
     // Allow assigning issues to sprints without employee assignment
     // Employees can be assigned later by the manager
