@@ -1,13 +1,11 @@
-name: Frontend CI (Dev)
+name: Frontend CI + CD (Dev)
 
 on:
   push:
     branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
 
 jobs:
-  frontend-ci:
+  frontend:
     runs-on: ubuntu-latest
 
     steps:
@@ -19,7 +17,7 @@ jobs:
         with:
           node-version: 18
 
-      - name: Install frontend dependencies
+      - name: Install dependencies
         run: |
           cd frontend
           npm install
@@ -29,7 +27,21 @@ jobs:
           cd frontend
           npm run lint
 
-      - name: Build frontend (TypeScript + Vite)
+      - name: Build frontend
         run: |
           cd frontend
           npm run build
+
+      - name: Deploy Frontend to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/Stratify
+            git pull origin dev
+            cd frontend
+            npm install
+            npm run build
+            sudo systemctl reload nginx

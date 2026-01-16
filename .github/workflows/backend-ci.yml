@@ -1,41 +1,47 @@
-name: Backend CI (Dev Branch)
+name: Backend CI + CD (Dev)
 
-# Trigger CI on push or pull request to dev branch
 on:
   push:
     branches: [ dev ]
-  pull_request:
-    branches: [ dev ]
 
 jobs:
-  backend-ci:
+  backend:
     runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Get your code
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: 18
 
-      # Step 3: Install dependencies
       - name: Install dependencies
         run: |
           cd backend
           npm install
 
-      # Step 4: Run ESLint
       - name: Run ESLint
         run: |
           cd backend
           npm run lint
 
-      # Step 5: Optional TypeScript type check
       - name: TypeScript check
         run: |
           cd backend
           npx tsc --noEmit
+
+      - name: Deploy Backend to EC2
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.EC2_HOST }}
+          username: ${{ secrets.EC2_USER }}
+          key: ${{ secrets.EC2_SSH_KEY }}
+          script: |
+            cd /var/www/Stratify
+            git pull origin dev
+            cd backend
+            npm install
+            npm run build
+            pm2 restart stratify-backend
