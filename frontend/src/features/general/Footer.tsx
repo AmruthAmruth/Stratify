@@ -15,7 +15,7 @@ export default function Footer() {
     { icon: Linkedin, href: "#", label: "LinkedIn" },
     { icon: Instagram, href: "#", label: "Instagram" },
   ]
-
+ 
   return (
     <footer className="relative z-40 bg-gradient-to-br from-bg via-accent/10 to-bg border-t-4 border-primary/30 mt-16 sm:mt-20 lg:mt-24">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 sm:py-16">

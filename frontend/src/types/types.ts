@@ -108,18 +108,18 @@ export interface Leave {
     employeeId: string;
     employeeName?: string;
     departmentId?: string;
-    leaveType: string;
+    type: string;
     startDate: string;
     endDate: string;
     reason: string;
     status: 'pending' | 'approved' | 'rejected';
-    rejectionReason?: string;
+    rejectedReason?: string;
     createdAt?: string;
     updatedAt?: string;
 }
 
 export interface LeaveFormData {
-    leaveType: string;
+    type: string;
     startDate: string;
     endDate: string;
     reason: string;

@@ -21,6 +21,10 @@ leaveRouter.get(
   authMiddleware(["manager"]),
   asyncHandler(controller.getDepartmentLeaves),
 );
-leaveRouter.post("/leave-status", asyncHandler(controller.approveLeave));
+leaveRouter.post(
+  "/leave-status",
+  authMiddleware(["manager"]),
+  asyncHandler(controller.approveLeave),
+);
 
 export default leaveRouter;

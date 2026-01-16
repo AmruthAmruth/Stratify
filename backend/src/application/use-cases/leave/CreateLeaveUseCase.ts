@@ -12,6 +12,7 @@ import { INotificationRepository } from "../../../domain/repositories/INotificat
 import { Messages } from "../../../shared/constants/messages";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
+import { DateUtils } from "../../../shared/utils/DateUtils";
 
 export class CreateLeaveUseCase implements ICreateLeaveUseCase {
   constructor(
@@ -50,8 +51,7 @@ export class CreateLeaveUseCase implements ICreateLeaveUseCase {
 
     const start = new Date(leaveDTO.startDate);
     const end = new Date(leaveDTO.endDate);
-    const days =
-      Math.ceil((end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)) + 1;
+    const days = DateUtils.calculateWorkingDays(start, end);
 
     const leaveMonth = start.getMonth();
 

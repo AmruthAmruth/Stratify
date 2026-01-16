@@ -44,12 +44,13 @@ const Leave = () => {
   const paginatedData = leaveRecords
     .slice((currentPage - 1) * itemsPerPage, currentPage * itemsPerPage)
     .map((record) => ({
-      id: record.employeeId + record.startDate, // unique id
-      type: record.leaveType,
+      id: record.id || record.employeeId + record.startDate, // use id if available
+      type: record.type,
       startDate: new Date(record.startDate).toLocaleDateString(),
       endDate: new Date(record.endDate).toLocaleDateString(),
       status: record.status,
       reason: record.reason,
+      rejectedReason: record.rejectedReason,
     }));
 
   const totalPages = Math.ceil(leaveRecords.length / itemsPerPage);
@@ -116,6 +117,7 @@ const Leave = () => {
           { key: "endDate", label: "End Date" },
           { key: "status", label: "Status" },
           { key: "reason", label: "Reason" },
+          { key: "rejectedReason", label: "Rejected Reason" },
         ]}
         data={paginatedData}
         currentPage={currentPage}

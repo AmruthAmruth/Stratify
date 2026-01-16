@@ -15,7 +15,7 @@ const DepartmentLeaves = () => {
 
   const [leaveCounts, setLeaveCounts] = useState({
     totalLeave: 0,
-    peadingLeave: 0,
+    pendingLeave: 0,
     approvedLeave: 0,
     activeMembers: 0,
   });
@@ -42,8 +42,8 @@ const DepartmentLeaves = () => {
         setLeaves(leavesList);
         setLeaveCounts({
           totalLeave: leavesList.length,
-          peadingLeave: leavesList.filter((l: Leave) => l.status === "pending").length,
-          approvedLeave: leavesList.filter((l: Leave) => l.status === "approved").length,
+          pendingLeave: leavesList.filter((l: Leave) => l.status.toLowerCase() === "pending").length,
+          approvedLeave: leavesList.filter((l: Leave) => l.status.toLowerCase() === "approved").length,
           activeMembers: 0,
         });
       } catch (error) {
@@ -133,7 +133,7 @@ const DepartmentLeaves = () => {
       setLeaves((prev) =>
         prev.map((l) =>
           (l.leaveId || l.id) === (selectedLeave.leaveId || selectedLeave.id)
-            ? { ...l, status: "rejected" as const, rejectedReason: formData.reason }
+            ? { ...l, status: "rejected" as const, rejectedReason: formData.reason as string }
             : l
         )
       );
@@ -173,9 +173,9 @@ const DepartmentLeaves = () => {
         />
         <DashboardCard
           title="Pending Leaves"
-          value={leaveCounts.peadingLeave}
+          value={leaveCounts.pendingLeave}
           subtitle="Awaiting approval"
-          trend={leaveCounts.peadingLeave > 0 ? "up" : "down"}
+          trend={leaveCounts.pendingLeave > 0 ? "up" : "down"}
         />
         <DashboardCard
           title="Approved Leaves"

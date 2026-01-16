@@ -103,7 +103,7 @@ export class LeaveRepository implements ILeaveRepository {
       employeeId: new Types.ObjectId(employeeId),
       month,
       type,
-      status: { $in: ["Approved"] },
+      status: { $in: ["Approved", "Pending"] },
     }).exec();
 
     return leaves.reduce((sum, leave) => {
@@ -193,15 +193,6 @@ export class LeaveRepository implements ILeaveRepository {
     return LeaveMapper.toEntities(docs);
   }
 
-
-async findLeaveOfEmployee(employeeId:string,startDate:Date,endDate:Date):Promise<boolean>{
-  const leave = await LeaveModel.find({employeeId,$or:[{startDate:{$gte:startDate},endDate:{$lte:endDate}}]})
-    if(leave){
-      return true
-    }else{
-      return false;
-    }
-}
 
 
 

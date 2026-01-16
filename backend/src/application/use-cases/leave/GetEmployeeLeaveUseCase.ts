@@ -8,7 +8,7 @@ import {
 import { IGetEmployeeLeaveUseCase } from "../../interfaces/leave/IGetEmployeeLeaveUseCase";
 
 export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase {
-  constructor(private _leaveRepo: ILeaveRepository) {}
+  constructor(private _leaveRepo: ILeaveRepository) { }
 
   async execute(employeeId: string): Promise<EmployeeLeaveDTO> {
     const now = new Date();
@@ -33,19 +33,19 @@ export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase {
 
         const clampedStart =
           start.getFullYear() === currentYear &&
-          start.getMonth() + 1 === currentMonth
+            start.getMonth() === currentMonth
             ? start
-            : new Date(currentYear, currentMonth - 1, 1);
+            : new Date(currentYear, currentMonth, 1);
         const clampedEnd =
           end.getFullYear() === currentYear &&
-          end.getMonth() + 1 === currentMonth
+            end.getMonth() === currentMonth
             ? end
-            : new Date(currentYear, currentMonth, 0);
+            : new Date(currentYear, currentMonth + 1, 0);
 
         const diffDays =
           Math.ceil(
             (clampedEnd.getTime() - clampedStart.getTime()) /
-              (1000 * 60 * 60 * 24),
+            (1000 * 60 * 60 * 24),
           ) + 1;
 
         if (
@@ -62,12 +62,14 @@ export class GetEmployeeLeaveUseCase implements IGetEmployeeLeaveUseCase {
     }
 
     const leaveDTOs: LeaveDTO[] = leaves.map((l) => ({
+      id: l.id,
       employeeId: l.employeeId,
       startDate: l.startDate,
       endDate: l.endDate,
       type: l.type,
       status: l.status,
       reason: l.reason,
+      rejectedReason: l.rejectedReason,
     }));
 
     return {

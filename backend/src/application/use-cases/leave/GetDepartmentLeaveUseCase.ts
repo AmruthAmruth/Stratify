@@ -48,12 +48,20 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
       await this._employeeRepo.findByDepartmentId(departmentId);
     const totalEmployees = employeesInDept.length;
 
+    // Filter for employees currently on leave (today)
+    const currentLeaves = leaves.filter(
+      (l) =>
+        l.status === "Approved" &&
+        new Date(l.startDate) <= today &&
+        new Date(l.endDate) >= today,
+    );
+
     const leaveCounts: LeaveCountsDTO = {
       totalLeave: leaves.length,
       peadingLeave: leaves.filter((l) => l.status === "Pending").length,
       approvedLeave: leaves.filter((l) => l.status === "Approved").length,
       activeMembers:
-        totalEmployees - new Set(leaves.map((l) => l.employeeId)).size,
+        totalEmployees - new Set(currentLeaves.map((l) => l.employeeId)).size,
     };
 
     const leavesDTO: LeaveDTO[] = leaves.map((l) => {
