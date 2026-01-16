@@ -279,7 +279,7 @@ const HomePage = () => {
                     <Star key={i} className="w-3 h-3 sm:w-4 sm:h-4 text-primary fill-current animate-pulse" style={{ animationDelay: `${i * 0.1}s` }} />
                   ))}
                 </div>
-                <span className="text-text font-bold text-sm sm:text-base">Complete COMPANY Management Platform..!</span>
+                <span className="text-text font-bold text-sm sm:text-base">Complete Company Management Platform..!</span>
                 <div className="w-2 h-2 bg-primary rounded-full animate-pulse shadow-lg shadow-primary/50"></div>
               </div>
 
@@ -293,7 +293,7 @@ const HomePage = () => {
                     className="block text-heading text-3xl sm:text-4xl md:text-5xl lg:text-6xl animate-slide-up"
                     style={{ animationDelay: "0.4s" }}
                   >
-                    In One Platform
+                    In One Platform.!
                   </span>
                 </h1>
 
