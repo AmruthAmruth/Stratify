@@ -103,12 +103,6 @@ const SprintCapacity: React.FC<Props> = ({ sprintId }) => {
 
     const colorScheme = getCapacityColor(percent);
 
-    const getEmployeeColor = (percentage: number) => {
-        if (percentage >= 90) return "text-primaryHover";
-        if (percentage >= 70) return "text-yellow-700";
-        return "text-red-700";
-    };
-
     return (
         <div
             className={`rounded-lg shadow-md border ${colorScheme.border} ${colorScheme.bg} p-6 mb-6 transition-all duration-300 hover:shadow-lg`}
