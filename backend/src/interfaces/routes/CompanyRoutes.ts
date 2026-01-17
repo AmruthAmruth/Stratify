@@ -41,7 +41,7 @@ companyRouter.post(
   asyncHandler(controller.unapproveCompany),
 );
 
-// Theme routes
+
 companyRouter.get(
   "/theme/:companyId",
   authMiddleware(["company", "manager", "employee"]),

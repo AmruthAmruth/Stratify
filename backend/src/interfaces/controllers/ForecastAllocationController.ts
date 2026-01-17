@@ -21,7 +21,7 @@ export class ForecastAllocationController {
         private _forecastRepo: IForecastAllocationRepository,
     ) { }
 
-    // Create forecast allocation
+    
     async create(req: Request, res: Response): Promise<void> {
         const { userId, role, companyId } = req as AuthenticatedRequest;
 
@@ -41,7 +41,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Update forecast allocation
+    
     async update(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
 
@@ -54,7 +54,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Get forecast allocations by project
+    
     async getByProject(req: Request, res: Response): Promise<void> {
         const { projectId } = req.params;
 
@@ -67,7 +67,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Get forecast allocations by employee
+    
     async getByEmployee(req: Request, res: Response): Promise<void> {
         const { employeeId } = req.params;
 
@@ -80,7 +80,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Get forecast allocation by ID
+    
     async getById(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
 
@@ -93,7 +93,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Calculate forecast vs actual
+    
     async calculateVsActual(req: Request, res: Response): Promise<void> {
         const { employeeId, projectId } = req.params;
         const { startDate, endDate } = req.query;
@@ -112,7 +112,7 @@ export class ForecastAllocationController {
         });
     }
 
-    // Delete forecast allocation
+    
     async delete(req: Request, res: Response): Promise<void> {
         const { id } = req.params;
 

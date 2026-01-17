@@ -22,7 +22,7 @@ export class CreateForecastAllocationUseCase
         createdByModel: "Company" | "Manager",
         companyId: string,
     ): Promise<ForecastAllocationResponseDTO> {
-        // Validate employee exists and belongs to company
+        
         const employee = await this._employeeRepo.findById(data.employeeId);
         if (!employee) {
             throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
@@ -34,7 +34,7 @@ export class CreateForecastAllocationUseCase
             );
         }
 
-        // Validate project exists and belongs to company
+        
         const project = await this._projectRepo.findById(data.projectId);
         if (!project) {
             throw new AppError("Project not found", StatusCodes.NOT_FOUND);
@@ -46,7 +46,7 @@ export class CreateForecastAllocationUseCase
             );
         }
 
-        // Validate hours per week
+        
         if (data.forecastHoursPerWeek <= 0 || data.forecastHoursPerWeek > 168) {
             throw new AppError(
                 "Forecast hours per week must be between 1 and 168",
@@ -54,11 +54,11 @@ export class CreateForecastAllocationUseCase
             );
         }
 
-        // Parse dates
+        
         const startDate = new Date(data.startDate);
         const endDate = data.endDate ? new Date(data.endDate) : null;
 
-        // Validate date range
+        
         if (endDate && endDate <= startDate) {
             throw new AppError(
                 "End date must be after start date",
@@ -66,7 +66,7 @@ export class CreateForecastAllocationUseCase
             );
         }
 
-        // Create forecast allocation
+        
         const forecast = new ForecastAllocation(
             undefined,
             data.employeeId,
@@ -83,7 +83,7 @@ export class CreateForecastAllocationUseCase
 
         const created = await this._forecastRepo.create(forecast);
 
-        // Calculate total forecast hours and weeks
+        
         const weeksInPeriod = endDate
             ? Math.ceil(
                 (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24 * 7),
@@ -93,7 +93,7 @@ export class CreateForecastAllocationUseCase
             ? weeksInPeriod * data.forecastHoursPerWeek
             : null;
 
-        // Return response DTO
+        
         return {
             id: created.id!,
             employeeId: created.employeeId,

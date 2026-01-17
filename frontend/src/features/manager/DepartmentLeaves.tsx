@@ -76,7 +76,7 @@ const DepartmentLeaves = () => {
   const handleApprove = (leave: Leave) => {
     const payload = {
       leaveId: leave.leaveId || leave.id,
-      status: "approved",
+      status: "Approved",
     };
 
     setConfirmDialog({
@@ -124,8 +124,8 @@ const DepartmentLeaves = () => {
     try {
       const payload = {
         leaveId: selectedLeave.leaveId || selectedLeave.id,
-        status: "rejected",
-        reason: formData.reason, // ✅ send as "reason"
+        status: "Rejected",
+        reason: formData.reason,
       };
 
       const res = await leaveStatusUpdate(payload);

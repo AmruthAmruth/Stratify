@@ -59,11 +59,11 @@ export class VerifyCompanyOTPUseCase {
 
     await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
 
-    // Cleanup temporary data
+    
     await this._tempRegRepo.delete(email);
     await this._otpRepo.deleteByEmail(email);
 
-    // No token generation - company must be approved by super admin before login
+    
     return;
   }
 }

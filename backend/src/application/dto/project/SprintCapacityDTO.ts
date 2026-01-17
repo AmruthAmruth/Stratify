@@ -5,10 +5,10 @@ export interface EmployeeCapacityDTO {
     totalHours: number;
     leaveHours: number;
     availableHours: number;
-    assignedHours: number; // Hours from assigned issues
-    remainingHours: number; // availableHours - assignedHours
+    assignedHours: number; 
+    remainingHours: number; 
     utilizationPercent: number;
-    workloadPercent: number; // (assignedHours / availableHours) * 100
+    workloadPercent: number; 
     leaves?: Array<{
         startDate: Date;
         endDate: Date;

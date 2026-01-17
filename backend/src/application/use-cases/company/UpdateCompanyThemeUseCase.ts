@@ -28,7 +28,7 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
     async execute(companyId: string, themeData: UpdateThemeDTO): Promise<CompanyTheme> {
         const hexColorRegex = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
 
-        // Validate all color fields
+        
         const colorFields = [
             'primaryColor',
             'secondaryColor',
@@ -50,11 +50,11 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
             }
         }
 
-        // Check if theme exists for this company
+        
         const existingTheme = await this._companyThemeRepository.findByCompanyId(companyId);
 
         if (!existingTheme) {
-            // Create new theme
+            
             const newTheme = new CompanyTheme(
                 undefined,
                 companyId,
@@ -74,7 +74,7 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
             return await this._companyThemeRepository.create(newTheme);
         }
 
-        // Update existing theme
+        
         existingTheme.themeName = themeData.themeName;
         existingTheme.themeMode = themeData.themeMode;
         existingTheme.primaryColor = themeData.primaryColor;

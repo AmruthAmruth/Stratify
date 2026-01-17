@@ -28,7 +28,7 @@ export class UpdateManagerProfileUseCase implements IUpdateManagerProfileUseCase
         const updatedManager = await this.managerRepository.updatePartial(managerId, updateData);
 
         if (!updatedManager) {
-            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND); // Changed from MANAGER_UPDATE_FAILED
+            throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND); 
         }
 
         return {

@@ -1,5 +1,5 @@
-// node-vibrant requires require() style import due to its module structure
-// eslint-disable-next-line @typescript-eslint/no-require-imports
+
+
 const Vibrant = require("node-vibrant");
 
 export interface ExtractedColors {

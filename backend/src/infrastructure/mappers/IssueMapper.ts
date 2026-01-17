@@ -18,7 +18,7 @@ export class IssueMapper {
       doc.assignedTo ? doc.assignedTo.toString() : null,
       doc.createdAt,
       doc.updatedAt,
-      0, // estimatedHours - computed from subtasks at query time
+      0, 
     );
   }
 

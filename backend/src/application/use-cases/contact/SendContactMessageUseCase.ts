@@ -6,18 +6,18 @@ export class SendContactMessageUseCase implements ISendContactMessageUseCase {
     constructor(private emailService: IEmailService) { }
 
     async execute(data: ContactMessageDTO): Promise<void> {
-        // Validate input
+        
         if (!data.name || !data.email || !data.subject || !data.message) {
             throw new Error("All fields are required");
         }
 
-        // Email validation
+        
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
             throw new Error("Invalid email format");
         }
 
-        // Prepare email content
+        
         const emailHtml = `
       <!DOCTYPE html>
       <html>
@@ -65,7 +65,7 @@ export class SendContactMessageUseCase implements ISendContactMessageUseCase {
       </html>
     `;
 
-        // Send email to amruthshyju@gmail.com
+        
         await this.emailService.sendEmail(
             "amruthshyju@gmail.com",
             `Stratify Contact Form: ${data.subject}`,

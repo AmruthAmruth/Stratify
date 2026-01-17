@@ -64,7 +64,7 @@ export class CalculateSprintCapacityUseCase
 
         const validEmployees = employees.filter((emp) => emp !== null);
 
-        // Fetch all issues in this sprint to calculate assigned workload
+        
         const sprintIssues = await this._issueRepo.findBySprintId(sprintId);
 
 
@@ -87,7 +87,7 @@ export class CalculateSprintCapacityUseCase
                 const leaveHours = leaveDays * 8;
                 const availableHours = totalHours - leaveHours;
 
-                // Calculate assigned workload for this employee
+                
                 const assignedIssues = sprintIssues.filter(
                     (issue) => issue.assignedTo === employee!.id
                 );
@@ -96,10 +96,10 @@ export class CalculateSprintCapacityUseCase
                     0
                 );
 
-                // Calculate remaining capacity
+                
                 const remainingHours = availableHours - assignedHours;
 
-                // Calculate workload percentage
+                
                 const workloadPercent = availableHours > 0
                     ? (assignedHours / availableHours) * 100
                     : 0;

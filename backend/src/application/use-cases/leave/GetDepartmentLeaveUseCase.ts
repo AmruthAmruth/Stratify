@@ -24,7 +24,7 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
       throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    // Handle populated departmentId (it's an object with _id and name when populated)
+    
     const departmentId = manager.departmentId?._id?.toString();
     if (!departmentId) {
       throw new AppError(
@@ -48,7 +48,7 @@ export class GetDepartmentLeaveUseCase implements IGetDepartmentLeaveUseCase {
       await this._employeeRepo.findByDepartmentId(departmentId);
     const totalEmployees = employeesInDept.length;
 
-    // Filter for employees currently on leave (today)
+    
     const currentLeaves = leaves.filter(
       (l) =>
         l.status === "Approved" &&

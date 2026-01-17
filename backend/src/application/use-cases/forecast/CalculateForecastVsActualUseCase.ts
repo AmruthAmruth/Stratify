@@ -26,19 +26,19 @@ export class CalculateForecastVsActualUseCase
         startDate?: string,
         endDate?: string,
     ): Promise<ForecastVsActualDTO> {
-        // Validate employee exists
+        
         const employee = await this._employeeRepo.findById(employeeId);
         if (!employee) {
             throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Validate project exists
+        
         const project = await this._projectRepo.findById(projectId);
         if (!project) {
             throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Get forecast allocations for employee and project
+        
         const forecasts = await this._forecastRepo.findByEmployeeAndProject(
             employeeId,
             projectId,
@@ -51,7 +51,7 @@ export class CalculateForecastVsActualUseCase
             );
         }
 
-        // Determine date range
+        
         let rangeStart: Date;
         let rangeEnd: Date;
 
@@ -59,7 +59,7 @@ export class CalculateForecastVsActualUseCase
             rangeStart = new Date(startDate);
             rangeEnd = new Date(endDate);
         } else {
-            // Use the earliest start and latest end from active forecasts
+            
             const activeForecasts = forecasts.filter((f) => f.status === "Active");
             if (activeForecasts.length === 0) {
                 throw new AppError(
@@ -72,7 +72,7 @@ export class CalculateForecastVsActualUseCase
                 Math.min(...activeForecasts.map((f) => f.startDate.getTime())),
             );
             rangeEnd = activeForecasts.some((f) => !f.endDate)
-                ? new Date() // Use current date for ongoing forecasts
+                ? new Date() 
                 : new Date(
                     Math.max(
                         ...activeForecasts
@@ -82,7 +82,7 @@ export class CalculateForecastVsActualUseCase
                 );
         }
 
-        // Calculate total forecast hours
+        
         let totalForecastHours = 0;
         for (const forecast of forecasts.filter((f) => f.status === "Active")) {
             const forecastStart = forecast.startDate > rangeStart ? forecast.startDate : rangeStart;
@@ -95,13 +95,13 @@ export class CalculateForecastVsActualUseCase
             totalForecastHours += weeks * forecast.forecastHoursPerWeek;
         }
 
-        // Get actual hours from issues assigned to this employee in this project
+        
         const allIssues = await this._issueRepo.findByProjectId(projectId);
         const issues = allIssues.filter(
             (issue) => issue.assignedTo === employeeId,
         );
 
-        // Filter issues within date range and sum estimated hours (using size as proxy)
+        
         const actualHours = issues
             .filter((issue) => {
                 if (!issue.createdAt) return false;
@@ -109,14 +109,14 @@ export class CalculateForecastVsActualUseCase
             })
             .reduce((sum: number, issue) => sum + (issue.size || 0), 0);
 
-        // Get approved leaves in the date range
+        
         const leaves = await this._leaveRepo.findApprovedLeavesByEmployeesInRange(
             [employeeId],
             rangeStart,
             rangeEnd,
         );
 
-        // Calculate leave hours
+        
         const leaveDays = DateUtils.countLeaveDays(
             leaves.map((leave) => ({
                 startDate: leave.startDate,
@@ -125,17 +125,17 @@ export class CalculateForecastVsActualUseCase
             rangeStart,
             rangeEnd,
         );
-        const leaveHours = leaveDays * 8; // Assuming 8 hours per day
+        const leaveHours = leaveDays * 8; 
 
-        // Calculate available hours (forecast minus leaves)
+        
         const availableHours = totalForecastHours - leaveHours;
 
-        // Calculate variance
+        
         const variance = actualHours - totalForecastHours;
         const variancePercent =
             totalForecastHours > 0 ? (variance / totalForecastHours) * 100 : 0;
 
-        // Calculate utilization (actual vs available)
+        
         const utilizationPercent =
             availableHours > 0 ? (actualHours / availableHours) * 100 : 0;
 

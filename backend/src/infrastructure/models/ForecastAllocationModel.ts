@@ -33,7 +33,7 @@ const ForecastAllocationSchema = new Schema<IForecastAllocationDocument>(
             type: Number,
             required: true,
             min: 0,
-            max: 168, // Max hours in a week
+            max: 168, 
         },
         startDate: {
             type: Date,
@@ -77,7 +77,7 @@ const ForecastAllocationSchema = new Schema<IForecastAllocationDocument>(
     },
 );
 
-// Compound indexes for efficient queries
+
 ForecastAllocationSchema.index({ employeeId: 1, startDate: 1, endDate: 1 });
 ForecastAllocationSchema.index({ projectId: 1, status: 1 });
 ForecastAllocationSchema.index({ companyId: 1, status: 1 });

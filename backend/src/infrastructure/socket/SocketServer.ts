@@ -28,7 +28,7 @@ export const initSocket = (server: HttpServer) => {
     },
   });
 
-  // Authentication middleware
+  
   io.use(async (socket, next) => {
     try {
       const token = socket.handshake.auth.token;
@@ -59,7 +59,7 @@ export const initSocket = (server: HttpServer) => {
     logger.info(`Socket connected: ${socket.id} (User: ${authenticatedSocket.userId})`);
 
     socket.on("register", (userId: string) => {
-      // Validate that userId matches authenticated user
+      
       if (userId !== authenticatedSocket.userId) {
         logger.warn(`User ${authenticatedSocket.userId} attempted to register as ${userId}`);
         return;
@@ -74,13 +74,13 @@ export const initSocket = (server: HttpServer) => {
     socket.on("send-message", (data) => {
       const { senderId, receiverId, message } = data;
 
-      // Validate sender matches authenticated user
+      
       if (senderId !== authenticatedSocket.userId) {
         logger.warn(`User ${authenticatedSocket.userId} attempted to send message as ${senderId}`);
         return;
       }
 
-      // Basic message sanitization (prevent empty messages)
+      
       if (!message || typeof message !== 'string' || message.trim().length === 0) {
         logger.warn(`Invalid message from ${senderId}`);
         return;
@@ -144,13 +144,13 @@ export const initSocket = (server: HttpServer) => {
     socket.on("send-group-message", (data) => {
       const { groupId, senderId, message } = data;
 
-      // Validate sender matches authenticated user
+      
       if (senderId !== authenticatedSocket.userId) {
         logger.warn(`User ${authenticatedSocket.userId} attempted to send group message as ${senderId}`);
         return;
       }
 
-      // Basic message sanitization
+      
       if (!message || typeof message !== 'string' || message.trim().length === 0) {
         logger.warn(`Invalid group message from ${senderId}`);
         return;

@@ -25,7 +25,31 @@ const TeamPage: React.FC = () => {
       setIsLoading(true);
       try {
         const data = await getTeamMember();
-        setTeamMembers(data || []);
+        console.log('Team members API response:', data);
+
+        // Handle different response formats
+        let members: TeamMember[] = [];
+
+        if (Array.isArray(data)) {
+          // Direct array response
+          members = data;
+        } else if (data && typeof data === 'object') {
+          // Wrapped response - check common wrapper properties
+          const wrappedData = data as Record<string, unknown>;
+
+          if (Array.isArray(wrappedData.response)) {
+            members = wrappedData.response as TeamMember[];
+          } else if (Array.isArray(wrappedData.data)) {
+            members = wrappedData.data as TeamMember[];
+          } else if (Array.isArray(wrappedData.teamMembers)) {
+            members = wrappedData.teamMembers as TeamMember[];
+          } else {
+            console.warn('Unexpected API response format:', data);
+            members = [];
+          }
+        }
+
+        setTeamMembers(members);
       } catch (error) {
         console.error('Error fetching team members:', error);
         setTeamMembers([]);
@@ -235,6 +259,47 @@ const TeamPage: React.FC = () => {
           currentPage={currentPage}
           totalPages={totalPages}
           onPageChange={setCurrentPage}
+          renderCell={(row: TeamMember, key: string) => {
+            switch (key) {
+              case 'status':
+                return (
+                  <span
+                    className={`px-3 py-1 rounded-full text-xs font-semibold ${row.status?.toLowerCase() === 'active'
+                      ? 'bg-green-100 text-green-700'
+                      : 'bg-gray-100 text-gray-700'
+                      }`}
+                  >
+                    {row.status || 'Unknown'}
+                  </span>
+                );
+              case 'role':
+                return (
+                  <span className="capitalize font-medium text-text">
+                    {row.role || 'N/A'}
+                  </span>
+                );
+              case 'position':
+                return (
+                  <span className="text-text">
+                    {row.position || 'Not assigned'}
+                  </span>
+                );
+              case 'departmentName':
+                return (
+                  <span className="text-text">
+                    {row.departmentName || 'No department'}
+                  </span>
+                );
+              case 'phone':
+                return (
+                  <span className="text-text">
+                    {row.phone || 'N/A'}
+                  </span>
+                );
+              default:
+                return <span className="text-text">{row[key as keyof TeamMember] as React.ReactNode}</span>;
+            }
+          }}
           actions={[
             {
               label: 'View Details',

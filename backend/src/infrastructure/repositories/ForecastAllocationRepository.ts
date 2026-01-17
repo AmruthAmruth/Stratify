@@ -61,13 +61,13 @@ export class ForecastAllocationRepository
             employeeId: new Types.ObjectId(employeeId),
             status: "Active",
             $or: [
-                // Forecast starts within range
+                
                 { startDate: { $gte: startDate, $lte: endDate } },
-                // Forecast ends within range
+                
                 { endDate: { $gte: startDate, $lte: endDate } },
-                // Forecast spans the entire range
+                
                 { startDate: { $lte: startDate }, endDate: { $gte: endDate } },
-                // Ongoing forecast (no end date) that started before range end
+                
                 { startDate: { $lte: endDate }, endDate: null },
             ],
         })

@@ -20,7 +20,7 @@ export class GetDepartmentEmployeesUseCase implements IGetDepartmentEmployeesUse
             throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Handle populated departmentId (it's an object with _id and name when populated)
+        
         const departmentId = manager.departmentId?._id?.toString();
         if (!departmentId) {
             throw new AppError(Messages.MANAGER_NO_DEPARTMENT, StatusCodes.BAD_REQUEST);

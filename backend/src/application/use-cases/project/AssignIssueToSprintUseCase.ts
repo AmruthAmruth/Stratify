@@ -20,7 +20,7 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
     const sprint = await this._sprintRepo.findById(sprintId);
     if (!sprint) throw new AppError(Messages.SPRINT_NOT_FOUND, StatusCodes.NOT_FOUND);
 
-    // If issue has an assigned employee, validate capacity
+    
     if (issue.assignedTo) {
       const validationResult = await this._validateCapacityUseCase.execute({
         employeeId: issue.assignedTo,
@@ -37,8 +37,8 @@ export class AssignIssueToSprintUseCase implements IAssignIssueToSprintUseCase {
       }
     }
 
-    // Allow assigning issues to sprints without employee assignment
-    // Employees can be assigned later by the manager
+    
+    
     issue.sprintId = sprintId;
 
     const updatedIssue = await this._issueRepo.update(issue);

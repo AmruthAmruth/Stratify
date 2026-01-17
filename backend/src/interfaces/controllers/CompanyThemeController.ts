@@ -47,7 +47,7 @@ export class CompanyThemeController {
             const role = (req as { role?: string }).role;
             const userId = (req as { userId?: string }).userId;
 
-            // Only company admins can update theme
+            
             if (role !== 'company') {
                 throw new AppError(
                     "Only company administrators can update themes",
@@ -61,7 +61,7 @@ export class CompanyThemeController {
 
             const themeData: UpdateThemeDTO = req.body;
 
-            // Validate required fields
+            
             if (!themeData.themeName || !themeData.themeMode ||
                 !themeData.primaryColor || !themeData.secondaryColor ||
                 !themeData.accentColor || !themeData.backgroundColor ||

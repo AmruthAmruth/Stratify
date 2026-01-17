@@ -16,21 +16,21 @@ export class GetForecastAllocationsByProjectUseCase
     ) { }
 
     async execute(projectId: string): Promise<ForecastAllocationResponseDTO[]> {
-        // Validate project exists
+        
         const project = await this._projectRepo.findById(projectId);
         if (!project) {
             throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Get all forecast allocations for the project
+        
         const forecasts = await this._forecastRepo.findByProjectId(projectId);
 
-        // Enrich with employee details
+        
         const enrichedForecasts = await Promise.all(
             forecasts.map(async (forecast) => {
                 const employee = await this._employeeRepo.findById(forecast.employeeId);
 
-                // Calculate total forecast hours and weeks
+                
                 const weeksInPeriod = forecast.endDate
                     ? Math.ceil(
                         (forecast.endDate.getTime() - forecast.startDate.getTime()) /

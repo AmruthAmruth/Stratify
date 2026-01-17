@@ -23,7 +23,7 @@ export class GetProjectsByDepartmentUseCase
       throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    // Handle populated departmentId (it's an object with _id and name when populated)
+    
     const departmentId = manager.departmentId?._id?.toString();
     if (!departmentId) {
       throw new AppError(
@@ -34,7 +34,7 @@ export class GetProjectsByDepartmentUseCase
 
     const projects = await this._projectRepo.findByDepartmentId(departmentId);
 
-    // Return empty array if no projects - this is a valid state for new departments
+    
     const projectsList = projects || [];
 
     const counts = {

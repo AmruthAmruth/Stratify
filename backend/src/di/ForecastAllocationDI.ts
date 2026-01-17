@@ -16,7 +16,7 @@ export class ForecastAllocationDI {
     private static leaveRepo = new LeaveRepository();
     private static issueRepo = new IssueRepository();
 
-    // Use Cases
+    
     private static createUseCase = new CreateForecastAllocationUseCase(
         ForecastAllocationDI.forecastRepo,
         ForecastAllocationDI.employeeRepo,
@@ -45,7 +45,7 @@ export class ForecastAllocationDI {
             ForecastAllocationDI.issueRepo,
         );
 
-    // Controller
+    
     private static controller = new ForecastAllocationController(
         ForecastAllocationDI.createUseCase,
         ForecastAllocationDI.updateUseCase,

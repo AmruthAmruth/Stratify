@@ -25,24 +25,24 @@ export class UpdateIssueUseCase implements IUpdateIssueUseCase {
       throw new AppError(Messages.ISSUE_NOT_FOUND, StatusCodes.NOT_FOUND);
     }
 
-    // Validate employee capacity if assigning to a new employee in a sprint
+    
     if (issueDTO.assignedTo !== undefined && existingIssue.sprintId) {
       const isChangingAssignment = issueDTO.assignedTo !== existingIssue.assignedTo;
 
       if (isChangingAssignment && issueDTO.assignedTo) {
-        // Validate that the new employee exists
+        
         const employee = await this._employeeRepo.findById(issueDTO.assignedTo);
         if (!employee) {
           throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
 
-        // Validate that employee is in the project
+        
         const project = await this._projectRepo.findById(existingIssue.projectId);
         if (project && !project.teamMemberIds?.includes(issueDTO.assignedTo)) {
           throw new AppError(Messages.EMPLOYEE_NOT_IN_PROJECT, StatusCodes.BAD_REQUEST);
         }
 
-        // Validate capacity
+        
         const validationResult = await this._validateCapacityUseCase.execute({
           employeeId: issueDTO.assignedTo,
           sprintId: existingIssue.sprintId,

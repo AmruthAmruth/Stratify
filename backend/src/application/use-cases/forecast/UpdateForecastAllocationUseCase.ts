@@ -20,7 +20,7 @@ export class UpdateForecastAllocationUseCase
         id: string,
         data: UpdateForecastAllocationDTO,
     ): Promise<ForecastAllocationResponseDTO> {
-        // Find existing forecast
+        
         const existing = await this._forecastRepo.findById(id);
         if (!existing) {
             throw new AppError(
@@ -29,7 +29,7 @@ export class UpdateForecastAllocationUseCase
             );
         }
 
-        // Validate hours if provided
+        
         if (
             data.forecastHoursPerWeek !== undefined &&
             (data.forecastHoursPerWeek <= 0 || data.forecastHoursPerWeek > 168)
@@ -40,7 +40,7 @@ export class UpdateForecastAllocationUseCase
             );
         }
 
-        // Parse dates if provided
+        
         const startDate = data.startDate
             ? new Date(data.startDate)
             : existing.startDate;
@@ -50,7 +50,7 @@ export class UpdateForecastAllocationUseCase
                 : new Date(data.endDate)
             : existing.endDate;
 
-        // Validate date range
+        
         if (endDate && endDate <= startDate) {
             throw new AppError(
                 "End date must be after start date",
@@ -58,7 +58,7 @@ export class UpdateForecastAllocationUseCase
             );
         }
 
-        // Update forecast
+        
         const updated = new ForecastAllocation(
             existing.id,
             existing.employeeId,
@@ -76,11 +76,11 @@ export class UpdateForecastAllocationUseCase
 
         const result = await this._forecastRepo.update(updated);
 
-        // Get employee and project details
+        
         const employee = await this._employeeRepo.findById(result.employeeId);
         const project = await this._projectRepo.findById(result.projectId);
 
-        // Calculate total forecast hours and weeks
+        
         const weeksInPeriod = result.endDate
             ? Math.ceil(
                 (result.endDate.getTime() - result.startDate.getTime()) /
