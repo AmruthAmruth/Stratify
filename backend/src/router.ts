@@ -17,10 +17,10 @@ import { apiLimiter } from "./config/RateLimiter";
 
 const router = Router();
 
-
+// Apply global API rate limiting
 router.use(apiLimiter);
 
-
+// Routes (auth routes have their own stricter rate limiting applied in AuthRouter)
 router.use("/auth", authRouter);
 router.use("/company", companyRouter);
 router.use("/department", departmentRouter);

@@ -2,15 +2,15 @@ export interface ValidateEmployeeCapacityDTO {
     employeeId: string;
     sprintId: string;
     additionalSize: number;
-    excludeIssueId?: string; 
+    excludeIssueId?: string; // For update scenarios
 }
 
 export interface EmployeeCapacityValidationResult {
     isValid: boolean;
     employeeName: string;
-    totalAvailability: number; 
-    currentWorkload: number; 
-    additionalSize: number; 
-    remainingCapacity: number; 
+    totalAvailability: number; // in days
+    currentWorkload: number; // in days
+    additionalSize: number; // in days
+    remainingCapacity: number; // in days
     errorMessage?: string;
 }

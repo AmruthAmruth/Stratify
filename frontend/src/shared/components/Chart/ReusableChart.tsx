@@ -57,24 +57,6 @@ const ReusableChart: React.FC<ChartProps> = ({
     "#3b3b3b",
   ],
 }) => {
-  // Helper function to get CSS variable color values from the theme
-  const getThemeColor = (cssVar: string, fallback: string): string => {
-    if (typeof window === 'undefined') return fallback;
-    const root = document.documentElement;
-    const value = getComputedStyle(root).getPropertyValue(cssVar).trim();
-    return value || fallback;
-  };
-
-  // Get theme colors
-  const themeColors = {
-    text: getThemeColor('--color-text', '#1f2937'),
-    heading: getThemeColor('--color-heading', '#0f172a'),
-    muted: getThemeColor('--color-muted', '#6b7280'),
-    surface: getThemeColor('--color-surface', '#ffffff'),
-    accent: getThemeColor('--color-accent', '#e5e7eb'),
-    bg: getThemeColor('--color-background', '#f7faf9'),
-  };
-
   const chartData = {
     labels,
     datasets: datasets || [
@@ -82,7 +64,7 @@ const ReusableChart: React.FC<ChartProps> = ({
         label: title || "Dataset",
         data: data || [],
         backgroundColor: backgroundColors,
-        borderColor: themeColors.text,
+        borderColor: "#1f2937",
         borderWidth: 1,
       },
     ],
@@ -93,59 +75,39 @@ const ReusableChart: React.FC<ChartProps> = ({
     backgroundColor: "transparent",
     plugins: {
       tooltip: {
-        backgroundColor: themeColors.heading,
-        titleColor: themeColors.surface,
-        bodyColor: themeColors.accent,
-        borderColor: themeColors.muted,
+        backgroundColor: "#111827",
+        titleColor: "#e5e7eb",
+        bodyColor: "#e5e7eb",
+        borderColor: "#1f2937",
         borderWidth: 1,
       },
       legend: {
         position: "bottom" as const,
         labels: {
-          color: themeColors.text,
-          font: {
-            size: 12,
-          },
-          padding: 10,
+          color: "#e5e7eb",
         },
       },
       title: {
         display: !!title,
         text: title,
-        color: themeColors.heading,
-        font: {
-          size: 16,
-          weight: "bold" as const,
-        },
-        padding: {
-          top: 10,
-          bottom: 20,
-        },
+        color: "#e5e7eb",
       },
     },
     scales: type === "line" || type === "bar" ? {
       x: {
         ticks: {
-          color: themeColors.text,
-          font: {
-            size: 11,
-          },
+          color: "#e5e7eb",
         },
         grid: {
-          color: themeColors.accent,
-          lineWidth: 1,
+          color: "#1f2937",
         },
       },
       y: {
         ticks: {
-          color: themeColors.text,
-          font: {
-            size: 11,
-          },
+          color: "#e5e7eb",
         },
         grid: {
-          color: themeColors.accent,
-          lineWidth: 1,
+          color: "#1f2937",
         },
       },
     } : undefined,

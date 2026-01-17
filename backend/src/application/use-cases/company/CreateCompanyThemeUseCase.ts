@@ -27,22 +27,22 @@ export class CreateCompanyThemeUseCase implements ICreateCompanyThemeUseCase {
                 return await this.companyThemeRepository.update(existingTheme);
             }
 
-            
+            // Create new theme with extracted colors as primary
             const theme = new CompanyTheme(
                 undefined,
                 companyId,
-                'Custom Theme',         
-                'light',                 
-                backgroundColor,         
-                textColor,              
-                backgroundColor,         
-                '#FFFFFF',              
-                textColor,              
-                '#F9FAFB',              
-                '#E5E7EB',              
-                '#6B7280',              
-                textColor,              
-                true                    
+                'Custom Theme',         // themeName
+                'light',                 // themeMode
+                backgroundColor,         // primaryColor - use extracted color
+                textColor,              // secondaryColor
+                backgroundColor,         // accentColor
+                '#FFFFFF',              // backgroundColor
+                textColor,              // textColor
+                '#F9FAFB',              // surfaceColor
+                '#E5E7EB',              // borderColor
+                '#6B7280',              // mutedColor
+                textColor,              // headingColor
+                true                    // isCustom - true since extracted from image
             );
 
             return await this.companyThemeRepository.create(theme);

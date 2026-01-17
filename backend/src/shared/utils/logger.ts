@@ -1,7 +1,7 @@
 import winston from 'winston';
 import path from 'path';
 
-
+// Define log levels
 const levels = {
     error: 0,
     warn: 1,
@@ -10,7 +10,7 @@ const levels = {
     debug: 4,
 };
 
-
+// Define log colors
 const colors = {
     error: 'red',
     warn: 'yellow',
@@ -21,14 +21,14 @@ const colors = {
 
 winston.addColors(colors);
 
-
+// Determine log level based on environment
 const level = () => {
     const env = process.env.NODE_ENV || 'development';
     const isDevelopment = env === 'development';
     return isDevelopment ? 'debug' : 'warn';
 };
 
-
+// Define log format
 const format = winston.format.combine(
     winston.format.timestamp({ format: 'YYYY-MM-DD HH:mm:ss:ms' }),
     winston.format.colorize({ all: true }),
@@ -37,24 +37,24 @@ const format = winston.format.combine(
     ),
 );
 
-
+// Define transports
 const transports = [
-    
+    // Console transport
     new winston.transports.Console(),
 
-    
+    // File transport for errors
     new winston.transports.File({
         filename: path.join(__dirname, '../../logs/error.log'),
         level: 'error',
     }),
 
-    
+    // File transport for all logs
     new winston.transports.File({
         filename: path.join(__dirname, '../../logs/combined.log'),
     }),
 ];
 
-
+// Create logger instance
 const logger = winston.createLogger({
     level: level(),
     levels,

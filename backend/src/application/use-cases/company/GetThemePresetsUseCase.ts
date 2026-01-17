@@ -19,7 +19,7 @@ export interface IGetThemePresetsUseCase {
 export class GetThemePresetsUseCase implements IGetThemePresetsUseCase {
     async execute(): Promise<ThemePreset[]> {
         return [
-            
+            // Default Light Theme
             {
                 name: 'Clean Professional',
                 mode: 'light',
@@ -33,7 +33,7 @@ export class GetThemePresetsUseCase implements IGetThemePresetsUseCase {
                 mutedColor: '#6b7280',
                 headingColor: '#0f172a',
             },
-            
+            // Light Themes
             {
                 name: 'Ocean Blue',
                 mode: 'light',
@@ -151,7 +151,7 @@ export class GetThemePresetsUseCase implements IGetThemePresetsUseCase {
                 mutedColor: '#6b7280',
                 headingColor: '#78350f',
             },
-            
+            // Dark Themes
             {
                 name: 'Midnight Dark',
                 mode: 'dark',

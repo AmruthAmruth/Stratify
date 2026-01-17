@@ -23,43 +23,43 @@ import { MeetingRepository } from "./infrastructure/repositories/MeetingReposito
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";
 import { NotificationRepository } from "./infrastructure/repositories/NotificationRepository";
 
-
-
-
+// ----------------------------------------------------
+// Load environment variables
+// ----------------------------------------------------
 dotenv.config();
 
-
-
-
+// ----------------------------------------------------
+// Validate environment variables
+// ----------------------------------------------------
 validateEnv();
 
-
-
-
+// ----------------------------------------------------
+// Create app
+// ----------------------------------------------------
 const app = express();
 
-
+/* ✅ REQUIRED for EC2 / Nginx / Rate-Limit */
 app.set("trust proxy", 1); 
 
-
-
-
+// ----------------------------------------------------
+// Security
+// ----------------------------------------------------
 app.use(
   helmet({ 
     crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
 
-
-
-
+// ----------------------------------------------------
+// CORS
+// ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL!, 
+  process.env.FRONTEND_URL!, // Production frontend URL
 ];
 
-
+// Add localhost origins for local development
 if (!isProduction) {
   allowedOrigins.push(
     "http://localhost:5173",
@@ -89,16 +89,16 @@ app.use(
   })
 );
 
-
-
-
+// ----------------------------------------------------
+// Body parsers
+// ----------------------------------------------------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-
-
-
+// ----------------------------------------------------
+// Logging
+// ----------------------------------------------------
 const logDirectory = path.join(__dirname, "logs");
 if (!fs.existsSync(logDirectory)) fs.mkdirSync(logDirectory);
 
@@ -114,28 +114,28 @@ if (!isProduction) {
   app.use(morgan("dev"));
 }
 
-
-
-
+// ----------------------------------------------------
+// Database (SAFE for PM2)
+// ----------------------------------------------------
 connectDB()
   .then(() => logger.info("✅ MongoDB Connected"))
   .catch((err) => {
     logger.error("❌ MongoDB connection failed", err);
 
-    
+    // ❌ never hard-crash production
     if (!isProduction) {
       process.exit(1);
     }
   });
 
-
-
-
+// ----------------------------------------------------
+// Static files
+// ----------------------------------------------------
 app.use("/uploads", express.static(path.join(__dirname, "../uploads")));
 
-
-
-
+// ----------------------------------------------------
+// Health check
+// ----------------------------------------------------
 app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
@@ -145,26 +145,26 @@ app.get("/health", (_req, res) => {
   });
 });
 
-
-
-
+// ----------------------------------------------------
+// API routes
+// ----------------------------------------------------
 app.use("/api", router);
 
-
-
-
+// ----------------------------------------------------
+// Error handler (LAST middleware)
+// ----------------------------------------------------
 app.use(errorMiddleware);
 
-
-
-
+// ----------------------------------------------------
+// HTTP + Socket
+// ----------------------------------------------------
 const server = http.createServer(app); 
 const io = initSocket(server);
 SocketService.setIO(io);
 
-
-
-
+// ----------------------------------------------------
+// Scheduler
+// ----------------------------------------------------
 const meetingRepo = new MeetingRepository();
 const projectRepo = new ProjectRepository();
 const notificationRepo = new NotificationRepository();
@@ -176,9 +176,9 @@ const meetingScheduler = new MeetingScheduler(
 );
 meetingScheduler.start();
 
-
-
-
+// ----------------------------------------------------
+// Start server
+// ----------------------------------------------------
 const PORT = Number(process.env.PORT) || 7000;
 
 server.listen(PORT, () => {
@@ -186,7 +186,7 @@ server.listen(PORT, () => {
   logger.info(`Environment: ${process.env.NODE_ENV || "development"}`);
 });
 
-
+// Timeout for long requests
 server.timeout = 30000;
 
 export { io };
