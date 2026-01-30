@@ -1,7 +1,7 @@
 import { Sprint } from "../../domain/entities/Sprint";
 import { ISprintRepository } from "../../domain/repositories/ISprintRepository";
 import { SprintMapper } from "../mappers/SprintMapper";
-import { SprentModel } from "../models/SprintModel";
+import { SprentModel } from '../models/SprintModel';
 import { AppError } from "../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
@@ -64,7 +64,22 @@ export class SprintRepository implements ISprintRepository {
   }
 
 
+async isSubTaskAdd(sprintId:string):Promise<boolean>{
+  const today = new Date()
+  const nextDay= new Date();
+  nextDay.setDate(today.getDate()+1)
 
+  const sprint = await SprentModel.findById(sprintId);
+  if(!sprint){
+    return false;
+  }
+
+  if(today===sprint.startDate || today=== nextDay){
+    return true;
+  }else{
+    return false;
+  }
+}
 
 
 
