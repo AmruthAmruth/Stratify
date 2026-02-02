@@ -105,7 +105,7 @@ const EmployeeDashboard = () => {
                     <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Priority</h3>
                         {hasChartData(chartData.issuesByPriority.data) ? (
-                            <div className="h-64 flex items-center justify-center">
+                            <div className="h-64 w-full flex items-center justify-center">
                                 <ReusableChart
                                     type="doughnut"
                                     labels={chartData.issuesByPriority.labels}
@@ -122,7 +122,7 @@ const EmployeeDashboard = () => {
                     <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Status</h3>
                         {hasChartData(chartData.issuesByStatus.data) ? (
-                            <div className="h-64">
+                            <div className="h-64 w-full">
                                 <ReusableChart
                                     type="bar"
                                     labels={chartData.issuesByStatus.labels}
@@ -139,7 +139,7 @@ const EmployeeDashboard = () => {
                     <div className="bg-surface border border-accent rounded-2xl p-6 shadow-sm hover:shadow-md transition-all duration-300">
                         <h3 className="text-lg font-semibold text-text mb-4">Issues by Type</h3>
                         {hasChartData(chartData.issuesByType.data) ? (
-                            <div className="h-64 flex items-center justify-center">
+                            <div className="h-64 w-full flex items-center justify-center">
                                 <ReusableChart
                                     type="pie"
                                     labels={chartData.issuesByType.labels}

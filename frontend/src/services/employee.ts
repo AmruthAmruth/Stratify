@@ -10,7 +10,7 @@ export interface DashboardStatsResponse {
 
 export const getEmployeeDashboardStats = async (): Promise<DashboardStatsResponse> => {
     try {
-        const response = await axiosInstance.get('/api/employee/dashboard-stats');
+        const response = await axiosInstance.get('/employee/dashboard-stats');
         return response.data;
     } catch (error) {
         console.error('Error fetching employee dashboard stats:', error);

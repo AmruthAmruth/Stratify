@@ -104,7 +104,7 @@ export class IssueRepository implements IIssueRepository {
       const objectId = new mongoose.Types.ObjectId(userId);
       console.log(`[IssueRepository] Converted to ObjectId: ${objectId}`);
 
-
+      // Find ALL issues assigned to this user, regardless of sprint status
       const results = await IssueModel.aggregate([
         {
           $match: { assignedTo: objectId }
@@ -115,12 +115,6 @@ export class IssueRepository implements IIssueRepository {
             localField: 'sprintId',
             foreignField: '_id',
             as: 'sprint'
-          }
-        },
-        {
-          $match: {
-            sprintId: { $ne: null },
-            'sprint.status': 'Active'
           }
         },
         {
@@ -174,7 +168,6 @@ export class IssueRepository implements IIssueRepository {
       ]);
 
       console.log(`[IssueRepository] Found ${results.length} issues with project names and subtasks`);
-
 
       return results.map(doc => ({
         id: doc._id.toString(),

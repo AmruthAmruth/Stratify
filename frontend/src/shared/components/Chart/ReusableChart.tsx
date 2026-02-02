@@ -72,6 +72,7 @@ const ReusableChart: React.FC<ChartProps> = ({
 
   const options = {
     responsive: true,
+    maintainAspectRatio: true,
     backgroundColor: "transparent",
     plugins: {
       tooltip: {
@@ -115,13 +116,29 @@ const ReusableChart: React.FC<ChartProps> = ({
 
   switch (type) {
     case "pie":
-      return <Pie data={chartData} options={options} />;
+      return (
+        <div style={{ position: 'relative', height: '100%', width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+          <Pie data={chartData} options={options} />
+        </div>
+      );
     case "doughnut":
-      return <Doughnut data={chartData} options={options} />;
+      return (
+        <div style={{ position: 'relative', height: '100%', width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+          <Doughnut data={chartData} options={options} />
+        </div>
+      );
     case "line":
-      return <Line data={chartData} options={options} />;
+      return (
+        <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+          <Line data={chartData} options={options} />
+        </div>
+      );
     case "bar":
-      return <Bar data={chartData} options={options} />;
+      return (
+        <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+          <Bar data={chartData} options={options} />
+        </div>
+      );
     default:
       return null;
   }
