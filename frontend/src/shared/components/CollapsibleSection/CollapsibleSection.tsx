@@ -41,6 +41,7 @@ interface CollapsibleSectionProps {
   getPriorityColor: (priority: string) => string;
   getTypeColor: (type: string) => string;
   onAssignIssue?: (sprintId: string) => void;
+  onCreateSubtask?: (issueId: string) => void;
 }
 
 const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
@@ -54,7 +55,8 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
   getStatusColor,
   getPriorityColor,
   getTypeColor,
-  onAssignIssue
+  onAssignIssue,
+  onCreateSubtask
 }) => {
   const [expandedIssue, setExpandedIssue] = useState<string | null>(null);
 
@@ -400,6 +402,17 @@ const CollapsibleSection: React.FC<CollapsibleSectionProps> = ({
                                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" />
                                 </svg>
                                 SubTasks
+                                {onCreateSubtask && (
+                                  <button
+                                    onClick={(e) => {
+                                      e.stopPropagation();
+                                      onCreateSubtask(issueId || '');
+                                    }}
+                                    className="ml-auto px-4 py-2 bg-primary text-white rounded-lg text-sm font-semibold hover:bg-primaryHover transition-colors duration-200 shadow-sm"
+                                  >
+                                    + Create Subtask
+                                  </button>
+                                )}
                               </h6>
 
                               <div className="grid gap-4">

@@ -75,6 +75,7 @@ export interface ProjectContextValue {
     optimisticCreateIssue: (projectId: string, issue: Partial<Issue>) => void;
     optimisticUpdateIssue: (issueId: string, updates: Partial<Issue>) => void;
     optimisticDeleteIssue: (issueId: string) => void;
+    optimisticCreateSubTask: (issueId: string, subtask: Partial<SubTask>) => void;
     optimisticUpdateSubTask: (issueId: string, subtaskId: string, updates: Partial<SubTask>) => void;
     optimisticDeleteSubTask: (issueId: string, subtaskId: string) => void;
     optimisticAddEmployee: (projectId: string, employee: Employee) => void;

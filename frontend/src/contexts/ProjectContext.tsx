@@ -305,6 +305,73 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
         }
     }, [createSnapshot, currentProject]);
 
+    const optimisticCreateSubTask = useCallback((issueId: string, subtask: Partial<SubTask>) => {
+        console.log('[optimisticCreateSubTask] Starting with issueId:', issueId, 'subtask:', subtask);
+        createSnapshot();
+        const newSubTask: SubTask = {
+            id: `temp-${Date.now()}`,
+            heading: subtask.heading || '',
+            description: subtask.description || '',
+            status: subtask.status || 'Planned',
+            hours: subtask.hours,
+            assignedToId: subtask.assignedToId,
+            ...subtask,
+        };
+        console.log('[optimisticCreateSubTask] Created newSubTask:', newSubTask);
+
+        // Update issues list
+        setIssues((prev) =>
+            prev.map((issue) =>
+                issue.id === issueId
+                    ? { ...issue, subTasks: [...(issue.subTasks || []), newSubTask] }
+                    : issue
+            )
+        );
+
+        // Update current project if viewing project details
+        console.log('[optimisticCreateSubTask] Updating currentProject');
+        setCurrentProject((prev) => {
+            if (!prev) {
+                console.log('[optimisticCreateSubTask] No current project, skipping');
+                return null;
+            }
+            const updated = {
+                ...prev,
+                backlog: prev.backlog?.map((issue) =>
+                    issue.id === issueId
+                        ? { ...issue, subTasks: [...(issue.subTasks || []), newSubTask] }
+                        : issue
+                ),
+                activeSprints: prev.activeSprints?.map((sprint) => ({
+                    ...sprint,
+                    issues: sprint.issues?.map((issue) =>
+                        issue.id === issueId
+                            ? { ...issue, subTasks: [...(issue.subTasks || []), newSubTask] }
+                            : issue
+                    ),
+                })),
+                plannedSprints: prev.plannedSprints?.map((sprint) => ({
+                    ...sprint,
+                    issues: sprint.issues?.map((issue) =>
+                        issue.id === issueId
+                            ? { ...issue, subTasks: [...(issue.subTasks || []), newSubTask] }
+                            : issue
+                    ),
+                })),
+                completedSprints: prev.completedSprints?.map((sprint) => ({
+                    ...sprint,
+                    issues: sprint.issues?.map((issue) =>
+                        issue.id === issueId
+                            ? { ...issue, subTasks: [...(issue.subTasks || []), newSubTask] }
+                            : issue
+                    ),
+                })),
+            };
+            console.log('[optimisticCreateSubTask] Updated project:', updated);
+            return updated;
+        });
+    }, [createSnapshot]);
+
     const optimisticUpdateSubTask = useCallback((issueId: string, subtaskId: string, updates: Partial<SubTask>) => {
         createSnapshot();
         setIssues((prev) =>
@@ -445,6 +512,7 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
         optimisticCreateIssue,
         optimisticUpdateIssue,
         optimisticDeleteIssue,
+        optimisticCreateSubTask,
         optimisticUpdateSubTask,
         optimisticDeleteSubTask,
         optimisticAddEmployee,

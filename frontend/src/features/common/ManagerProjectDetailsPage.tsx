@@ -7,6 +7,7 @@ import {
   addEmployeeProject,
   createIssue,
   createSprint,
+  createSubTask,
   updateProject,
 } from "@/services/projects";
 import { useProjectContext } from "@/contexts/useProjectContext";
@@ -16,11 +17,13 @@ import AuthForm from "@/shared/components/Forms/DynamicForm";
 import {
   createIssueFields,
   createSprintFields,
+  createSubTaskFields,
 } from "@/shared/components/Forms/formFields";
 import {
   createIssueSchema,
   createSprintSchema,
   createProjectSchema,
+  createSubTaskSchema,
 } from "@/shared/utils/validations";
 import { enqueueSnackbar } from "notistack";
 import * as z from "zod";
@@ -50,6 +53,7 @@ const ManagerProjectDetailsPage = () => {
     optimisticUpdateProject,
     optimisticCreateSprint,
     optimisticCreateIssue,
+    optimisticCreateSubTask,
     optimisticAddEmployee,
     rollback,
   } = useProjectContext();
@@ -62,6 +66,8 @@ const ManagerProjectDetailsPage = () => {
   const [isStoryModalOpen, setIsStoryModalOpen] = useState(false);
   const [isEmployeeModalOpen, setIsEmployeeModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [isSubtaskModalOpen, setIsSubtaskModalOpen] = useState(false);
+  const [selectedIssueForSubtask, setSelectedIssueForSubtask] = useState<string | null>(null);
 
   const [submitLoading, setSubmitLoading] = useState(false);
   const [expandedBacklog, setExpandedBacklog] = useState<string | null>(null);
@@ -348,6 +354,49 @@ const ManagerProjectDetailsPage = () => {
 
   const handleOpenEditModal = () => {
     setIsEditModalOpen(true);
+  };
+
+  const handleOpenSubtaskModal = (issueId: string) => {
+    setSelectedIssueForSubtask(issueId);
+    setIsSubtaskModalOpen(true);
+  };
+
+  const handleCreateSubtask = async (values: Record<string, unknown>) => {
+    console.log('[handleCreateSubtask] Called with values:', values);
+    console.log('[handleCreateSubtask] selectedIssueForSubtask:', selectedIssueForSubtask);
+    if (!selectedIssueForSubtask || !id) return;
+    setSubmitLoading(true);
+
+    // Optimistic update
+    console.log('[handleCreateSubtask] Calling optimisticCreateSubTask');
+    optimisticCreateSubTask(selectedIssueForSubtask, {
+      heading: values.heading as string,
+      description: values.description as string,
+      status: values.status as string,
+      hours: values.hours as number,
+    });
+    console.log('[handleCreateSubtask] Optimistic update complete');
+
+    try {
+      const payload = { ...values, issueId: selectedIssueForSubtask };
+      console.log('[handleCreateSubtask] Calling API with payload:', payload);
+      await createSubTask(payload);
+      enqueueSnackbar("Subtask created successfully!", { variant: "success" });
+      console.log('[handleCreateSubtask] API call successful, refreshing project details');
+      await refreshProjectDetails(id);
+      console.log('[handleCreateSubtask] Refresh complete');
+      setIsSubtaskModalOpen(false);
+      setSelectedIssueForSubtask(null);
+    } catch (err: unknown) {
+      rollback();
+      console.error('[handleCreateSubtask] Error:', err);
+      const error = err as { message?: string };
+      enqueueSnackbar(error.message || "Failed to create subtask.", {
+        variant: "error",
+      });
+    } finally {
+      setSubmitLoading(false);
+    }
   };
 
 
@@ -754,6 +803,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
+            onCreateSubtask={handleOpenSubtaskModal}
           />
         )}
 
@@ -778,7 +828,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-
+            onCreateSubtask={handleOpenSubtaskModal}
           />
         )}
 
@@ -803,7 +853,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
-
+            onCreateSubtask={handleOpenSubtaskModal}
           />
         )}
 
@@ -828,6 +878,7 @@ const ManagerProjectDetailsPage = () => {
             getStatusColor={getStatusColor}
             getPriorityColor={getPriorityColor}
             getTypeColor={getTypeColor}
+            onCreateSubtask={handleOpenSubtaskModal}
           />
         )}
       </div>
@@ -885,6 +936,23 @@ const ManagerProjectDetailsPage = () => {
           onSubmit={handleUpdateProject}
           buttonText={submitLoading ? "Updating..." : "Update Project"}
           initialValues={initialEditValues}
+          disabled={submitLoading}
+        />
+      </Modal>
+
+      <Modal
+        isOpen={isSubtaskModalOpen}
+        onClose={() => {
+          setIsSubtaskModalOpen(false);
+          setSelectedIssueForSubtask(null);
+        }}
+        title="Create Subtask"
+      >
+        <AuthForm
+          fields={createSubTaskFields}
+          validationSchema={createSubTaskSchema}
+          onSubmit={handleCreateSubtask}
+          buttonText={submitLoading ? "Creating..." : "Create Subtask"}
           disabled={submitLoading}
         />
       </Modal>
