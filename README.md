@@ -1,14 +1,15 @@
 <div align="center">
   <img src="https://capsule-render.vercel.app/api?type=waving&color=timeGradient&height=250&section=header&text=Stratify&fontSize=90&animation=fadeIn&fontAlignY=38&desc=Enterprise-Grade%20B2B%20SaaS%20Platform&descAlignY=51&descAlign=62" alt="Stratify Header" />
-</div>
 
-<div align="center">
+<br/>
 
 [![TypeScript](https://img.shields.io/badge/TypeScript-007ACC?style=for-the-badge&logo=typescript&logoColor=white)](https://www.typescriptlang.org/)
 [![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)](https://reactjs.org/)
 [![Node.js](https://img.shields.io/badge/Node.js-43853D?style=for-the-badge&logo=node.js&logoColor=white)](https://nodejs.org/)
 [![MongoDB](https://img.shields.io/badge/MongoDB-4EA94B?style=for-the-badge&logo=mongodb&logoColor=white)](https://www.mongodb.com/)
 [![Socket.io](https://img.shields.io/badge/Socket.io-010101?style=for-the-badge&logo=socket.io&logoColor=white)](https://socket.io/)
+
+<br/>
 
 **An enterprise-grade, highly scalable B2B SaaS platform engineered with Clean Architecture, Domain-Driven Design (DDD), and advanced request-scoped data isolation.**
 
@@ -100,7 +101,7 @@ Manual DI containers (e.g., `CompanyDI.ts`) wire the application dynamically top
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/yourusername/stratify.git
+   git clone https://github.com/AmruthAmruth/stratify.git
    cd stratify
    ```
 
@@ -124,11 +125,11 @@ Manual DI containers (e.g., `CompanyDI.ts`) wire the application dynamically top
 
 ## 👨‍💻 Author
 
-**Amruth**
+**Amruth Shyju**
 
-- **GitHub:** [@yourusername](https://github.com/yourusername)
-- **LinkedIn:** [Your LinkedIn Profile](https://linkedin.com/in/yourprofile)
-- **Email:** your.email@example.com
+- **GitHub:** [@AmruthAmruth](https://github.com/AmruthAmruth)
+- **LinkedIn:** [Amruth Shyju](https://www.linkedin.com/in/amruth-shyju/)
+- **Email:** amruthshyju@gmail.com
 
 <div align="center">
   <p>If you find this repository impressive, please consider giving it a ⭐!</p>
