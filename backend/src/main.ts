@@ -23,9 +23,7 @@ import { MeetingRepository } from "./infrastructure/repositories/MeetingReposito
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";
 import { NotificationRepository } from "./infrastructure/repositories/NotificationRepository";
 
-// ----------------------------------------------------
-// Load environment variables
-// ----------------------------------------------------
+
 dotenv.config();
 
 // ----------------------------------------------------
