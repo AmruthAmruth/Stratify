@@ -6,6 +6,7 @@ import logger from "../../shared/utils/logger";
 export interface AuthRequest extends Request {
   userId?: string;
   role?: string;
+  userCompanyId?: string;
 }
 
 interface JwtPayload {
@@ -15,10 +16,15 @@ interface JwtPayload {
   exp?: number;
 }
 
+// Minimal models for middleware lookup to keep dependencies lightweight
+import mongoose from "mongoose";
+const ManagerModel = mongoose.models.Manager || mongoose.model("Manager", new mongoose.Schema({ companyId: String }, { strict: false }));
+const EmployeeModel = mongoose.models.Employee || mongoose.model("Employee", new mongoose.Schema({ companyId: String }, { strict: false }));
+
 export const authMiddleware = (
   allowedRoles: ("company" | "manager" | "employee" | "super-admin")[] = [],
 ) => {
-  return (req: AuthRequest, _res: Response, next: NextFunction) => {
+  return async (req: AuthRequest, _res: Response, next: NextFunction) => {
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader?.startsWith("Bearer ")) {
@@ -38,7 +44,17 @@ export const authMiddleware = (
       req.role = decoded.role;
       req.userId = decoded.id;
 
-      logger.debug(`Token verified for user ${decoded.id} with role ${decoded.role}`);
+      let userCompanyId = decoded.id; // defaults to company
+      if (decoded.role === "manager") {
+        const manager = await ManagerModel.findById(decoded.id).select("companyId").lean();
+        if (manager) userCompanyId = String((manager as any).companyId);
+      } else if (decoded.role === "employee") {
+        const employee = await EmployeeModel.findById(decoded.id).select("companyId").lean();
+        if (employee) userCompanyId = String((employee as any).companyId);
+      }
+      req.userCompanyId = userCompanyId;
+
+      logger.debug(`Token verified for user ${decoded.id} with role ${decoded.role} and company ${userCompanyId}`);
       next();
     } catch (err) {
       logger.error("Auth middleware error", { error: err });

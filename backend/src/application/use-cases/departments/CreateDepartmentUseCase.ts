@@ -45,7 +45,7 @@ export class CreateDepartmentUseCase implements ICreateDepartmentUseCase {
       const manager = await this._managerRepo.findById(data.managerId);
       if (!manager) {
         throw new AppError(Messages.MANAGER_NOT_FOUND, StatusCodes.NOT_FOUND);
-      }
+      } 
 
       if (manager.departmentId) {
         throw new AppError(

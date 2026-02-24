@@ -30,12 +30,14 @@ export class EmployeeRepository extends BaseRepository<Employee, EmployeeDocumen
     return this.findMany({ departmentId });
   }
 
-  async totalEmployeeInACompany(companyId: string): Promise<number> {
-    return this.count({ companyId });
+  async totalEmployeeInACompany(_companyId: string): Promise<number> {
+    // TenantPlugin handles companyId injection automatically
+    return this.count({});
   }
 
-  async findByCompanyId(companyId: string): Promise<Employee[]> {
-    return this.findMany({ companyId });
+  async findByCompanyId(_companyId: string): Promise<Employee[]> {
+    // TenantPlugin handles companyId injection automatically via findMany({})
+    return this.findMany({});
   }
 
   async findByIdWithDepartment(id: string): Promise<EmployeeWithDepartment | null> {

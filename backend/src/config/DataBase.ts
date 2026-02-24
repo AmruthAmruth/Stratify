@@ -1,4 +1,5 @@
-import mongoose from "mongoose";
+import mongoose from 'mongoose';
+import { tenantPlugin } from '../infrastructure/database/TenantPlugin';
 import dotenv from "dotenv";
 import logger from "../shared/utils/logger";
 
@@ -6,6 +7,7 @@ dotenv.config();
 
 const connectDB = async () => {
   try {
+    mongoose.plugin(tenantPlugin);
     await mongoose.connect(process.env.MONGO_URI as string, {
       serverSelectionTimeoutMS: 5000, // fail fast
     });

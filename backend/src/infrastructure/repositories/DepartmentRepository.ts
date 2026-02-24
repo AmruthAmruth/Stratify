@@ -12,11 +12,11 @@ export class DepartmentRepository extends BaseRepository<Department, DepartmentD
 
   async findByNameAndCompany(
     name: string,
-    companyId: string
+    // companyId: string // Parameter kept for signature compatibility during transition, but not used in query
   ): Promise<Department | null> {
     const normalizedName = name.toLowerCase().trim();
+    // The TenantPlugin will automatically inject { companyId } into this findOne.
     return this.findOne({
-      companyId,
       normalizedName,
     });
   }
@@ -29,15 +29,16 @@ export class DepartmentRepository extends BaseRepository<Department, DepartmentD
     ).exec();
   }
 
-  async findDepartmentsByCompanyId(companyId: string): Promise<Department[]> {
-    return this.findMany({ companyId });
+  async findDepartmentsByCompanyId(_companyId: string): Promise<Department[]> {
+    // TenantPlugin handles companyId injection automatically via `findMany({})` which hooks into `find`
+    return this.findMany({});
   }
 
   async getUnassignedDepartments(
-    companyId: string
+    _companyId: string
   ): Promise<{ id: string; name: string }[]> {
     const docs = await DepartmentModel.find({
-      companyId,
+      // companyId is automatically injected by TenantPlugin
       $or: [{ managerId: { $exists: false } }, { managerId: null }],
     }).select("_id name");
 
