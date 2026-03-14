@@ -3,16 +3,19 @@ import { authMiddleware } from "../middleware/AuthMiddleware";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { GroupChatDI } from "../../di/GroupChatDI";
 import { chatMediaUpload } from "../../infrastructure/services/CloudinaryService";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import { CreateGroupChatSchema, AddMemberToGroupSchema } from "../../application/validators/OtherValidators";
 
 const groupChatRouter = express.Router();
 const controller = GroupChatDI();
 
 groupChatRouter.post(
     "/create",
-    authMiddleware(["manager", "company", "employee"]), 
+    authMiddleware(["manager", "company", "employee"]),
+    validateRequest(CreateGroupChatSchema),
     asyncHandler(controller.createGroup)
 );
- 
+
 
 groupChatRouter.post(
     "/send",
@@ -53,6 +56,7 @@ groupChatRouter.get(
 groupChatRouter.post(
     "/:groupId/members",
     authMiddleware(["manager", "company", "employee"]),
+    validateRequest(AddMemberToGroupSchema),
     asyncHandler(controller.addMemberToGroup)
 );
 

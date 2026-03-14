@@ -5,6 +5,14 @@ import { companyDI } from "../../di/CompanyDI";
 import { companyThemeDI } from "../../di/CompanyThemeDI";
 import { emitNotification } from "../../infrastructure/socket/SocketServer";
 import { io } from "../../main";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import {
+  UpdateCompanyProfileSchema,
+  ApproveCompanySchema,
+  UnapproveCompanySchema,
+  UpdateThemeSchema,
+  ApplyPresetSchema,
+} from "../../application/validators/CompanyValidator";
 
 const companyRouter = Router();
 const controller = companyDI();
@@ -32,12 +40,14 @@ companyRouter.get(
 companyRouter.put(
   "/profile",
   authMiddleware(["company"]),
+  validateRequest(UpdateCompanyProfileSchema),
   asyncHandler(controller.updateProfile),
 );
 
-companyRouter.post("/approve-company", asyncHandler(controller.approveCompany));
+companyRouter.post("/approve-company", validateRequest(ApproveCompanySchema), asyncHandler(controller.approveCompany));
 companyRouter.post(
   "/unapprove-company",
+  validateRequest(UnapproveCompanySchema),
   asyncHandler(controller.unapproveCompany),
 );
 
@@ -51,6 +61,7 @@ companyRouter.get(
 companyRouter.put(
   "/theme",
   authMiddleware(["company"]),
+  validateRequest(UpdateThemeSchema),
   asyncHandler(themeController.updateCompanyTheme),
 );
 
@@ -63,6 +74,7 @@ companyRouter.get(
 companyRouter.post(
   "/theme/apply-preset",
   authMiddleware(["company"]),
+  validateRequest(ApplyPresetSchema),
   asyncHandler(themeController.applyPreset),
 );
 

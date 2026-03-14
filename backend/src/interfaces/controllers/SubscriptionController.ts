@@ -2,7 +2,6 @@ import { Request, Response } from "express";
 import { IPurchaseSubscriptionUseCase } from "../../application/interfaces/subscriptions/IPurchaseSubscriptionUseCase";
 import { IListSubscriptionPlansUseCase } from "../../application/interfaces/subscriptions/IListSubscriptionPlansUseCase";
 import { AuthRequest } from "../middleware/AuthMiddleware";
-import { CreatePlanSchema } from "../../application/validators/CreatePlan";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { Messages } from "../../shared/constants/messages";
 import { ICreatePlanUseCase } from "../../application/interfaces/subscriptions/ICreatePlanUseCase";
@@ -27,7 +26,7 @@ export class SubscriptionController {
     res.status(StatusCodes.OK).json(response);
   };
 
- 
+
 
   getDashboardStats = async (_req: Request, res: Response): Promise<void> => {
     const stats = await this._getSuperAdminDashboardStats.execute();
@@ -35,18 +34,6 @@ export class SubscriptionController {
   };
 
   purchasePlan = async (req: AuthRequest, res: Response): Promise<void> => {
-    const result = CreatePlanSchema.safeParse(req.body);
-    if (!result.success) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: "error",
-        errors: result.error.issues.map((issue) => ({
-          field: issue.path.join("."),
-          message: issue.message,
-        })),
-      });
-      return;
-    }
-
     const companyId = req.userId!;
     const { planName } = req.body;
     const subscription = await this._purchaseSubscriptionUseCase.execute(

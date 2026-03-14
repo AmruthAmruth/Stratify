@@ -2,6 +2,8 @@ import { Router } from "express";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { departmentDI } from "../../di/DepartmentDI";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import { DepartmentDetailsSchema } from "../../application/validators/CreateDepartment";
 
 const departmentRouter = Router();
 const controller = departmentDI();
@@ -9,6 +11,7 @@ const controller = departmentDI();
 departmentRouter.post(
   "/create-department",
   authMiddleware(["company"]),
+  validateRequest(DepartmentDetailsSchema),
   asyncHandler(controller.createDepartment),
 );
 departmentRouter.get(
@@ -17,7 +20,7 @@ departmentRouter.get(
   asyncHandler(controller.getCompanyDepartments),
 );
 departmentRouter.get(
-  "/department-details/:id", 
+  "/department-details/:id",
   asyncHandler(controller.getDepartmentDetails),
 );
 departmentRouter.get(

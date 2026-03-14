@@ -2,6 +2,8 @@ import express from "express";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { notificationDI } from "../../di/NotificationDI";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import { CreateNotificationSchema, UpdateNotificationStatusSchema } from "../../application/validators/OtherValidators";
 
 const notificationRouter = express.Router();
 const controller = notificationDI();
@@ -10,6 +12,7 @@ notificationRouter
   .route("/")
   .post(
     authMiddleware(["company", "manager", "employee"]),
+    validateRequest(CreateNotificationSchema),
     asyncHandler(controller.createNotification)
   )
   .get(
@@ -19,6 +22,7 @@ notificationRouter
 
 notificationRouter.post(
   "/update-status",
+  validateRequest(UpdateNotificationStatusSchema),
   asyncHandler(controller.toggleReadStatus)
 );
 notificationRouter.delete(
@@ -31,5 +35,5 @@ notificationRouter.delete(
   asyncHandler(controller.deleteAllNotificatins)
 );
 
-notificationRouter.post('/read-all',authMiddleware(["company","employee","manager"]),asyncHandler(controller.readAllNotification))
+notificationRouter.post('/read-all', authMiddleware(["company", "employee", "manager"]), asyncHandler(controller.readAllNotification))
 export default notificationRouter;

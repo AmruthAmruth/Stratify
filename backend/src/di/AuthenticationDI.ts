@@ -76,7 +76,7 @@ export const authenticationDI = () => {
   const resetPasswordUseCase = new ResetPasswordUseCase(
     companyRepo,
     managerRepo,
-    employeeRepo,
+    employeeRepo, 
   );
   const superAdminLoginUseCase = new LoginUseCase(superAdminRepo);
 

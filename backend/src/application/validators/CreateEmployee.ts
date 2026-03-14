@@ -15,3 +15,5 @@ export const CreateEmployeeSchema = z.object({
 });
 
 export type CreateEmployeeDTO = z.infer<typeof CreateEmployeeSchema>;
+
+export const UpdateEmployeeProfileSchema = CreateEmployeeSchema.partial();

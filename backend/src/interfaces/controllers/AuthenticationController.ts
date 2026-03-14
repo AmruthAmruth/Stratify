@@ -8,7 +8,6 @@ import { IVerifyForgotPasswordOTPUseCase } from "../../application/interfaces/au
 import { IResetPasswordUseCase } from "../../application/interfaces/authentication/IResetPasswordOTPUseCase";
 import {
   LoginDTO,
-  LoginSchema,
 } from "../../application/validators/LoginValidator";
 import { Messages } from "../../shared/constants/messages";
 import { StatusCodes } from "../../shared/constants/statusCodes";
@@ -54,18 +53,6 @@ export class AuthenticationController {
 
 
   superAdminLogin = async (req: Request, res: Response): Promise<void> => {
-    const result = LoginSchema.safeParse(req.body);
-    if (!result.success) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: Messages.LOGIN_FAILED,
-        errors: result.error.issues.map((issue) => ({
-          field: issue.path.join("."),
-          message: issue.message,
-        })),
-      });
-      return;
-    }
-
     const dto: LoginDTO = {
       email: req.body.email,
       password: req.body.password,
@@ -121,18 +108,6 @@ export class AuthenticationController {
   };
 
   login = async (req: Request, res: Response): Promise<void> => {
-    const result = LoginSchema.safeParse(req.body);
-    if (!result.success) {
-      res.status(StatusCodes.BAD_REQUEST).json({
-        status: "error",
-        errors: result.error.issues.map((issue) => ({
-          field: issue.path.join("."),
-          message: issue.message,
-        })),
-      });
-      return;
-    }
-
     const dto: LoginDTO = {
       email: req.body.email,
       password: req.body.password,

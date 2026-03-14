@@ -2,6 +2,8 @@ import { Router } from "express";
 import { ForecastAllocationDI } from "../../di/ForecastAllocationDI";
 import { authMiddleware } from "../middleware/AuthMiddleware";
 import { asyncHandler } from "../middleware/AsyncHandler";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import { CreateForecastAllocationSchema, UpdateForecastAllocationSchema } from "../../application/validators/OtherValidators";
 
 const router = Router();
 const controller = ForecastAllocationDI.getForecastAllocationController();
@@ -10,6 +12,7 @@ const controller = ForecastAllocationDI.getForecastAllocationController();
 router.post(
     "/",
     authMiddleware(["company", "manager"]),
+    validateRequest(CreateForecastAllocationSchema),
     asyncHandler((req, res) => controller.create(req, res)),
 );
 
@@ -17,6 +20,7 @@ router.post(
 router.put(
     "/:id",
     authMiddleware(["company", "manager"]),
+    validateRequest(UpdateForecastAllocationSchema),
     asyncHandler((req, res) => controller.update(req, res)),
 );
 

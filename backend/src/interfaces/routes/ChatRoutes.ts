@@ -3,15 +3,22 @@ import { authMiddleware } from '../middleware/AuthMiddleware';
 import { asyncHandler } from '../middleware/AsyncHandler';
 import { ChatDI } from '../../di/ChatDI';
 import { chatMediaUpload } from '../../infrastructure/services/CloudinaryService';
+import { validateRequest } from '../middleware/ValidationMiddleware';
+import { z } from 'zod';
+
+const SendChatMessageSchema = z.object({
+    receiverId: z.string().min(1, "Receiver ID is required"),
+    content: z.string().optional(),
+}).passthrough();
 
 const chatRouter = express.Router();
 const controller = ChatDI();
-
 
 chatRouter.post(
     '/send',
     authMiddleware(['manager', 'company', 'employee']),
     chatMediaUpload.single('file'),
+    validateRequest(SendChatMessageSchema),
     asyncHandler(controller.sentMessage)
 );
 

@@ -1,4 +1,3 @@
-import { RegisterCompanySchema } from "../../validators/CompanyValidator";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { SendOtpUseCase } from "./SendOTPUseCase";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
@@ -16,8 +15,6 @@ export class RegisterCompanyUseCase {
   ) { }
 
   async execute(data: Company): Promise<Date> {
-    RegisterCompanySchema.parse(data);
-
     const existing = await this._companyRepo.findByEmail(data.email);
     if (existing) throw new AppError(Messages.COMPANY_ALREADY_EXISTS, StatusCodes.CONFLICT);
 

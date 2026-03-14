@@ -5,6 +5,8 @@ import { managerDI } from "../../di/ManagerDI";
 import multer from "multer";
 import path from "path";
 import fs from "fs";
+import { validateRequest } from "../middleware/ValidationMiddleware";
+import { UpdateManagerProfileSchema, ChangePasswordSchema } from "../../application/validators/ManagerValidator";
 
 const managerRouter = Router();
 const controller = managerDI();
@@ -28,7 +30,7 @@ const storage = multer.diskStorage({
 
 const upload = multer({
     storage,
-    limits: { fileSize: 5 * 1024 * 1024 }, 
+    limits: { fileSize: 5 * 1024 * 1024 },
     fileFilter: (_req, file, cb) => {
         const allowedTypes = /jpeg|jpg|png|webp/;
         const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
@@ -53,12 +55,14 @@ managerRouter.put(
     "/profile",
     authMiddleware(["manager"]),
     upload.single("profileImage"),
+    validateRequest(UpdateManagerProfileSchema),
     asyncHandler(controller.updateProfile)
 );
 
 managerRouter.post(
     "/change-password",
     authMiddleware(["manager"]),
+    validateRequest(ChangePasswordSchema),
     asyncHandler(controller.changePassword)
 );
 
