@@ -69,20 +69,7 @@ if (!isProduction) {
 
 app.use(
   cors({
-    origin: (origin, callback) => {
-      if (!origin) return callback(null, true);
-
-      const isAllowed = allowedOrigins.some((allowed) =>
-        origin.startsWith(allowed)
-      );
-
-      if (isAllowed) {
-        callback(null, true);
-      } else {
-        logger.warn(`CORS blocked request from origin: ${origin}`);
-        callback(new Error("Not allowed by CORS"));
-      }
-    },
+    origin: process.env.FRONTEND_URL,
     credentials: true,
   })
 );
