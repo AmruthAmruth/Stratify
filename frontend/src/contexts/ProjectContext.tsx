@@ -313,8 +313,8 @@ export const ProjectProvider: React.FC<ProjectProviderProps> = ({ children }) =>
             heading: subtask.heading || '',
             description: subtask.description || '',
             status: subtask.status || 'Planned',
-            hours: subtask.hours,
-            assignedToId: subtask.assignedToId,
+            hours: subtask.hours ?? 0,
+            assignedToId: subtask.assignedToId ?? "",
             ...subtask,
         };
         console.log('[optimisticCreateSubTask] Created newSubTask:', newSubTask);
