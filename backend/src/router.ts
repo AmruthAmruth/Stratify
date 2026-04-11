@@ -17,7 +17,7 @@ import { apiLimiter } from "./config/RateLimiter";
 import { tenantMiddleware } from "./interfaces/middleware/TenantMiddleware";
 
 const router = Router();
-
+  
 // Apply global API rate limiting
 router.use(apiLimiter);
 

@@ -20,7 +20,7 @@ export const useAuth = () => {
             let shouldRetry = false;
 
             try {
-                // Try to refresh token from cookie
+                
                 const response = await api.post('/auth/refresh-token');
                 const { accessToken } = response.data;
 
@@ -29,7 +29,7 @@ export const useAuth = () => {
                     return;
                 }
 
-                // Decode and validate the token
+               
                 try {
                     const decoded: DecodedToken = jwtDecode(accessToken);
 
