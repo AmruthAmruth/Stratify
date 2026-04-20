@@ -16,9 +16,11 @@ interface AuthenticatedSocket {
 }
 
 export const initSocket = (server: HttpServer) => {
-  const allowedOrigins = process.env.FRONTEND_URL
-    ? [process.env.FRONTEND_URL]
-    : ["http://localhost:5173"];
+  const isProduction = process.env.NODE_ENV === "production";
+  const allowedOrigins = process.env.FRONTEND_URL ? [process.env.FRONTEND_URL] : [];
+  if (!isProduction) {
+    allowedOrigins.push("http://localhost:5173", "http://localhost:5174", "http://127.0.0.1:5173", "http://127.0.0.1:5174");
+  }
 
   const io = new Server(server, {
     cors: {
