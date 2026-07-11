@@ -1,6 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import { z, ZodError } from "zod";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export const validateRequest = (schema: z.ZodSchema) => {
     return async (req: Request, res: Response, next: NextFunction): Promise<void> => {
@@ -11,7 +12,7 @@ export const validateRequest = (schema: z.ZodSchema) => {
             if (error instanceof ZodError) {
                 res.status(StatusCodes.BAD_REQUEST).json({
                     status: "error",
-                    message: "Validation failed",
+                    message: Messages.VALIDATION_FAILED,
                     errors: error.issues.map((issue) => ({
                         field: issue.path.join("."),
                         message: issue.message,

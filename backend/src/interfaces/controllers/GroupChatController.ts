@@ -54,7 +54,7 @@ export class GroupChatController {
         const { groupId, message, senderName } = req.body;
         if (!groupId) {
             res.status(StatusCodes.BAD_REQUEST).json({
-                message: "groupId is required"
+                message: Messages.GROUP_ID_REQUIRED
             });
             return;
         }
@@ -165,7 +165,7 @@ export class GroupChatController {
     getGroupsForUser = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -176,7 +176,7 @@ export class GroupChatController {
     addMemberToGroup = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -185,7 +185,7 @@ export class GroupChatController {
 
         if (!newMemberId) {
             res.status(StatusCodes.BAD_REQUEST).json({
-                message: "newMemberId is required"
+                message: Messages.NEW_MEMBER_ID_REQUIRED
             });
             return;
         }
@@ -222,7 +222,7 @@ export class GroupChatController {
     removeMemberFromGroup = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId;
         if (!userId) {
-            res.status(StatusCodes.UNAUTHORIZED).json({ message: "User not authenticated" });
+            res.status(StatusCodes.UNAUTHORIZED).json({ message: Messages.USER_NOT_AUTHENTICATED });
             return;
         }
 
@@ -231,13 +231,13 @@ export class GroupChatController {
 
         const group = await this._groupRepository.findById(groupId);
         if (!group) {
-            res.status(StatusCodes.NOT_FOUND).json({ message: "Group not found" });
+            res.status(StatusCodes.NOT_FOUND).json({ message: Messages.GROUP_NOT_FOUND });
             return;
         }
 
         if (!group.members.includes(userId)) {
             res.status(StatusCodes.FORBIDDEN).json({
-                message: "You are not a member of this group"
+                message: Messages.NOT_GROUP_MEMBER
             });
             return;
         }
@@ -265,7 +265,7 @@ export class GroupChatController {
 
         if (!this._getDepartmentGroupsForCompanyUseCase) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: "Department groups feature not available"
+                message: Messages.DEPARTMENT_GROUP_UNAVAILABLE
             });
             return;
         }
@@ -285,14 +285,14 @@ export class GroupChatController {
 
         if (!userRole || (userRole !== "manager" && userRole !== "employee")) {
             res.status(StatusCodes.FORBIDDEN).json({
-                message: "This endpoint is only for managers and employees"
+                message: Messages.ENDPOINT_MANAGERS_EMPLOYEES_ONLY
             });
             return;
         }
 
         if (!this._getMyDepartmentGroupUseCase) {
             res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
-                message: "Department group feature not available"
+                message: Messages.DEPARTMENT_GROUP_UNAVAILABLE
             });
             return;
         }

@@ -193,4 +193,39 @@ export const Messages = {
   COMPANY_DEACTIVATED: "Company account has been deactivated",
   COMPANY_ACTIVATED: "Company account has been activated",
   MANAGER_ALREADY_EXISTS: "Manager with this email already exists",
+
+  // Theme Messages
+  THEME_NOT_FOUND: "Theme not found for this company",
+  THEME_RETRIEVED: "Company theme retrieved successfully",
+  THEME_UPDATED: "Company theme updated successfully",
+  THEME_PRESETS_RETRIEVED: "Theme presets retrieved successfully",
+
+  // Group Messages
+  GROUP_ID_REQUIRED: "groupId is required",
+  NEW_MEMBER_ID_REQUIRED: "newMemberId is required",
+  DEPARTMENT_GROUP_UNAVAILABLE: "Department group feature not available",
+  ENDPOINT_MANAGERS_EMPLOYEES_ONLY: "This endpoint is only for managers and employees",
+
+  // Manager Messages
+  PASSWORD_FIELDS_REQUIRED: "Current password and new password are required",
+
+  // Forecast Messages
+  FORECAST_CREATED: "Forecast allocation created successfully",
+  FORECAST_UPDATED: "Forecast allocation updated successfully",
+  FORECAST_RETRIEVED: "Forecast allocations retrieved successfully",
+  FORECAST_CALCULATED: "Forecast vs actual calculated successfully",
+  FORECAST_DELETED: "Forecast allocation deleted successfully",
+
+  // Miscellaneous
+  CONTACT_SUCCESS: "Thank you for your message! We'll get back to you soon.",
+  RECEIVER_ID_REQUIRED: "Receiver ID is required",
+  VALIDATION_FAILED: "Validation failed",
+  INVALID_DOB_FORMAT: "Invalid date format for dob",
+  INVALID_JOINING_DATE_FORMAT: "Invalid date format for joiningDate",
+  SOCKET_WORKS: "If you see this, socket works!",
+
+  // Rate Limiter Messages
+  RATE_LIMIT_AUTH: "Too many authentication attempts from this IP, please try again after 15 minutes",
+  RATE_LIMIT_API: "Too many requests from this IP, please try again after 15 minutes",
+  RATE_LIMIT_PASSWORD_RESET: "Too many password reset attempts, please try again after an hour",
 } as const;

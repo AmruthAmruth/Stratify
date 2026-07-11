@@ -4,6 +4,7 @@ import { IUpdateCompanyThemeUseCase, UpdateThemeDTO } from "../../application/us
 import { IGetThemePresetsUseCase } from "../../application/use-cases/company/GetThemePresetsUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
 import { AppError } from "../middleware/ErrorMiddleware";
+import { Messages } from "../../shared/constants/messages";
 
 export class CompanyThemeController {
     constructor(
@@ -26,7 +27,7 @@ export class CompanyThemeController {
             if (!theme) {
                 res.status(StatusCodes.NOT_FOUND).json({
                     success: false,
-                    message: "Theme not found for this company"
+                    message: Messages.THEME_NOT_FOUND
                 });
                 return;
             }
@@ -34,7 +35,7 @@ export class CompanyThemeController {
             res.status(StatusCodes.OK).json({
                 success: true,
                 response: theme,
-                message: "Company theme retrieved successfully"
+                message: Messages.THEME_RETRIEVED
             });
         } catch (error) {
             throw error;
@@ -82,7 +83,7 @@ export class CompanyThemeController {
             res.status(StatusCodes.OK).json({
                 success: true,
                 response: updatedTheme,
-                message: "Company theme updated successfully"
+                message: Messages.THEME_UPDATED
             });
         } catch (error) {
             throw error;
@@ -97,7 +98,7 @@ export class CompanyThemeController {
             res.status(StatusCodes.OK).json({
                 success: true,
                 response: presets,
-                message: "Theme presets retrieved successfully"
+                message: Messages.THEME_PRESETS_RETRIEVED
             });
         } catch (error) {
             throw error;

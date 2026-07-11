@@ -5,6 +5,7 @@ import { IGetForecastAllocationsByProjectUseCase } from "../../application/inter
 import { ICalculateForecastVsActualUseCase } from "../../application/interfaces/forecast/ICalculateForecastVsActualUseCase";
 import { IForecastAllocationRepository } from "../../domain/repositories/IForecastAllocationRepository";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 interface AuthenticatedRequest extends Request {
     userId: string;
@@ -36,7 +37,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.CREATED).json({
             success: true,
-            message: "Forecast allocation created successfully",
+            message: Messages.FORECAST_CREATED,
             data: result,
         });
     }
@@ -49,7 +50,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast allocation updated successfully",
+            message: Messages.FORECAST_UPDATED,
             data: result,
         });
     }
@@ -62,7 +63,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast allocations retrieved successfully",
+            message: Messages.FORECAST_RETRIEVED,
             data: result,
         });
     }
@@ -75,7 +76,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast allocations retrieved successfully",
+            message: Messages.FORECAST_RETRIEVED,
             data: result,
         });
     }
@@ -88,7 +89,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast allocation retrieved successfully",
+            message: Messages.FORECAST_RETRIEVED,
             data: result,
         });
     }
@@ -107,7 +108,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast vs actual calculated successfully",
+            message: Messages.FORECAST_CALCULATED,
             data: result,
         });
     }
@@ -120,7 +121,7 @@ export class ForecastAllocationController {
 
         res.status(StatusCodes.OK).json({
             success: true,
-            message: "Forecast allocation deleted successfully",
+            message: Messages.FORECAST_DELETED,
             data: { deleted: true },
         });
     }

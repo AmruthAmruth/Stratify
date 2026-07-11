@@ -5,7 +5,7 @@ import departmentRouter from "./interfaces/routes/DepartmentRoutes";
 import employeeRouter from "./interfaces/routes/EmployeeRoutes";
 import subscriptionRouter from "./interfaces/routes/SubscriptionRouter";
 import projectRouter from "./interfaces/routes/ProjectRouter";
-import leaveRouter from "./interfaces/routes/LeaveRoues";
+import leaveRouter from "./interfaces/routes/LeaveRoues"; 
 import notificationRouter from "./interfaces/routes/NotificationRoutes";
 import meetingRouter from "./interfaces/routes/MeetingRoutes";
 import chatRouter from "./interfaces/routes/ChatRoutes";

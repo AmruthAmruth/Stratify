@@ -14,10 +14,10 @@ import { errorMiddleware } from "./interfaces/middleware/ErrorMiddleware";
 import router from "./router";
 import { validateEnv } from "./config/validateEnv";
 import logger from "./shared/utils/logger";
-
+   
 import { initSocket } from "./infrastructure/socket/SocketServer";
 import { SocketService } from "./shared/services/SocketService";
-
+ 
 import { MeetingScheduler } from "./infrastructure/scheduler/MeetingScheduler";
 import { MeetingRepository } from "./infrastructure/repositories/MeetingRepository";
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";

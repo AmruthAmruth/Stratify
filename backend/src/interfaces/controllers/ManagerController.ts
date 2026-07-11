@@ -6,6 +6,7 @@ import { IChangeManagerPasswordUseCase } from "../../application/interfaces/mana
 import { IGetDepartmentEmployeesUseCase } from "../../application/interfaces/managers/IGetDepartmentEmployeesUseCase";
 import { IGetTeamAnalyticsUseCase } from "../../application/interfaces/managers/IGetTeamAnalyticsUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class ManagerController {
     constructor(
@@ -40,7 +41,7 @@ export class ManagerController {
 
             const manager = await this.updateManagerProfileUseCase.execute(managerId, data);
             res.status(StatusCodes.OK).json({
-                message: "Profile updated successfully",
+                message: Messages.PROFILE_UPDATE_SUCCESS,
                 manager,
             });
         } catch (error: unknown) {
@@ -57,7 +58,7 @@ export class ManagerController {
 
             if (!currentPassword || !newPassword) {
                 res.status(StatusCodes.BAD_REQUEST).json({
-                    message: "Current password and new password are required",
+                    message: Messages.PASSWORD_FIELDS_REQUIRED,
                 });
                 return;
             }
@@ -69,7 +70,7 @@ export class ManagerController {
             );
 
             res.status(StatusCodes.OK).json({
-                message: "Password changed successfully",
+                message: Messages.PASSWORD_CHANGE_SUCCESS,
             });
         } catch (error: unknown) {
             if (error instanceof Error && error.message === "Current password is incorrect") {

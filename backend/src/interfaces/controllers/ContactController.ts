@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import { ISendContactMessageUseCase } from "../../application/interfaces/contact/ISendContactMessageUseCase";
 import { StatusCodes } from "../../shared/constants/statusCodes";
+import { Messages } from "../../shared/constants/messages";
 
 export class ContactController {
     constructor(private sendContactMessageUseCase: ISendContactMessageUseCase) { }
@@ -18,7 +19,7 @@ export class ContactController {
 
             res.status(StatusCodes.OK).json({
                 success: true,
-                message: "Thank you for your message! We'll get back to you soon.",
+                message: Messages.CONTACT_SUCCESS,
             });
         } catch (error) {
             res.status(StatusCodes.BAD_REQUEST).json({

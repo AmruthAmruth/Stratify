@@ -30,7 +30,7 @@ export class ChatController {
 
         const { receiverId, message } = req.body;
         if (!receiverId) {
-            res.status(StatusCodes.BAD_REQUEST).json({ message: "Receiver ID is required" });
+            res.status(StatusCodes.BAD_REQUEST).json({ message: Messages.RECEIVER_ID_REQUIRED });
             return;
         }
 

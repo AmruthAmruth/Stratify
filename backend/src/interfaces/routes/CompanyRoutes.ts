@@ -6,6 +6,7 @@ import { companyThemeDI } from "../../di/CompanyThemeDI";
 import { emitNotification } from "../../infrastructure/socket/SocketServer";
 import { io } from "../../main";
 import { validateRequest } from "../middleware/ValidationMiddleware";
+import { Messages } from "../../shared/constants/messages";
 import {
   UpdateCompanyProfileSchema,
   ApproveCompanySchema,
@@ -85,7 +86,7 @@ companyRouter.post("/test", (_req, res) => {
   const sample = {
     title: "Server Test",
     role: "company",
-    message: "If you see this, socket works!",
+    message: Messages.SOCKET_WORKS,
     type: "info",
     userId: "hello",
   };
