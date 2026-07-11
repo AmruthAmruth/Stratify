@@ -47,14 +47,13 @@ app.use(
     crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
-
 // ----------------------------------------------------
 // CORS
 // ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins = [
-  process.env.FRONTEND_URL!, // Production frontend URL
+  process.env.FRONTEND_URL!, // Production frontend URL from Render env
 ];
 
 // Add localhost origins for local development
@@ -66,6 +65,11 @@ if (!isProduction) {
     "http://127.0.0.1:5174"
   );
 }
+
+// Add production Vercel frontend URL
+allowedOrigins.push(
+  "https://stratify-sigma.vercel.app"
+);
 
 app.use(
   cors({
