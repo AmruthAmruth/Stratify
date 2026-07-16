@@ -16,6 +16,10 @@ interface JwtPayload {
   exp?: number;
 }
 
+interface WithCompanyId {
+  companyId?: unknown;
+}
+
 // Minimal models for middleware lookup to keep dependencies lightweight
 import mongoose from "mongoose";
 const ManagerModel = mongoose.models.Manager || mongoose.model("Manager", new mongoose.Schema({ companyId: String }, { strict: false }));
@@ -47,10 +51,10 @@ export const authMiddleware = (
       let userCompanyId = decoded.id; // defaults to company
       if (decoded.role === "manager") {
         const manager = await ManagerModel.findById(decoded.id).select("companyId").lean();
-        if (manager) userCompanyId = String((manager as any).companyId);
+        if (manager) userCompanyId = String((manager as WithCompanyId).companyId);
       } else if (decoded.role === "employee") {
         const employee = await EmployeeModel.findById(decoded.id).select("companyId").lean();
-        if (employee) userCompanyId = String((employee as any).companyId);
+        if (employee) userCompanyId = String((employee as WithCompanyId).companyId);
       }
       req.userCompanyId = userCompanyId;
 

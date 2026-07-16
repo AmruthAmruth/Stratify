@@ -1,4 +1,4 @@
-import { Schema } from "mongoose";
+import { Schema, Query, Aggregate } from "mongoose";
 import { getTenantContext } from "../context/TenantContext";
 
 export function tenantPlugin(schema: Schema) {
@@ -8,7 +8,7 @@ export function tenantPlugin(schema: Schema) {
 
     if (!hasCompanyId) return;
 
-    const handleTenantInjection = function (this: any, next: (err?: Error) => void) {
+    const handleTenantInjection = function (this: Query<unknown, unknown>, next: (err?: Error) => void) {
         const context = getTenantContext();
 
         if (!context) {
@@ -42,7 +42,7 @@ export function tenantPlugin(schema: Schema) {
     schema.pre("updateMany", handleTenantInjection);
     schema.pre("deleteMany", handleTenantInjection);
     schema.pre("deleteOne", handleTenantInjection);
-    schema.pre("aggregate", function (this: any, next: (err?: Error) => void) {
+    schema.pre("aggregate", function (this: Aggregate<unknown>, next: (err?: Error) => void) {
         const context = getTenantContext();
         const isBypass = this.options.bypassTenant || (context && context.bypassTenant);
 
