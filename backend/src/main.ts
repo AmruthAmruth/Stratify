@@ -5,7 +5,7 @@ import morgan from "morgan";
 import * as rfs from "rotating-file-stream";
 import path from "path";
 import fs from "fs";
-import cors from "cors";   
+// cors package removed in favour of manual CORS middleware below
 import cookieParser from "cookie-parser";
 import http from "http";
 import helmet from "helmet";
@@ -49,21 +49,18 @@ app.use(
 );
 
 // ----------------------------------------------------
-// CORS
+// CORS — manual middleware (works for ALL responses incl. errors)
 // ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
 const allowedOrigins: string[] = [
-  // Always allow the deployed Vercel frontend
-  "https://stratify-sigma.vercel.app",
+  "https://stratify-sigma.vercel.app", // production Vercel frontend (hardcoded)
 ];
 
-// Add env-configured frontend URL if present and not already listed
 if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_URL)) {
   allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
-// Add localhost origins for local development
 if (!isProduction) {
   allowedOrigins.push(
     "http://localhost:5173",
@@ -73,40 +70,36 @@ if (!isProduction) {
   );
 }
 
-app.use(
-  cors({
-    origin: (origin, callback) => {
-      // Allow requests with no origin (server-to-server, curl, health checks)
-      if (!origin) return callback(null, true);
+/**
+ * Manual CORS middleware.
+ * Sets Access-Control-* headers on EVERY response — including 4xx/5xx errors.
+ * The `cors` npm package is not used here because its callback approach can
+ * fail to attach headers when downstream middleware calls next(err) early.
+ */
+app.use((req, res, next) => {
+  const origin = req.headers.origin as string | undefined;
 
-      if (allowedOrigins.includes(origin)) {
-        callback(null, true);
-      } else {
-        logger.warn(`CORS blocked request from origin: ${origin}`);
-        callback(new Error(`CORS policy: origin '${origin}' is not allowed`));
-      }
-    },
-    credentials: true,
-    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  })
-);
+  if (origin && allowedOrigins.includes(origin)) {
+    res.setHeader("Access-Control-Allow-Origin", origin);
+    res.setHeader("Access-Control-Allow-Credentials", "true");
+    res.setHeader(
+      "Access-Control-Allow-Methods",
+      "GET, POST, PUT, PATCH, DELETE, OPTIONS"
+    );
+    res.setHeader(
+      "Access-Control-Allow-Headers",
+      "Content-Type, Authorization, X-Requested-With"
+    );
+  }
 
-// ✅ Handle OPTIONS preflight for ALL routes explicitly
-// This MUST come right after cors() and before any other middleware/routes
-app.options("*", cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error(`CORS policy: origin '${origin}' is not allowed`));
-    }
-  },
-  credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-}));
+  // Respond immediately to preflight OPTIONS requests
+  if (req.method === "OPTIONS") {
+    res.status(204).end();
+    return;
+  }
+
+  next();
+});
 
 // ----------------------------------------------------
 // Body parsers
