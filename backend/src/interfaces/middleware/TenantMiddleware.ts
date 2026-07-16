@@ -24,7 +24,7 @@ export const tenantMiddleware = (req: AuthRequest, _res: Response, next: NextFun
     const contextData = {
         // By default context is empty, Use Cases / Controllers can set context or we resolve from DB.
         // But passing undefined is fine, the plugin will block queries unless bypassTenant is true.
-        companyId: req.userCompanyId || req.userId, // fallback
+        companyId: req.userCompanyId ?? req.userId ?? "", // fallback to empty string if unauthenticated
         bypassTenant: req.role === 'super-admin'
     };
 
