@@ -53,9 +53,15 @@ app.use(
 // ----------------------------------------------------
 const isProduction = process.env.NODE_ENV === "production";
 
-const allowedOrigins = [
-  process.env.FRONTEND_URL!, // Production frontend URL from Render env
+const allowedOrigins: string[] = [
+  // Always allow the deployed Vercel frontend
+  "https://stratify-sigma.vercel.app",
 ];
+
+// Add env-configured frontend URL if present and not already listed
+if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_URL)) {
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
 
 // Add localhost origins for local development
 if (!isProduction) {
@@ -67,15 +73,22 @@ if (!isProduction) {
   );
 }
 
-// Add production Vercel frontend URL
-allowedOrigins.push(
-  "https://stratify-sigma.vercel.app"
-);
-
 app.use(
   cors({
-    origin: allowedOrigins,
+    origin: (origin, callback) => {
+      // Allow requests with no origin (server-to-server, curl, health checks)
+      if (!origin) return callback(null, true);
+
+      if (allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        logger.warn(`CORS blocked request from origin: ${origin}`);
+        callback(new Error(`CORS policy: origin '${origin}' is not allowed`));
+      }
+    },
     credentials: true,
+    methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+    allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
   })
 );
 
