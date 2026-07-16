@@ -46,7 +46,7 @@ export class NotificationController {
    }
 
    deleteNotification = async (req: Request, res: Response): Promise<void> => {
-      const id = req.params.id;
+      const id = req.params.id as string;
       console.log(id);
 
       await this._deleteNotificationUseCase.execute(id);

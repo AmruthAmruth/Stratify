@@ -16,7 +16,7 @@ export class CompanyThemeController {
 
     getCompanyTheme = async (req: Request, res: Response): Promise<void> => {
         try {
-            const { companyId } = req.params;
+            const companyId = req.params.companyId as string;
 
             if (!companyId) {
                 throw new AppError("Company ID is required", StatusCodes.BAD_REQUEST);

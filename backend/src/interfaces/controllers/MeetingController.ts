@@ -35,14 +35,14 @@ export class MeetingController {
   }
 
   joinMeeting = async (req: AuthRequest, res: Response): Promise<void> => {
-    const { roomId } = req.params;
+    const roomId = req.params.roomId as string;
     const userId = req.userId; 
     const meeting = await this._joinMeetingUseCase.execute(roomId, userId!);
     res.status(StatusCodes.OK).json(meeting)
   }
 
   closeMeeting = async (req: Request, res: Response): Promise<void> => {
-    const { roomId } = req.params;
+    const roomId = req.params.roomId as string;
     await this._closeMeetingUseCase.execute(roomId);
     res.status(StatusCodes.OK).json({ message: Messages.MEETING_CLOSED })
   }

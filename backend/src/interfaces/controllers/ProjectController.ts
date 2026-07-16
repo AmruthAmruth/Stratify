@@ -135,7 +135,7 @@ export class ProjectController {
   };
 
   getProjectDetails = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const response = await this._getProjectDetailsUseCase.execute(id);
     res.status(StatusCodes.OK).json(response);
   };
@@ -191,7 +191,7 @@ export class ProjectController {
     req: Request,
     res: Response,
   ): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const response =
       await this._issueLevelEmployeeAllocationUseCase.execute(id);
     res.status(StatusCodes.OK).json(response);
@@ -208,7 +208,7 @@ export class ProjectController {
   };
 
   deleteProject = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
 
     await this._deleteProjectUseCase.execute(id);
     res
@@ -231,7 +231,7 @@ export class ProjectController {
     req: Request,
     res: Response,
   ): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const response = await this._getEmployeeNotInProjectUseCase.execute(id);
     res.status(StatusCodes.OK).json(response);
   };
@@ -266,7 +266,7 @@ export class ProjectController {
 
 
   deleteIssue = async (req: Request, res: Response): Promise<void> => {
-    const { issueId } = req.params
+    const issueId = req.params.issueId as string;
     await this._deleteIssueUseCase.execute(issueId!)
     res.status(StatusCodes.OK).json({ message: Messages.ISSUE_DELETED })
   }
@@ -277,7 +277,7 @@ export class ProjectController {
   };
 
   deleteSprint = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await this._deleteSprintUseCase.execute(id);
     res.status(StatusCodes.OK).json({ message: Messages.SPRINT_DELETED });
   };
@@ -288,7 +288,7 @@ export class ProjectController {
   };
 
   deleteSubTask = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     await this._deleteSubTaskUseCase.execute(id);
     res.status(StatusCodes.OK).json({ message: Messages.SUBTASK_DELETED });
   };
@@ -305,7 +305,7 @@ export class ProjectController {
   };
 
   getSprintCapacity = async (req: Request, res: Response): Promise<void> => {
-    const { sprintId } = req.params;
+    const sprintId = req.params.sprintId as string;
     const response = await this._calculateSprintCapacityUseCase.execute(sprintId);
     res.status(StatusCodes.OK).json(response);
   };

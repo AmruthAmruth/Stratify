@@ -44,7 +44,7 @@ export class ForecastAllocationController {
 
     // Update forecast allocation
     async update(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const id = req.params.id as string;
 
         const result = await this._updateUseCase.execute(id, req.body);
 
@@ -57,9 +57,9 @@ export class ForecastAllocationController {
 
     // Get forecast allocations by project
     async getByProject(req: Request, res: Response): Promise<void> {
-        const { projectId } = req.params;
+        const projectId = req.params.projectId as string;
 
-        const result = await this._getByProjectUseCase.execute(projectId);
+        const result = await this._getByProjectUseCase.execute(projectId as string);
 
         res.status(StatusCodes.OK).json({
             success: true,
@@ -70,7 +70,7 @@ export class ForecastAllocationController {
 
     // Get forecast allocations by employee
     async getByEmployee(req: Request, res: Response): Promise<void> {
-        const { employeeId } = req.params;
+        const employeeId = req.params.employeeId as string;
 
         const result = await this._forecastRepo.findByEmployeeId(employeeId);
 
@@ -83,7 +83,7 @@ export class ForecastAllocationController {
 
     // Get forecast allocation by ID
     async getById(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const id = req.params.id as string;
 
         const result = await this._forecastRepo.findById(id);
 
@@ -96,12 +96,13 @@ export class ForecastAllocationController {
 
     // Calculate forecast vs actual
     async calculateVsActual(req: Request, res: Response): Promise<void> {
-        const { employeeId, projectId } = req.params;
+        const employeeId = req.params.employeeId as string;
+        const projectId = req.params.projectId as string;
         const { startDate, endDate } = req.query;
 
         const result = await this._calculateVsActualUseCase.execute(
-            employeeId,
-            projectId,
+            employeeId as string,
+            projectId as string,
             startDate as string | undefined,
             endDate as string | undefined,
         );
@@ -115,7 +116,7 @@ export class ForecastAllocationController {
 
     // Delete forecast allocation
     async delete(req: Request, res: Response): Promise<void> {
-        const { id } = req.params;
+        const id = req.params.id as string;
 
         await this._forecastRepo.delete(id);
 

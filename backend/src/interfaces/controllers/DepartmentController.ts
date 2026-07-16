@@ -52,7 +52,7 @@ export class DepartmentController {
   };
 
   getDepartmentDetails = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const response = await this._getDepartmentDetailsUseCase.execute(id);
     res.status(StatusCodes.OK).json({ response });
   };
@@ -71,7 +71,7 @@ export class DepartmentController {
     req: Request,
     res: Response,
   ): Promise<void> => {
-    const { managerId } = req.params;
+    const managerId = req.params.managerId as string;
     const response =
       await this._getManagerDepartmentsUseCase.execute(managerId);
     res.status(StatusCodes.OK).json(response);

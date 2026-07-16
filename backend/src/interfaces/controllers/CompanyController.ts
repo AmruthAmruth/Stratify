@@ -25,7 +25,7 @@ export class CompanyController {
   ) { }
 
   getCompanyById = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const company = await this._getCompanyByIdUseCase.execute(id);
     res.status(StatusCodes.OK).json(company);
   };
@@ -71,7 +71,7 @@ export class CompanyController {
   };
 
   getTeamMemberProfile = async (req: Request, res: Response): Promise<void> => {
-    const { id } = req.params;
+    const id = req.params.id as string;
     const response = await this._getTeamMemberProfileUseCase.execute(id);
     res.status(StatusCodes.OK).json({ response });
   };

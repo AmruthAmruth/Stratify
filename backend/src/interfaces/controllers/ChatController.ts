@@ -93,7 +93,7 @@ export class ChatController {
 
     getChatHistory = async (req: AuthRequest, res: Response): Promise<void> => {
         const userId = req.userId!;
-        const { receiverId } = req.params;
+        const receiverId = req.params.receiverId as string;
         const chats = await this._getChatUseCase.execute(userId, receiverId)
         res.status(StatusCodes.OK).json(chats)
 
@@ -107,7 +107,7 @@ export class ChatController {
                 return;
             }
 
-            const { senderId } = req.params;
+            const senderId = req.params.senderId as string;
             if (!senderId) {
                 res.status(StatusCodes.BAD_REQUEST).json({ message: Messages.SENDER_ID_REQUIRED });
                 return;

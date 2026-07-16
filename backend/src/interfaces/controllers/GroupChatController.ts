@@ -137,7 +137,7 @@ export class GroupChatController {
             return;
         }
 
-        const { groupId } = req.params;
+        const groupId = req.params.groupId as string;
         const { limit, after } = req.query;
 
         const group = await this._groupRepository.findById(groupId);
@@ -180,7 +180,7 @@ export class GroupChatController {
             return;
         }
 
-        const { groupId } = req.params;
+        const groupId = req.params.groupId as string;
         const { newMemberId, newMemberName } = req.body;
 
         if (!newMemberId) {
@@ -226,7 +226,8 @@ export class GroupChatController {
             return;
         }
 
-        const { groupId, memberId } = req.params;
+        const groupId = req.params.groupId as string;
+        const memberId = req.params.memberId as string;
         const { memberName } = req.body;
 
         const group = await this._groupRepository.findById(groupId);
