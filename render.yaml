@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: stratify-backend
+    runtime: node
+    rootDir: backend
+    branch: dev
+    buildCommand: npm install && npm run build
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 7000
+      - key: FRONTEND_URL
+        value: https://stratify-sigma.vercel.app

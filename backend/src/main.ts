@@ -92,6 +92,22 @@ app.use(
   })
 );
 
+// ✅ Handle OPTIONS preflight for ALL routes explicitly
+// This MUST come right after cors() and before any other middleware/routes
+app.options("*", cors({
+  origin: (origin, callback) => {
+    if (!origin) return callback(null, true);
+    if (allowedOrigins.includes(origin)) {
+      callback(null, true);
+    } else {
+      callback(new Error(`CORS policy: origin '${origin}' is not allowed`));
+    }
+  },
+  credentials: true,
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
+}));
+
 // ----------------------------------------------------
 // Body parsers
 // ----------------------------------------------------
