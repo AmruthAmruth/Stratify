@@ -61,14 +61,14 @@ const corsOptions: CorsOptions = {
 };
 
 // ✅ Handle preflight requests globally
-app.use(cors(corsOptions));
-app.options("*", cors(corsOptions));
-
 app.use(
   helmet({
     crossOriginResourcePolicy: { policy: "cross-origin" },
   })
 );
+
+app.use(cors(corsOptions));
+app.options(/.*/, cors(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
