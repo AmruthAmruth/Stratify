@@ -6,8 +6,8 @@
  "scripts": {
   "lint": "eslint . --ext .ts",
   "lint:fix": "eslint . --ext .ts --fix",
-  "prebuild": "npx tsc -v && node -v && echo 'Listing tsconfig files:' && find . -name 'tsconfig*.json' -print",
-  "build": "npx tsc -p tsconfig.json",
+  "prebuild": "./node_modules/.bin/tsc -v && node -v && echo 'Listing tsconfig files:' && find . -name 'tsconfig*.json' -print",
+  "build": "./node_modules/.bin/tsc -p tsconfig.json",
   "start": "node dist/main.js",
   "dev": "nodemon src/main.ts",
   "format": "prettier --write 'src/**/*.{js,ts,jsx,tsx,json,css,md}'"
