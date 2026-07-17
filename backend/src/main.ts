@@ -5,7 +5,7 @@ import morgan from "morgan";
 import * as rfs from "rotating-file-stream";
 import path from "path";
 import fs from "fs";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
 import helmet from "helmet";
@@ -30,7 +30,7 @@ const app = express();
 app.set("trust proxy", 1);
 
 // ✅ Allowed origins
-const allowedOrigins = [
+const allowedOrigins: string[] = [
   "https://stratify-sigma.vercel.app",
   "http://localhost:5173",
   "http://localhost:5174",
@@ -42,13 +42,15 @@ if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_UR
   allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
-// ✅ Proper CORS setup
-const corsOptions = {
-  origin: (origin, callback) => {
+// ✅ Properly typed CORS options
+const corsOptions: CorsOptions = {
+  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
     if (!origin) return callback(null, true); // allow server-to-server, curl, Postman
+
     if (allowedOrigins.includes(origin)) {
       return callback(null, true);
     }
+
     logger.warn(`CORS blocked origin: ${origin}`);
     return callback(new Error(`CORS: origin ${origin} not allowed`));
   },
