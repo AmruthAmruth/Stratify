@@ -1,10 +1,13 @@
 // src/shared/socket.ts
 import { io, Socket } from "socket.io-client";
 
-const SOCKET_URL =
-  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
-    ? "http://localhost:7000"
-    : import.meta.env.VITE_SOCKET_URL || "http://localhost:7000";
+const isLocal =
+  window.location.hostname === "localhost" ||
+  window.location.hostname === "127.0.0.1";
+
+const SOCKET_URL = isLocal
+  ? "http://localhost:7000"
+  : import.meta.env.VITE_SOCKET_URL || "https://stratify-sboa.onrender.com";
 
 let socket: Socket | null = null;
 

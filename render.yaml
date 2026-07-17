@@ -13,3 +13,9 @@ services:
         value: 7000
       - key: FRONTEND_URL
         value: https://stratify-sigma.vercel.app
+      - key: COOKIE_SECURE
+        value: true
+      - key: COOKIE_SAME_SITE
+        value: none
+      - key: COOKIE_HTTP_ONLY
+        value: true
