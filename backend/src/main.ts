@@ -117,17 +117,21 @@ app.get("/health", (_req, res) => {
   res.json({
     status: "ok",
     uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development",
   });
 });
 
-app.use((req, _res, next) => {
-  console.log(
-    `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
-  );
-  console.log("Origin:", req.headers.origin);
-  console.log("Cookies:", req.cookies);
-  next();
-});
+if (process.env.NODE_ENV !== "production") {
+  app.use((req, _res, next) => {
+    console.log(
+      `[${new Date().toISOString()}] ${req.method} ${req.originalUrl}`
+    );
+    console.log("Origin:", req.headers.origin);
+    console.log("Cookies:", req.cookies);
+    next();
+  });
+}
 
 app.use("/api", router);
 
