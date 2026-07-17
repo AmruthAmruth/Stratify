@@ -42,25 +42,13 @@ if (process.env.FRONTEND_URL && !allowedOrigins.includes(process.env.FRONTEND_UR
   allowedOrigins.push(process.env.FRONTEND_URL);
 }
 
-// ✅ Properly typed CORS options
+// ✅ Simplified CORS options
 const corsOptions: CorsOptions = {
-  origin: (origin: string | undefined, callback: (err: Error | null, allow?: boolean) => void) => {
-    if (!origin) return callback(null, true); // allow server-to-server, curl, Postman
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    }
-
-    logger.warn(`CORS blocked origin: ${origin}`);
-    return callback(new Error(`CORS: origin ${origin} not allowed`));
-  },
+  origin: allowedOrigins,
   credentials: true,
-  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
-  allowedHeaders: ["Content-Type", "Authorization", "X-Requested-With"],
-  optionsSuccessStatus: 200,
 };
 
-// ✅ Handle preflight requests globally
+// ✅ Apply CORS at the very top
 app.use(cors(corsOptions));
 app.options("*", cors(corsOptions));
 
