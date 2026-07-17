@@ -8,7 +8,7 @@ import { jwtDecode } from "jwt-decode";
 
 // Determine API base URL based on environment
 const apiBaseURL =
-  window.location.hostname === "localhost"
+  window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1"
     ? import.meta.env.VITE_LOCAL_API
     : import.meta.env.VITE_PROD_API;
 

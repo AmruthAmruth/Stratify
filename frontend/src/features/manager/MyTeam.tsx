@@ -147,7 +147,7 @@ const MyTeam = () => {
                 <div className="flex items-center gap-3">
                     {employee.profileImage ? (
                         <img
-                            src={`${import.meta.env.VITE_API_BASE_URL}${employee.profileImage}`}
+                            src={employee.profileImage.startsWith('http') ? employee.profileImage : `${window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1" ? "http://localhost:7000" : "https://stratify-sboa.onrender.com"}${employee.profileImage}`}
                             alt={employee.name}
                             className="w-10 h-10 rounded-full object-cover border-2 border-primary"
                         />

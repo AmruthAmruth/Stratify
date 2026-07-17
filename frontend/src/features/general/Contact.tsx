@@ -6,6 +6,7 @@ import { Navbar } from "./Navbar"
 import Footer from "./Footer"
 import { useSnackbar } from "notistack"
 import axios from "axios"
+import api from "@/services/axiosInstance"
 
 export default function ContactPage() {
   const { enqueueSnackbar } = useSnackbar()
@@ -56,7 +57,7 @@ export default function ContactPage() {
     setIsSubmitting(true)
 
     try {
-      const response = await axios.post(`${import.meta.env.VITE_API_BASE_URL}/contact`, formData)
+      const response = await api.post("/contact", formData)
 
       if (response.data.success) {
         enqueueSnackbar(response.data.message || "Thank you for your message! We'll get back to you soon.", {
