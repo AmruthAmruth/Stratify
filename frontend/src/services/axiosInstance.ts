@@ -29,7 +29,7 @@ const api = axios.create({
 // Token refresh management
 let isRefreshing = false;
 
-let failedQueue: Array<{
+let failedQueue: Array<{ 
   resolve: (value?: unknown) => void;
   reject: (reason?: unknown) => void;
 }> = [];

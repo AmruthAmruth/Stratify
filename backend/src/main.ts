@@ -39,11 +39,9 @@ app.set("trust proxy", 1);
 // ===============================
 
 const allowedOrigins = [
-  "https://stratify-sigma.vercel.app",
+  process.env.FRONTEND_URL!,
   "http://localhost:5173",
   "http://localhost:5174",
-  "http://127.0.0.1:5173",
-  "http://127.0.0.1:5174",
 ];
 
 
@@ -272,7 +270,7 @@ app.get(
 // ===============================
 
 
-app.use(
+app.use( 
   "/api",
   router
 );
