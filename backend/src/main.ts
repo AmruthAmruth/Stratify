@@ -106,7 +106,6 @@ const corsOptions: CorsOptions = {
 
 app.use(cors(corsOptions));
 
-app.options("*", cors(corsOptions));
 
 
 

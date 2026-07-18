@@ -1,6 +1,7 @@
 import { PaginatedResult } from "../../../domain/common/Pagination";
 import { Company } from "../../../domain/entities/Company";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
+import { IGetPaginatedCompaniesUseCase } from "../../interfaces/company/IListCompanyUseCase";
 
 interface GetPaginatedCompaniesDTO {
   page?: number;
@@ -10,7 +11,7 @@ interface GetPaginatedCompaniesDTO {
   sort?: Record<string, 1 | -1>;
 }
 
-export class GetPaginatedCompaniesUsecase {
+export class GetPaginatedCompaniesUsecase implements IGetPaginatedCompaniesUseCase{
   constructor(private readonly _companyRepository: ICompanyRepository) {}
 
   async execute(

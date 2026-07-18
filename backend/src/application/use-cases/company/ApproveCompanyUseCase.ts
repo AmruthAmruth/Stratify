@@ -4,8 +4,9 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { approveCompanyTemplate } from "../../../shared/templates/ApproveCompanyTemplate";
+import { IApproveCompanyUseCase } from "../../interfaces/company/IApproveCompanyUseCase";
 
-export class ApproveCompany {
+export class ApproveCompany implements IApproveCompanyUseCase{
   constructor(
     private _emailService: IEmailService,
     private _companyRepo: ICompanyRepository,

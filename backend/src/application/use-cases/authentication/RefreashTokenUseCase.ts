@@ -7,8 +7,9 @@ import {
   generateAccessToken,
   generateRefreshToken,
 } from "../../../shared/utils/token";
+import { IRefreashTokenUseCase } from "../../interfaces/authentication/IRefreashTokenUseCase";
 
-export class RefreshTokenUseCase {
+export class RefreshTokenUseCase implements IRefreashTokenUseCase{
   async execute(
     refreshToken: string,
   ): Promise<{ accessToken: string; refreshToken: string }> {

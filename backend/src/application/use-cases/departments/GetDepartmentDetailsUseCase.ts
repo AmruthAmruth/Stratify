@@ -8,8 +8,7 @@ import { DepartmentDetailsDTO } from "../../dto/departments/DepartmentDetailsDTO
 import { IGetCompanyDepartmentDetailsUseCase } from "../../interfaces/departments/IGetDepartmentDetailsUseCase";
 import { DepartmentMapper } from "../../mappers/DepartmentMapper";
 
-export class GetDepartmentDetailsUseCase
-  implements IGetCompanyDepartmentDetailsUseCase {
+export class GetDepartmentDetailsUseCase implements IGetCompanyDepartmentDetailsUseCase {
   constructor(
     private _departmentRepo: IDepartmentRepository,
     private _managerRepo: IManagerRepository,

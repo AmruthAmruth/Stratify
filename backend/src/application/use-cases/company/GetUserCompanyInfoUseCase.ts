@@ -4,8 +4,9 @@ import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepos
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { Messages } from "../../../shared/constants/messages";
+import { IGetUserCompanyInfoUseCase } from "../../interfaces/company/IGetUserCompanyInfoUseCase";
 
-export class GetUserCompanyInfoUseCase {
+export class GetUserCompanyInfoUseCase implements IGetUserCompanyInfoUseCase{
   constructor(
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,

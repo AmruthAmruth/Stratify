@@ -5,8 +5,7 @@ import { DepartmentDetails } from "../../dto/departments/CompanyDepartmentsDTO";
 import { IGetCompanyDepartmentUseCase } from "../../interfaces/departments/IGetCompanyDepartmentsUseCase";
 import { DepartmentMapper } from "../../mappers/DepartmentMapper"; 
 
-export class GetCompanyDepartmentUseCase
-  implements IGetCompanyDepartmentUseCase
+export class GetCompanyDepartmentUseCase implements IGetCompanyDepartmentUseCase
 {
   constructor(
     private _departmentRepo: IDepartmentRepository,

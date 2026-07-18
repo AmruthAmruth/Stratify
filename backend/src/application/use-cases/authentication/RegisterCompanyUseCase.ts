@@ -6,8 +6,9 @@ import { hashPassword } from "../../../shared/utils/password";
 import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { IRegisterCompanyUseCase } from "../../interfaces/authentication/IRegisterCompanyUseCase";
 
-export class RegisterCompanyUseCase {
+export class RegisterCompanyUseCase implements IRegisterCompanyUseCase{
   constructor(
     private _companyRepo: ICompanyRepository,
     private _sendOtpUseCase: SendOtpUseCase,

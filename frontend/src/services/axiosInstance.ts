@@ -4,153 +4,265 @@ import axios, { AxiosError, InternalAxiosRequestConfig } from "axios";
 import { jwtDecode } from "jwt-decode";
 
 
+// Automatically switch API URL
+const apiBaseURL =
+  import.meta.env.MODE === "development"
+    ? import.meta.env.VITE_LOCAL_API
+    : import.meta.env.VITE_PROD_API;
 
 
-// Determine API base URL based on environment
-const apiBaseURL ="https://stratify-sboa.onrender.com/api"
-   
+console.log(
+  "Current API:",
+  apiBaseURL
+);
+
+
 const api = axios.create({
-  baseURL: `${apiBaseURL}`,
+  baseURL: apiBaseURL,
   withCredentials: true,
+  headers: {
+    "Content-Type": "application/json",
+  },
 });
 
-// Token refresh state management
+
+// Token refresh management
 let isRefreshing = false;
+
 let failedQueue: Array<{
   resolve: (value?: unknown) => void;
   reject: (reason?: unknown) => void;
 }> = [];
 
-const processQueue = (error: AxiosError | null, token: string | null = null) => {
-  failedQueue.forEach((prom) => {
-    if (error) {
-      prom.reject(error);
-    } else {
-      prom.resolve(token);
+
+const processQueue = (
+  error: AxiosError | null,
+  token: string | null = null
+) => {
+
+  failedQueue.forEach(({resolve,reject}) => {
+
+    if(error){
+      reject(error);
     }
+    else{
+      resolve(token);
+    }
+
   });
-  failedQueue = [];
+
+
+  failedQueue=[];
 };
 
-const isTokenExpiringSoon = (token: string, bufferSeconds = 60): boolean => {
-  try {
-    const decoded = jwtDecode<{ exp: number }>(token);
-    const currentTime = Date.now() / 1000;
-    return decoded.exp < currentTime + bufferSeconds;
-  } catch {
-    return true; // Treat invalid tokens as expired
+
+
+const isTokenExpiringSoon = (
+  token:string,
+  bufferSeconds=60
+)=>{
+
+  try{
+
+    const decoded =
+      jwtDecode<{exp:number}>(token);
+
+
+    return decoded.exp <
+      Date.now()/1000 + bufferSeconds;
+
   }
+  catch{
+
+    return true;
+
+  }
+
 };
 
+
+
+// Attach access token
 api.interceptors.request.use(
-  async (config) => {
-    const token = store.getState().auth.accessToken;
+(config)=>{
 
-    if (token) {
-      if (isTokenExpiringSoon(token, 60)) {
-        console.log("Token expiring soon, will be refreshed on next 401");
-      }
-      config.headers.Authorization = `Bearer ${token}`;
+  const token =
+    store.getState().auth.accessToken;
+
+
+  if(token){
+
+    if(isTokenExpiringSoon(token)){
+      console.log("Token expiring soon");
     }
 
-    return config;
-  },
-  (error) => Promise.reject(error)
-);
 
-api.interceptors.response.use(
-  (response) => response,
-  async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & { _retry?: boolean };
+    config.headers.Authorization =
+      `Bearer ${token}`;
 
-
-    if (error.response?.status === 401 && originalRequest && !originalRequest._retry) {
-
-      if (originalRequest.url?.includes('/refresh-token')) {
-        return Promise.reject(error);
-      }
-
-      if (isRefreshing) {
-
-        return new Promise((resolve, reject) => {
-          failedQueue.push({ resolve, reject });
-        })
-          .then(() => {
-            const token = store.getState().auth.accessToken;
-            if (token && originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
-            return api.request(originalRequest);
-          })
-          .catch((err) => Promise.reject(err));
-      }
-
-      originalRequest._retry = true;
-      isRefreshing = true;
-
-      try {
-
-        const refreshRes = await api.post("/auth/refresh-token");
-        const newToken = refreshRes.data.accessToken;
-
-        if (!newToken) {
-          throw new Error("No access token received from refresh");
-        }
-
-
-        const decoded = jwtDecode<{ id: string; role: string; name?: string; exp: number }>(newToken);
-
-        if (!decoded.id || !decoded.role || !decoded.exp) {
-          throw new Error("Invalid token payload received");
-        }
-
-        store.dispatch(
-          setCredentials({
-            accessToken: newToken,
-            role: decoded.role,
-            userId: decoded.id,
-            name: decoded.name || null,
-          })
-        );
-
-
-        processQueue(null, newToken);
-
-
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${newToken}`;
-        }
-
-        return api.request(originalRequest);
-      } catch (refreshError) {
-
-        processQueue(refreshError as AxiosError, null);
-
-        console.error("Token refresh failed:", refreshError);
-
-
-        store.dispatch(clearCredentials());
-
-
-        try {
-          await api.post("/auth/logout");
-        } catch (logoutError) {
-          console.error("Logout API call failed:", logoutError);
-        }
-
-
-        if (!window.location.pathname.includes('/login')) {
-          window.location.href = "/login";
-        }
-
-        return Promise.reject(refreshError);
-      } finally {
-        isRefreshing = false;
-      }
-    }
-
-    return Promise.reject(error);
   }
-);
+
+
+  return config;
+
+});
+
+
+
+// Refresh token handler
+api.interceptors.response.use(
+(response)=>response,
+
+
+async(error:AxiosError)=>{
+
+
+const originalRequest =
+error.config as InternalAxiosRequestConfig & {
+  _retry?:boolean
+};
+
+
+
+if(
+ error.response?.status===401 &&
+ originalRequest &&
+ !originalRequest._retry
+){
+
+
+ if(
+ originalRequest.url?.includes(
+ "/refresh-token"
+ )
+ ){
+   return Promise.reject(error);
+ }
+
+
+
+ if(isRefreshing){
+
+   return new Promise((resolve,reject)=>{
+
+     failedQueue.push({
+       resolve,
+       reject
+     });
+
+   })
+   .then(()=>{
+
+     const token =
+     store.getState().auth.accessToken;
+
+
+     if(token && originalRequest.headers){
+
+       originalRequest.headers.Authorization =
+       `Bearer ${token}`;
+
+     }
+
+
+     return api.request(originalRequest);
+
+   });
+
+ }
+
+
+
+ originalRequest._retry=true;
+ isRefreshing=true;
+
+
+
+ try{
+
+
+ const response =
+ await api.post("/auth/refresh-token");
+
+
+ const newToken =
+ response.data.accessToken;
+
+
+
+ const decoded =
+ jwtDecode<{
+ id:string;
+ role:string;
+ name?:string;
+ exp:number;
+ }>(newToken);
+
+
+
+ store.dispatch(
+ setCredentials({
+   accessToken:newToken,
+   userId:decoded.id,
+   role:decoded.role,
+   name:decoded.name ?? null
+ })
+ );
+
+
+
+ processQueue(
+ null,
+ newToken
+ );
+
+
+
+ originalRequest.headers.Authorization =
+ `Bearer ${newToken}`;
+
+
+ return api.request(originalRequest);
+
+
+
+ }
+ catch(refreshError){
+
+
+ processQueue(
+ refreshError as AxiosError,
+ null
+ );
+
+
+ store.dispatch(
+ clearCredentials()
+ );
+
+
+ window.location.href="/login";
+
+
+ return Promise.reject(refreshError);
+
+
+ }
+ finally{
+
+ isRefreshing=false;
+
+ }
+
+
+}
+
+
+
+return Promise.reject(error);
+
+
+});
+
 
 export default api;

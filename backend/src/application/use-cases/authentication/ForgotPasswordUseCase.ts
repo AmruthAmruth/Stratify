@@ -9,10 +9,11 @@ import { Company } from "../../../domain/entities/Company";
 import { Employee } from "../../../domain/entities/Employee";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Manager } from "../../../domain/entities/Manager";
+import { IForgotPasswordUseCase } from "../../interfaces/authentication/IForgotPasswordUseCase";
 
 type UserType = Company | Manager | Employee;
 
-export class ForgotPasswordUseCase {
+export class ForgotPasswordUseCase implements IForgotPasswordUseCase{
   constructor(
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,

@@ -8,10 +8,11 @@ import { Employee } from "../../../domain/entities/Employee";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Manager } from "../../../domain/entities/Manager";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { IResetPasswordUseCase } from "../../interfaces/authentication/IResetPasswordOTPUseCase";
 
 type UserType = Company | Manager | Employee;
 
-export class ResetPasswordUseCase {
+export class ResetPasswordUseCase implements IResetPasswordUseCase{
   constructor(
     private readonly _companyRepository: ICompanyRepository,
     private readonly _managerRepository: IManagerRepository,

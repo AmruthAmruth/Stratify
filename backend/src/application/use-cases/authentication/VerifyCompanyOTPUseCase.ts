@@ -6,7 +6,7 @@ import { Company } from "../../../domain/entities/Company";
 import { ICreateTrialSubscriptionUseCase } from "../../interfaces/subscriptions/ICreateTrialSubscriptionUseCase";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 
-export class VerifyCompanyOTPUseCase {
+export class VerifyCompanyOTPUseCase implements VerifyCompanyOTPUseCase{
   constructor(
     private _otpRepo: IOTPRepository,
     private _companyRepo: ICompanyRepository,

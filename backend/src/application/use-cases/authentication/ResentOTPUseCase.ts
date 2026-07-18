@@ -4,8 +4,9 @@ import { ITempRegistrationRepository } from "../../../domain/repositories/ITempR
 import { EmailService } from "../../../infrastructure/services/EmailService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { generateOtp } from "../../../shared/utils/otpUtils";
+import { IResendOtpUseCase } from "../../interfaces/authentication/IResentOTPUseCase";
 
-export class ResendOtpUseCase {
+export class ResendOtpUseCase implements IResendOtpUseCase{
   constructor(
     private _otpRepo: IOTPRepository,
     private _emailService: EmailService,

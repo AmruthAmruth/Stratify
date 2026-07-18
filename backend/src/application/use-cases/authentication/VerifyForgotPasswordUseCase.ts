@@ -11,7 +11,7 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 
 type UserType = Company | Manager | Employee;
 
-export class VerifyForgotPasswordOTPUseCase {
+export class VerifyForgotPasswordOTPUseCase implements VerifyForgotPasswordOTPUseCase{
   constructor(
     private readonly _otpRepository: IOTPRepository,
     private readonly _companyRepository: ICompanyRepository,

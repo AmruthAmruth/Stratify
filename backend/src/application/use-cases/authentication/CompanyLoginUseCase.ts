@@ -19,10 +19,11 @@ import { INotificationRepository } from "../../../domain/repositories/INotificat
 import { Notification } from "../../../domain/entities/Notification";
 import { ICompanyThemeRepository } from "../../../domain/repositories/ICompanyThemeRepository";
 import { CompanyTheme } from "../../../domain/entities/CompanyTheme";
+import { ICompanyLoginUseCase } from "../../interfaces/authentication/ICompanyLoginUseCase";
 
 type UserType = Company | Manager | Employee;
 
-export class CompanyLoginUseCase {
+export class CompanyLoginUseCase implements ICompanyLoginUseCase{
   constructor(
     private _companyRepository: ICompanyRepository,
     private _managerRepository: IManagerRepository,

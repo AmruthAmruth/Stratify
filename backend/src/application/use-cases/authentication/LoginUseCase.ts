@@ -8,8 +8,9 @@ import {
 import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { ILoginUseCase } from "../../interfaces/authentication/ILoginUseCase";
 
-export class LoginUseCase {
+export class LoginUseCase implements ILoginUseCase{
   constructor(private _superAdminRepository: ISuperAdminRepository) { }
 
   async execute(
