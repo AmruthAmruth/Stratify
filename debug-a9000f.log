@@ -1,0 +1,1 @@
+{"sessionId":"a9000f","hypothesisId":"A","location":"CookieConfig.ts:init","message":"Resolved CookieConfig at boot","data":{"NODE_ENV":"development","isProduction":false,"cookieSecure":false,"cookieSameSite":"lax","envCOOKIE_SECURE":"false","envCOOKIE_SAME_SITE":"lax","envCOOKIE_HTTP_ONLY":"true","ignoresEnvCookieFlags":true},"timestamp":1784363850306}

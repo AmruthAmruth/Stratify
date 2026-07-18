@@ -22,6 +22,8 @@ import { MeetingScheduler } from "./infrastructure/scheduler/MeetingScheduler";
 import { MeetingRepository } from "./infrastructure/repositories/MeetingRepository";
 import { ProjectRepository } from "./infrastructure/repositories/ProjectRepository";
 import { NotificationRepository } from "./infrastructure/repositories/NotificationRepository";
+import { agentLog } from "./shared/utils/agentDebugLog";
+import { CookieConfig } from "./config/CookieConfig";
 
 
 dotenv.config();
@@ -55,17 +57,38 @@ const corsOptions: CorsOptions = {
     console.log("REQUEST ORIGIN:", origin);
 
     if (!origin) {
+      // #region agent log
+      agentLog("C", "main.ts:cors", "CORS no Origin header — allowing without ACAO reflect", {
+        origin: null,
+        decision: "allow-no-origin",
+        allowedOrigins,
+      });
+      // #endregion
       return callback(null, true);
     }
 
 
     if (allowedOrigins.includes(origin)) {
+      // #region agent log
+      agentLog("C", "main.ts:cors", "CORS origin allowed", {
+        origin,
+        decision: "allow",
+        callbackValue: true,
+      });
+      // #endregion
       return callback(null, true);
     }
 
 
     console.log("BLOCKED ORIGIN:", origin);
 
+    // #region agent log
+    agentLog("C", "main.ts:cors", "CORS origin blocked — no ACAO will be set", {
+      origin,
+      decision: "block",
+      allowedOrigins,
+    });
+    // #endregion
     return callback(null, false);
   },
 
@@ -90,7 +113,9 @@ const corsOptions: CorsOptions = {
 // IMPORTANT: CORS FIRST
 app.use(cors(corsOptions));
 
-app.options("*", cors(corsOptions));
+// Express 5 rejects app.options("*"); cors() above already handles OPTIONS.
+// Keep a named wildcard compatible with path-to-regexp v8+ for explicit preflight.
+app.options("/{*splat}", cors(corsOptions));
 
 
 
@@ -232,7 +257,18 @@ app.use(
 
 app.get(
   "/health",
-  (_req,res)=>{
+  (req,res)=>{
+
+    // #region agent log
+    agentLog("A", "main.ts:health", "Health check CORS/cookie diagnostics", {
+      receivedOrigin: req.headers.origin ?? null,
+      NODE_ENV: process.env.NODE_ENV ?? null,
+      cookieSameSite: CookieConfig.sameSite,
+      cookieSecure: CookieConfig.secure,
+      FRONTEND_URL: process.env.FRONTEND_URL ?? null,
+      allowedOrigins,
+    });
+    // #endregion
 
     res.json({
 
@@ -244,7 +280,17 @@ app.get(
       .toISOString(),
 
       environment:
-      process.env.NODE_ENV || "development"
+      process.env.NODE_ENV || "development",
+
+      // debug session a9000f — remove after fix verified
+      debugCors: {
+        receivedOrigin: req.headers.origin ?? null,
+        allowedOrigins,
+        cookieSameSite: CookieConfig.sameSite,
+        cookieSecure: CookieConfig.secure,
+        envCOOKIE_SAME_SITE: process.env.COOKIE_SAME_SITE ?? null,
+        envCOOKIE_SECURE: process.env.COOKIE_SECURE ?? null,
+      },
 
     });
 
