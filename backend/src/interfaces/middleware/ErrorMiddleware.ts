@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Messages } from "../../shared/constants/messages";
+import { getAllowedOrigins } from "../../config/corsConfig";
 
 export class AppError extends Error {
   statusCode: number;
@@ -13,14 +14,6 @@ export class AppError extends Error {
   }
 }
 
-const ALLOWED_ORIGINS_FOR_ERRORS = [
-  "https://stratify-sigma.vercel.app",
-  "http://localhost:5173",
-  "http://localhost:5174",
-  "http://127.0.0.1:5173",
-  "http://127.0.0.1:5174",
-];
-
 export const errorMiddleware = (
   err: Error | AppError,
   req: Request,
@@ -32,7 +25,7 @@ export const errorMiddleware = (
   // Re-apply CORS headers on error responses.
   // The browser checks these headers even on 4xx/5xx, so they MUST be present.
   const origin = req.headers.origin as string | undefined;
-  if (origin && ALLOWED_ORIGINS_FOR_ERRORS.includes(origin)) {
+  if (origin && getAllowedOrigins().includes(origin)) {
     res.setHeader("Access-Control-Allow-Origin", origin);
     res.setHeader("Access-Control-Allow-Credentials", "true");
   }

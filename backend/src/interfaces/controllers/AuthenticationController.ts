@@ -15,7 +15,6 @@ import { CookieConfig } from "../../config/CookieConfig";
 import { ILoginUseCase } from "../../application/interfaces/authentication/ILoginUseCase";
 import { IRefreashTokenUseCase } from "../../application/interfaces/authentication/IRefreashTokenUseCase";
 import logger from "../../shared/utils/logger";
-import { agentLog } from "../../shared/utils/agentDebugLog";
 
 interface MulterRequest extends Request {
   file?: Express.Multer.File;
@@ -36,24 +35,7 @@ export class AuthenticationController {
 
   refresh = async (req: Request, res: Response) => {
     const refreshToken = req.cookies.refreshToken;
-    // #region agent log
-    agentLog("A", "AuthenticationController.ts:refresh", "refresh-token request", {
-      origin: req.headers.origin ?? null,
-      hasRefreshCookie: Boolean(refreshToken),
-      cookieNames: Object.keys(req.cookies || {}),
-      cookieConfigSameSite: CookieConfig.sameSite,
-      cookieConfigSecure: CookieConfig.secure,
-      NODE_ENV: process.env.NODE_ENV ?? null,
-      acaoWillDependOnCorsMiddleware: true,
-    });
-    // #endregion
     if (!refreshToken) {
-      // #region agent log
-      agentLog("A", "AuthenticationController.ts:refresh", "401 missing refresh cookie", {
-        origin: req.headers.origin ?? null,
-        hypothesis: "cookie not sent (SameSite/Secure) or never set",
-      });
-      // #endregion
       res.status(StatusCodes.UNAUTHORIZED).json({
         message: Messages.NO_REFREASHTOKEN,
       });
@@ -131,19 +113,6 @@ export class AuthenticationController {
       password: req.body.password,
     };
     const { accessToken, refreshToken, companyId, theme } = await this._loginUseCase.execute(dto);
-    // #region agent log
-    agentLog("B", "AuthenticationController.ts:login", "Setting refreshToken cookie on login", {
-      origin: req.headers.origin ?? null,
-      cookieConfig: {
-        httpOnly: CookieConfig.httpOnly,
-        secure: CookieConfig.secure,
-        sameSite: CookieConfig.sameSite,
-        maxAge: CookieConfig.maxAge,
-      },
-      NODE_ENV: process.env.NODE_ENV ?? null,
-      note: "Cross-site needs SameSite=None; Secure=true",
-    });
-    // #endregion
     res.cookie("refreshToken", refreshToken, CookieConfig);
     res
       .status(StatusCodes.OK)
