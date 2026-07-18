@@ -100,8 +100,9 @@ const corsOptions: CorsOptions = {
 
 
 // IMPORTANT: CORS FIRST
-
 app.use(cors(corsOptions));
+
+app.options("*", cors(corsOptions));
 
 
 
