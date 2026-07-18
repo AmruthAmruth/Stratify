@@ -24,10 +24,8 @@ router.use(apiLimiter);
 // Routes that don't need tenant context or setup their own auth heavily first
 router.use("/auth", authRouter);
 
-// Apply tenant context wrapper for everywhere else
-// The middleware will be safe even if unauthenticated, but it allows Context scope to run
 router.use(tenantMiddleware);
-
+ 
 router.use("/company", companyRouter);
 router.use("/department", departmentRouter);
 router.use("/employee", employeeRouter);

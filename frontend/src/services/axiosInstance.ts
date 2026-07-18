@@ -10,7 +10,11 @@ const apiBaseURL =
     ? import.meta.env.VITE_LOCAL_API
     : import.meta.env.VITE_PROD_API;
 
-
+console.log("MODE:", import.meta.env.MODE);
+console.log("LOCAL API:", import.meta.env.VITE_LOCAL_API);
+console.log("PROD API:", import.meta.env.VITE_PROD_API);
+console.log("CURRENT API:", apiBaseURL);
+ 
 console.log(
   "Current API:",
   apiBaseURL
