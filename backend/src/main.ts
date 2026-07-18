@@ -38,17 +38,22 @@ app.set("trust proxy", 1);
 // CORS CONFIGURATION
 // ===============================
 const allowedOrigins = [
+  "https://stratify-sigma.vercel.app",
   "http://localhost:5173",
   "http://localhost:5174",
-  "https://stratify-sigma.vercel.app",
 ];
 
 
+if(process.env.FRONTEND_URL){
+  allowedOrigins.push(process.env.FRONTEND_URL);
+}
+
+
 const corsOptions: CorsOptions = {
+  origin: (origin, callback) => {
 
-  origin(origin, callback) {
+    console.log("REQUEST ORIGIN:", origin);
 
-    // Allow Postman, mobile apps, server-to-server
     if (!origin) {
       return callback(null, true);
     }
@@ -59,19 +64,12 @@ const corsOptions: CorsOptions = {
     }
 
 
-    logger.warn(
-      `Blocked by CORS: ${origin}`
-    );
+    console.log("BLOCKED ORIGIN:", origin);
 
-
-    return callback(
-      new Error("Not allowed by CORS")
-    );
+    return callback(null, false);
   },
 
-
   credentials: true,
-
 
   methods: [
     "GET",
@@ -82,17 +80,12 @@ const corsOptions: CorsOptions = {
     "OPTIONS",
   ],
 
-
   allowedHeaders: [
     "Content-Type",
     "Authorization",
     "X-Requested-With",
   ],
-
-
-  optionsSuccessStatus: 204,
 };
-
 
 // IMPORTANT: CORS FIRST
 app.use(cors(corsOptions));
