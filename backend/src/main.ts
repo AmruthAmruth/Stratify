@@ -37,16 +37,11 @@ app.set("trust proxy", 1);
 // ===============================
 // CORS CONFIGURATION
 // ===============================
-
 const allowedOrigins = [
   "http://localhost:5173",
   "http://localhost:5174",
+  "https://stratify-sigma.vercel.app",
 ];
-
-
-if(process.env.FRONTEND_URL){
-  allowedOrigins.push(process.env.FRONTEND_URL);
-}
 
 
 const corsOptions: CorsOptions = {
