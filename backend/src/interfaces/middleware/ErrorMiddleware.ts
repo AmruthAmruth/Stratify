@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import { Messages } from "../../shared/constants/messages";
+import { StatusCodes } from "../../shared/constants/statusCodes";
 import { getAllowedOrigins } from "../../config/corsConfig";
 
 export class AppError extends Error {
@@ -37,7 +38,7 @@ export const errorMiddleware = (
       ...(err.details ? { details: err.details } : {}),
     });
   } else {
-    res.status(500).json({
+    res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
       status: "error",
       message: Messages.SERVER_ERROR,
     });

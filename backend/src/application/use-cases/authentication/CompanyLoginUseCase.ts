@@ -107,7 +107,7 @@ export class CompanyLoginUseCase implements ICompanyLoginUseCase{
           '#f7faf9', // Background - Off-white
           '#1f2937', // Text - Dark gray
           '#ffffff', // Surface - White
-          '#e5e7eb', // Border - Light gray
+          '#e5e7eb', // Border - Light gray 
           '#6b7280', // Muted - Medium gray
           '#0f172a', // Heading - Very dark
           false // Not custom

@@ -1,5 +1,6 @@
 import { NextFunction, Response, Request } from "express";
 import { Messages } from "../../shared/constants/messages";
+import { StatusCodes } from "../../shared/constants/statusCodes";
 import jwt from "jsonwebtoken";
 import logger from "../../shared/utils/logger";
 
@@ -32,7 +33,7 @@ export const authMiddleware = (
     try {
       const authHeader = req.headers.authorization;
       if (!authHeader?.startsWith("Bearer ")) {
-        return next({ status: 401, message: Messages.UNAUTHORIZED_ACCESS });
+        return next({ status: StatusCodes.UNAUTHORIZED, message: Messages.UNAUTHORIZED_ACCESS });
       }
 
       const token = authHeader.split(" ")[1];
@@ -42,7 +43,7 @@ export const authMiddleware = (
       ) as JwtPayload;
 
       if (allowedRoles.length && !allowedRoles.includes(decoded.role)) {
-        return next({ status: 403, message: Messages.ACCESS_DENIED });
+        return next({ status: StatusCodes.FORBIDDEN, message: Messages.ACCESS_DENIED });
       }
 
       req.role = decoded.role;

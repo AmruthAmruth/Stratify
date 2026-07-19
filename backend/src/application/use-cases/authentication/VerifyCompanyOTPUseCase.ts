@@ -2,6 +2,7 @@ import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { Company } from "../../../domain/entities/Company";
 import { ICreateTrialSubscriptionUseCase } from "../../interfaces/subscriptions/ICreateTrialSubscriptionUseCase";
 import { IVerifyCompanyOTPUseCase } from "../../interfaces/authentication/IVerifyCompanyOTPUseCase";
@@ -22,17 +23,17 @@ export class VerifyCompanyOTPUseCase implements IVerifyCompanyOTPUseCase{
     const storedOtp = await this._otpRepo.findByEmail(email);
     console.log("Stored OTP:", storedOtp, "Entered OTP:", otp);
 
-    if (!storedOtp) throw new Error(Messages.OTP_EXPIRED);
-    if (storedOtp.code !== otp) throw new Error(Messages.OTP_INVALID);
-    if (storedOtp.expiresAt < new Date()) throw new Error(Messages.OTP_EXPIRED);
+    if (!storedOtp) throw new AppError(Messages.OTP_EXPIRED, StatusCodes.BAD_REQUEST);
+    if (storedOtp.code !== otp) throw new AppError(Messages.OTP_INVALID, StatusCodes.BAD_REQUEST);
+    if (storedOtp.expiresAt < new Date()) throw new AppError(Messages.OTP_EXPIRED, StatusCodes.BAD_REQUEST);
 
     const companyData = await this._tempRegRepo.findByEmail(email);
-    if (!companyData) throw new Error(Messages.REGISTRATION_DATA_EXPIRED);
+    if (!companyData) throw new AppError(Messages.REGISTRATION_DATA_EXPIRED, StatusCodes.BAD_REQUEST);
 
     console.log("Company Data :", companyData);
 
     if (!companyData.password)
-      throw new Error(Messages.PASSWORD_MISSING);
+      throw new AppError(Messages.PASSWORD_MISSING, StatusCodes.BAD_REQUEST);
 
     const createdCompany = await this._companyRepo.create(
       new Company(
@@ -56,7 +57,7 @@ export class VerifyCompanyOTPUseCase implements IVerifyCompanyOTPUseCase{
     );
 
     if (!createdCompany.id)
-      throw new AppError("Company ID is missing after creation");
+      throw new AppError(Messages.COMPANY_ID_MISSING_AFTER_CREATION, StatusCodes.BAD_REQUEST);
 
     await this._createTrialSubscriptionUseCase.execute(createdCompany.id);
 

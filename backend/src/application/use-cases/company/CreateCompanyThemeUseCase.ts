@@ -2,6 +2,7 @@ import { ICompanyThemeRepository } from "../../../domain/repositories/ICompanyTh
 import { CompanyTheme } from "../../../domain/entities/CompanyTheme";
 import { ColorExtractionService } from "../../../infrastructure/services/ColorExtractionService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 
 export interface ICreateCompanyThemeUseCase {
@@ -49,7 +50,7 @@ export class CreateCompanyThemeUseCase implements ICreateCompanyThemeUseCase {
         } catch (error) {
             console.error("Error creating company theme:", error);
             throw new AppError(
-                "Failed to create company theme",
+                Messages.THEME_CREATION_FAILED,
                 StatusCodes.INTERNAL_SERVER_ERROR
             );
         }

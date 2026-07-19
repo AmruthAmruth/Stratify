@@ -1,6 +1,9 @@
 import { ISendContactMessageUseCase } from "../../interfaces/contact/ISendContactMessageUseCase";
 import { ContactMessageDTO } from "../../dto/ContactMessageDTO";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
+import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 
 export class SendContactMessageUseCase implements ISendContactMessageUseCase {
     constructor(private emailService: IEmailService) { }
@@ -8,13 +11,13 @@ export class SendContactMessageUseCase implements ISendContactMessageUseCase {
     async execute(data: ContactMessageDTO): Promise<void> {
         // Validate input
         if (!data.name || !data.email || !data.subject || !data.message) {
-            throw new Error("All fields are required");
+            throw new AppError(Messages.MISSING_FIELDS, StatusCodes.BAD_REQUEST);
         }
 
         // Email validation
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(data.email)) {
-            throw new Error("Invalid email format");
+            throw new AppError(Messages.INVALID_EMAIL_FORMAT, StatusCodes.BAD_REQUEST);
         }
 
         // Prepare email content

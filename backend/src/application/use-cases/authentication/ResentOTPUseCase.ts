@@ -3,6 +3,8 @@ import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { ITempRegistrationRepository } from "../../../domain/repositories/ITempRegistrationRepository";
 import { EmailService } from "../../../infrastructure/services/EmailService";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
+import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { generateOtp } from "../../../shared/utils/otpUtils";
 import { IResendOtpUseCase } from "../../interfaces/authentication/IResentOTPUseCase";
 
@@ -16,7 +18,7 @@ export class ResendOtpUseCase implements IResendOtpUseCase{
   async execute(email: string): Promise<void> {
     const tempData = await this._tempRegRepo.findByEmail(email);
     if (!tempData) {
-      throw new AppError("Registration data expired. Please register again.");
+      throw new AppError(Messages.REGISTRATION_DATA_EXPIRED_RETRY, StatusCodes.BAD_REQUEST);
     }
 
     const otpCode = generateOtp();

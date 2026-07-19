@@ -1,6 +1,7 @@
 import { ICompanyThemeRepository } from "../../../domain/repositories/ICompanyThemeRepository";
 import { CompanyTheme, ThemeMode } from "../../../domain/entities/CompanyTheme";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 
 export interface UpdateThemeDTO {
@@ -44,7 +45,7 @@ export class UpdateCompanyThemeUseCase implements IUpdateCompanyThemeUseCase {
         for (const field of colorFields) {
             if (!hexColorRegex.test(themeData[field])) {
                 throw new AppError(
-                    `Invalid ${field} format. Please provide a valid hex color (e.g., #3B82F6)`,
+                    Messages.INVALID_COLOR_FORMAT.replace("{field}", field),
                     StatusCodes.BAD_REQUEST
                 );
             }

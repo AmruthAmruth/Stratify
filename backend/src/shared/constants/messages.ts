@@ -178,7 +178,7 @@ export const Messages = {
   COMPANY_APPROVED: "Company approved successfully",
   COMPANY_UNAPPROVED: "Company unapproved successfully",
   COMPNAY_NOT_FOUND: "Company not found",
-
+  COMPANY_ID_MISSING_AFTER_CREATION: "Company ID is missing after creation",
 
   INTERNAL_SERVER_ERROR: "Internal Server Error",
   FORBIDDEN: "Forbidden",
@@ -199,6 +199,19 @@ export const Messages = {
   THEME_RETRIEVED: "Company theme retrieved successfully",
   THEME_UPDATED: "Company theme updated successfully",
   THEME_PRESETS_RETRIEVED: "Theme presets retrieved successfully",
+  THEME_CREATION_FAILED: "Failed to create company theme",
+  MISSING_REQUIRED_THEME_FIELDS: "Missing required theme fields",
+  COMPANY_ADMIN_REQUIRED: "Only company administrators can update themes",
+  COMPANY_ADMIN_REQUIRED_APPLY: "Only company administrators can apply themes",
+  USER_ID_REQUIRED: "User ID is required",
+  PRESET_NAME_REQUIRED: "Preset name is required",
+  INVALID_PRESET_NAME: "Invalid preset name",
+  PRESET_APPLIED_SUCCESS: 'Preset theme "{presetName}" applied successfully',
+  INVALID_COLOR_FORMAT: "Invalid {field} format. Please provide a valid hex color (e.g., #3B82F6)",
+  MANAGER_HAS_NO_DEPARTMENT: "Manager has no department assigned",
+  FORECAST_HOURS_INVALID: "Forecast hours per week must be between 1 and 168",
+  FORECAST_DATE_RANGE_INVALID: "End date must be after start date",
+  REGISTRATION_DATA_EXPIRED_RETRY: "Registration data expired. Please register again.",
 
   // Group Messages
   GROUP_ID_REQUIRED: "groupId is required",

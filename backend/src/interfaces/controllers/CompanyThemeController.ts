@@ -19,7 +19,7 @@ export class CompanyThemeController {
             const companyId = req.params.companyId as string;
 
             if (!companyId) {
-                throw new AppError("Company ID is required", StatusCodes.BAD_REQUEST);
+                throw new AppError(Messages.COMPANY_ID_REQUIRED, StatusCodes.BAD_REQUEST);
             }
 
             const theme = await this.getCompanyThemeUseCase.execute(companyId);
@@ -51,7 +51,7 @@ export class CompanyThemeController {
             // Only company admins can update theme
             if (role !== 'company') {
                 throw new AppError(
-                    "Only company administrators can update themes",
+                    Messages.COMPANY_ADMIN_REQUIRED,
                     StatusCodes.FORBIDDEN
                 );
             }
@@ -70,7 +70,7 @@ export class CompanyThemeController {
                 !themeData.borderColor || !themeData.mutedColor ||
                 !themeData.headingColor) {
                 throw new AppError(
-                    "Missing required theme fields",
+                    Messages.MISSING_REQUIRED_THEME_FIELDS,
                     StatusCodes.BAD_REQUEST
                 );
             }
@@ -113,7 +113,7 @@ export class CompanyThemeController {
 
             if (role !== 'company') {
                 throw new AppError(
-                    "Only company administrators can apply themes",
+                    Messages.COMPANY_ADMIN_REQUIRED_APPLY,
                     StatusCodes.FORBIDDEN
                 );
             }
@@ -125,14 +125,14 @@ export class CompanyThemeController {
             const { presetName } = req.body;
 
             if (!presetName) {
-                throw new AppError("Preset name is required", StatusCodes.BAD_REQUEST);
+                throw new AppError(Messages.PRESET_NAME_REQUIRED, StatusCodes.BAD_REQUEST);
             }
 
             const presets = await this.getThemePresetsUseCase.execute();
             const selectedPreset = presets.find(p => p.name === presetName);
 
             if (!selectedPreset) {
-                throw new AppError("Invalid preset name", StatusCodes.BAD_REQUEST);
+                throw new AppError(Messages.INVALID_PRESET_NAME, StatusCodes.BAD_REQUEST);
             }
 
 
@@ -159,7 +159,7 @@ export class CompanyThemeController {
             res.status(StatusCodes.OK).json({
                 success: true,
                 response: updatedTheme,
-                message: `Preset theme "${presetName}" applied successfully`
+                message: Messages.PRESET_APPLIED_SUCCESS.replace("{presetName}", presetName)
             });
         } catch (error) {
             throw error;

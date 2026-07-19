@@ -24,7 +24,7 @@ export class GetIssuesForManagerUseCase implements IGetIssuesForManagerUseCase {
         // Handle populated departmentId (it's an object with _id and name when populated)
         const departmentId = manager.departmentId?._id?.toString();
         if (!departmentId) {
-            throw new AppError("Manager has no department assigned", StatusCodes.BAD_REQUEST);
+            throw new AppError(Messages.MANAGER_HAS_NO_DEPARTMENT, StatusCodes.BAD_REQUEST);
         }
 
         // Get all projects in the manager's department

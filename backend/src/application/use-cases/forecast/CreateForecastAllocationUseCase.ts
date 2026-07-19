@@ -3,6 +3,7 @@ import { IForecastAllocationRepository } from "../../../domain/repositories/IFor
 import { IEmployeeRepository } from "../../../domain/repositories/IEmployeeRepository";
 import { IProjectRepository } from "../../../domain/repositories/IProjectRepository";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { CreateForecastAllocationDTO } from "../../dto/forecast/CreateForecastAllocationDTO";
 import { ForecastAllocationResponseDTO } from "../../dto/forecast/ForecastAllocationResponseDTO";
@@ -25,7 +26,7 @@ export class CreateForecastAllocationUseCase
         // Validate employee exists and belongs to company
         const employee = await this._employeeRepo.findById(data.employeeId);
         if (!employee) {
-            throw new AppError("Employee not found", StatusCodes.NOT_FOUND);
+            throw new AppError(Messages.EMPLOYEE_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
         if (employee.companyId !== companyId) {
             throw new AppError(
@@ -37,7 +38,7 @@ export class CreateForecastAllocationUseCase
         // Validate project exists and belongs to company
         const project = await this._projectRepo.findById(data.projectId);
         if (!project) {
-            throw new AppError("Project not found", StatusCodes.NOT_FOUND);
+            throw new AppError(Messages.PROJECT_NOT_FOUND, StatusCodes.NOT_FOUND);
         }
         if (project.companyId !== companyId) {
             throw new AppError(
@@ -49,7 +50,7 @@ export class CreateForecastAllocationUseCase
         // Validate hours per week
         if (data.forecastHoursPerWeek <= 0 || data.forecastHoursPerWeek > 168) {
             throw new AppError(
-                "Forecast hours per week must be between 1 and 168",
+                Messages.FORECAST_HOURS_INVALID,
                 StatusCodes.BAD_REQUEST,
             );
         }
@@ -61,7 +62,7 @@ export class CreateForecastAllocationUseCase
         // Validate date range
         if (endDate && endDate <= startDate) {
             throw new AppError(
-                "End date must be after start date",
+                Messages.FORECAST_DATE_RANGE_INVALID,
                 StatusCodes.BAD_REQUEST,
             );
         }
