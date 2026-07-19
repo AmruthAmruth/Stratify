@@ -8,11 +8,12 @@ import {
   generateRefreshToken,
 } from "../../../shared/utils/token";
 import { IRefreashTokenUseCase } from "../../interfaces/authentication/IRefreashTokenUseCase";
+import { RefreshTokenResponseDTO } from "../../dto/authentication/RefreshTokenResponseDTO";
 
 export class RefreshTokenUseCase implements IRefreashTokenUseCase{
   async execute(
     refreshToken: string,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<RefreshTokenResponseDTO> {
     try {
       const decoded = verifyRefreshToken(refreshToken) as TokenPayload;
       const payload: TokenPayload = {

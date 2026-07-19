@@ -1,8 +1,6 @@
-import { LoginDTO } from "../../validators/LoginValidator";
-import { CompanyTheme } from "../../../domain/entities/CompanyTheme";
+import { LoginDTO } from "../../dto/authentication/LoginDTO";
+import { LoginResponseDTO } from "../../dto/authentication/LoginResponseDTO";
 
 export interface ICompanyLoginUseCase {
-  execute(
-    dto: LoginDTO,
-  ): Promise<{ accessToken: string; refreshToken: string; companyId: string; theme: CompanyTheme | null }>;
+  execute(dto: LoginDTO): Promise<LoginResponseDTO>;
 }

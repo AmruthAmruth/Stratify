@@ -1,16 +1,11 @@
 import { Subscription } from "../../../domain/entities/Subscription";
+import { PurchaseSubscriptionResponseDTO } from "../../dto/subscriptions/PurchaseSubscriptionResponseDTO";
 
 export interface IPurchaseSubscriptionUseCase {
   execute(
     planName: string,
     companyId: string,
-  ): Promise<{
-    orderId: string;
-    amount: number;
-    currency: string;
-    key: string | undefined;
-    planName: string;
-  }>;
+  ): Promise<PurchaseSubscriptionResponseDTO>;
 
   verifyAndActivate(
     companyId: string,

@@ -5,6 +5,7 @@ import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { Messages } from "../../../shared/constants/messages";
 import { IGetUserCompanyInfoUseCase } from "../../interfaces/company/IGetUserCompanyInfoUseCase";
+import { UserCompanyInfoResponseDTO } from "../../dto/company/UserCompanyInfoResponseDTO";
 
 export class GetUserCompanyInfoUseCase implements IGetUserCompanyInfoUseCase{
   constructor(
@@ -13,7 +14,7 @@ export class GetUserCompanyInfoUseCase implements IGetUserCompanyInfoUseCase{
     private _employeeRepository: IEmployeeRepository
   ) { }
 
-  async execute(userId: string, role: string): Promise<{ id: string; name: string; profileImage?: string }> {
+  async execute(userId: string, role: string): Promise<UserCompanyInfoResponseDTO> {
     let companyId: string;
 
     if (role === "company") {

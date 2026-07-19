@@ -5,8 +5,9 @@ import { Meeting } from "../../../domain/entities/Meeting";
 import { Notification } from "../../../domain/entities/Notification";
 import { randomUUID } from "crypto";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
+import { IGenerateDailyStandupsUseCase } from "../../interfaces/meeting/IGenerateDailyStandupsUseCase";
 
-export class GenerateDailyStandupsUseCase {
+export class GenerateDailyStandupsUseCase implements IGenerateDailyStandupsUseCase {
     constructor(
         private _meetingRepo: IMeetingRepository,
         private _projectRepo: IProjectRepository,

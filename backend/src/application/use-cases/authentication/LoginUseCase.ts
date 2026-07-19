@@ -9,13 +9,14 @@ import { Messages } from "../../../shared/constants/messages";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { ILoginUseCase } from "../../interfaces/authentication/ILoginUseCase";
+import { RefreshTokenResponseDTO } from "../../dto/authentication/RefreshTokenResponseDTO";
 
 export class LoginUseCase implements ILoginUseCase{
   constructor(private _superAdminRepository: ISuperAdminRepository) { }
 
   async execute(
     data: LoginDTO,
-  ): Promise<{ accessToken: string; refreshToken: string }> {
+  ): Promise<RefreshTokenResponseDTO> {
     const user = await this._superAdminRepository.findByEmail(data.email);
     if (!user) throw new AppError(Messages.SUPER_ADMIN_NOT_FOUND, StatusCodes.NOT_FOUND);
 

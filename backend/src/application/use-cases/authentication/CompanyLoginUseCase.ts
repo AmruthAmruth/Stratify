@@ -1,5 +1,5 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
-import { LoginDTO } from "../../validators/LoginValidator";
+import { LoginDTO } from "../../dto/authentication/LoginDTO";
 import {
   generateAccessToken,
   generateRefreshToken,
@@ -20,6 +20,7 @@ import { Notification } from "../../../domain/entities/Notification";
 import { ICompanyThemeRepository } from "../../../domain/repositories/ICompanyThemeRepository";
 import { CompanyTheme } from "../../../domain/entities/CompanyTheme";
 import { ICompanyLoginUseCase } from "../../interfaces/authentication/ICompanyLoginUseCase";
+import { LoginResponseDTO } from "../../dto/authentication/LoginResponseDTO";
 
 type UserType = Company | Manager | Employee;
 
@@ -35,7 +36,7 @@ export class CompanyLoginUseCase implements ICompanyLoginUseCase{
 
   async execute(
     data: LoginDTO,
-  ): Promise<{ accessToken: string; refreshToken: string; companyId: string; theme: CompanyTheme | null }> {
+  ): Promise<LoginResponseDTO> {
     let user: UserType | null = await this._companyRepository.findByEmail(
       data.email,
     );

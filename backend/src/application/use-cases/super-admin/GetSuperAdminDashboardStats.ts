@@ -1,13 +1,17 @@
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 import { ISubscriptionRepository } from "../../../domain/repositories/ISubscriptionRepository";
+import {
+  IGetSuperAdminDashboardStatsUseCase,
+  SuperAdminDashboardStatsResponse,
+} from "../../interfaces/super-admin/IGetSuperAdminDashboardStatsUseCase";
 
-export class GetSuperAdminDashboardStats {
+export class GetSuperAdminDashboardStats implements IGetSuperAdminDashboardStatsUseCase {
     constructor(
         private companyRepository: ICompanyRepository,
         private subscriptionRepository: ISubscriptionRepository
     ) { }
 
-    async execute() {
+    async execute(): Promise<SuperAdminDashboardStatsResponse> {
     
         const totalCompaniesResult = await this.companyRepository.findPaginated({ pageSize: 1, filter: {} });
         const totalCompanies = totalCompaniesResult.total;
@@ -77,7 +81,11 @@ export class GetSuperAdminDashboardStats {
             graphs: {
                 companiesByStatus: {
                     labels: ["Approved", "Pending", "Rejected"],
-                    data: [approvedCompanies, pendingCompanies, rejectedCompanies]
+                    data: [
+                        approvedCompanies ?? 0,
+                        pendingCompanies ?? 0,
+                        rejectedCompanies ?? 0,
+                    ]
                 },
                 subscriptionsByPlan: {
                     labels: Object.keys(planCounts),

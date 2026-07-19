@@ -9,6 +9,7 @@ import { Messages } from "../../../shared/constants/messages";
 import { generateRandomPassword } from "../../../shared/utils/password";
 import { IPurchaseSubscriptionUseCase } from "../../interfaces/subscriptions/IPurchaseSubscriptionUseCase";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
+import { PurchaseSubscriptionResponseDTO } from "../../dto/subscriptions/PurchaseSubscriptionResponseDTO";
 import { subscriptionConfirmationTemplate } from "../../../shared/templates/SubscriptionConfirmationTemplate";
 import { ICompanyRepository } from "../../../domain/repositories/ICompanyRepository";
 
@@ -22,7 +23,7 @@ export class PurchaseSubscriptionUseCase
     private _companyRepo: ICompanyRepository,
   ) { }
 
-  async execute(planName: string, companyId: string) {
+  async execute(planName: string, companyId: string): Promise<PurchaseSubscriptionResponseDTO> {
     const activeSubscription =
       await this._subscriptionRepo.getActiveByCompany(companyId);
     if (activeSubscription) {

@@ -3,11 +3,15 @@ import { SuperAdmin } from "../../../domain/entities/SuperAdmin";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 import { StatusCodes } from "../../../shared/constants/statusCodes";
 import { Messages } from "../../../shared/constants/messages";
+import {
+  IUpdateSuperAdminProfileUseCase,
+  SuperAdminProfileResponse,
+} from "../../interfaces/super-admin/IUpdateSuperAdminProfileUseCase";
 
-export class UpdateSuperAdminProfile {
+export class UpdateSuperAdminProfile implements IUpdateSuperAdminProfileUseCase {
     constructor(private superAdminRepository: ISuperAdminRepository) { }
 
-    async execute(id: string, data: { name?: string; profileImage?: string }) {
+    async execute(id: string, data: { name?: string; profileImage?: string }): Promise<SuperAdminProfileResponse> {
         const superAdmin = await this.superAdminRepository.findById(id);
         if (!superAdmin) {
             throw new AppError(Messages.SUPER_ADMIN_NOT_FOUND, StatusCodes.NOT_FOUND);

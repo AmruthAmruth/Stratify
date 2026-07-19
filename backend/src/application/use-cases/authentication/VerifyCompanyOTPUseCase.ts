@@ -4,9 +4,10 @@ import { ITempRegistrationRepository } from "../../../domain/repositories/ITempR
 import { Messages } from "../../../shared/constants/messages";
 import { Company } from "../../../domain/entities/Company";
 import { ICreateTrialSubscriptionUseCase } from "../../interfaces/subscriptions/ICreateTrialSubscriptionUseCase";
+import { IVerifyCompanyOTPUseCase } from "../../interfaces/authentication/IVerifyCompanyOTPUseCase";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
 
-export class VerifyCompanyOTPUseCase implements VerifyCompanyOTPUseCase{
+export class VerifyCompanyOTPUseCase implements IVerifyCompanyOTPUseCase{
   constructor(
     private _otpRepo: IOTPRepository,
     private _companyRepo: ICompanyRepository,

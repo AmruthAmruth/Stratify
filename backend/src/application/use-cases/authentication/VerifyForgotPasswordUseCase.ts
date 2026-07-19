@@ -8,10 +8,12 @@ import { Employee } from "../../../domain/entities/Employee";
 import { IManagerRepository } from "../../../domain/repositories/IManagerRepository";
 import { Manager } from "../../../domain/entities/Manager";
 import { AppError } from "../../../interfaces/middleware/ErrorMiddleware";
+import { IVerifyForgotPasswordOTPUseCase } from "../../interfaces/authentication/IVerifyForgotPasswordOTPUseCase";
+import { VerifyForgotPasswordResponseDTO } from "../../dto/authentication/VerifyForgotPasswordResponseDTO";
 
 type UserType = Company | Manager | Employee;
 
-export class VerifyForgotPasswordOTPUseCase implements VerifyForgotPasswordOTPUseCase{
+export class VerifyForgotPasswordOTPUseCase implements IVerifyForgotPasswordOTPUseCase{
   constructor(
     private readonly _otpRepository: IOTPRepository,
     private readonly _companyRepository: ICompanyRepository,
@@ -22,7 +24,7 @@ export class VerifyForgotPasswordOTPUseCase implements VerifyForgotPasswordOTPUs
   async execute(
     email: string,
     otp: string,
-  ): Promise<{ success: boolean; userName: string; role: string }> {
+  ): Promise<VerifyForgotPasswordResponseDTO> {
     const storedOtp = await this._otpRepository.findByEmail(email);
     if (!storedOtp) throw new AppError(Messages.OTP_INVALID);
 

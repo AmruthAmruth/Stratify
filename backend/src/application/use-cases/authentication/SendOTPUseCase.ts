@@ -2,8 +2,9 @@ import { IOTPRepository } from "../../../domain/repositories/IOTPRepository";
 import { generateOtp } from "../../../shared/utils/otpUtils";
 import { OTP } from "../../../domain/entities/OTP";
 import { IEmailService } from "../../../domain/repositories/IEmailService";
+import { ISendOTPUseCase } from "../../interfaces/authentication/ISendOTPUseCase";
 
-export class SendOtpUseCase {
+export class SendOtpUseCase implements ISendOTPUseCase {
   constructor(
     private _otpRepo: IOTPRepository,
     private _emailService: IEmailService,

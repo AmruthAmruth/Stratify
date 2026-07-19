@@ -1,12 +1,16 @@
 import { IIssueRepository } from "../../../domain/repositories/IIssueRepository";
 import { EmployeeIssueDTO } from "../../dto/project/EmployeeIssueDTO";
+import {
+  EmployeeDashboardStatsResponse,
+  IGetEmployeeDashboardStatsUseCase,
+} from "../../interfaces/employees/IGetEmployeeDashboardStatsUseCase";
 
-export class GetEmployeeDashboardStats {
+export class GetEmployeeDashboardStats implements IGetEmployeeDashboardStatsUseCase {
     constructor(
         private issueRepository: IIssueRepository
     ) { }
 
-    async execute(employeeId: string) {
+    async execute(employeeId: string): Promise<EmployeeDashboardStatsResponse> {
         console.log(`[GetEmployeeDashboardStats] Executing for employeeId: ${employeeId}`);
 
 
