@@ -7,7 +7,7 @@ import { validateRequest } from "../middleware/ValidationMiddleware";
 import { RegisterCompanySchema } from "../../application/validators/CompanyValidator";
 import { LoginSchema } from "../../application/validators/LoginValidator";
 import {
-  VerifyOtpSchema,
+  
   ResendOtpSchema,
   ForgotPasswordSchema,
   VerifyForgotPasswordOtpSchema,
@@ -16,14 +16,19 @@ import {
 
 const authRouter = Router();
 const controller = authenticationDI();
-
-const optionalProfileUpload = (req: any, res: any, next: any) => {
+const optionalProfileUpload = (
+  req: any,
+  res: any,
+  next: any
+) => {
   upload.single("profileImage")(req, res, (err?: unknown) => {
+
     if (err) {
-      req.body = req.body || {};
-      req.body.profileImage = undefined;
-      return next();
+      console.error("Image upload error:", err);
+
+      return next(err);
     }
+
     next();
   });
 };
@@ -35,7 +40,7 @@ authRouter.post(
   validateRequest(RegisterCompanySchema),
   asyncHandler(controller.register),
 );
-authRouter.post("/verify-otp", validateRequest(VerifyOtpSchema), asyncHandler(controller.verifyOtp));
+authRouter.post("/verify-otp", asyncHandler(controller.verifyOtp));
 authRouter.post("/login", authLimiter, validateRequest(LoginSchema), asyncHandler(controller.login));
 authRouter.post("/logout", asyncHandler(controller.logout));
 authRouter.post("/resend-otp", validateRequest(ResendOtpSchema), asyncHandler(controller.resendOtp));

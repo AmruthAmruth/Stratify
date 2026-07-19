@@ -26,6 +26,8 @@ export class RegisterCompanyUseCase implements IRegisterCompanyUseCase{
 
     const expiresAt = new Date(Date.now() + 30 * 60 * 1000);
 
+    const sanitizedProfileImage = typeof data.profileImage === 'string' ? data.profileImage : undefined;
+
     const tempData = new Company(
       undefined,
       data.name,
@@ -42,7 +44,7 @@ export class RegisterCompanyUseCase implements IRegisterCompanyUseCase{
       hashedPassword,
       data.status ?? "pending",
       "company",
-      data.profileImage,
+      sanitizedProfileImage,
     );
 
     await this._tempRegRepo.save(data.email, tempData, expiresAt);

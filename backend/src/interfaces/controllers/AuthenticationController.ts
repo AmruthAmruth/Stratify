@@ -69,16 +69,27 @@ export class AuthenticationController {
 
   register = async (req: MulterRequest, res: Response): Promise<void> => {
     try {
-      logger.info("Registration request received");
-console.log("Registration request received");
+      console.log("BODY BEFORE IMAGE:", req.body);
+console.log("FILE:", req.file);
 
       if (req.file) {
+
         logger.debug("File uploaded", {
           filename: req.file.filename,
           size: req.file.size,
           mimetype: req.file.mimetype,
         });
+
+        console.log("BODY AFTER IMAGE:", req.body);
+
+
         req.body.profileImage = req.file.path;
+      }
+
+      // If client sent an empty object for profileImage (e.g., from a form without a file),
+      // normalize it to undefined so Mongoose string casting doesn't fail.
+      if (req.body.profileImage && typeof req.body.profileImage === 'object') {
+        delete req.body.profileImage;
       }
 
       logger.debug("Executing registration use case");

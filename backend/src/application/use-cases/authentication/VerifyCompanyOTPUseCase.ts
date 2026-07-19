@@ -35,6 +35,8 @@ export class VerifyCompanyOTPUseCase implements IVerifyCompanyOTPUseCase{
     if (!companyData.password)
       throw new AppError(Messages.PASSWORD_MISSING, StatusCodes.BAD_REQUEST);
 
+    const sanitizedProfileImage = typeof companyData.profileImage === 'string' ? companyData.profileImage : undefined;
+
     const createdCompany = await this._companyRepo.create(
       new Company(
         undefined,
@@ -52,7 +54,7 @@ export class VerifyCompanyOTPUseCase implements IVerifyCompanyOTPUseCase{
         companyData.password,
         companyData.status,
         "company",
-        companyData.profileImage,
+        sanitizedProfileImage,
       ),
     );
 
