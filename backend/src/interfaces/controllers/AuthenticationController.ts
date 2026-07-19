@@ -70,6 +70,7 @@ export class AuthenticationController {
   register = async (req: MulterRequest, res: Response): Promise<void> => {
     try {
       logger.info("Registration request received");
+console.log("Registration request received");
 
       if (req.file) {
         logger.debug("File uploaded", {

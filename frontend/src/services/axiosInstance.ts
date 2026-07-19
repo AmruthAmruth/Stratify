@@ -5,7 +5,7 @@ import { jwtDecode } from "jwt-decode";
 
 
 // Automatically switch API URL
-const apiBaseURL ="http://16.16.206.69:7000/api"
+const apiBaseURL = "http://localhost:7000/api";
   // import.meta.env.MODE === "development"
   //   ? import.meta.env.VITE_LOCAL_API
   //   : import.meta.env.VITE_PROD_API;

@@ -18,10 +18,8 @@ import { tenantMiddleware } from "./interfaces/middleware/TenantMiddleware";
 
 const router = Router();
   
-// Apply global API rate limiting
 router.use(apiLimiter);
 
-// Routes that don't need tenant context or setup their own auth heavily first
 router.use("/auth", authRouter);
 
 router.use(tenantMiddleware);
