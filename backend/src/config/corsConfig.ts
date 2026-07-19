@@ -14,7 +14,7 @@ export function getAllowedOrigins(): string[] {
     origins.push(frontendUrl);
   }
 
-  return origins;
+  return origins;     
 }
 
 export function buildCorsOptions(): CorsOptions {

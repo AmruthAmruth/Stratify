@@ -34,10 +34,12 @@ const Register: React.FC = () => {
         }
         navigate("/verify-otp")
       })
-      .catch((err) => {
+      .catch((err: unknown) => {
         console.error("Registration failed:", err)
 
-        enqueueSnackbar(err?.message || "Registration failed", {
+        const message = err instanceof Error ? err.message : "Registration failed"
+
+        enqueueSnackbar(message, {
           variant: "error",
         })
       })

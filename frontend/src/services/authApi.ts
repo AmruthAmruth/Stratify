@@ -4,15 +4,36 @@ import { AxiosError } from "axios";
 import type { UserProfile } from "@/types/types";
 
 
+const extractErrorMessage = (err: unknown, fallback: string): string => {
+  if (err instanceof AxiosError) {
+    const serverMessage = err.response?.data?.message || err.response?.data?.error || err.message;
+    if (typeof serverMessage === "string" && serverMessage.trim()) {
+      return serverMessage;
+    }
+  }
+
+  if (typeof err === "object" && err !== null) {
+    const maybeMessage = (err as { message?: unknown }).message;
+    if (typeof maybeMessage === "string" && maybeMessage.trim()) {
+      return maybeMessage;
+    }
+
+    const maybeData = (err as { data?: { message?: unknown } }).data;
+    if (typeof maybeData?.message === "string" && maybeData.message.trim()) {
+      return maybeData.message;
+    }
+  }
+
+  return fallback;
+};
+
 const handleRequest = async <T>(request: Promise<{ data: T }>, errorMessage?: string): Promise<T> => {
   try {
     const response = await request;
     return response.data;
   } catch (err) {
-    if (err instanceof AxiosError) {
-      throw err.response?.data || new Error(errorMessage || "Network error");
-    }
-    throw new Error(errorMessage || "Network error");
+    const message = extractErrorMessage(err, errorMessage || "Network error");
+    throw new Error(message);
   }
 };
 

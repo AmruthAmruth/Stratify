@@ -17,10 +17,21 @@ import {
 const authRouter = Router();
 const controller = authenticationDI();
 
+const optionalProfileUpload = (req: any, res: any, next: any) => {
+  upload.single("profileImage")(req, res, (err?: unknown) => {
+    if (err) {
+      req.body = req.body || {};
+      req.body.profileImage = undefined;
+      return next();
+    }
+    next();
+  });
+};
+
 authRouter.post(
   "/register",
   authLimiter,
-  upload.single("profileImage"),
+  optionalProfileUpload,
   validateRequest(RegisterCompanySchema),
   asyncHandler(controller.register),
 );

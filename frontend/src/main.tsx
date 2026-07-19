@@ -4,7 +4,9 @@ import { PersistGate } from 'redux-persist/integration/react';
 import { store, persistor } from "./store";
 import App from "./App";
 import AuthInitializer from "./components/AuthInitializer";
-import "./index.css";
+import "./index.css";  
+
+
 
 createRoot(document.getElementById("root")!).render(
   <Provider store={store}>
