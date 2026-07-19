@@ -3,7 +3,7 @@ import { EmployeeIssueDTO } from "../../dto/project/EmployeeIssueDTO";
 import {
   EmployeeDashboardStatsResponse,
   IGetEmployeeDashboardStatsUseCase,
-} from "../../interfaces/employees/IGetEmployeeDashboardStatsUseCase";
+} from "../../../application/interfaces/employees/IGetEmployeeDashboardStatsUseCase";
 
 export class GetEmployeeDashboardStats implements IGetEmployeeDashboardStatsUseCase {
     constructor(

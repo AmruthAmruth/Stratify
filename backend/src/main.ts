@@ -2,9 +2,8 @@ import express from "express";
 import dotenv from "dotenv";
 import connectDB from "./config/DataBase";
 import morgan from "morgan";
-import * as rfs from "rotating-file-stream";
 import path from "path";
-import fs from "fs";
+import fs, { createWriteStream } from "fs";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 import http from "http";
@@ -60,10 +59,8 @@ if (!fs.existsSync(logDirectory)) {
   fs.mkdirSync(logDirectory);
 }
 
-const accessLogStream = rfs.createStream("access.log", {
-  interval: "1d",
-  path: logDirectory,
-  maxFiles: 7,
+const accessLogStream = createWriteStream(path.join(logDirectory, "access.log"), {
+  flags: "a",
 });
 
 app.use(

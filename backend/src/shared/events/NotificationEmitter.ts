@@ -3,7 +3,7 @@ import { emitNotification } from "../../infrastructure/socket/SocketServer";
 
 export class NotificationEmitter {
   static async emit(notification: Notification) {
-    const { io } = await import("../../main");
+    const { io } = await import("../../main.js");
 
     if (io) {
       emitNotification(

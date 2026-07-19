@@ -6,7 +6,7 @@ import { Messages } from "../../../shared/constants/messages";
 import {
   IUpdateSuperAdminProfileUseCase,
   SuperAdminProfileResponse,
-} from "../../interfaces/super-admin/IUpdateSuperAdminProfileUseCase";
+} from "../../../application/interfaces/super-admin/IUpdateSuperAdminProfileUseCase";
 
 export class UpdateSuperAdminProfile implements IUpdateSuperAdminProfileUseCase {
     constructor(private superAdminRepository: ISuperAdminRepository) { }

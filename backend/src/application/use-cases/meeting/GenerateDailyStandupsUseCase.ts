@@ -5,7 +5,7 @@ import { Meeting } from "../../../domain/entities/Meeting";
 import { Notification } from "../../../domain/entities/Notification";
 import { randomUUID } from "crypto";
 import { NotificationEmitter } from "../../../shared/events/NotificationEmitter";
-import { IGenerateDailyStandupsUseCase } from "../../interfaces/meeting/IGenerateDailyStandupsUseCase";
+import { IGenerateDailyStandupsUseCase } from "../../../application/interfaces/meeting/IGenerateDailyStandupsUseCase";
 
 export class GenerateDailyStandupsUseCase implements IGenerateDailyStandupsUseCase {
     constructor(

@@ -5,7 +5,7 @@ import { Messages } from "../../../shared/constants/messages";
 import {
   IGetSuperAdminProfileUseCase,
   SuperAdminProfileResponse,
-} from "../../interfaces/super-admin/IGetSuperAdminProfileUseCase";
+} from "../../../application/interfaces/super-admin/IGetSuperAdminProfileUseCase";
 
 export class GetSuperAdminProfile implements IGetSuperAdminProfileUseCase {
     constructor(private superAdminRepository: ISuperAdminRepository) { }
