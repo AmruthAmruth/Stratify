@@ -1,4 +1,4 @@
-import { Router } from "express";
+import { NextFunction, Request, Response, Router } from "express";
 import { asyncHandler } from "../middleware/AsyncHandler";
 import { upload } from "../../infrastructure/services/CloudinaryService";
 import { authenticationDI } from "../../di/AuthenticationDI";
@@ -17,9 +17,9 @@ import {
 const authRouter = Router();
 const controller = authenticationDI();
 const optionalProfileUpload = (
-  req: any,
-  res: any,
-  next: any
+  req: Request,
+  res: Response,
+  next: NextFunction,
 ) => {
   upload.single("profileImage")(req, res, (err?: unknown) => {
 
