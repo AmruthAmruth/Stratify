@@ -44,23 +44,71 @@ const handleRequest = async <T>(
   }
 };
 
-const createFormData = (
+const compressImageIfNeeded = async (file: File): Promise<File> => {
+  if (!file.type.startsWith("image/")) {
+    return file;
+  }
+
+  if (file.size <= 600 * 1024) {
+    return file;
+  }
+
+  try {
+    const bitmap = await createImageBitmap(file);
+    const maxDimension = 1200;
+    const scale = Math.min(
+      1,
+      maxDimension / Math.max(bitmap.width, bitmap.height)
+    );
+
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.max(1, Math.round(bitmap.width * scale));
+    canvas.height = Math.max(1, Math.round(bitmap.height * scale));
+
+    const context = canvas.getContext("2d");
+    if (!context) {
+      return file;
+    }
+
+    context.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+    const blob = await new Promise<Blob | null>((resolve) => {
+      canvas.toBlob(resolve, "image/jpeg", 0.8);
+    });
+
+    if (!blob) {
+      return file;
+    }
+
+    return new File([blob], file.name.replace(/\.[^.]+$/, ".jpg"), {
+      type: "image/jpeg",
+    });
+  } catch {
+    return file;
+  }
+};
+
+const createFormData = async (
   data: Record<string, unknown>,
   fileField = "profileImage"
-): FormData => {
+): Promise<FormData> => {
   const formData = new FormData();
 
-  Object.entries(data).forEach(([key, value]) => {
+  for (const [key, value] of Object.entries(data)) {
     if (value === undefined || value === null || value === "") {
-      return;
+      continue;
     }
 
     if (key === fileField && value instanceof File) {
-      formData.append(key, value);
+      const sanitizedFile = await compressImageIfNeeded(value);
+
+      if (sanitizedFile.size <= 1 * 1024 * 1024) {
+        formData.append(key, sanitizedFile);
+      }
     } else {
       formData.append(key, String(value));
     }
-  });
+  }
 
   return formData;
 };
@@ -74,20 +122,14 @@ export const superAdminLogin = (
 ): Promise<{ accessToken: string }> =>
   handleRequest(api.post(AUTH_ROUTES.SUPER_ADMIN_LOGIN, data));
 
-export const companyRegistration = (
+export const companyRegistration = async (
   data: Record<string, unknown>
 ): Promise<{
   message: string;
   companyId: string;
   time?: string;
 }> => {
-  const formData = createFormData(data);
-
-  // Debug (remove after testing)
-  console.log("Registration FormData:");
-  for (const [key, value] of formData.entries()) {
-    console.log(`${key}:`, value);
-  }
+  const formData = await createFormData(data);
 
   return handleRequest(
     api.post(AUTH_ROUTES.COMPANY_REGISTER, formData)
@@ -179,10 +221,10 @@ export const updatePassword = (
 export const getManagerProfile = (): Promise<UserProfile> =>
   handleRequest(api.get("/manager/profile"));
 
-export const updateManagerProfile = (
+export const updateManagerProfile = async (
   data: Record<string, unknown>
 ): Promise<UserProfile> => {
-  const formData = createFormData(data);
+  const formData = await createFormData(data);
 
   return handleRequest(
     api.put("/manager/profile", formData)

@@ -5,20 +5,16 @@ import { jwtDecode } from "jwt-decode";
 
 
 // Automatically switch API URL
-const apiBaseURL = "http://localhost:7000/api";
-  // import.meta.env.MODE === "development"
-  //   ? import.meta.env.VITE_LOCAL_API
-  //   : import.meta.env.VITE_PROD_API;
+const apiBaseURL =
+  (import.meta.env.VITE_API_BASE_URL as string | undefined) ||
+  (import.meta.env.VITE_PROD_API as string | undefined) ||
+  (import.meta.env.VITE_LOCAL_API as string | undefined) ||
+  "http://localhost:7000/api";
 
 console.log("MODE:", import.meta.env.MODE);
 console.log("LOCAL API:", import.meta.env.VITE_LOCAL_API);
-console.log("PROD API:", import.meta.env.VITE_PROD_API);
+console.log("PROD API:", import.meta.env.VITE_PROD_API); 
 console.log("CURRENT API:", apiBaseURL);
- 
-console.log(
-  "Current API:",
-  apiBaseURL
-);
 
 
 const api = axios.create({
